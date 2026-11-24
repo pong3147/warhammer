@@ -20,10 +20,27 @@ const fail = (gate, msg) => errors.push(`[Gate ${gate}] ${msg}`);
 console.log("=== 1 / QUADRILLION : IMPERIALIS VITA — QA Regression Suite ===");
 
 // ============================================================================
-// Gate 1: index.html 스크립트 실존 · 로드 순서 · vm.Script 구문 · CSS 확인
+// Gate 1: index.html 스크립트 실존 · 로드 순서 · 고아 파일 · 구문 · 크기 상한 · CSS 확인
 // ============================================================================
 const html = readRel("index.html");
 const scripts = [...html.matchAll(/<script\s+src="\.\/([^"]+)"><\/script>/g)].map((m) => m[1]);
+const scriptSet = new Set(scripts);
+
+function collectDirJs(relDir) {
+  const abs = path.join(ROOT, relDir);
+  if (!fs.existsSync(abs)) return [];
+  const out = [];
+  (function walk(dir) {
+    for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, ent.name);
+      if (ent.isDirectory()) walk(full);
+      else if (ent.isFile() && ent.name.endsWith(".js")) {
+        out.push(path.relative(ROOT, full).split(path.sep).join("/"));
+      }
+    }
+  })(abs);
+  return out.sort();
+}
 
 const expectedPrefix = [
   "data/worlds.js",
@@ -31,7 +48,8 @@ const expectedPrefix = [
   "data/careers.js",
   "data/chapters.js",
   "data/characters.js",
-  "data/timeline.js"
+  "data/timeline.js",
+  "data/tags.js"
 ];
 expectedPrefix.forEach((p, idx) => {
   if (scripts[idx] !== p) fail(1, `Script order mismatch at index ${idx}: expected ${p}, got ${scripts[idx]}`);
@@ -40,16 +58,55 @@ if (scripts[scripts.length - 2] !== "js/engine.js" || scripts[scripts.length - 1
   fail(1, `Final scripts must be js/engine.js -> js/ui.js`);
 }
 
+// Check that all event scripts precede all chronicle scripts
+let seenChronScript = false;
+for (const s of scripts) {
+  if (s.startsWith("data/chronicles/")) seenChronScript = true;
+  else if (seenChronScript && s.startsWith("data/events/")) {
+    fail(1, `Event script "${s}" appears after chronicle scripts in index.html`);
+  }
+}
+
+// Orphan .js detection in data/events/ and data/chronicles/
+const diskEventFiles = collectDirJs("data/events");
+const diskChronFiles = collectDirJs("data/chronicles");
+for (const f of [...diskEventFiles, ...diskChronFiles]) {
+  if (!scriptSet.has(f)) {
+    fail(1, `Unregistered orphan data file not loaded in index.html: ${f} (run: node scripts/sync-scripts.js)`);
+  }
+}
+
+const EVENT_SIZE_WARN_KB = 110;
+const EVENT_LINE_WARN = 2200;
+const CHRON_SIZE_WARN_KB = 70;
+const CHRON_LINE_WARN = 1400;
+let maxEvKB = 0;
+let maxChKB = 0;
+
 for (const s of scripts) {
   const full = path.join(ROOT, s);
   if (!fs.existsSync(full)) {
     fail(1, `Missing script referenced in index.html: ${s}`);
     continue;
   }
+  const rawSrc = fs.readFileSync(full, "utf8");
   try {
-    new vm.Script(fs.readFileSync(full, "utf8"), { filename: s });
+    new vm.Script(rawSrc, { filename: s });
   } catch (e) {
     fail(1, `Syntax error in ${s}: ${e.message}`);
+  }
+  const kb = Buffer.byteLength(rawSrc, "utf8") / 1024;
+  const lineCount = rawSrc.split("\n").length;
+  if (s.startsWith("data/events/")) {
+    if (kb > maxEvKB) maxEvKB = kb;
+    if (kb > EVENT_SIZE_WARN_KB || lineCount > EVENT_LINE_WARN) {
+      warnings.push(`Large event file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines) — consider splitting/promoting`);
+    }
+  } else if (s.startsWith("data/chronicles/")) {
+    if (kb > maxChKB) maxChKB = kb;
+    if (kb > CHRON_SIZE_WARN_KB || lineCount > CHRON_LINE_WARN) {
+      warnings.push(`Large chronicle file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines) — consider splitting/promoting`);
+    }
   }
 }
 
@@ -61,7 +118,10 @@ if (!/fonts\.googleapis\.com/.test(html)) {
   warnings.push("Google Fonts <link> not found in index.html");
 }
 
-console.log(`[Gate 1] Scripts verified (${scripts.length} files), syntax & CSS checked.`);
+console.log(
+  `[Gate 1] Scripts verified (${scripts.length} files: ${diskEventFiles.length} events, ${diskChronFiles.length} chronicles; ` +
+  `maxEv=${maxEvKB.toFixed(1)}KB, maxCh=${maxChKB.toFixed(1)}KB), orphans=0, syntax & CSS checked.`
+);
 
 // ============================================================================
 // Gate 2: js/ui.js 모든 #id 셀렉터 DOM 존재 대조
@@ -118,12 +178,20 @@ for (const f of [...scripts, "index.html"]) {
 console.log(`[Gate 3] Naming standard & decorative symbol scan complete.`);
 
 // ============================================================================
-// Load data + engine into global.window
+// Load data + engine into global.window (with per-file source tracking)
 // ============================================================================
 global.window = global;
+const eventSourceByIndex = [];
+const chronSourceByIndex = [];
 for (const s of scripts) {
   if (s === "js/ui.js") continue;
+  const prevE = (global.IMPERIUM_DATA && global.IMPERIUM_DATA.EVENTS ? global.IMPERIUM_DATA.EVENTS.length : 0);
+  const prevC = (global.IMPERIUM_DATA && global.IMPERIUM_DATA.CHRONICLES ? global.IMPERIUM_DATA.CHRONICLES.length : 0);
   require(path.join(ROOT, s));
+  const nowE = (global.IMPERIUM_DATA && global.IMPERIUM_DATA.EVENTS ? global.IMPERIUM_DATA.EVENTS.length : 0);
+  const nowC = (global.IMPERIUM_DATA && global.IMPERIUM_DATA.CHRONICLES ? global.IMPERIUM_DATA.CHRONICLES.length : 0);
+  for (let i = prevE; i < nowE; i++) eventSourceByIndex[i] = s;
+  for (let i = prevC; i < nowC; i++) chronSourceByIndex[i] = s;
 }
 const DATA = global.IMPERIUM_DATA;
 const Engine = global.ImperiumEngine;
@@ -137,13 +205,18 @@ console.log(
 // ============================================================================
 // Gate 4: ID 중복 · 참조 무결성 · 미생산 태그 · TAG_LABELS · describeReq · 연표 정렬
 // ============================================================================
-const checkUnique = (arr, label) => {
-  const seen = new Set();
-  for (const item of arr) {
-    if (!item || !item.id) fail(4, `Missing id in ${label}`);
-    else if (seen.has(item.id)) fail(4, `Duplicate id "${item.id}" in ${label}`);
-    seen.add(item.id);
-  }
+const checkUnique = (arr, label, sourceList) => {
+  const seen = new Map();
+  arr.forEach((item, idx) => {
+    const src = sourceList ? sourceList[idx] : null;
+    if (!item || !item.id) fail(4, `Missing id in ${label}${src ? ` (${src})` : ""}`);
+    else if (seen.has(item.id)) {
+      const firstSrc = seen.get(item.id);
+      fail(4, `Duplicate id "${item.id}" in ${label}${src ? ` (${firstSrc} vs ${src})` : ""}`);
+    } else {
+      seen.set(item.id, src || label);
+    }
+  });
 };
 checkUnique(DATA.WORLDS, "WORLDS");
 checkUnique(DATA.ORIGINS, "ORIGINS");
@@ -152,8 +225,8 @@ checkUnique(DATA.CAREERS, "CAREERS");
 checkUnique(DATA.CHAPTERS, "CHAPTERS");
 checkUnique(DATA.CHARACTERS, "CHARACTERS");
 checkUnique(DATA.TIMELINE, "TIMELINE");
-checkUnique(DATA.EVENTS, "EVENTS");
-checkUnique(DATA.CHRONICLES, "CHRONICLES");
+checkUnique(DATA.EVENTS, "EVENTS", eventSourceByIndex);
+checkUnique(DATA.CHRONICLES, "CHRONICLES", chronSourceByIndex);
 
 // TIMELINE chronological order
 for (let i = 1; i < DATA.TIMELINE.length; i++) {

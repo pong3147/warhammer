@@ -24,7 +24,7 @@
 ### 2.1 실행 · 배포 구조 (100% 정적 / 무서버)
 * **로컬 즉시 실행:** 서버 호스팅이나 빌드 과정 없이 `index.html`을 브라우저로 직접 열어도(`file://` 프로토콜) 완벽히 동작해야 하며, GitHub Pages에 폴더째 푸시해 즉시 배포할 수 있어야 한다.
 * **기술 제약:** `fetch()`, ES Module(`import`/`export`), 외부 번들러 사용 금지. 모든 데이터 파일은 클래식 `<script>` 태그로 로드해 전역 `window.IMPERIUM_DATA` 객체를 공유한다.
-* **로드 순서 엄수:** `index.html`의 스크립트 로드 순서(`worlds` -> `origins` -> `careers` -> `chapters` -> `characters` -> `timeline` -> `events*` -> `chronicles*` -> `js/engine.js` -> `js/ui.js`)를 깨뜨리지 않는다.
+* **로드 순서 엄수:** `index.html`의 스크립트 로드 순서(`worlds` -> `origins` -> `careers` -> `chapters` -> `characters` -> `timeline` -> `tags` -> `events/**` -> `chronicles/**` -> `js/engine.js` -> `js/ui.js`)를 깨뜨리지 않는다. 신규 데이터 파일 생성 후에는 반드시 `node scripts/sync-scripts.js`로 `index.html`을 동기화한다.
 
 ### 2.2 시각장애인 스크린 리더 접근성 (최우선 불변 원칙)
 사용자는 시각장애인으로 스크린 리더를 사용해 플레이한다. 무분별한 ARIA 남용이 아니라 **간략하고 효과적인 정보 탐색**이 핵심이다.
@@ -47,8 +47,8 @@
 ## 3. 서사 보강 5대 핵심 작업 방향
 
 1. **단발성 이력 태그의 연작 아크 전환:**
-   * 사건·역사 선택지로 부여되는 이력 태그(`addTags`)는 인물창 장식으로 방치하지 않고, 후속 분기 사건(`data/events_deep.js`)과 고우선순위 일상 연대기(`data/chronicles_deep.js`, `priority: 3`)로 회수한다.
-   * 신규 이력 태그를 추가할 때는 반드시 `js/engine.js`의 `TAG_LABELS`에 한글 라벨을 등록한다.
+   * 사건·역사 선택지로 부여되는 이력 태그(`addTags`)는 인물창 장식으로 방치하지 않고, 해당 도메인 분기 사건(`data/events/**`)과 고우선순위 일상 연대기(`data/chronicles/**`, `priority: 3`)로 회수한다.
+   * 신규 이력 태그를 추가할 때는 반드시 `data/tags.js`의 `TAG_LABELS`(행성 유형 태그는 `WORLD_TAG_LABELS`)에 한글 라벨을 등록한다.
 2. **생애 주기 전체의 서사 곡선 완성:**
    * 유년기(6~13세) 성장 선택지로 14세 직무 배정 이전의 애착과 개성을 형성한다.
    * 노년기(55세 이상) 필멸자의 쇠락·회고, 그리고 `rejuvenat`·`bionic`·초인(`astartes`/`custodes`/`dreadnought`)의 초장수기(100세 이상) 세대 단절과 인간성 상실 서사를 구축한다.
@@ -119,13 +119,18 @@
 
 ## 6. 작업 완료 필수 QA 게이트 (Definition of Done)
 
-모든 콘텐츠·코드 변경은 아래 순서로 배치하고, Node.js 자동 검증(Windows `pwsh` 기준 `@' ... '@ | node`)으로 6개 항목을 모두 0오류 통과해야 완료로 인정한다.
+모든 콘텐츠·코드 변경은 아래 기준에 맞춰 배치하고, `node scripts/sync-scripts.js`로 `index.html`을 동기화한 뒤 `node scripts/qa.js`의 6대 게이트를 모두 0오류로 통과해야 완료로 인정한다.
 
-* **콘텐츠 배치 위치:** 추가 분기 사건은 `data/events_deep.js`(또는 새 `data/events_*.js` 생성 후 `index.html` 등록), 추가 연대기는 `data/chronicles_deep.js`에 `push(...)`로 추가한다.
-* **필수 6대 QA 검증 항목:**
-  1. `index.html`에 등록된 모든 `<script src>` 파일 실존 및 `vm.Script` 구문 오류 0건.
+* **콘텐츠 배치 및 단독 파일 승격 규칙:**
+  * 모든 분할 파일은 순서 독립적 자기 등록 헤더(`window.IMPERIUM_DATA = window.IMPERIUM_DATA || {}; (window.IMPERIUM_DATA.EVENTS = window.IMPERIUM_DATA.EVENTS || []).push(...);`)를 사용한다.
+  * **분기 사건(`data/events/`):** 도메인에 맞춰 `careers/`(직군 계열), `chapters/`(챕터), `worlds/`(행성 권역), `themes/`(생애·네임드·시대·외계·카오스·초점/태그·위기)에 배치한다. 추후 외계 종족 스타팅 등 신규 대형 축은 `data/events/<신규폴더>/`로 독립 추가할 수 있다.
+  * **일상 연대기(`data/chronicles/`):** 주제별 파일(`childhood.js`, `worlds.js`, `careers.js`, `chapters.js`, `arcs_named.js`, `eras.js`, `lifecycle.js`, `general.js`) 또는 하위 폴더로 확장 배치한다.
+  * **용량 상한 & 1:1 승격:** 단일 사건 파일이 **110KB / 2,200줄** 또는 특정 직군·행성·챕터가 **15~20건 이상** 커지면(연대기는 **70KB / 1,400줄** 초과 시) 해당 항목을 단독 파일(`careers/guardsman.js`, `worlds/cadia.js`, `chapters/ultramarines.js` 등)로 승격 분할한다.
+  * **신규 태그 등록:** 새 태그 라벨은 반드시 `data/tags.js`에 등록한다.
+* **필수 6대 QA 검증 항목 (`node scripts/qa.js`):**
+  1. `index.html`에 등록된 모든 `<script src>` 파일 실존, 로드 순서 준수, `data/events/`·`data/chronicles/` 미등록 고아 `.js` 0건, `vm.Script` 구문 오류 0건 및 파일 크기 상한 확인.
   2. `js/ui.js`의 모든 `#id` 셀렉터가 `index.html` 또는 동적 템플릿에 존재하는지 확인(누락 0건).
-  3. 5.1 금지 구표기, 장식 기호(`★`, `↗`, `←`, `✓`), 한국어 조사 불일치 0건.
-  4. 전체 데이터(`WORLDS`, `CAREERS`, `CHAPTERS`, `CHARACTERS`, `TIMELINE`, `EVENTS`, `CHRONICLES`)의 ID 중복 0건, 참조 ID(행성·직군·챕터·인물·성역·초점) 무결성 오류 0건, `TAG_LABELS` 누락 0건.
+  3. 5.1 금지 구표기, 장식 기호(`★`, `↗`, `←`, `✓`), 크리그 비타-움 정합성 오류 및 한국어 조사 불일치 0건.
+  4. 전체 데이터(`WORLDS`, `CAREERS`, `CHAPTERS`, `CHARACTERS`, `TIMELINE`, `EVENTS`, `CHRONICLES`)의 ID 중복 0건(출처 파일 대조), 참조 ID(행성·직군·챕터·인물·성역·초점) 무결성 오류 0건, `TAG_LABELS` 누락 0건.
   5. 모든 분기·역사 사건의 소프트락 0건(무조건 선택지 최소 1개) 및 신규 사건·연대기 전 항목 조건 도달 가능성 검증.
-  6. 200~250생애 `advanceQuarter` 스트레스 시뮬레이션 오류 0건 및 `maxRepeat <= 2` 확인 후 `PROJECT_GUIDE.md` 수치·완료 보고서 최신화.
+  6. 300생애 멀티-초점 `advanceQuarter` 스트레스 시뮬레이션 오류 0건 및 `maxRepeat <= 2` 확인 후 `PROJECT_GUIDE.md` 수치·완료 보고서 최신화.

@@ -33,9 +33,9 @@ Warhammer 40,000 인류제국 세계관을 배경으로 한 **로컬 / 정적 �
 
 ## 데이터 확장 방법 및 개발 문서
 
-`data/` 디렉토리의 각 파일(`worlds.js`, `origins.js`, `careers.js`, `chapters.js`, `characters.js`, `timeline.js`, `events.js`, `events_extra.js`, `events_deep.js`, `events_saga.js`, `chronicles.js`, `chronicles_extra.js`, `chronicles_deep.js`)에 항목을 추가하면 엔진이 자동으로 인식해 게임과 코덱스에 반영합니다.
-특히 `chronicles.js`는 행성·직업·신분·나이·시대 조건을 엄격히 대조해 본인 상황에 맞는 인류제국 일상 및 부조리 연대기 로그를 자동 출력합니다.
-수정 후에는 터미널에서 `node scripts/qa.js`를 실행해 구문·DOM 무결성·고증 표기·소프트락·300생애 시뮬레이션 6대 QA 게이트를 한 번에 검증할 수 있습니다.
+`data/` 디렉토리의 코어 정의 파일(`worlds.js`, `origins.js`, `careers.js`, `chapters.js`, `characters.js`, `timeline.js`, `tags.js`)과 도메인별 계층 폴더(`data/events/{careers,chapters,worlds,themes}/`, `data/chronicles/`)에 항목이나 새 파일을 추가하면 엔진이 자동으로 인식해 게임과 코덱스에 반영합니다.
+특히 `data/chronicles/`는 행성·직업·신분·나이·시대 조건을 엄격히 대조해 본인 상황에 맞는 인류제국 일상 및 부조리 연대기 로그를 자동 출력합니다.
+새 데이터 파일을 추가한 뒤에는 `node scripts/sync-scripts.js`로 `index.html`의 스크립트 목록을 자동 동기화하고, `node scripts/qa.js`를 실행해 구문·고아 파일·DOM 무결성·고증 표기·소프트락·300생애 시뮬레이션 6대 QA 게이트를 한 번에 검증할 수 있습니다.
 
 전체 아키텍처, 파일별 수록 현황, 엔진 스키마 및 단계별 진행 보고서는 [`PROJECT_GUIDE.md`](./PROJECT_GUIDE.md)를, AI 에이전트 작업 방향, 접근성·고증·나무위키 표기 불변 규칙 및 QA 게이트는 [`AGENTS.md`](./AGENTS.md)를 참고하십시오.
 
