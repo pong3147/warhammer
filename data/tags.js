@@ -124,6 +124,20 @@ window.IMPERIUM_DATA.TAG_LABELS = Object.assign(window.IMPERIUM_DATA.TAG_LABELS 
   shadow_master: "그림자 걸음 달인",
   khan_rider: "초고리스 폭풍 기수",
 
+  // 아스타르테스 4대 전문 직책 · 직군 심화 이력 태그 (12단계)
+  role_chaplain: "챕터 채플린",
+  role_apothecary: "챕터 아포세카리",
+  role_techmarine: "화성 수련 테크마린",
+  role_librarian: "챕터 라이브러리안",
+  rogue_warrant_charter: "개척 성계 영장",
+  interrogator_rank: "심문관 후보 심문자",
+  arbites_judge: "아르비테스 판관",
+  navy_commodore: "제국 함대 준장",
+  admin_prefect: "아드미니스트라툼 감사관",
+  ganger_baron: "언더하이브 구역 두목",
+  tempestus_prime: "템페스투스 프라임",
+  psyker_primaris: "프리마리스 사이커",
+
   // 인간관계 · 인연 태그
   bond_comrade: "등을 맡긴 전우",
   bond_mentor: "인생의 스승",

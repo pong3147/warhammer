@@ -394,5 +394,282 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Lexicanum: Sisters of Silence / Black Ships Lore"
+  },
+  // =========================================================================
+  // 12단계: 그레이 나이트(3종) · 아뎁투스 쿠스토데스(3종) 심화 사건 6종
+  // =========================================================================
+  {
+    id: "ev_s12_gk_prognosticar",
+    title: "그레이 나이트 — 타이탄 프로그노스티카의 예언과 단독 텔레포트 강하",
+    category: "그레이 나이트",
+    req: { anyCareers: ["grey_knight"] },
+    reqLabel: "직군: 그레이 나이트",
+    weight: 30,
+    text: "타이탄 지하 예언실의 프로그노스티카(Prognosticar)들이 72시간 뒤 변방 성지 행성에서 젠취의 차원문이 열릴 것을 예지했다. 아직 이단심문소조차 모르는 침공의 싹을 자르기 위해, 그대의 5인 타격대가 텔레포타리움으로 즉시 적 의식장 한복판에 강하한다!",
+    choices: [
+      {
+        label: "[의지 판정] 형제들과 사이킥 링크를 하나로 묶어 정화의 섬광(Purifying Flame)으로 의식 제단을 증발시킨다",
+        check: { stat: "WP", diff: -5 },
+        success: {
+          text: "은빛 화염이 붉은 소환진을 단숨에 불태웠다! 대악마가 현세에 발을 딛기도 전에 봉인되어 행성 전체가 구원받았다.",
+          stats: { WP: 8, Int: 5, Inf: 6 },
+          faith: 8,
+          addTags: ["daemon_bane"]
+        },
+        fail: {
+          text: "워프 역풍에 텔레포트 착지가 어긋나 부상을 입었으나 끝내 소환사를 베어 버렸다.",
+          wounds: -20,
+          stats: { WP: 5, WS: 4 }
+        }
+      },
+      {
+        label: "[백병 판정] 네메시스 포스 할버드를 휘둘러 소환진을 지키는 악마숙주 근위대를 일격에 돌파한다",
+        check: { stat: "WS", diff: 0 },
+        success: {
+          text: "은빛 갑주가 악마의 검은 피로 물들며 의식이 완전히 분쇄되었다! 타이탄 기록서에 무훈이 새겨졌다.",
+          stats: { WS: 8, WP: 5, T: 4 }
+        },
+        fail: {
+          text: "악마숙주의 발톱에 흉갑이 찢겼으나 의식 중단에 성공하고 텔레포트 귀환했다.",
+          wounds: -22,
+          stats: { WS: 4, T: 4 }
+        }
+      },
+      {
+        label: "강하 직후 성유물 방호 결계부터 전개해 악마들의 퇴로를 완전히 차단한 뒤 순차 정화한다",
+        effect: {
+          text: "단 한 마리의 악마도 도망치지 못하게 가둔 완벽한 666챕터 정석 작전이었다.",
+          stats: { Int: 5, WP: 5, T: 3 }
+        }
+      }
+    ],
+    source: "Codex: Grey Knights / Lexicanum: Prognosticar"
+  },
+  {
+    id: "ev_s12_gk_true_name",
+    title: "그레이 나이트 — 고위 악마의 진명(True Name) 해독",
+    category: "그레이 나이트",
+    once: true,
+    req: { anyCareers: ["grey_knight"] },
+    reqLabel: "직군: 그레이 나이트",
+    weight: 30,
+    text: "타이탄의 봉인 금서고 '생크툼 상크토룸'. 수백 년간 성계를 괴롭혀 온 블러드서스터의 고대 진명 파편이 담긴 석판을 해독하는 임무가 주어졌다. 한 글자라도 잘못 발음하면 정신이 산산조각 나지만, 진명을 쥐면 그 대악마를 단번에 추방할 수 있다.",
+    choices: [
+      {
+        label: "[지성 판정] 666개의 방호 룬을 중첩 전개한 채 고대 금지 문자의 음절을 오차 없이 해독한다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "마침내 대악마의 완전한 진명을 손에 넣었다! 그대의 이름이 타이탄 최정예 정화반 명부에 등재되었다.",
+          stats: { Int: 8, WP: 7, Inf: 6 },
+          addTags: ["daemon_bane"]
+        },
+        fail: {
+          text: "석판에서 터져 나온 정신 충격에 피를 토했으나, 그레이 나이트의 순결한 정신은 꺾이지 않았다.",
+          wounds: -18,
+          stats: { WP: 5, Int: 4 }
+        }
+      },
+      {
+        label: "[의지 판정] 석판의 속삭임을 정면으로 버텨 내며 6시간 동안 묵언 명상으로 핵심 음절을 각인시킨다",
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "단 한 점의 오염도 없이 진명을 기억 속에 봉인했다! 다음 원정에서 대악마는 그대의 음성 앞에 무릎 꿇을 것이다.",
+          stats: { WP: 9, Inf: 5 },
+          corruptionReset: true
+        },
+        fail: {
+          text: "극심한 편두통과 화상을 입었으나 불완전한 진명 조각만은 안전하게 기록했다.",
+          wounds: -16,
+          stats: { WP: 5 }
+        }
+      },
+      {
+        label: "단독 해독의 위험을 피하고 라이브러리안 형제단과 교차 검증하며 단계적으로 분석한다",
+        effect: {
+          text: "시간은 더 걸렸지만 단 하나의 실수도 없이 안전한 봉인 해독을 마쳤다.",
+          stats: { Int: 5, WP: 5 }
+        }
+      }
+    ],
+    source: "Codex: Grey Knights / The Emperor's Gift"
+  },
+  {
+    id: "ev_s12_gk_inquisitor_friction",
+    title: "그레이 나이트 — 급진파 이단심문관의 악마 무기 적발",
+    category: "그레이 나이트",
+    req: { anyCareers: ["grey_knight"] },
+    reqLabel: "직군: 그레이 나이트",
+    weight: 26,
+    text: "합동 작전 중 오르도 말레우스 소속 급진파 이단심문관이 악마의 정수를 봉인한 금지된 '데몬웨폰'을 꺼내 적을 베어 넘겼다! 심문관은 '악마를 잡는 데 이만한 무기가 없다'며 항변하지만, 그레이 나이트의 규율은 어떤 타협도 용납하지 않는다.",
+    choices: [
+      {
+        label: "[의지 판정] 그레이 나이트의 절대 권위로 즉각 데몬웨폰 압수와 이단심문관의 타이탄 심문을 요구한다",
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "은빛 전사의 흔들리지 않는 순결 앞에 심문관이 결국 무기를 내려놓았다! 저주받은 검을 즉시 정화 용광로에 던져 넣었다.",
+          stats: { WP: 7, Inf: 7, Fel: -2 },
+          faith: 8
+        },
+        fail: {
+          text: "심문관의 수행단과 일촉즉발의 대치 끝에 무기는 파괴했으나 심문소 내 정적이 생겼다.",
+          stats: { WP: 5, Inf: -3 }
+        }
+      },
+      {
+        label: "[백병 판정] 악마의 힘이 폭주하려는 찰나 번개같이 파고들어 심문관의 손에서 데몬웨폰을 두 동강 낸다",
+        check: { stat: "WS", diff: 0 },
+        success: {
+          text: "네메시스 칼날이 데몬웨폰의 사악한 핵을 꿰뚫어 악마를 소멸시켰다! 심문관의 영혼마저 파멸에서 건져 냈다.",
+          stats: { WS: 7, WP: 6, Inf: 5 }
+        },
+        fail: {
+          text: "검이 깨지며 터진 워프 폭발에 부상을 입었으나 악마 무기는 완전히 파괴했다.",
+          wounds: -18,
+          stats: { WS: 4, T: 4 }
+        }
+      },
+      {
+        label: "작전 종료까지 감시를 유지한 뒤 그랜드 마스터와 오르도 말레우스 콘클라베에 비밀 보고서를 제출한다",
+        effect: {
+          text: "작전 실패를 막으면서도 제국 최고 의회에 급진파의 위험을 정확히 고발했다.",
+          stats: { Int: 5, Inf: 5 }
+        }
+      }
+    ],
+    source: "Codex: Grey Knights / Lexicanum: Ordo Malleus"
+  },
+  {
+    id: "ev_s12_custodes_aquilan_shield",
+    title: "아뎁투스 쿠스토데스 — 아퀼란 실드의 기이한 필멸자 호위",
+    category: "쿠스토데스",
+    once: true,
+    req: { anyCareers: ["adeptus_custodes"] },
+    reqLabel: "직군: 아뎁투스 쿠스토데스",
+    weight: 30,
+    text: "황궁의 둠스크라이어(Doomscryer)들이 한 변방 하이브의 평범한 하급 가드맨 장교가 30년 뒤 대균열 전선을 구할 핵심 인물이라 예지했다. 아퀼란 실드(Aquilan Shield) 호스트의 일원으로서, 황금 갑주를 입은 그대가 말없이 그 필멸자의 그림자 호위를 맡게 되었다.",
+    choices: [
+      {
+        label: "[백병 판정] 그 장교를 노리고 침투한 카오스 암살단 12명을 단 4초 만에 소리 없이 도륙해 버린다",
+        check: { stat: "WS", diff: 5 },
+        success: {
+          text: "필멸자 장교는 자신이 왜 살아남았는지도 모른 채 임무를 완수했다! 황제의 위대한 운명 한 조각이 지켜졌다.",
+          stats: { WS: 7, Ag: 5, Inf: 6 }
+        },
+        fail: {
+          text: "독성 플라즈마 함정에 갑주 표면이 그을렸으나 호위 대상에게는 티끌 하나 닿지 않았다.",
+          wounds: -14,
+          stats: { WS: 4, T: 4 }
+        }
+      },
+      {
+        label: "[지성 판정] 단순한 무력 호위를 넘어 장교의 전술적 판단이 올바른 길로 흐르도록 미세한 정황만 조율한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "철학자이자 수호자인 쿠스토데스다운 치밀한 인도였다! 미래의 영웅이 온전히 성장할 토대가 마련되었다.",
+          stats: { Int: 8, WP: 5, Inf: 6 }
+        },
+        fail: {
+          text: "필멸자의 어리석은 돌발 행동에 수 차례 직접 개입해야 했으나 끝내 임무를 완수했다.",
+          stats: { Int: 4, WP: 4 }
+        }
+      },
+      {
+        label: "말 한마디 섞지 않고 임무가 끝나는 날까지 황금빛 조각상처럼 곁을 지키다 조용히 철수한다",
+        effect: {
+          text: "그 장교는 평생 황금 거인의 침묵을 기억하며 제국을 위해 헌신할 것이다.",
+          stats: { WP: 6, T: 4 }
+        }
+      }
+    ],
+    source: "Codex: Adeptus Custodes / Lexicanum: Aquilan Shield"
+  },
+  {
+    id: "ev_s12_custodes_shadowkeepers",
+    title: "아뎁투스 쿠스토데스 — 섀도우키퍼와 암흑기 봉인 괴물",
+    category: "쿠스토데스",
+    req: { anyCareers: ["adeptus_custodes"] },
+    reqLabel: "직군: 아뎁투스 쿠스토데스",
+    weight: 28,
+    text: "테라 황궁 최심부 암흑 감옥(Dark Cells)의 77번 봉인실. 기술의 암흑기 시절 인류가 봉인해 둔 정체불명의 양자 포식자가 정지장 균열 틈으로 속삭이며 '제국을 멸망에서 구할 금지된 지식을 주겠다'고 유혹한다.",
+    choices: [
+      {
+        label: "[의지 판정] 만 명의 수호자답게 어떤 속삭임에도 흔들리지 않고 정지장 룬을 수동 재봉인한다",
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "완벽한 정신 방호로 1만 년 된 공포를 다시 칠흑 속으로 가두었다! 섀도우키퍼 쉴드 캡틴이 그대의 진명에 새 칭호를 더했다.",
+          stats: { WP: 8, Int: 5, Inf: 7 }
+        },
+        fail: {
+          text: "정지장 역류 충격파에 손상을 입었으나 괴물은 단 한 발짝도 밖으로 나오지 못했다.",
+          wounds: -18,
+          stats: { WP: 5, T: 5 }
+        }
+      },
+      {
+        label: "[지성 판정] 봉인을 복구하는 동시에 틈새의 에너지 파형을 분석해 황궁 전체의 방어 격자를 보강한다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "암흑기 보안 장치의 숨겨진 취약점 세 곳을 찾아내 영구 보수했다! 황궁의 안전이 한층 견고해졌다.",
+          stats: { Int: 8, Inf: 7, T: 4 }
+        },
+        fail: {
+          text: "분석 도중 경보가 울려 동료 섀도우키퍼들과 함께 비상 진압을 벌였다.",
+          wounds: -14,
+          stats: { Int: 4, WS: 4 }
+        }
+      },
+      {
+        label: "대화를 일절 차단하고 봉인실 외곽 이중 차폐벽을 가동해 위험을 즉각 격리한다",
+        effect: {
+          text: "암흑 감옥의 수호자에게 호기심은 금물이다. 단호한 격리로 위기를 잠재웠다.",
+          stats: { WP: 5, T: 5 }
+        }
+      }
+    ],
+    source: "Codex: Adeptus Custodes / Lexicanum: Shadowkeepers"
+  },
+  {
+    id: "ev_s12_custodes_high_lords",
+    title: "아뎁투스 쿠스토데스 — 테라 하이 로드 회의실의 침묵",
+    category: "쿠스토데스",
+    req: { anyCareers: ["adeptus_custodes"] },
+    reqLabel: "직군: 아뎁투스 쿠스토데스",
+    weight: 26,
+    text: "테라 원로원(Senatorum Imperialis) 회의실. 아드미니스트라툼 대주인과 국교 교황청 대리인이 막대한 성전 예산을 두고 사흘째 추악한 권력 다툼을 벌이고 있다. 구석 기둥 옆에서 황금 가디언 스피어를 짚고 지켜보던 그대의 발걸음이 한 걸음 앞으로 나아가는 순간, 회의장 전체가 얼어붙었다.",
+    choices: [
+      {
+        label: "[권위 판정] '황금 옥좌의 침묵은 그대들의 탐욕을 용납하는 뜻이 아니다'라는 단 한 마디로 논쟁을 종결한다",
+        check: { stat: "Inf", diff: 5 },
+        success: {
+          text: "두 하이 로드가 땀을 흘리며 즉각 타협안에 서명했다! 100개 연대의 보급이 지체 없이 전선으로 출발했다.",
+          stats: { Inf: 8, Fel: 5, WP: 5 }
+        },
+        fail: {
+          text: "원로원 의원들이 정치적 불만을 품었으나 감히 쿠스토데스의 면전에서 거역하지는 못했다.",
+          stats: { Inf: 4, WP: 4 }
+        }
+      },
+      {
+        label: "[지성 판정] 두 세력이 감추고 있던 중복 회계와 군수 지연 보고서를 회의 탁자 위에 정확히 펼쳐 놓는다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "황궁의 첩보망 앞에서 누구도 변명하지 못했다! 투명한 군수 집행령이 만장일치로 통과되었다.",
+          stats: { Int: 7, Inf: 8 }
+        },
+        fail: {
+          text: "관료들이 서류 절차를 핑계로 일주일을 더 끌었으나 결국 예산안은 통과되었다.",
+          stats: { Int: 4, Inf: 3 }
+        }
+      },
+      {
+        label: "쿠스토데스는 제국의 정치인이 아니라 황제의 수호자다 — 말없이 창날만 바닥에 한 번 울리고 물러난다",
+        effect: {
+          text: "아우라마이트 창대가 대리석을 울린 단 한 번의 소리가 천 마디 웅변보다 무겁게 회의장을 짓눌렀다.",
+          stats: { WP: 6, Inf: 5 }
+        }
+      }
+    ],
+    source: "Watchers of the Throne: The Emperor's Legion / Codex: Adeptus Custodes"
   }
 );
+

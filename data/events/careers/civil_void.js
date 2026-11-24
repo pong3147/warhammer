@@ -364,38 +364,6 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     source: "Astra Militarum / Imperial Bureaucracy Lore"
   },
   {
-    id: "ev_rogue_trader_uncharted",
-    title: "미지의 성계 — 황제의 지도에 없는 고대 문명",
-    category: "탐험",
-    req: { anyCareers: ["rogue_trader", "imperial_navy"] },
-    reqLabel: "로그 트레이더 / 임페리얼 네이비",
-    weight: 24,
-    text: "제국 성도 바깥 헤일로 스타즈(Halo Stars) 경계에서 정체불명의 수정 도시가 남아 있는 무인 행성을 발견했다. 아키오테크 보물이 가득할 수도, 고대 외계 저주가 잠들어 있을 수도 있다.",
-    choices: [
-      {
-        label: "[지성 판정] 정밀 오스펙스 탐사 후 무장 정찰대와 함께 직접 보물 창고에 강하한다",
-        check: { stat: "Int", diff: -5 },
-        success: {
-          text: "고대 인류 식민지 시절의 순금 데이터 코어와 희귀 보석을 가득 싣고 귀환했다! 가문의 부가 배로 불어났다.",
-          stats: { Inf: 12, Int: 5, Fel: 4 }
-        },
-        fail: {
-          text: "고대 방어 드론과 정신 오염 장치에 휘말려 큰 손실을 입고 급히 이륙했다.",
-          wounds: -24,
-          corruption: 8
-        }
-      },
-      {
-        label: "위험한 미지의 별이다. 좌표만 기록해 제국 해군과 기계교에 비싸게 팔아넘긴다",
-        effect: {
-          text: "안전하게 탐색 좌표 정보료만 두둑이 챙겼다. 현명한 선장은 죽지 않는다.",
-          stats: { Inf: 6, Int: 3 }
-        }
-      }
-    ],
-    source: "Rogue Trader Core Rulebook"
-  },
-  {
     id: "ev_admin_paper_avalanche",
     title: "아드미니스트라툼의 물리적 재앙 — '서류 산사태'",
     category: "부조리",
@@ -638,44 +606,421 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     ],
     source: "Lexicanum: Departmento Munitorum / Adeptus Administratum"
   },
+  // =========================================================================
+  // 12단계: 갱단 · 아드미니스트라툼 · 아르비테스 · 임페리얼 네이비 · 노동자 심화 9종
+  // =========================================================================
   {
-    id: "ev_career_rogue_xenos",
-    title: "로그 트레이더 — 변경 정거장의 아엘다리 해적선장과 거래",
-    category: "직군 고유",
-    req: { anyCareers: ["rogue_trader"] },
-    reqLabel: "직군: 로그 트레이더",
-    weight: 26,
-    text: "제국 국경 너머 코로누스 성계 외곽의 무법 우주정거장. 유려한 아엘다리(엘다) 커세어 선장이 고대 성간 항로 지도를 내놓으며 제국산 희귀 광물과 교환하자고 제안했다. 황제의 무역 영장이 있으니 합법이지만, 선내 성직자의 눈초리가 매섭다.",
+    id: "ev_s12_ganger_baron_war",
+    title: "언더하이브 갱단원 — 정화수 공급관 쟁탈전과 구역 두목 등극",
+    category: "직군 심화",
+    once: true,
+    req: { anyCareers: ["underhive_ganger"], excludeTags: ["ganger_baron"] },
+    reqLabel: "직군: 언더하이브 갱단원",
+    weight: 34,
+    text: "하층 돔의 생명줄인 정화수 배관 교차점을 두고 라이벌 갱단 세 곳이 피비린내 나는 전쟁을 벌이고 있다. 지금 이 교차점을 장악하면 하층 구역 전체의 통행세와 암시장을 주무르는 구역 두목(Underhive Baron)이 된다!",
     choices: [
       {
-        label: "[교섭 판정] 무역 영장의 절대 권위를 내세워 아엘다리 선장과 배짱 두둑한 대거래를 성사시킨다",
-        check: { stat: "Fel", diff: 0 },
+        label: "[백병 판정] 체인 액스와 샷건을 들고 적 두목의 은신처에 정면으로 쳐들어가 일기토로 결판낸다",
+        check: { stat: "WS", diff: 0 },
         success: {
-          text: "미지의 보물 성계 항로를 손에 넣었다! 가문의 국고가 넘쳐나고 외계 항법 지식까지 얻었다.",
-          stats: { Fel: 6, Inf: 10, Int: 4 },
-          addTags: ["xenos_contact"]
+          text: "적 두목이 쓰러지자 양쪽 갱단원들이 일제히 무릎을 꿇었다! 하층 3개 구역이 그대의 이름 아래 통일되었다.",
+          stats: { WS: 7, Inf: 9, Fel: 5 },
+          addTags: ["ganger_baron"]
         },
         fail: {
-          text: "오만한 외계인이 함정을 파 두었다! 정거장 총격전 끝에 화물 절반을 잃고 겨우 기함으로 탈출했다.",
-          wounds: -18,
-          stats: { Inf: -4, Ag: 3 }
+          text: "독가스 함정에 걸려 크게 다쳤으나 부하들의 엄호로 간신히 구역을 지켜 냈다.",
+          wounds: -20,
+          stats: { T: 4, WS: 3 }
         }
       },
       {
-        label: "[사격 판정] 거래를 가장해 기함의 거포 사거리 안으로 유인한 뒤 외계 해적선을 격침·노획한다",
-        check: { stat: "BS", diff: 0 },
+        label: "[교섭 판정] 두 라이벌 갱단이 서로 싸우다 탈진하도록 거짓 정보를 흘린 뒤 어부지리로 교차점을 접수한다",
+        check: { stat: "Fel", diff: 0 },
         success: {
-          text: "선내 국교 사제와 제국 해군 모두 환호했다! 부서진 외계선 잔해에서 귀한 전리품까지 건졌다.",
-          stats: { BS: 6, Inf: 7, WP: 4 },
-          faith: 8
+          text: "피 한 방울 거의 흘리지 않고 암시장과 수로를 손에 넣었다! 지하 세계의 전설적인 책사로 불리게 되었다.",
+          stats: { Fel: 7, Int: 6, Inf: 9 },
+          addTags: ["ganger_baron"]
         },
         fail: {
-          text: "아엘다리 함선의 믿기 힘든 기동력에 역습당해 선체 방어막이 크게 손상되었다.",
+          text: "이간질이 들통나 양쪽에서 협공당했으나 뒷골목 통로로 탈출해 목숨을 건졌다.",
           wounds: -16,
-          stats: { Ag: 3 }
+          stats: { Ag: 4, Int: 3 }
+        }
+      },
+      {
+        label: "구역 패권 경쟁 대신 수로 수리 길드와 손잡고 안전한 호위 수수료만 챙긴다",
+        effect: {
+          text: "눈에 띄지 않게 실속을 챙기며 하층 구역에서 탄탄한 기반을 다졌다.",
+          stats: { Inf: 4, Ag: 3, T: 2 }
         }
       }
     ],
-    source: "Rogue Trader Core Rulebook / Koronus Expanse"
+    source: "Necromunda Core Rulebook / Dark Heresy"
+  },
+  {
+    id: "ev_s12_ganger_bounty_guild",
+    title: "언더하이브 갱단원 — 상층 귀족의 도망친 아들 현상금 의뢰",
+    category: "직군 심화",
+    req: { anyCareers: ["underhive_ganger"] },
+    reqLabel: "직군: 언더하이브 갱단원",
+    weight: 26,
+    text: "상층 첨탑 귀족 가문의 밀사가 거액의 쓰론 겔트를 들고 찾아왔다. 가출해 언더하이브 이단 모임에 빠져든 귀족 아들을 산 채로 잡아 오라는 의뢰다. 그런데 막상 은신처를 덮쳐 보니 그 청년은 부패한 아버지의 세금 횡령 장부를 훔쳐 도망친 상태였다.",
+    choices: [
+      {
+        label: "[민첩 판정] 의뢰대로 청년을 깔끔하게 제압해 귀족 가문에 넘기고 거액의 현상금을 받는다",
+        check: { stat: "Ag", diff: 5 },
+        success: {
+          text: "군말 없는 일 처리에 상층 가문이 대만족했다! 고가의 불법 플라즈마 권총과 거액을 손에 넣었다.",
+          stats: { Ag: 6, Inf: 8, BS: 4 }
+        },
+        fail: {
+          text: "청년을 보호하던 지하 경호원들과 총격전을 벌여 부상을 입었으나 임무는 완수했다.",
+          wounds: -16,
+          stats: { BS: 3, Inf: 4 }
+        }
+      },
+      {
+        label: "[지성 판정] 횡령 장부를 복사해 아르비테스와 귀족 양쪽을 저울질하며 더 큰 몸값을 끌어낸다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "완벽한 양면 거래로 귀족의 입막음 비용과 지하 세계의 신용을 동시에 챙겼다!",
+          stats: { Int: 7, Fel: 6, Inf: 8 }
+        },
+        fail: {
+          text: "귀족 가문이 보낸 암살자에게 추격당해 한동안 구역을 옮겨 숨어 지내야 했다.",
+          wounds: -18,
+          stats: { Ag: 4, Inf: -3 }
+        }
+      },
+      {
+        label: "장부만 아르비테스 익명 투서함에 던져 주고 현상금 의뢰는 조용히 손을 뗀다",
+        effect: {
+          text: "돈은 못 벌었지만 상층 첨탑의 더러운 권력 싸움에 휘말리지 않았다.",
+          stats: { WP: 4, Int: 4 }
+        }
+      }
+    ],
+    source: "Necromunda: Underhive / Imperium Maledictum"
+  },
+  {
+    id: "ev_s12_admin_prefect_audit",
+    title: "아드미니스트라툼 — 성계 십일조 특별 감사관 파견",
+    category: "직군 심화",
+    once: true,
+    req: { anyCareers: ["administratum"], excludeTags: ["admin_prefect"] },
+    reqLabel: "직군: 아드미니스트라툼",
+    weight: 34,
+    text: "인접 공업 행성의 십일조 납부량이 3년 연속 12% 미달되었다. 본부 고위 서기관이 그대에게 특별 감사 권한을 위임하며 원인을 밝혀내라 명했다. 현지 총독은 막대한 뇌물을 내밀며 '기후 이상으로 인한 일시적 감산'으로 처리해 달라 속삭인다.",
+    choices: [
+      {
+        label: "[지성 판정] 10년 치 운송 전표와 전력 소모량을 교차 대조해 총독의 비밀 밀수 창고를 적발한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "완벽한 회계 감사로 총독의 횡령을 입증했다! 본부에서 그대를 정식 감사관(Prefect)으로 승진시켰다.",
+          stats: { Int: 8, Inf: 9, WP: 4 },
+          addTags: ["admin_prefect"]
+        },
+        fail: {
+          text: "총독 측이 장부 창고에 방화를 저질러 결정적 증거 일부가 탔으나, 미납분 징수에는 성공했다.",
+          stats: { Int: 4, Inf: 4 }
+        }
+      },
+      {
+        label: "[교섭 판정] 총독의 약점을 쥔 채 미납 십일조 150% 즉시 보충과 행정부 예산 기여를 합의해 낸다",
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "행성 반란 없이 십일조 초과 달성! 실무 능력을 인정받아 감사관 인장을 하사받았다.",
+          stats: { Fel: 7, Inf: 9, Int: 4 },
+          addTags: ["admin_prefect"]
+        },
+        fail: {
+          text: "협상이 결렬되어 아르비테스 강제 징수대를 호출하는 소동을 겪었다.",
+          stats: { Inf: 2, WP: 3 }
+        }
+      },
+      {
+        label: "규정대로 3개년 추가 증세 고지서만 발행하고 본부로 안전하게 복귀한다",
+        effect: {
+          text: "원칙에 충실한 관료적 처리로 아무 잡음 없이 임무를 마쳤다.",
+          stats: { Int: 4, Inf: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Adeptus Administratum / Imperium Maledictum"
+  },
+  {
+    id: "ev_s12_admin_lost_planet",
+    title: "아드미니스트라툼 — 400년 전 오타로 '사라진 행성' 발견",
+    category: "직군 심화",
+    req: { anyCareers: ["administratum"] },
+    reqLabel: "직군: 아드미니스트라툼",
+    weight: 26,
+    text: "지하 서고 정리 중 400년 전 서기관이 성계 코드의 마지막 숫자 하나를 잘못 적어, 인구 8억의 아그리 월드가 제국 장부에서 '멸망 및 삭제' 처리된 사실을 발견했다! 그 행성은 지금까지 4세기 동안 십일조를 한 푼도 내지 않은 채 평화롭게 번영하고 있다.",
+    choices: [
+      {
+        label: "[지성 판정] 즉시 정정 보고서를 올려 400년 치 체납 십일조 재산정과 제국 편입 절차를 개시한다",
+        check: { stat: "Int", diff: 5 },
+        success: {
+          text: "제국 국고에 막대한 식량 공급원이 복구되었다! 대서기관장이 그대의 매서운 눈썰미를 격찬했다.",
+          stats: { Int: 7, Inf: 8, WP: 4 }
+        },
+        fail: {
+          text: "오류를 인정하기 싫어한 상급 부서가 보고서를 3년째 심의 보류함에 처박아 두었다.",
+          stats: { Int: 3, WP: 3 }
+        }
+      },
+      {
+        label: "[권위 판정] 급격한 소급 징수로 반란이 나지 않게 '신규 발견 개척 행성'으로 재등록해 완만한 과세를 설계한다",
+        check: { stat: "Inf", diff: 0 },
+        success: {
+          text: "제국은 새로운 식량 창고를 얻고 행성은 반란을 피했다! 진정한 제국 행정의 달인이다.",
+          stats: { Inf: 8, Fel: 6, Int: 5 }
+        },
+        fail: {
+          text: "감사부에서 절차 위반을 지적받아 시말서를 썼으나 행성 재편입 자체는 통과되었다.",
+          stats: { Int: 4, Inf: 2 }
+        }
+      },
+      {
+        label: "400년 된 낡은 철자에 손을 댔다가 선배 부서들의 책임을 건드릴 수 있으니 조용히 서고 깊숙이 되돌려 놓는다",
+        effect: {
+          text: "은하계 어딘가의 평화로운 농부들은 자신이 어떤 거대한 재앙을 피했는지 영원히 모를 것이다.",
+          stats: { WP: 3, Fel: 3 }
+        }
+      }
+    ],
+    source: "Lexicanum: Adeptus Administratum / Warhammer 40k Lore"
+  },
+  {
+    id: "ev_s12_arbites_judge_seat",
+    title: "아뎁투스 아르비테스 — 판관(Judge) 승진 심사와 제국법의 무게",
+    category: "직군 심화",
+    once: true,
+    req: { anyCareers: ["arbites"], excludeTags: ["arbites_judge"] },
+    reqLabel: "직군: 아뎁투스 아르비테스",
+    weight: 34,
+    text: "행성 최고 법정에서 12년간 묵혀 온 대형 십일조 횡령·반역 사건의 최종 판결이 그대의 손에 맡겨졌다. 피고인은 행성 상공회의소 의장이며, 유죄를 선고하면 당장 내일 하이브 상층 길드들이 파업할 것이라 협박하고 있다.",
+    choices: [
+      {
+        label: "[의지 판정] 제국법(Lex Imperialis)에 예외는 없다 — 흔들림 없이 즉결 사형과 전 재산 몰수를 선고한다",
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "법정의 위엄 앞에 길드들이 굴복했다! 마샬이 그대의 냉혹한 공정함을 인정해 판관(Judge) 배지를 수여했다.",
+          stats: { WP: 8, Inf: 9, Int: 4 },
+          addTags: ["arbites_judge"]
+        },
+        fail: {
+          text: "판결 직후 상층 길드가 고용한 용병대가 법정 밖을 습격해 부상을 입었으나 끝내 법을 집행했다.",
+          wounds: -18,
+          stats: { WP: 6, Inf: 6 },
+          addTags: ["arbites_judge"]
+        }
+      },
+      {
+        label: "[지성 판정] 법전 942조 연좌 조항을 인용해 협박에 가담한 길드장들까지 동시에 법정 구속한다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "완벽한 법리적 기습으로 반발 세력의 숨통을 단번에 끊었다! 전설적인 판관의 탄생이다.",
+          stats: { Int: 8, Inf: 9, WP: 5 },
+          addTags: ["arbites_judge"]
+        },
+        fail: {
+          text: "법리 논쟁이 길어지며 판결이 연기되었으나 결국 피고인 유죄를 이끌어 냈다.",
+          stats: { Int: 4, Inf: 4 }
+        }
+      },
+      {
+        label: "피고인의 유죄를 확정하되 길드 파업을 막기 위해 몰수 재산 운영권만 임시 위원회에 위임한다",
+        effect: {
+          text: "법의 원칙과 행성 질서를 균형 있게 지켜 냈다.",
+          stats: { Int: 5, Fel: 4, Inf: 5 }
+        }
+      }
+    ],
+    source: "Book of Judgement (Dark Heresy) / Lexicanum: Adeptus Arbites"
+  },
+  {
+    id: "ev_s12_arbites_precinct_siege",
+    title: "아뎁투스 아르비테스 — 폭동군에 포위된 치안 요새 사수전",
+    category: "직군 심화",
+    req: { anyCareers: ["arbites"] },
+    reqLabel: "직군: 아뎁투스 아르비테스",
+    weight: 26,
+    text: "이단 선동가들의 선동으로 수만 명의 무장 폭동군이 아르비테스 치안 요새(Precinct Fortress) 정문을 포위했다! 외부 증원은 이틀 뒤에나 도착한다. 요새의 두꺼운 아다만티움 방벽 너머로 폭도들의 공성 차량이 밀려든다.",
+    choices: [
+      {
+        label: "[사격 판정] 요새 방벽 위에서 익스큐셔너 샷건과 헤비 스터버 교차 화망으로 공성 차량을 분쇄한다",
+        check: { stat: "BS", diff: 0 },
+        success: {
+          text: "정확한 제압 사격으로 폭동 주동자들과 공성 차량을 무력화했다! 이틀을 단 한 치도 밀리지 않고 버텨 냈다.",
+          stats: { BS: 7, WP: 5, Inf: 6 }
+        },
+        fail: {
+          text: "화염병과 로켓탄에 방벽 일부가 무너지며 화상을 입었으나 끝내 정문을 지켰다.",
+          wounds: -20,
+          stats: { T: 4, BS: 3 }
+        }
+      },
+      {
+        label: "[백병 판정] 진압 방패와 쇼크 마울을 들고 기동 타격대와 함께 정문 밖으로 역돌격해 지휘부를 꺾는다",
+        check: { stat: "WS", diff: -5 },
+        success: {
+          text: "검은 갑주의 철벽 방진이 폭동군 한복판을 갈라 선동가를 생포했다! 폭도들이 공포에 질려 흩어졌다.",
+          stats: { WS: 8, WP: 6, Inf: 7 }
+        },
+        fail: {
+          text: "수적 열세 속에 방패가 부서지며 중상을 입었으나 선동가를 쓰러뜨리는 데는 성공했다.",
+          wounds: -22,
+          stats: { WS: 4, T: 4 }
+        }
+      },
+      {
+        label: "요새 내부 방호 격벽을 단계적으로 봉쇄하며 최루 가스와 경고 방송으로 증원 도착까지 시간을 번다",
+        effect: {
+          text: "아르비테스 요새는 애초에 행성 반란을 버티도록 지어졌다. 최소 피해로 증원군을 맞이했다.",
+          stats: { Int: 5, T: 4, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Adeptus Arbites / Enforcer Omnibus"
+  },
+  {
+    id: "ev_s12_navy_commodore_fleet",
+    title: "임페리얼 네이비 — 제국 함대 준장(Commodore) 임시 지휘권",
+    category: "직군 심화",
+    once: true,
+    req: { anyCareers: ["imperial_navy"], minAge: 24, excludeTags: ["navy_commodore"] },
+    reqLabel: "24세+ 임페리얼 네이비",
+    weight: 34,
+    text: "성계 외곽에서 카오스 순양함 전대와 조우한 순간, 기함의 사령관이 적 랜스 포격으로 전사했다! 6척의 제국 호위함과 경순양함이 지휘 공백 속에 흩어지려는 찰나, 함교에서 가장 침착한 그대에게 임시 전대 지휘권이 넘어왔다.",
+    choices: [
+      {
+        label: "[지성 판정] 3차원 궤도 기동으로 적 순양함의 현측 사각을 파고들어 6척 동시 어뢰 일제 발사를 지휘한다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "수십 발의 어뢰가 적 기함의 보이드 실드를 뚫고 허리를 두 동강 냈다! 전투 후 정식 준장(Commodore)으로 추서되었다.",
+          stats: { Int: 8, Inf: 10, BS: 5 },
+          addTags: ["navy_commodore"]
+        },
+        fail: {
+          text: "적 역포격에 기함 함교가 흔들리며 부상을 입었으나 전대 손실을 줄이며 적을 물리쳤다.",
+          wounds: -18,
+          stats: { Int: 4, Inf: 5 }
+        }
+      },
+      {
+        label: "[사격 판정] 선수 노바 캐논과 매크로 포대의 장거리 정밀 포격으로 적 전대 기함부터 침묵시킨다",
+        check: { stat: "BS", diff: 0 },
+        success: {
+          text: "1만 킬로미터 밖에서 명중한 노바 캐논 탄두가 적 전대 전체를 공황에 빠뜨렸다! 함대 준장의 영예를 거머쥐었다.",
+          stats: { BS: 8, Inf: 10, WP: 4 },
+          addTags: ["navy_commodore"]
+        },
+        fail: {
+          text: "포격전이 길어지며 선체에 큰 피해를 입었으나 끝내 성계 항로를 지켜 냈다.",
+          wounds: -20,
+          stats: { BS: 4, T: 3 }
+        }
+      },
+      {
+        label: "무리한 결전 대신 궤도 방어 정거장 화력권까지 전대를 질서 있게 유도해 협공한다",
+        effect: {
+          text: "단 한 척의 아군 함선도 잃지 않고 적을 격퇴한 안정적인 함대 지휘였다.",
+          stats: { Int: 5, WP: 4, Inf: 5 }
+        }
+      }
+    ],
+    source: "Battlefleet Gothic Rulebook / Lexicanum: Imperial Navy"
+  },
+  {
+    id: "ev_s12_navy_void_salvage",
+    title: "임페리얼 네이비 — 300년 전 표류 순양함 수색 작전",
+    category: "직군 심화",
+    req: { anyCareers: ["imperial_navy"] },
+    reqLabel: "직군: 임페리얼 네이비",
+    weight: 26,
+    text: "워프 조류가 잠잠해진 구역에서 300년 전 실종되었던 제국 루나급 순양함의 선체가 유령처럼 떠올랐다. 자동 구조 신호는 여전히 울리고 있지만, 선내 생체 반응은 불규칙하고 불길한 워프 잔류 파동이 감지된다.",
+    choices: [
+      {
+        label: "[의지 판정] 해군 강습대와 함께 직접 승선해 함교 항해 일지와 고대 플라즈마 코어 도면을 회수한다",
+        check: { stat: "WP", diff: -5 },
+        success: {
+          text: "선내에 떠도는 미친 승무원 잔당을 정화하고 300년 전 잃어버린 비밀 항로 기록을 되찾았다! 함대 사령부가 극찬했다.",
+          stats: { WP: 7, Int: 6, Inf: 7 }
+        },
+        fail: {
+          text: "워프 환각과 돌연변이 습격에 부상을 입고 급히 셔틀로 탈출했다.",
+          wounds: -20,
+          corruption: 6
+        }
+      },
+      {
+        label: "[지성 판정] 원격 서보 스컬 정찰로 위험 구역을 먼저 식별한 뒤 무기고와 블랙박스만 정밀 회수한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "오염된 하층 갑판을 피하고 기밀 기록과 멀쩡한 어뢰 12발을 안전하게 인양했다!",
+          stats: { Int: 7, Inf: 6, BS: 3 }
+        },
+        fail: {
+          text: "서보 스컬이 선내 자동 방어 포탑에 파괴되어 절반의 기록만 건졌다.",
+          stats: { Int: 3, Inf: 2 }
+        }
+      },
+      {
+        label: "워프 오염 위험이 크다. 해군 교리에 따라 장거리 어뢰로 선체를 정화 침몰시킨다",
+        effect: {
+          text: "아까운 전함이지만 보이지 않는 재앙을 항로에 남겨 둘 수는 없다. 신앙과 규율에 따른 결단이었다.",
+          stats: { WP: 4, BS: 3 },
+          faith: 4
+        }
+      }
+    ],
+    source: "Battlefleet Gothic / Rogue Trader: Space Hulks Lore"
+  },
+  {
+    id: "ev_s12_menial_shift_strike",
+    title: "행성 노동자 — 18시간 연장 노역과 지하 매뉴팩토룸 파업 모의",
+    category: "직군 심화",
+    req: { anyCareers: ["menial_worker"], excludeWorlds: ["krieg"] },
+    reqLabel: "직군: 행성 노동자 (크리그 제외)",
+    weight: 26,
+    text: "전시 증산령으로 하루 18시간 연속 조업이 보름째 이어지자, 과로로 쓰러진 동료 셋이 컨베이어 벨트 아래로 사라졌다. 분노한 야간 조장들이 내일 새벽 용광로 밸브를 잠그고 집단 파업을 벌이자며 그대에게 동참을 요구한다. 아르비테스가 알면 전원 처형이다.",
+    choices: [
+      {
+        label: "[교섭 판정] 파업 대신 '기계령 과열로 인한 정비 휴식 필요' 기술 탄원서를 작성해 감독관과 협상한다",
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "생산 설비 파손을 두려워한 감독관이 교대 휴식 2시간과 시체 전분 추가 배급을 승인했다! 동료들의 목숨을 구했다.",
+          stats: { Fel: 7, Int: 5, Inf: 5 }
+        },
+        fail: {
+          text: "감독관에게 건방지다며 채찍질을 당했으나 다행히 유혈 파업은 막았다.",
+          wounds: -12,
+          stats: { T: 3, Fel: 3 }
+        }
+      },
+      {
+        label: "[지성 판정] 고장 난 냉각 팬과 톱니를 밤새 손봐 작업장 온도를 낮추고 작업 효율을 높여 할당량을 맞춘다",
+        check: { stat: "Int", diff: 5 },
+        success: {
+          text: "훨씬 적은 힘으로 할당량을 채울 수 있게 되자 감독관이 그대를 숙련 정비공으로 발탁했다!",
+          stats: { Int: 7, T: 4, Inf: 5 }
+        },
+        fail: {
+          text: "무단 수리 중 뜨거운 증기에 팔뚝을 데었으나 기계는 한결 부드럽게 돌아갔다.",
+          wounds: -10,
+          stats: { Int: 4, T: 3 }
+        }
+      },
+      {
+        label: "위험한 파업 모의에서 발을 빼고 묵묵히 할당량을 채우며 살아남는 데 집중한다",
+        effect: {
+          text: "다음 날 새벽 아르비테스 기동대가 파업 주동자들을 서비터 공장으로 끌고 갔다. 침묵이 목숨을 살렸다.",
+          stats: { T: 4, WP: 4 }
+        }
+      }
+    ],
+    source: "Imperium Maledictum / Lexicanum: Imperial Citizens"
   }
 );
+

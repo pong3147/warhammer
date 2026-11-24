@@ -1022,5 +1022,106 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Lexicanum: Thousand Sons / Rubric Marines"
+  },
+  // =========================================================================
+  // 12단계: 생션드 사이커 · 아스트로패스 심화 사건 2종
+  // =========================================================================
+  {
+    id: "ev_s12_psyker_primaris_trial",
+    title: "생션드 사이커 — 프리마리스 사이커(Primaris Psyker) 전장 인가 시험",
+    category: "사이커",
+    once: true,
+    req: { anyCareers: ["sanctioned_psyker"], excludeTags: ["psyker_primaris"] },
+    reqLabel: "직군: 생션드 사이커",
+    weight: 34,
+    text: "아스트라 텔레파티카 감찰관과 사단 커미사르가 지켜보는 가운데, 최전선 장교급 사이커인 '프리마리스 사이커' 승격 실전 평가가 시작되었다. 적 장갑 행렬을 사이킥 번개로 저지하되 워프의 악마적 속삭임을 단 한 틈도 허락하지 않아야 한다.",
+    choices: [
+      {
+        label: "[의지 판정] 황제 영혼 결속의 빛을 집중시켜 포스 스태프 끝에서 순수한 사이킥 뇌전을 쏟아붓는다",
+        check: { stat: "WP", diff: -5 },
+        success: {
+          text: "푸른 뇌전이 적 장갑차 세 대를 동시에 고철로 만들었으나 오염 계측기는 0에 머물렀다! 정식 프리마리스 사이커 휘장을 하사받았다.",
+          stats: { WP: 8, Int: 6, Inf: 8 },
+          addTags: ["psyker_primaris"]
+        },
+        fail: {
+          text: "워프 과부하로 코에서 피가 쏟아지고 경미한 오염을 입었으나 사격 저지에는 성공했다.",
+          wounds: -18,
+          corruption: 6,
+          stats: { WP: 4 }
+        }
+      },
+      {
+        label: "[지성 판정] 파괴적인 공격 대신 정교한 예지와 아군 방어막 술식으로 연대 전체의 피해를 절반으로 줄인다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "감찰관과 커미사르가 가장 안전하고 신뢰할 만한 전장 사이커라 극찬하며 프리마리스 인가를 승인했다!",
+          stats: { Int: 8, WP: 6, Inf: 7 },
+          addTags: ["psyker_primaris"]
+        },
+        fail: {
+          text: "방어막 유지가 도중에 끊겨 심한 탈진을 겪었으나 통제력 자체는 인정을 받았다.",
+          wounds: -12,
+          stats: { Int: 4, WP: 3 }
+        }
+      },
+      {
+        label: "과도한 출력으로 워프의 주의를 끌기보다 규정 안전 한도 내에서 안정적인 보조 술식만 시연한다",
+        effect: {
+          text: "커미사르가 총구에서 손을 떼며 고개를 끄덕였다. 살아남는 사이커는 언제나 절제를 안다.",
+          stats: { WP: 5, Int: 4 },
+          corruption: -3
+        }
+      }
+    ],
+    source: "Codex: Astra Militarum / Lexicanum: Primaris Psyker"
+  },
+  {
+    id: "ev_s12_psyker_astropath_dream",
+    title: "생션드 사이커 — 성간 텔레파시 교신 속 원격 비명 해독",
+    category: "사이커",
+    req: { anyCareers: ["sanctioned_psyker"] },
+    reqLabel: "직군: 생션드 사이커",
+    weight: 28,
+    text: "아스트로패스 성가대 첨탑에서 성간 교신을 수신하던 중, 피와 재의 환영이 섞인 끔찍한 구조 신호가 정신 속으로 파고들었다. 인접 성계 함대가 워프 폭풍 속에 좌초되어 보내는 마지막 절규지만, 그 환영 뒤에는 악마의 함정이 숨어 있을 수도 있다.",
+    choices: [
+      {
+        label: "[의지 판정] 정신 방벽을 세운 채 환영 깊숙이 들어가 좌초 함대의 정확한 워프 탈출 좌표를 건져 올린다",
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "피 묻은 환영 속에서 정확한 성계 좌표를 해독해 냈다! 구조 함대가 출항해 3만 명의 제국 장병을 살려 냈다.",
+          stats: { WP: 7, Int: 5, Inf: 7 },
+          faith: 6
+        },
+        fail: {
+          text: "환영 뒤에 숨어 있던 워프 포식자가 정신을 할퀴고 지나가며 심한 고통과 오염을 남겼다.",
+          wounds: -18,
+          corruption: 7,
+          stats: { WP: 4 }
+        }
+      },
+      {
+        label: "[지성 판정] 환영의 상징을 직접 체험하지 않고 황제 타로(Emperor's Tarot) 해석법으로 간접 번역한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "악마의 함정을 피해 핵심 경고 메시지만 안전하게 해독해 성역 사령부에 전달했다!",
+          stats: { Int: 7, Inf: 5, WP: 4 }
+        },
+        fail: {
+          text: "해석이 모호해 절반의 정보만 건졌으나 정신적 타격은 피했다.",
+          stats: { Int: 3, WP: 3 }
+        }
+      },
+      {
+        label: "오염 징후가 짙은 교신이다. 아스트로패스 수칙에 따라 즉시 수신을 차단하고 정화 기도를 올린다",
+        effect: {
+          text: "성가대 동료들을 워프 감염에서 지켜 냈다. 냉혹하지만 필수적인 보안 절차였다.",
+          stats: { WP: 5, Int: 3 },
+          corruption: -4
+        }
+      }
+    ],
+    source: "Rogue Trader: The Navis Primer / Lexicanum: Astropath"
   }
 );
+

@@ -380,5 +380,154 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Lexicanum: Orders Militant / Codex: Adepta Sororitas"
+  },
+  // =========================================================================
+  // 12단계: 아뎁타 소로리타스 · 캐노네스 · 에클레시아키 사제 심화 사건 3종
+  // =========================================================================
+  {
+    id: "ev_s12_sororitas_penitent",
+    title: "아뎁타 소로리타스 — 참회 엔진의 절규와 전투 수녀의 신념",
+    category: "신앙",
+    req: { anyCareers: ["adepta_sororitas"] },
+    reqLabel: "직군: 아뎁타 소로리타스",
+    weight: 28,
+    text: "이단 요새 돌파전, 죄수들을 묶어 거대 회전 톱날을 달아 둔 참회 엔진(Penitent Engine) 부대가 울부짖으며 적진으로 돌진하고 있다. 그중 한 기가 적 대전차 지뢰에 다리가 날아가며 고통 속에 쓰러졌고, 묶여 있던 죄수가 그대를 향해 울며 자비를 애원한다.",
+    choices: [
+      {
+        label: "[의지 판정] 황제의 자비로운 축복 기도를 읊어 준 뒤 볼터 단발로 고통을 끝내고 속죄를 완수시켜 준다",
+        check: { stat: "WP", diff: 5 },
+        success: {
+          text: "고통에 뒤틀렸던 죄수의 얼굴에 평온이 찾아왔다. 신앙의 엄정함과 자비를 함께 품은 진정한 전투 수녀의 길이었다.",
+          stats: { WP: 7, Fel: 4, BS: 3 },
+          faith: 8
+        },
+        fail: {
+          text: "사격 순간 적 저격탄이 파워 아머 어깨를 스쳤으나 끝내 안식을 내려 주었다.",
+          wounds: -12,
+          stats: { WP: 4 },
+          faith: 5
+        }
+      },
+      {
+        label: "[백병 판정] 쓰러진 참회 엔진 앞을 막아서고 체인소드로 몰려드는 이단자 무리를 정화해 죄수의 마지막을 지킨다",
+        check: { stat: "WS", diff: 0 },
+        success: {
+          text: "불타는 화염방사기와 볼터 세례 속에 이단 요새 정문이 열렸다! 자매들이 찬송가를 부르며 뒤따랐다.",
+          stats: { WS: 7, T: 4, Inf: 5 },
+          faith: 8
+        },
+        fail: {
+          text: "이단자들의 맹공에 부상을 입었으나 돌파구를 끝까지 사수했다.",
+          wounds: -18,
+          stats: { WS: 4, T: 4 }
+        }
+      },
+      {
+        label: "감상에 젖지 않고 교리에 따라 전진 명령을 수행하며 성채 내부 성소 탈환에 집중한다",
+        effect: {
+          text: "흔들림 없는 신앙과 규율로 이단 성채의 최상층까지 정화했다.",
+          stats: { WP: 5, BS: 4 },
+          faith: 6
+        }
+      }
+    ],
+    source: "Codex: Adepta Sororitas / Lexicanum: Penitent Engine"
+  },
+  {
+    id: "ev_s12_canoness_relic_war",
+    title: "캐노네스 — 두 성지 주교구의 성유물 분쟁과 중재",
+    category: "신앙",
+    req: { anyCareers: ["canoness"] },
+    reqLabel: "직군: 캐노네스",
+    weight: 28,
+    text: "고대 성녀의 순교 유골함을 두고 인접한 두 대주교구가 서로 정통 소유권을 주장하며 사병대까지 동원해 일촉즉발의 유혈 충돌을 앞두고 있다. 성유물을 호위하는 소로리타스 지휘관으로서 그대의 결단이 국교 내전을 막을 유일한 열쇠다.",
+    choices: [
+      {
+        label: "[교섭 판정] 두 대주교를 대성당 제단 앞에 세우고 '성유물은 성직자의 소유가 아니라 전선 병사들의 등불'이라며 공동 봉안을 관철한다",
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "성녀의 위엄을 대변한 장엄한 설득에 두 대주교가 부끄러워하며 무릎을 꿇었다! 시노드 원로회가 그대의 지혜를 극찬했다.",
+          stats: { Fel: 8, Inf: 9, WP: 5 },
+          faith: 10
+        },
+        fail: {
+          text: "한쪽 대주교가 반발했으나 결국 캐노네스의 권위 아래 타협안에 서명했다.",
+          stats: { Fel: 4, Inf: 4 }
+        }
+      },
+      {
+        label: "[권위 판정] 전투 수녀회 직권으로 유골함을 아예 최전선 성전군 성당으로 이송해 정치 분쟁을 원천 차단한다",
+        check: { stat: "Inf", diff: 0 },
+        success: {
+          text: "전선으로 향한 성유물 앞에서 수십만 가드맨의 사기가 하늘을 찔렀다! 누구도 반박하지 못할 성스러운 결단이었다.",
+          stats: { Inf: 9, WP: 6, Fel: 4 },
+          faith: 10
+        },
+        fail: {
+          text: "양쪽 주교구에서 거센 항의 서한이 쏟아졌으나 성유물은 무사히 전선에 봉안되었다.",
+          stats: { Inf: 4, WP: 5 },
+          faith: 6
+        }
+      },
+      {
+        label: "유골함의 진위와 소유권 심의를 오펠리아 VII 시노드 미니스트라 본산으로 정식 이관한다",
+        effect: {
+          text: "절차에 따른 공정한 이관으로 불필요한 유혈 사태 없이 분쟁을 봉합했다.",
+          stats: { Int: 5, Inf: 5, WP: 4 }
+        }
+      }
+    ],
+    source: "Codex: Adepta Sororitas / Lexicanum: Canoness"
+  },
+  {
+    id: "ev_s12_priest_heretic_debate",
+    title: "에클레시아키 사제 — 지하 공장의 이단 선동가와 공개 교리 대결",
+    category: "신앙",
+    req: { anyCareers: ["ecclesiarchy_priest"] },
+    reqLabel: "직군: 에클레시아키 사제",
+    weight: 28,
+    text: "기근과 과로에 지친 하층 매뉴팩토룸 노동자 수천 명 앞에 정체불명의 '자비로운 네 팔의 황제'를 설파하는 이단 선동가가 나타났다. 지금 무력 진압만 부르면 공장 전체가 폭동으로 불탈 것이다. 그대는 성전과 체인소드를 들고 군중 한복판으로 걸어 들어갔다.",
+    choices: [
+      {
+        label: "[교섭 판정] 군중의 고통을 어루만지면서도 '네 팔의 거짓 신은 외계 괴물의 덫'임을 웅변으로 폭로한다",
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "진실에 눈뜬 노동자들이 스스로 이단 선동가를 붙잡아 그대 앞에 끌어냈다! 공장에 다시 진정한 황제 찬가가 울려 퍼졌다.",
+          stats: { Fel: 8, WP: 6, Inf: 7 },
+          faith: 10
+        },
+        fail: {
+          text: "광기에 물든 추종자 몇 명이 쇠파이프를 던져 부상을 입었으나 끝내 군중의 마음을 돌렸다.",
+          wounds: -14,
+          stats: { Fel: 4, WP: 5 },
+          faith: 6
+        }
+      },
+      {
+        label: "[백병 판정] 이단자와의 대화는 죄악이다 — 체인소드의 굉음과 함께 단상으로 뛰어올라 거짓 선지자를 즉결 처단한다",
+        check: { stat: "WS", diff: 0 },
+        success: {
+          text: "쓰러진 선동가의 로브 아래에서 진짜 진스틸러 혼혈의 기형 팔이 드러나자 군중이 공포와 경외 속에 무릎을 꿇었다!",
+          stats: { WS: 7, WP: 6, Inf: 6 },
+          faith: 10
+        },
+        fail: {
+          text: "변이된 이단자의 기습 발톱에 깊은 상처를 입었으나 끝내 이단자를 정화했다.",
+          wounds: -20,
+          stats: { WS: 4, T: 4 },
+          faith: 6
+        }
+      },
+      {
+        label: "성당 구호 식량을 먼저 공장에 풀어 굶주린 노동자들을 진정시킨 뒤 아르비테스와 함께 선동가만 조용히 체포한다",
+        effect: {
+          text: "배고픈 이에게 빵과 믿음을 함께 건넨 현명한 사목으로 이단의 싹을 조용히 잘라 냈다.",
+          stats: { Int: 5, Fel: 5, Inf: 4 },
+          faith: 6
+        }
+      }
+    ],
+    source: "Dark Heresy: Blood of Martyrs / Lexicanum: Ecclesiarchy"
   }
 );
+

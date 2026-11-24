@@ -267,6 +267,10 @@
       if (!state.chapterId || !req.anyChapters.includes(state.chapterId)) return false;
     }
 
+    if (req.excludeChapters) {
+      if (state.chapterId && req.excludeChapters.includes(state.chapterId)) return false;
+    }
+
     if (req.anyWorlds) {
       if (!req.anyWorlds.includes(state.worldId)) return false;
     }
@@ -434,6 +438,9 @@
     if (req.or && Array.isArray(req.or)) {
       const orText = req.or.map((sub) => describeReq(sub)).filter(Boolean).join(" 또는 ");
       if (orText) parts.push(`(${orText})`);
+    }
+    if (req.excludeChapters && req.excludeChapters.length && parts.length === 0) {
+      parts.push(req.excludeChapters.map((id) => `${(getChapter(id) && getChapter(id).name) || id} 제외`).join(" · "));
     }
     if (req.excludeWorlds && req.excludeWorlds.length && parts.length === 0) {
       parts.push(req.excludeWorlds.map((id) => `${getWorld(id).name} 제외`).join(" · "));
@@ -1832,6 +1839,36 @@
         rank: "ROSETTE OF UNYIELDING PURITY",
         title: "오르도의 불굴 심판관",
         verdict: "단 한 치의 타협도 없이 이단과 외계와 악마를 정화한 정통 이단심문관이었다. 그대가 남긴 로제트는 다음 세대 수행원에게 계승되었다."
+      });
+    }
+
+    if (tags.includes("astartes") && (tags.includes("role_chaplain") || tags.includes("role_apothecary") || tags.includes("role_techmarine") || tags.includes("role_librarian"))) {
+      const chapName = state.chapterName || "아스타르테스";
+      if (tags.includes("role_chaplain")) {
+        return withEpilogue({
+          rank: "RECLUSIAM — KEEPER OF FAITH",
+          title: `${chapName}의 영원한 채플린`,
+          verdict: "해골 투구 아래 흔들림 없는 증오의 기도문으로 형제들의 영혼을 지킨 영적 수호자였다. 그대가 휘두른 크로지우스 아르카눔은 챕터 성소에 경건히 안치되었다."
+        });
+      }
+      if (tags.includes("role_apothecary")) {
+        return withEpilogue({
+          rank: "APOTHECARION — GUARDIAN OF GENESEED",
+          title: `${chapName}의 위대한 아포세카리`,
+          verdict: "포화 속에서도 전사한 형제들의 진시드를 끝까지 회수해 챕터의 미래를 이어 낸 백색 갑주의 수호자였다. 수십 세대의 배틀 브라더가 그대의 헌신 덕분에 살아 숨 쉰다."
+        });
+      }
+      if (tags.includes("role_techmarine")) {
+        return withEpilogue({
+          rank: "ARMOURY — MASTER OF THE FORGE",
+          title: `${chapName}의 붉은 대장장이`,
+          verdict: "화성의 비술과 챕터의 형제애를 함께 짊어지고 전차와 드레드노트의 기계령을 깨워 온 테크마린이었다. 챕터 무기고의 모든 화로가 그대의 안식을 위해 이진법 찬가를 울린다."
+        });
+      }
+      return withEpilogue({
+        rank: "LIBRARIUS — KEEPER OF THE VEIL",
+        title: `${chapName}의 고결한 라이브러리안`,
+        verdict: "워프의 광풍과 악마의 속삭임에 맞서 정신 방벽과 챕터의 역사를 지켜 낸 푸른 갑주의 현자였다. 그대의 전술 기록과 예지는 라이브러리우스 서고에 영구 보존되었다."
       });
     }
 

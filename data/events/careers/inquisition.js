@@ -553,5 +553,196 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Dark Heresy: Radicals Handbook / Lexicanum: Inquisition"
+  },
+  // =========================================================================
+  // 12단계: 이단심문소 어콜라이트(3종) · 이단심문관(1종) 심화 사건 4종
+  // =========================================================================
+  {
+    id: "ev_s12_acolyte_interrogator",
+    title: "이단심문소 어콜라이트 — 심문자(Interrogator) 승격 최종 시험",
+    category: "이단심문소",
+    once: true,
+    req: { anyCareers: ["inquisition_acolyte"], excludeTags: ["interrogator_rank"] },
+    reqLabel: "직군: 이단심문소 어콜라이트",
+    weight: 36,
+    text: "수년간 그대를 지켜본 주군 이단심문관이 밀실로 불러 세 가지 봉인 파일을 내밀었다. '귀족 살인 사건의 배후에 카오스 교단이 숨어 있다. 지원도 신분 보장도 없이 48시간 안에 주모자의 진짜 이름을 가져온다면 그대를 정식 심문자(Interrogator)로 임명하마.'",
+    choices: [
+      {
+        label: "[지성 판정] 시신의 룬 문양과 성당 헌금 장부를 역추적해 귀족 가문 집사가 배후 교주임을 완벽히 입증한다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "단 30시간 만에 증거와 자백서를 주군 책상 위에 올려놓았다! 스승이 그대에게 심문자의 은빛 인장을 수여했다.",
+          stats: { Int: 8, Inf: 9, WP: 5 },
+          addTags: ["interrogator_rank"]
+        },
+        fail: {
+          text: "교단의 거짓 단서에 속아 함정에 빠졌으나 간신히 살아 돌아와 주모자의 정체를 밝혀냈다.",
+          wounds: -18,
+          stats: { Int: 4, Inf: 5 },
+          addTags: ["interrogator_rank"]
+        }
+      },
+      {
+        label: "[교섭 판정] 하층 정보상과 부패한 귀족 시종들을 교묘히 압박해 주모자가 스스로 정체를 드러내게 만든다",
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "피 한 방울 흘리지 않고 교주와 공범 7명을 일망타진했다! 주군이 그대의 수사 수완을 극찬하며 심문자로 임명했다.",
+          stats: { Fel: 8, Inf: 9, Int: 4 },
+          addTags: ["interrogator_rank"]
+        },
+        fail: {
+          text: "정보상이 배신해 추격전을 치렀으나 끝내 사건을 해결해 신뢰를 얻었다.",
+          wounds: -14,
+          stats: { Fel: 4, Ag: 4 }
+        }
+      },
+      {
+        label: "무리한 단독 돌입 대신 아르비테스 정예와 은밀히 공조해 교단 아지트 전체를 포위 검거한다",
+        effect: {
+          text: "화려하진 않았지만 완벽하고 안전한 수사였다. 주군이 다음 로제트 계승 후보로 그대를 주목하기 시작했다.",
+          stats: { Int: 5, Inf: 6, WP: 4 }
+        }
+      }
+    ],
+    source: "Dark Heresy Core / Lexicanum: Interrogator"
+  },
+  {
+    id: "ev_s12_acolyte_safehouse",
+    title: "이단심문소 어콜라이트 — 비밀 안전가옥 노출과 암호 문서",
+    category: "이단심문소",
+    req: { anyCareers: ["inquisition_acolyte"] },
+    reqLabel: "직군: 이단심문소 어콜라이트",
+    weight: 28,
+    text: "자정 무렵, 심문소 비밀 안전가옥 바깥 골목에서 소음기 장착 오토건으로 무장한 정체불명의 암살자 8명이 건물을 포위했다! 책상 위에는 6개월간 모아 온 성역 이단 조직망 암호 문서가 놓여 있다.",
+    choices: [
+      {
+        label: "[민첩 판정] 암호 문서를 품에 쑤셔 넣고 지붕 환기구를 통해 빗발치는 총탄 사이로 탈출한다",
+        check: { stat: "Ag", diff: 0 },
+        success: {
+          text: "어둠 속 지붕을 타고 추적자들을 완벽히 따돌렸다! 목숨 걸고 지켜 낸 문서 덕분에 성역 전체의 이단망이 궤멸되었다.",
+          stats: { Ag: 7, Int: 5, Inf: 7 }
+        },
+        fail: {
+          text: "어깨에 총탄을 스치며 피를 흘렸으나 끝내 문서를 주군에게 전달하는 데 성공했다.",
+          wounds: -20,
+          stats: { Ag: 4, WP: 4 }
+        }
+      },
+      {
+        label: "[사격 판정] 안전가옥 내부에 설치해 둔 함정을 터뜨리고 헬건 사격으로 암살조를 역으로 섬멸한다",
+        check: { stat: "BS", diff: -5 },
+        success: {
+          text: "함정에 갇힌 암살조를 깔끔하게 제압하고 생포한 지휘관에게서 배후 세력의 자백까지 받아 냈다!",
+          stats: { BS: 8, WS: 4, Inf: 7 }
+        },
+        fail: {
+          text: "실내 총격전 끝에 큰 부상을 입었으나 문서는 불타지 않고 무사히 지켜 냈다.",
+          wounds: -22,
+          stats: { BS: 4, T: 4 }
+        }
+      },
+      {
+        label: "보안 규정에 따라 즉시 소이탄으로 암호 문서를 완전 소각하고 비상 지하 통로로 철수한다",
+        effect: {
+          text: "6개월의 수사는 날아갔지만 단 한 명의 정보원 신원도 적에게 넘어가지 않았다. 철칙을 지켰다.",
+          stats: { WP: 5, Int: 4 }
+        }
+      }
+    ],
+    source: "Dark Heresy 2e / Eisenhorn Trilogy"
+  },
+  {
+    id: "ev_s12_acolyte_master_fall",
+    title: "이단심문소 어콜라이트 — 스승 심문관의 금지된 실험 목격",
+    category: "이단심문소",
+    once: true,
+    req: { anyCareers: ["inquisition_acolyte"] },
+    reqLabel: "직군: 이단심문소 어콜라이트",
+    weight: 30,
+    text: "늦은 밤 스승 이단심문관의 지하 연구실에 보고서를 올리러 들어갔다가 충격적인 장면을 보았다. 스승이 묶어 둔 죄수의 몸에 워프 악마를 가두는 '악마숙주(Daemonhost)' 소환진을 그리고 있었다! 스승은 돌아보며 '제국을 구할 거대한 적을 막기 위한 불가피한 무기다'라고 속삭인다.",
+    choices: [
+      {
+        label: "[의지 판정] 스승이라 해도 선을 넘었다 — 즉시 라스피스톨을 겨누고 소환진을 파괴한 뒤 콘클라베에 고발한다",
+        check: { stat: "WP", diff: -5 },
+        success: {
+          text: "치열한 사투 끝에 소환진을 깨뜨리고 스승을 체포했다! 청교도파 콘클라베가 그대의 흔들리지 않는 순결을 높이 평가했다.",
+          stats: { WP: 8, Inf: 9, WS: 4 },
+          faith: 10
+        },
+        fail: {
+          text: "스승의 사이킥 반격에 중상을 입고 도주했으나, 콘클라베에 정식 고발장을 올리는 데는 성공했다.",
+          wounds: -22,
+          stats: { WP: 5, Inf: 5 }
+        }
+      },
+      {
+        label: "[지성 판정] 당장 맞서지 않고 스승의 논리와 금지된 의식 기록을 냉철히 분석하며 급진파의 경계를 이해한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "어둠을 써서 더 큰 어둠을 막는 급진파의 위험한 비술을 터득했다. 지식과 권력은 커졌으나 영혼에 그림자가 드리웠다.",
+          stats: { Int: 8, WP: 5, Inf: 6 },
+          corruption: 10
+        },
+        fail: {
+          text: "의식 잔류 파동에 휘말려 며칠간 악몽에 시달렸고 오염이 스며들었다.",
+          corruption: 12,
+          stats: { Int: 4 }
+        }
+      },
+      {
+        label: "보지 못한 척 조용히 문을 닫고 나와 타 오르도 심문관에게 익명으로 감찰 요청을 보낸다",
+        effect: {
+          text: "석 달 뒤 스승이 비밀리에 실종 처리되었다. 살아남은 수행원만이 다음 로제트를 쥔다.",
+          stats: { Int: 5, WP: 4 }
+        }
+      }
+    ],
+    source: "Eisenhorn: Hereticus / Dark Heresy: Radicals Handbook"
+  },
+  {
+    id: "ev_s12_inquisitor_retinue",
+    title: "제국 이단심문관 — 새 수행단(Retinue) 편성과 결함 있는 정예들",
+    category: "이단심문소",
+    once: true,
+    req: { anyCareers: ["inquisitor"] },
+    reqLabel: "직군: 제국 이단심문관",
+    weight: 30,
+    text: "거대한 성역 음모를 파헤치기 위해 새로운 직속 수행단을 꾸려야 한다. 감옥과 전선에서 세 명의 탁월하지만 위험한 후보가 추천되었다. 전직 살인마 출신 데스컬트 암살자, 이단 누명을 쓴 천재 기계교 추방자, 그리고 성질 고약한 퇴역 아르비테스 베테랑이다.",
+    choices: [
+      {
+        label: "[교섭 판정] 세 명 모두를 불러 모아 로제트의 이름으로 각자의 약점을 쥐고 완벽한 다기능 수행단으로 길들인다",
+        check: { stat: "Fel", diff: -5 },
+        success: {
+          text: "서로 으르렁거리던 세 인재가 그대의 카리스마 아래 최강의 비밀 요원 팀으로 거듭났다! 이후 모든 수사가 일사천리로 풀렸다.",
+          stats: { Fel: 8, Inf: 8, Int: 5 }
+        },
+        fail: {
+          text: "추방자 기계교도가 기밀 장비를 건드리다 사고를 냈으나 나머지는 훌륭히 정착했다.",
+          stats: { Inf: 4, Int: 4 }
+        }
+      },
+      {
+        label: "[의지 판정] 청교도 원칙대로 오염 우려가 있는 둘을 배제하고 가장 충직한 퇴역 아르비테스만 정예로 등용한다",
+        check: { stat: "WP", diff: 5 },
+        success: {
+          text: "단 한 치의 배신 우려도 없는 철벽 수행단이 완성되었다! 콘클라베에서도 모범적인 인선이라 호평했다.",
+          stats: { WP: 7, Inf: 6, WS: 4 },
+          faith: 6
+        },
+        fail: {
+          text: "인원이 부족해 수사가 다소 길어졌으나 끝내 배신 없는 신뢰 관계를 구축했다.",
+          stats: { WP: 4, Inf: 3 }
+        }
+      },
+      {
+        label: "세 후보에게 각자 소규모 예비 임무를 맡겨 살아남아 증명한 자만 정식 어콜라이트로 들인다",
+        effect: {
+          text: "잔혹하지만 확실한 이단심문소 전통 검증법으로 가장 믿을 만한 심복을 얻었다.",
+          stats: { Int: 5, Inf: 6 }
+        }
+      }
+    ],
+    source: "Dark Heresy / Eisenhorn & Ravenor Trilogies"
   }
 );
+
