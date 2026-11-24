@@ -74,10 +74,10 @@
       en: "Forbidden Lore",
       desc: "지성(Int) 대폭 상승 · 의지(WP) 상승, 단 오염 급증(카오스/비밀 분기 해금)",
       statDelta: { Int: 2.5, WP: 1.2 },
-      woundsDelta: -2,
+      woundsDelta: -1,
       faithDelta: -5,
-      corruptionDelta: 7,
-      hazardMult: 1.25
+      corruptionDelta: 5,
+      hazardMult: 1.2
     }
   };
 
@@ -828,7 +828,7 @@
       const failedCareer = getCareer(outcome.trialFailFor);
       const tc = failedCareer && failedCareer.trialCheck;
       state.declinedCareers = state.declinedCareers || {};
-      state.declinedCareers[outcome.trialFailFor] = failedCareer && failedCareer.tier >= 6 ? state.year + 4 : state.year;
+      state.declinedCareers[outcome.trialFailFor] = failedCareer && failedCareer.tier >= 6 ? state.year + 8 : state.year;
       if (tc && Math.random() < (tc.failDeathChance || 0.25)) {
         const cause = tc.failDeathCause || `${tc.title} 도중 치명적 거부 반응으로 순직`;
         addLog(state, `[${tc.title}] 시련 실패! ${cause}`, "death", rollInfo, { badge: "시련 실패" });
@@ -1146,7 +1146,17 @@
       }
       state.wounds = clamp(state.wounds + baseNaturalHeal + focusHeal, 0, state.maxWounds);
       state.faith = clamp(state.faith + (focus.faithDelta || 0), 0, 100);
-      state.corruption = clamp(state.corruption + (focus.corruptionDelta || 0), 0, 100);
+      const rawCorrDelta = focus.corruptionDelta || 0;
+      if (rawCorrDelta > 0) {
+        let effCorrDelta = state.age < 12 ? Math.min(rawCorrDelta, 2) : rawCorrDelta;
+        if (state.tags.includes("heretic") || state.tags.includes("chaos_aligned")) {
+          if (state.corruption >= 92) effCorrDelta = 0;
+          else if (state.corruption >= 80) effCorrDelta = Math.min(effCorrDelta, 2);
+        }
+        state.corruption = clamp(state.corruption + effCorrDelta, 0, 100);
+      } else if (rawCorrDelta < 0) {
+        state.corruption = clamp(state.corruption + rawCorrDelta, 0, 100);
+      }
 
       if (state.year >= 999 && !state.globalFlags.greatRiftOpened) {
         state.globalFlags.greatRiftOpened = true;
@@ -1276,14 +1286,23 @@
 
       const eventPool = freshEvents.length > 0 ? freshEvents : shortFreshEvents;
       if (eventPool.length > 0) {
+        const hasChaosMark =
+          reqCtx.tagSet.has("mark_khorne") ||
+          reqCtx.tagSet.has("mark_tzeentch") ||
+          reqCtx.tagSet.has("mark_nurgle") ||
+          reqCtx.tagSet.has("mark_slaanesh");
+        const needsChaosMark = reqCtx.tagSet.has("heretic") && !hasChaosMark;
         const weightedPool = eventPool.map((ev) => {
           let w = ev.weight || 15;
           const isWorldSpecific = ev.req && ev.req.anyWorlds && ev.req.anyWorlds.includes(state.worldId);
           const isCareerSpecific = ev.req && ev.req.anyCareers && ev.req.anyCareers.includes(state.careerId);
+          const isPastContrast = ev.req && Array.isArray(ev.req.anyPastCareers) && ev.req.anyPastCareers.length > 0;
           const isChapterSpecific = ev.req && ev.req.anyChapters && state.chapterId && ev.req.anyChapters.includes(state.chapterId);
           const isEraSpecific = ev.req && (ev.req.minYear !== undefined || ev.req.maxYear !== undefined);
           const isNamedEncounter = Array.isArray(ev.characters) && ev.characters.length > 0;
-          if (isChapterSpecific || isNamedEncounter) w *= 3.0;
+          if (needsChaosMark && ev.id === "ev_chaos_whispers") w *= 5.0;
+          else if (isChapterSpecific || isNamedEncounter) w *= 3.0;
+          else if (isPastContrast) w *= 2.8;
           else if (isWorldSpecific || isCareerSpecific || isEraSpecific) w *= 2.6;
           return { item: ev, w };
         });
@@ -1337,7 +1356,7 @@
 
     const ctx = reqCtx || makeReqContext(state);
     const cur = getCareer(state.careerId);
-    const minOfferGap = cur.id === "child" ? 1 : 3;
+    const minOfferGap = cur.id === "child" ? 1 : (cur.tier >= 5 ? 7 : 4);
     if (!options.forceOffer && state.year - (state.lastCareerOfferYear ?? -999) < minOfferGap) return null;
 
     const history = state.careerHistory || [state.careerId];
@@ -1350,6 +1369,7 @@
       if (!c.selectable || c.id === state.careerId || c.tier < 2) continue;
       if (history.includes(c.id)) continue;
       if (!options.ignoreCooldown && declined[c.id] !== undefined && state.year - declined[c.id] < 8) continue;
+      if (c.id === "chaos_cultist" && cur.tier >= 4) continue;
       if (!checkReq(state, c.req, ctx)) continue;
 
       if (cur.id === "child") {
@@ -1370,26 +1390,29 @@
         }
       }
 
-      let w = 16;
-      let prob = 0.06;
-      if (c.tier >= 6) {
-        w = 70;
-        prob = 0.09;
+      let w = 14;
+      let prob = 0.04;
+      if (c.id === "daemon_prince") {
+        w = 90;
+        prob = 0.28;
+      } else if (c.tier >= 6) {
+        w = 35;
+        prob = 0.025;
       } else if (Boolean(c.isTranshuman)) {
         w = 50;
-        prob = 0.22;
+        prob = 0.24;
       } else if (c.tree === "chaos") {
-        w = 40;
-        prob = 0.16;
+        w = 34;
+        prob = 0.12;
       } else if (c.tree === cur.tree && c.entryMode === "event") {
-        w = 50;
-        prob = 0.16;
+        w = 40;
+        prob = 0.11;
       } else if (c.tree === cur.tree) {
-        w = 14;
-        prob = 0.06;
+        w = 12;
+        prob = 0.04;
       } else if (c.entryMode === "event") {
-        w = 16;
-        prob = 0.06;
+        w = cur.tier >= 5 ? 8 : 14;
+        prob = cur.tier >= 5 ? 0.022 : 0.032;
       }
       candidates.push({ item: c, w, prob });
     }

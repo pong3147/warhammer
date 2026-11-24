@@ -41,9 +41,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "상층 첨탑의 비술 — 수명 연장 시술 제안",
     category: "일상",
     once: true,
-    req: { minAge: 52, stats: { Inf: 66 }, excludeTags: ["astartes", "custodes", "dreadnought", "daemon_prince"] },
-    reqLabel: "나이 52세+ · 권위 66+ (필멸자 고위층)",
-    weight: 18,
+    req: { minAge: 54, stats: { Inf: 74 }, excludeTags: ["astartes", "custodes", "dreadnought", "daemon_prince"] },
+    reqLabel: "나이 54세+ · 권위 74+ (필멸자 최상류층)",
+    weight: 16,
     text: "황혼기에 접어든 그대에게 저명한 마고스 바이올로기스가 은밀히 '리주버냇(Rejuvenat)' 세포 회춘 시술을 제안했다. 제국의 평민은 꿈도 꾸지 못할 200년 수명의 특권이다.",
     choices: [
       {
@@ -52,7 +52,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "백발이 다시 검어지고 쇠약했던 심장이 힘차게 뛰기 시작했다! 기대수명이 크게 연장되었다.",
           stats: { T: 6, Inf: -6 },
           wounds: 30,
-          lifeBonusExtra: 50,
+          lifeBonusExtra: 45,
           incrementRejuvenat: true,
           addTags: ["rejuvenat"]
         }

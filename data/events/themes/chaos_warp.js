@@ -222,7 +222,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     category: "오염",
     req: { minAge: 16, minCorruption: 35, excludeTags: ["custodes", "grey_knight"] },
     reqLabel: "오염도 35+ (금단 분기)",
-    weight: 26,
+    weight: 34,
     text: "꿈과 현실의 경계가 무너진다. 워프 너머의 위대한 네 권능이 그대에게 속삭인다. '거짓 시체 황제는 너를 버렸다. 우리의 축복을 택하라!'",
     choices: [
       {
@@ -231,7 +231,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "혈관이 끓어오르며 두려움이 사라졌다! 무력과 강인함이 폭증했으나 피의 갈증이 시작된다.",
           stats: { WS: 12, T: 10, Int: -6 },
           faith: -25,
-          corruption: 20,
+          corruption: 12,
           addTags: ["mark_khorne", "heretic"]
         }
       },
@@ -241,7 +241,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "운명의 실타래가 눈에 보이기 시작했다! 지성과 사이킥 감각이 날카로워졌다.",
           stats: { Int: 12, WP: 8, Fel: 6 },
           faith: -25,
-          corruption: 20,
+          corruption: 12,
           addTags: ["mark_tzeentch", "heretic", "psyker"]
         }
       },
@@ -252,7 +252,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { T: 16, Fel: -10, Ag: -6 },
           wounds: 35,
           faith: -25,
-          corruption: 20,
+          corruption: 12,
           addTags: ["mark_nurgle", "heretic"]
         }
       },
@@ -262,13 +262,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "세상의 모든 소리와 색채가 칼날처럼 선명해졌다! 감각이 극도로 예민해지며 탐닉의 갈증이 깨어난다.",
           stats: { Ag: 12, Fel: 10, WS: 6, WP: -6 },
           faith: -25,
-          corruption: 20,
+          corruption: 12,
           addTags: ["mark_slaanesh", "heretic"]
         }
       },
       {
         label: "[의지 58+ 해금] 악마의 유혹을 끝까지 거부하고 영혼을 되찾는다!",
-        req: { stats: { WP: 58 } },
+        req: { stats: { WP: 58 }, excludeTags: ["heretic", "chaos_aligned"] },
         check: { stat: "WP", diff: -10 },
         success: {
           text: "피를 토하는 고통 끝에 속삭임을 끊어 냈다! 오염이 크게 정화되고 황제의 빛이 다시 돌아왔다.",

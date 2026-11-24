@@ -126,7 +126,7 @@ window.IMPERIUM_DATA.ORIGINS = [
     id: "terra_high_blood",
     name: "테라 고위 귀족 영아 (전설)",
     en: "Terran High-House Scion",
-    weight: 0.5,
+    weight: 2.0,
     worldFilter: ["terra"],
     statMods: { Inf: 26, WP: 10, WS: 8, T: 8, Int: 8, Fel: 8 },
     lifeMod: 35,
