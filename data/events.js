@@ -9,7 +9,7 @@ window.IMPERIUM_DATA.EVENTS = [
     title: "스콜라 프로제니움의 검은 마차",
     category: "성장",
     once: true,
-    req: { minAge: 8, maxAge: 14, excludeTags: ["schola", "astartes", "custodes", "abhuman"], or: [{ stats: { WP: 34 } }, { stats: { Int: 34 } }, { anyTags: ["military_blood", "pious"] }] },
+    req: { minAge: 8, maxAge: 14, excludeWorlds: ["krieg"], excludeWorldTags: ["feral"], excludeTags: ["schola", "astartes", "custodes", "abhuman"], or: [{ stats: { WP: 34 } }, { stats: { Int: 34 } }, { anyTags: ["military_blood", "pious"] }] },
     reqLabel: "나이 8~14세 · 의지 또는 지성 34+",
     weight: 18,
     text: "아뎁투스 미니스토룸의 드릴-애벗(교관 수도사)이 그대의 또렷한 눈빛과 기개를 눈여겨보았다. 스콜라 프로제니움 편입 시험에 응시하면 커미사르, 소로리타스, 템페스투스 사이온, 심지어 이단심문관으로 가는 엘리트 관문이 열린다.",
@@ -445,7 +445,7 @@ window.IMPERIUM_DATA.EVENTS = [
     title: "영혼 없는 자를 찾는 검은 인장",
     category: "특수",
     once: true,
-    req: { minAge: 16, allTags: ["blank"], excludeTags: ["inquisition_agent", "inquisitor", "astartes"] },
+    req: { minAge: 16, allTags: ["blank"], excludeTags: ["inquisition_agent", "inquisitor", "astartes", "custodes", "grey_knight", "magos", "rogue_trader", "canoness", "lord_commissar"] },
     reqLabel: "자질: 블랭크(퍼라이어) · 16세+",
     weight: 28,
     text: "평생 주변 사람들에게 이유 없는 혐오를 받아 왔던 그대 앞에, 로제트를 품은 오르도 말레우스 이단심문관이 나타났다. '워프의 괴물들 앞에서 흔들리지 않는 너의 공허한 영혼은 제국의 가장 귀한 무기다. 나와 함께하겠느냐?'",
@@ -884,11 +884,11 @@ window.IMPERIUM_DATA.EVENTS = [
       minAge: 18,
       stats: { Int: 42, WP: 42 },
       maxCorruption: 25,
-      excludeTags: ["inquisition_agent", "inquisitor", "astartes", "custodes", "abhuman", "heretic"]
+      excludeTags: ["inquisition_agent", "inquisitor", "astartes", "custodes", "grey_knight", "abhuman", "heretic", "magos", "rogue_trader", "canoness", "lord_commissar"]
     },
     reqLabel: "18세+ · 지성 42+ · 의지 42+",
     weight: 20,
-    text: "그대의 예리한 통찰력과 굳건한 정신력을 지켜본 이단심문소 요원이 밀실로 초대했다. 책상 위에는 황금 로제트와 전설적 이단심문관 그레고르 아이젠혼의 고대 수사 교본이 놓여 있다. '인류를 갉아먹는 내부의 적을 사냥할 어콜라이트가 필요하다.'",
+    text: "그대의 예리한 통찰력과 굳건한 정신력을 지켜본 이단심문소 요원이 밀실로 초대했다. 책상 위에는 황금 로제트와 오르도의 기밀 수사 교본이 놓여 있다. '인류를 갉아먹는 내부의 적을 사냥할 어콜라이트가 필요하다.'",
     choices: [
       {
         label: "[지성 판정] 시험 과제로 주어진 이단 암호를 해독하고 어콜라이트로 발탁된다",
@@ -1390,9 +1390,9 @@ window.IMPERIUM_DATA.EVENTS = [
     title: "상층 첨탑의 비술 — 수명 연장 시술 제안",
     category: "일상",
     once: true,
-    req: { minAge: 52, stats: { Inf: 46 }, excludeTags: ["astartes", "custodes", "dreadnought"] },
-    reqLabel: "나이 52세+ · 권위 46+ (필멸자)",
-    weight: 26,
+    req: { minAge: 52, stats: { Inf: 58 }, excludeTags: ["astartes", "custodes", "dreadnought"] },
+    reqLabel: "나이 52세+ · 권위 58+ (필멸자 고위층)",
+    weight: 18,
     text: "황혼기에 접어든 그대에게 저명한 마고스 바이올로기스가 은밀히 '리주버냇(Rejuvenat)' 세포 회춘 시술을 제안했다. 제국의 평민은 꿈도 꾸지 못할 200년 수명의 특권이다.",
     choices: [
       {
@@ -1402,6 +1402,7 @@ window.IMPERIUM_DATA.EVENTS = [
           stats: { T: 6, Inf: -6 },
           wounds: 30,
           lifeBonusExtra: 65,
+          incrementRejuvenat: true,
           addTags: ["rejuvenat"]
         }
       },

@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>1 / QUADRILLION — 인류제국 생존 시뮬레이터</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+KR:wght@400;600;700&display=swap" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
@@ -54,6 +57,8 @@
         </p>
       </div>
 
+      <div id="resume-banner" class="resume-banner" style="display:none;" aria-live="off"></div>
+
       <div class="mode-grid">
         <!-- 운명 모드 -->
         <div class="mode-card destiny">
@@ -62,7 +67,7 @@
             <p>제국의 인구 확률에 몸을 맡긴다. 행성·신분·시대에 맞는 연대기 기록과 자연스러운 선택지가 차례로 펼쳐진다.</p>
             <ul class="feature-list">
               <li>1년 = 30초 (1년 3분기 · 10초마다 새 기록이나 사건 전개)</li>
-              <li>22개 행성·직군·챕터·시기별 270종+ 연대기 및 170종+ 분기 사건</li>
+              <li>22개 행성·직군·챕터·시기별 485종+ 연대기 및 368종+ 분기·역사 사건</li>
               <li>9대 아스타르테스 챕터 선택·고유 서사 및 20인 네임드 조우 카드</li>
               <li>워해머 40k 고증 8대 특성치(d100 판정) · 계급별 파견 승인율 반영</li>
             </ul>
@@ -191,10 +196,20 @@
               <button id="btn-speed-4" class="btn-ghost" aria-pressed="false">4배속 (1년 7.5초)</button>
               <button id="btn-step" class="btn-gold">다음 분기 진행</button>
             </div>
-            <label class="live-toggle">
-              <input type="checkbox" id="chk-sr-announce" checked />
-              <span>새 기록 자동 알림</span>
-            </label>
+            <div class="pref-toggles">
+              <label class="live-toggle">
+                <input type="checkbox" id="chk-sr-announce" checked />
+                <span>새 기록 자동 알림</span>
+              </label>
+              <label class="live-toggle">
+                <input type="checkbox" id="chk-fast-childhood" />
+                <span>유년기 빠른 진행 (0~13세 연 1분기)</span>
+              </label>
+              <label class="live-toggle">
+                <input type="checkbox" id="chk-career-alert" />
+                <span>새 진로 해금 시 알림·일시정지</span>
+              </label>
+            </div>
           </div>
           <!-- 매 0.1초 갱신되는 시각 전용 진행 바: 스크린 리더 방해 방지를 위해 aria-hidden -->
           <div class="year-progress-wrap" aria-hidden="true">
@@ -265,6 +280,8 @@
         </div>
         <div class="chron-controls">
           <button id="btn-chron-order" class="btn-gold">정렬: 출생순 (0세부터)</button>
+          <button id="btn-copy-chronicle" class="btn-ghost">기록 텍스트 복사</button>
+          <button id="btn-export-chronicle" class="btn-ghost">.txt 파일 저장</button>
           <button id="btn-back-to-game" class="btn-ghost">시뮬레이션으로 복귀</button>
         </div>
       </div>
@@ -306,7 +323,8 @@
         <h2 id="heading-hall" class="panel-title">영혼의 전당 (역대 생애 기록)</h2>
         <button id="btn-clear-hall" class="btn-ghost">기록 초기화</button>
       </div>
-      <div id="hall-summary" class="obit-stats-row" style="margin-bottom:18px;"></div>
+      <div id="hall-summary" class="hall-summary-grid"></div>
+      <div id="hall-codex-wrap"></div>
       <div id="hall-list" class="codex-grid"></div>
     </div>
   </section>
@@ -320,6 +338,7 @@
       <div id="obit-body"></div>
       <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
         <button id="btn-obit-chronicle" class="btn-ghost">전체 인생 기록서 읽기</button>
+        <button id="btn-obit-copy" class="btn-ghost">부고·기록 복사</button>
         <button id="btn-obit-random" class="btn-primary">새 운명으로 다시 태어나기</button>
         <button id="btn-obit-custom" class="btn-gold">지정 출생으로 다시 시작</button>
         <button id="btn-obit-close" class="btn-ghost">닫기</button>

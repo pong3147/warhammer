@@ -343,7 +343,7 @@ window.IMPERIUM_DATA.TIMELINE = [
     text: "타니스 최초의 제국군 연대 창설식이 열리던 밤, 카오스 함대가 방어선을 뚫고 행성 궤도에 출현했다! 숲이 불바다로 변하는 가운데 대령-커미사르 이브람 건트가 수송선을 향해 소리친다. '탈출하라! 살아서 복수하라!'",
     choices: [
       {
-        label: "[민첩 판정] 이브람 건트의 수송선에 몸을 싣고 '제1유일 연대'에 합류한다",
+        label: "[민첩 판정] 이브람 건트의 수송선에 몸을 싣고 '타니스 퍼스트 앤드 온리'에 합류한다",
         check: { stat: "Ag", diff: 5 },
         success: {
           text: "불타는 숲을 뚫고 마지막 수송선에 올라탔다! 고향은 잿더미가 되었으나 그대는 '건트의 유령들'의 일원이 되어 사바트 성전으로 떠난다.",
@@ -469,6 +469,50 @@ window.IMPERIUM_DATA.TIMELINE = [
     source: "Lexicanum: Badab War / Imperial Armour Vol. 9-10"
   },
   {
+    id: "tl_cain_valhalla",
+    year: 931,
+    title: "발할라 제597연대와 커미사르 케인의 '우연한 영웅담'",
+    en: "Ciaphas Cain & the Valhallan 597th",
+    scope: "발할라 · 아스트라 밀리타룸 · 커미사르",
+    dispatchScope: "galaxy",
+    dispatchText: "제국 선전 홀로비드가 '제국의 영웅' 카이아파스 케인 커미사르와 새로 통합 창설된 발할라 제597연대가 또다시 압도적 외계인 침공을 분쇄했다는 영웅담을 대대적으로 방송했다.",
+    filter: { minAge: 16, or: [{ anyWorlds: ["valhalla"] }, { anyTags: ["militarum", "commissar", "inquisition_agent"] }] },
+    characters: ["cain", "amberley_vail"],
+    summary: "931.M41 창설된 발할라 제597연대와 커미사르 카이아파스 케인이 지휘하는 그라발락스 전선에 합류했다. 어째서인지 가장 안전한 후방 정찰로를 택했는데 진스틸러 소굴이 튀어나왔다.",
+    text: "훈장 가득한 커미사르 카이아파스 케인이 특유의 여유로운 미소로 '후방 안전 점검'을 명했다. 하지만 그의 불운한(?) 직감대로, 조용해야 할 지하 수로에서 진스틸러 컬트 매복 부대가 쏟아져 나왔다!",
+    choices: [
+      {
+        label: "[민첩 판정] 케인 커미사르의 옆에서 체인소드와 라스건으로 돌파구를 연다",
+        check: { stat: "Ag", diff: 5 },
+        success: {
+          text: "케인과 그의 부관 유르겐의 멜타건 세례 덕분에 컬트 수장을 처치했다! 케인이 '진정한 제국의 영웅'이라며 타나 차 한 잔을 권했다.",
+          stats: { Ag: 5, WS: 4, Inf: 7, Fel: 5 },
+          addTags: ["met_cain"]
+        },
+        fail: {
+          text: "진스틸러의 발톱에 스쳐 중상을 입었지만, 부관 유르겐의 블랭크 기운과 멜타 화력 덕에 살아 돌아왔다.",
+          wounds: -20,
+          stats: { T: 3 }
+        }
+      },
+      {
+        label: "[지성 판정] 이것이 더 큰 이단 음모의 일부임을 파악해 보고한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "전선에 동행하던 오르도 제노스 이단심문관 앰벌리 베일의 눈에 띄어 높은 평가를 받았다!",
+          stats: { Int: 6, Inf: 8 },
+          addTags: ["inquisition_favor", "met_cain"]
+        },
+        fail: {
+          text: "서류를 정리하다가 기습당한 탓에 타박상을 입었으나 어찌어찌 임무는 완수했다.",
+          wounds: -10,
+          stats: { Int: 2 }
+        }
+      }
+    ],
+    source: "Lexicanum: Ciaphas Cain / For the Emperor"
+  },
+  {
     id: "tl_armageddon_2",
     year: 941,
     title: "제2차 아마겟돈 전쟁 — 가즈쿨의 대침공",
@@ -513,50 +557,6 @@ window.IMPERIUM_DATA.TIMELINE = [
       }
     ],
     source: "Lexicanum: Second War for Armageddon / Codex: Armageddon"
-  },
-  {
-    id: "tl_cain_valhalla",
-    year: 931,
-    title: "발할라 제597연대와 커미사르 케인의 '우연한 영웅담'",
-    en: "Ciaphas Cain & the Valhallan 597th",
-    scope: "발할라 · 아스트라 밀리타룸 · 커미사르",
-    dispatchScope: "galaxy",
-    dispatchText: "제국 선전 홀로비드가 '제국의 영웅' 카이아파스 케인 커미사르와 새로 통합 창설된 발할라 제597연대가 또다시 압도적 외계인 침공을 분쇄했다는 영웅담을 대대적으로 방송했다.",
-    filter: { minAge: 16, or: [{ anyWorlds: ["valhalla"] }, { anyTags: ["militarum", "commissar", "inquisition_agent"] }] },
-    characters: ["cain", "amberley_vail"],
-    summary: "931.M41 창설된 발할라 제597연대와 커미사르 카이아파스 케인이 지휘하는 그라발락스 전선에 합류했다. 어째서인지 가장 안전한 후방 정찰로를 택했는데 진스틸러 소굴이 튀어나왔다.",
-    text: "훈장 가득한 커미사르 카이아파스 케인이 특유의 여유로운 미소로 '후방 안전 점검'을 명했다. 하지만 그의 불운한(?) 직감대로, 조용해야 할 지하 수로에서 진스틸러 컬트 매복 부대가 쏟아져 나왔다!",
-    choices: [
-      {
-        label: "[민첩 판정] 케인 커미사르의 옆에서 체인소드와 라스건으로 돌파구를 연다",
-        check: { stat: "Ag", diff: 5 },
-        success: {
-          text: "케인과 그의 부관 유르겐의 멜타건 세례 덕분에 컬트 수장을 처치했다! 케인이 '진정한 제국의 영웅'이라며 타나 차 한 잔을 권했다.",
-          stats: { Ag: 5, WS: 4, Inf: 7, Fel: 5 },
-          addTags: ["met_cain"]
-        },
-        fail: {
-          text: "진스틸러의 발톱에 스쳐 중상을 입었지만, 부관 유르겐의 블랭크 기운과 멜타 화력 덕에 살아 돌아왔다.",
-          wounds: -20,
-          stats: { T: 3 }
-        }
-      },
-      {
-        label: "[지성 판정] 이것이 더 큰 이단 음모의 일부임을 파악해 보고한다",
-        check: { stat: "Int", diff: 0 },
-        success: {
-          text: "전선에 동행하던 오르도 제노스 이단심문관 앰벌리 베일의 눈에 띄어 높은 평가를 받았다!",
-          stats: { Int: 6, Inf: 8 },
-          addTags: ["inquisition_favor", "met_cain"]
-        },
-        fail: {
-          text: "서류를 정리하다가 기습당한 탓에 타박상을 입었으나 어찌어찌 임무는 완수했다.",
-          wounds: -10,
-          stats: { Int: 2 }
-        }
-      }
-    ],
-    source: "Lexicanum: Ciaphas Cain / For the Emperor"
   },
   {
     id: "tl_second_tyranic",

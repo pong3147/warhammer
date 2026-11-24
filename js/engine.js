@@ -18,8 +18,8 @@
       name: "생존과 보양",
       en: "Endurance",
       desc: "체력 회복, 강인(T) 상승, 연간 사고 위험 감소",
-      statDelta: { T: 1.5, Ag: 0.5 },
-      woundsDelta: 5,
+      statDelta: { T: 1.2, Ag: 0.5 },
+      woundsDelta: 2,
       faithDelta: 0,
       corruptionDelta: 0,
       hazardMult: 0.65
@@ -30,10 +30,10 @@
       en: "Martial Drill",
       desc: "백병(WS)·사격(BS)·민첩(Ag) 집중 육성",
       statDelta: { WS: 1.6, BS: 1.6, Ag: 0.8 },
-      woundsDelta: -1,
+      woundsDelta: 0,
       faithDelta: 0,
       corruptionDelta: 0,
-      hazardMult: 1.15
+      hazardMult: 1.0
     },
     faith: {
       id: "faith",
@@ -72,7 +72,7 @@
       id: "forbidden",
       name: "금단의 지식 탐구",
       en: "Forbidden Lore",
-      desc: "지성(Int)↑↑·의지(WP)↑, 단 오염 급증(카오스/비밀 분기 해금)",
+      desc: "지성(Int) 대폭 상승 · 의지(WP) 상승, 단 오염 급증(카오스/비밀 분기 해금)",
       statDelta: { Int: 2.5, WP: 1.2 },
       woundsDelta: -2,
       faithDelta: -5,
@@ -243,28 +243,106 @@
     return `${formatImperialYear(absYear)} ${QUARTER_LABELS[quarter] || "상반기"}`;
   }
 
+  const WORLD_BY_ID = new Map((DATA.WORLDS || []).map((w) => [w.id, w]));
+  const WORLD_TAG_SET_BY_ID = new Map((DATA.WORLDS || []).map((w) => [w.id, new Set(w.tags || [])]));
+  const ORIGIN_BY_ID = new Map((DATA.ORIGINS || []).map((o) => [o.id, o]));
+  const TRAIT_BY_ID = new Map((DATA.TRAITS || []).map((t) => [t.id, t]));
+  const CAREER_BY_ID = new Map((DATA.CAREERS || []).map((c) => [c.id, c]));
+  const CHAR_BY_ID = new Map((DATA.CHARACTERS || []).map((c) => [c.id, c]));
+  const CHAPTER_BY_ID = new Map((DATA.CHAPTERS || []).map((c) => [c.id, c]));
+  const EVENT_BY_ID = new Map((DATA.EVENTS || []).map((e) => [e.id, e]));
+
+  function buildPoolIndex(items) {
+    const byChapter = new Map();
+    const byWorld = new Map();
+    const byCareer = new Map();
+    const general = [];
+    const pushTo = (map, key, item) => {
+      let arr = map.get(key);
+      if (!arr) { arr = []; map.set(key, arr); }
+      arr.push(item);
+    };
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const req = item.req;
+      if (req && Array.isArray(req.anyChapters) && req.anyChapters.length) {
+        const uniq = new Set(req.anyChapters);
+        uniq.forEach((k) => pushTo(byChapter, k, item));
+      } else if (req && Array.isArray(req.anyWorlds) && req.anyWorlds.length) {
+        const uniq = new Set(req.anyWorlds);
+        uniq.forEach((k) => pushTo(byWorld, k, item));
+      } else if (req && Array.isArray(req.anyCareers) && req.anyCareers.length) {
+        const uniq = new Set(req.anyCareers);
+        uniq.forEach((k) => pushTo(byCareer, k, item));
+      } else {
+        general.push(item);
+      }
+    }
+    return { count: items.length, byChapter, byWorld, byCareer, general };
+  }
+
+  let EVENT_INDEX = buildPoolIndex(DATA.EVENTS || []);
+  let CHRONICLE_INDEX = buildPoolIndex(DATA.CHRONICLES || []);
+
+  function getEventBuckets(state) {
+    if (EVENT_INDEX.count !== (DATA.EVENTS || []).length) EVENT_INDEX = buildPoolIndex(DATA.EVENTS || []);
+    const buckets = [EVENT_INDEX.general];
+    const bw = EVENT_INDEX.byWorld.get(state.worldId);
+    if (bw) buckets.push(bw);
+    const bc = EVENT_INDEX.byCareer.get(state.careerId);
+    if (bc) buckets.push(bc);
+    if (state.chapterId) {
+      const bch = EVENT_INDEX.byChapter.get(state.chapterId);
+      if (bch) buckets.push(bch);
+    }
+    return buckets;
+  }
+
+  function getChronicleBuckets(state) {
+    if (CHRONICLE_INDEX.count !== (DATA.CHRONICLES || []).length) CHRONICLE_INDEX = buildPoolIndex(DATA.CHRONICLES || []);
+    const buckets = [CHRONICLE_INDEX.general];
+    const bw = CHRONICLE_INDEX.byWorld.get(state.worldId);
+    if (bw) buckets.push(bw);
+    const bc = CHRONICLE_INDEX.byCareer.get(state.careerId);
+    if (bc) buckets.push(bc);
+    if (state.chapterId) {
+      const bch = CHRONICLE_INDEX.byChapter.get(state.chapterId);
+      if (bch) buckets.push(bch);
+    }
+    return buckets;
+  }
+
   function getWorld(id) {
-    return DATA.WORLDS.find((w) => w.id === id) || DATA.WORLDS[0];
+    return WORLD_BY_ID.get(id) || DATA.WORLDS[0];
   }
 
   function getOrigin(id) {
-    return DATA.ORIGINS.find((o) => o.id === id) || DATA.ORIGINS[0];
+    return ORIGIN_BY_ID.get(id) || DATA.ORIGINS[0];
   }
 
   function getTrait(id) {
-    return DATA.TRAITS.find((t) => t.id === id) || DATA.TRAITS[0];
+    return TRAIT_BY_ID.get(id) || DATA.TRAITS[0];
   }
 
   function getCareer(id) {
-    return DATA.CAREERS.find((c) => c.id === id) || DATA.CAREERS[0];
+    return CAREER_BY_ID.get(id) || DATA.CAREERS[0];
   }
 
   function getCharacter(id) {
-    return DATA.CHARACTERS.find((c) => c.id === id) || null;
+    return CHAR_BY_ID.get(id) || null;
   }
 
   function getChapter(id) {
-    return (DATA.CHAPTERS || []).find((c) => c.id === id) || null;
+    return CHAPTER_BY_ID.get(id) || null;
+  }
+
+  function makeReqContext(state) {
+    const world = getWorld(state.worldId);
+    return {
+      world,
+      worldTagSet: WORLD_TAG_SET_BY_ID.get(world.id) || new Set(world.tags || []),
+      tagSet: new Set(state.tags || [])
+    };
   }
 
   function getCareerDisplayTitle(state, careerObj) {
@@ -283,9 +361,8 @@
     return c.name;
   }
 
-  function checkReq(state, req) {
+  function checkReq(state, req, ctx) {
     if (!req) return true;
-    const world = getWorld(state.worldId);
 
     if (req.minAge !== undefined && state.age < req.minAge) return false;
     if (req.maxAge !== undefined && state.age > req.maxAge) return false;
@@ -298,26 +375,6 @@
     if (req.maxCorruption !== undefined && state.corruption > req.maxCorruption) return false;
     if (req.minWounds !== undefined && state.wounds < req.minWounds) return false;
     if (req.maxWounds !== undefined && state.wounds > req.maxWounds) return false;
-
-    if (req.stats) {
-      for (const [k, minVal] of Object.entries(req.stats)) {
-        if ((state.stats[k] || 0) < minVal) return false;
-      }
-    }
-
-    if (req.allTags) {
-      for (const t of req.allTags) {
-        if (!state.tags.includes(t)) return false;
-      }
-    }
-
-    if (req.anyTags) {
-      if (!req.anyTags.some((t) => state.tags.includes(t))) return false;
-    }
-
-    if (req.excludeTags) {
-      if (req.excludeTags.some((t) => state.tags.includes(t))) return false;
-    }
 
     if (req.anyCareers) {
       if (!req.anyCareers.includes(state.careerId)) return false;
@@ -339,14 +396,6 @@
       if (req.excludeWorlds.includes(state.worldId)) return false;
     }
 
-    if (req.anyWorldTags) {
-      if (!req.anyWorldTags.some((wt) => (world.tags || []).includes(wt))) return false;
-    }
-
-    if (req.excludeWorldTags) {
-      if (req.excludeWorldTags.some((wt) => (world.tags || []).includes(wt))) return false;
-    }
-
     if (req.anySegmenta) {
       if (!req.anySegmenta.includes(state.segmentum)) return false;
     }
@@ -360,11 +409,127 @@
       if (opened !== req.greatRift) return false;
     }
 
+    if (req.stats) {
+      for (const k in req.stats) {
+        if ((state.stats[k] || 0) < req.stats[k]) return false;
+      }
+    }
+
+    const tagSet = ctx ? ctx.tagSet : null;
+    if (req.allTags) {
+      for (let i = 0; i < req.allTags.length; i++) {
+        const t = req.allTags[i];
+        if (tagSet ? !tagSet.has(t) : !state.tags.includes(t)) return false;
+      }
+    }
+
+    if (req.anyTags) {
+      let ok = false;
+      for (let i = 0; i < req.anyTags.length; i++) {
+        const t = req.anyTags[i];
+        if (tagSet ? tagSet.has(t) : state.tags.includes(t)) { ok = true; break; }
+      }
+      if (!ok) return false;
+    }
+
+    if (req.excludeTags) {
+      for (let i = 0; i < req.excludeTags.length; i++) {
+        const t = req.excludeTags[i];
+        if (tagSet ? tagSet.has(t) : state.tags.includes(t)) return false;
+      }
+    }
+
+    if (req.anyWorldTags || req.excludeWorldTags) {
+      const wTagSet = ctx ? ctx.worldTagSet : (WORLD_TAG_SET_BY_ID.get(state.worldId) || new Set((getWorld(state.worldId).tags) || []));
+      if (req.anyWorldTags) {
+        let ok = false;
+        for (let i = 0; i < req.anyWorldTags.length; i++) {
+          if (wTagSet.has(req.anyWorldTags[i])) { ok = true; break; }
+        }
+        if (!ok) return false;
+      }
+      if (req.excludeWorldTags) {
+        for (let i = 0; i < req.excludeWorldTags.length; i++) {
+          if (wTagSet.has(req.excludeWorldTags[i])) return false;
+        }
+      }
+    }
+
     if (req.or && Array.isArray(req.or)) {
-      if (!req.or.some((sub) => checkReq(state, sub))) return false;
+      let ok = false;
+      for (let i = 0; i < req.or.length; i++) {
+        if (checkReq(state, req.or[i], ctx)) { ok = true; break; }
+      }
+      if (!ok) return false;
     }
 
     return true;
+  }
+
+  const WORLD_TAG_LABELS = {
+    hive: "하이브 월드",
+    shrine: "성지 행성",
+    terra: "신성한 테라",
+    high_gothic: "하이 고딕권",
+    forge: "포지 월드",
+    mechanicus: "기계교 영역",
+    solar: "세그멘툼 솔라",
+    fortress: "요새 행성",
+    cadian: "카디아권",
+    militarized: "군사 행성",
+    eye_of_terror: "공포의 눈 인접",
+    death: "데스 월드",
+    krieg: "크리그",
+    radiation: "방사능 지대",
+    industrial: "공업 행성",
+    armageddon: "아마겟돈",
+    warzone: "격전지",
+    underhive: "언더하이브",
+    gang: "갱단 구역",
+    astartes_recruit: "아스타르테스 징병 행성",
+    civilised: "문명 행성",
+    ultramar: "울트라마",
+    ordered: "질서 행성",
+    baal: "바알",
+    feral: "야만 행성",
+    fenris: "펜리스",
+    jungle: "밀림 행성",
+    catachan: "카타찬",
+    vostroyan: "보스트로야",
+    cold: "한랭 행성",
+    valhallan: "발할라",
+    forest: "삼림 행성",
+    tanith: "타니스",
+    sabbat: "사바트 성역",
+    volcanic: "화산 행성",
+    nocturne: "녹턴",
+    ecclesiarchy: "국교 본산",
+    sororitas: "소로리타스 본산",
+    overpopulated: "과밀 행성",
+    agri: "아그리 월드",
+    rural: "농업 지대",
+    balanced: "표준 문명",
+    paradise: "낙원 행성",
+    wealthy: "부유 행성",
+    voidborn: "성간 함선",
+    navy: "제국 해군"
+  };
+
+  function syncImperialNihilus(state) {
+    if (!state || !state.globalFlags) return;
+    if (state.year >= 999 && !state.globalFlags.greatRiftOpened) {
+      state.globalFlags.greatRiftOpened = true;
+    }
+    if (!state.globalFlags.greatRiftOpened) return;
+    const w = getWorld(state.worldId);
+    const seg = DATA.SEGMENTA[state.segmentum];
+    const isNihilus = Boolean((w && w.nihilusOverride) || (seg && seg.nihilusAfterRift));
+    const idx = state.tags.indexOf("imperial_nihilus");
+    if (isNihilus && idx === -1) {
+      state.tags.push("imperial_nihilus");
+    } else if (!isNihilus && idx !== -1) {
+      state.tags.splice(idx, 1);
+    }
   }
 
   function describeReq(req) {
@@ -393,38 +558,54 @@
       }
     }
     if (req.minFaith !== undefined) parts.push(`신앙 ${req.minFaith}+`);
+    if (req.maxFaith !== undefined) parts.push(`신앙 ${req.maxFaith} 이하`);
     if (req.minCorruption !== undefined) parts.push(`오염 ${req.minCorruption}+`);
     if (req.maxCorruption !== undefined) parts.push(`오염 ${req.maxCorruption} 이하`);
-    if (req.allTags) {
+    if (req.minWounds !== undefined) parts.push(`생명력 ${req.minWounds}+`);
+    if (req.maxWounds !== undefined) parts.push(`생명력 ${req.maxWounds} 이하`);
+    if (req.allTags && req.allTags.length) {
       parts.push(req.allTags.map((t) => TAG_LABELS[t] || t).join(" & "));
     }
-    if (req.anyCareers) {
-      parts.push("전직: " + req.anyCareers.map((id) => getCareer(id).name.split(" ")[0]).join("/"));
+    if (req.anyTags && req.anyTags.length) {
+      parts.push(req.anyTags.map((t) => TAG_LABELS[t] || t).join("/"));
     }
-    if (req.anyChapters) {
+    if (req.anyCareers && req.anyCareers.length) {
+      parts.push("직군: " + req.anyCareers.map((id) => getCareer(id).name.split(" ")[0]).join("/"));
+    }
+    if (req.anyChapters && req.anyChapters.length) {
       parts.push("챕터: " + req.anyChapters.map((id) => {
         const ch = getChapter(id);
         return ch ? ch.name : id;
       }).join("/"));
     }
-    if (req.anyWorlds) {
+    if (req.anyWorlds && req.anyWorlds.length) {
       parts.push("행성: " + req.anyWorlds.map((id) => getWorld(id).name).join("/"));
     }
-    if (req.or) {
-      const orText = req.or.map((sub) => {
-        if (sub.anyTags) return sub.anyTags.map((t) => TAG_LABELS[t] || t).join("/");
-        if (sub.anyWorldTags) return `행성(${sub.anyWorldTags.join("/")})`;
-        if (sub.anyCareers) return sub.anyCareers.map((id) => getCareer(id).name.split(" ")[0]).join("/");
-        if (sub.anyChapters) return sub.anyChapters.map((id) => {
-          const ch = getChapter(id);
-          return ch ? ch.name : id;
-        }).join("/");
-        if (sub.anyWorlds) return sub.anyWorlds.map((id) => getWorld(id).name).join("/");
-        return describeReq(sub);
-      }).filter(Boolean).join(" 또는 ");
+    if (req.anyHomeWorlds && req.anyHomeWorlds.length) {
+      parts.push("출생지: " + req.anyHomeWorlds.map((id) => getWorld(id).name).join("/"));
+    }
+    if (req.anyWorldTags && req.anyWorldTags.length) {
+      parts.push("행성 유형: " + req.anyWorldTags.map((wt) => WORLD_TAG_LABELS[wt] || wt).join("/"));
+    }
+    if (req.anySegmenta && req.anySegmenta.length) {
+      parts.push("성역: " + req.anySegmenta.map((sid) => (DATA.SEGMENTA[sid] && DATA.SEGMENTA[sid].name) || sid).join("/"));
+    }
+    if (req.anyFocus && req.anyFocus.length) {
+      parts.push("초점: " + req.anyFocus.map((fid) => (FOCUSES[fid] && FOCUSES[fid].name) || fid).join("/"));
+    }
+    if (req.greatRift === true) parts.push("대균열 이후");
+    if (req.greatRift === false) parts.push("대균열 이전");
+    if (req.or && Array.isArray(req.or)) {
+      const orText = req.or.map((sub) => describeReq(sub)).filter(Boolean).join(" 또는 ");
       if (orText) parts.push(`(${orText})`);
     }
-    if (req.excludeTags && parts.length === 0) {
+    if (req.excludeWorlds && req.excludeWorlds.length && parts.length === 0) {
+      parts.push(req.excludeWorlds.map((id) => `${getWorld(id).name} 제외`).join(" · "));
+    }
+    if (req.excludeWorldTags && req.excludeWorldTags.length && parts.length === 0) {
+      parts.push(req.excludeWorldTags.map((wt) => `${WORLD_TAG_LABELS[wt] || wt} 제외`).join(" · "));
+    }
+    if (req.excludeTags && req.excludeTags.length && parts.length === 0) {
       parts.push(req.excludeTags.map((t) => `${TAG_LABELS[t] || t} 불가`).join(" · "));
     }
     return parts.join(" · ");
@@ -466,7 +647,7 @@
     const world = getWorld(state.worldId);
     const origin = getOrigin(state.originId);
     const career = getCareer(state.careerId);
-    const tMod = Math.floor(((state.stats.T || 25) - 25) * 0.45);
+    const tMod = clamp(Math.floor(((state.stats.T || 25) - 25) * 0.35), -8, 18);
     return Math.max(24, Math.round(
       world.baseLifeExpectancy +
       (origin.lifeMod || 0) +
@@ -515,8 +696,14 @@
     if (mode === "custom" && config.originId && config.originId !== "random") {
       origin = getOrigin(config.originId);
     } else {
-      const eligibleOrigins = DATA.ORIGINS.filter((o) => !o.worldFilter || o.worldFilter.includes(world.id));
-      origin = pickWeighted(eligibleOrigins, "weight");
+      const worldTags = world.tags || [];
+      const eligibleOrigins = DATA.ORIGINS.filter((o) => {
+        if (o.worldFilter && !o.worldFilter.includes(world.id)) return false;
+        if (o.excludeWorlds && o.excludeWorlds.includes(world.id)) return false;
+        if (o.excludeWorldTags && o.excludeWorldTags.some((wt) => worldTags.includes(wt))) return false;
+        return true;
+      });
+      origin = pickWeighted(eligibleOrigins.length ? eligibleOrigins : DATA.ORIGINS, "weight");
     }
 
     // 5. 선천 자질
@@ -598,18 +785,19 @@
       logs: []
     };
 
-    if (birthYear >= 999 && (world.nihilusOverride || DATA.SEGMENTA[segmentum].nihilusAfterRift)) {
-      if (!state.tags.includes("imperial_nihilus")) state.tags.push("imperial_nihilus");
-    }
+    syncImperialNihilus(state);
 
-    addLog(
-      state,
-      `${formatImperialYear(birthYear)} — ${world.name}(${world.worldClass})의 ${origin.name} 가정에서 ${name}(${gender === "male" ? "남" : "여"})이(가) 태어났다. 선천 자질: [${trait.name}].`,
-      "birth"
-    );
+    const birthLogText = world.id === "krieg"
+      ? `${formatImperialYear(birthYear)} — 크리그 지하 비타-움(인공 배양실)에서 ${name}(${gender === "male" ? "남" : "여"})이(가) 배양·등록되었다. 배속 분류: [${origin.name}] · 선천 자질: [${trait.name}].`
+      : `${formatImperialYear(birthYear)} — ${world.name}(${world.worldClass})의 ${origin.name} 가정에서 ${name}(${gender === "male" ? "남" : "여"})이(가) 태어났다. 선천 자질: [${trait.name}].`;
+
+    addLog(state, birthLogText, "birth");
 
     return state;
   }
+
+  const MAX_LOGS = 2400;
+  const PRUNABLE_LOG_KINDS = new Set(["chronicle", "chronicle-grim", "normal"]);
 
   function addLog(state, text, kind = "normal", meta = null, extra = null) {
     state.logs.unshift({
@@ -622,7 +810,17 @@
       deltaText: extra && extra.deltaText ? extra.deltaText : null,
       chronicleId: extra && extra.chronicleId ? extra.chronicleId : null
     });
-    if (state.logs.length > 480) state.logs.pop();
+    if (state.logs.length > MAX_LOGS) {
+      let removeIdx = -1;
+      for (let i = state.logs.length - 1; i >= 0; i--) {
+        if (PRUNABLE_LOG_KINDS.has(state.logs[i].kind)) {
+          removeIdx = i;
+          break;
+        }
+      }
+      if (removeIdx !== -1) state.logs.splice(removeIdx, 1);
+      else state.logs.pop();
+    }
   }
 
   function formatDeltaText(eff) {
@@ -726,6 +924,10 @@
     if (outcome.lifeBonusExtra || outcome.extraLifeBonus) {
       state.extraLifeBonus += (outcome.lifeBonusExtra || outcome.extraLifeBonus);
     }
+    if (outcome.incrementRejuvenat) {
+      state.rejuvenatCount = (state.rejuvenatCount || 0) + 1;
+      state.lastRejuvenatAge = state.age;
+    }
     if (outcome.addTags) {
       for (const t of outcome.addTags) {
         if (!state.tags.includes(t)) state.tags.push(t);
@@ -740,17 +942,33 @@
       state.worldId = nextWorld.id;
       if (!state.visitedWorlds.includes(nextWorld.id)) state.visitedWorlds.push(nextWorld.id);
       if (nextWorld.segmentum !== "random") state.segmentum = nextWorld.segmentum;
+      syncImperialNihilus(state);
     }
     if (outcome.warpYearShift && Number.isInteger(outcome.warpYearShift)) {
       state.year += outcome.warpYearShift;
+      syncImperialNihilus(state);
     }
     if (outcome.forceCareer) {
       const targetCareer = getCareer(outcome.forceCareer);
-      state.careerId = targetCareer.id;
-      if (!state.careerHistory.includes(targetCareer.id)) state.careerHistory.push(targetCareer.id);
-      if (targetCareer.useChapterName && !state.chapterName) {
-        const hw = getWorld(state.homeWorldId);
-        state.chapterName = hw.astartesChapter || "제국 아스타르테스 챕터";
+      const curCareer = getCareer(state.careerId);
+      const isTranshuman = state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("grey_knight");
+      const targetIsTranshuman = ["astartes_scout", "astartes_brother", "astartes_captain", "grey_knight", "adeptus_custodes"].includes(targetCareer.id);
+      const preventDowngrade =
+        targetCareer.id !== "chaos_cultist" &&
+        (curCareer.tier > targetCareer.tier || (isTranshuman && !targetIsTranshuman));
+
+      if (!preventDowngrade) {
+        state.careerId = targetCareer.id;
+        if (!state.careerHistory.includes(targetCareer.id)) state.careerHistory.push(targetCareer.id);
+        if (targetCareer.useChapterName && !state.chapterName) {
+          const hw = getWorld(state.homeWorldId);
+          state.chapterName = hw.astartesChapter || "제국 아스타르테스 챕터";
+        }
+        if (targetCareer.onJoin && targetCareer.onJoin.addTags) {
+          for (const t of targetCareer.onJoin.addTags) {
+            if (!state.tags.includes(t)) state.tags.push(t);
+          }
+        }
       }
     }
 
@@ -767,7 +985,7 @@
       finalizeDeath(state, "치명적인 부상과 가혹한 시련을 견디지 못하고 순직");
     } else if (state.corruption >= 100) {
       finalizeDeath(state, "워프 오염이 임계치를 돌파하여 카오스 스폰으로 변이 후 정화됨");
-    } else if (outcome.forceCareer === "astartes_scout" && !state.chapterId && !state.pendingEvent) {
+    } else if (outcome.forceCareer === "astartes_scout" && state.careerId === "astartes_scout" && !state.chapterId && !state.pendingEvent) {
       const chapEv = createChapterSelectionEvent(state);
       if (chapEv) state.pendingEvent = chapEv;
     }
@@ -782,13 +1000,6 @@
 
     if (ev.setGlobalFlag) {
       state.globalFlags[ev.setGlobalFlag] = true;
-      if (ev.setGlobalFlag === "greatRiftOpened") {
-        const w = getWorld(state.worldId);
-        const seg = DATA.SEGMENTA[state.segmentum];
-        if (w.nihilusOverride || (seg && seg.nihilusAfterRift)) {
-          if (!state.tags.includes("imperial_nihilus")) state.tags.push("imperial_nihilus");
-        }
-      }
     }
 
     let rollResult = null;
@@ -805,6 +1016,9 @@
     state.pendingEvent = null;
 
     applyOutcome(state, outcome, rollResult);
+    if (ev.setGlobalFlag === "greatRiftOpened") {
+      syncImperialNihilus(state);
+    }
 
     return {
       eventTitle: ev.title,
@@ -814,16 +1028,32 @@
     };
   }
 
-  function applyChronicle(state) {
-    const pool = (DATA.CHRONICLES || []).filter((ch) => checkReq(state, ch.req));
+  function applyChronicle(state, reqCtx) {
+    const ctx = reqCtx || makeReqContext(state);
+    const buckets = getChronicleBuckets(state);
+    const pool = [];
+    for (let b = 0; b < buckets.length; b++) {
+      const arr = buckets[b];
+      for (let i = 0; i < arr.length; i++) {
+        if (checkReq(state, arr[i].req, ctx)) pool.push(arr[i]);
+      }
+    }
     if (pool.length === 0) {
       addLog(state, generateDailyFlavor(state), "normal", null, { badge: "일상 기록" });
       return;
     }
 
     const recent = state.recentChronicles || [];
-    const fresh = pool.filter((ch) => !recent.includes(ch.id));
-    const notRecentShort = pool.filter((ch) => !recent.slice(0, Math.min(8, Math.max(1, pool.length - 1))).includes(ch.id));
+    const recentSet = new Set(recent);
+    const shortLimit = Math.min(8, Math.max(1, pool.length - 1));
+    const shortRecentSet = new Set(recent.slice(0, shortLimit));
+    const fresh = [];
+    const notRecentShort = [];
+    for (let i = 0; i < pool.length; i++) {
+      const ch = pool[i];
+      if (!recentSet.has(ch.id)) fresh.push(ch);
+      if (!shortRecentSet.has(ch.id)) notRecentShort.push(ch);
+    }
     const candidates = fresh.length > 0 ? fresh : (notRecentShort.length > 0 ? notRecentShort : pool);
 
     // priority 가중치: 현재 행성/직업 초고유(3)=9, 특화(2)=3, 일반 부조리(1)=1.2
@@ -886,12 +1116,13 @@
     return `[${getCareerDisplayTitle(state, career)}] 복무 중 '${focus.name}'에 매진하며 한 해를 넘겼다.`;
   }
 
-  function advanceQuarter(state) {
+  function advanceQuarter(state, options = {}) {
     if (!state.alive || state.pendingEvent) return { status: "blocked" };
 
-    // 1년 = 3분기(상반기/중반기/하반기). 3분기 이후 새해 진입 시 나이·연도 +1 및 연간 성장·노화 정산!
+    // 1년 = 3분기(상반기/중반기/하반기). 선택형 유년기 빠른 진행 활성화 시 0~13세 구간은 연 1분기(새해 즉시 진행)!
     let isNewYear = false;
-    if (!state.quarter || state.quarter >= 3) {
+    const fastKid = Boolean(options && options.fastChildhood && state.age < 13);
+    if (fastKid || !state.quarter || state.quarter >= 3) {
       state.quarter = 1;
       state.age += 1;
       state.year += 1;
@@ -901,7 +1132,6 @@
     }
 
     const world = getWorld(state.worldId);
-    const career = getCareer(state.careerId);
     const focus = FOCUSES[state.focus] || FOCUSES.survival;
 
     if (isNewYear) {
@@ -910,10 +1140,13 @@
         if (state.tags.includes("mechanicus_blood")) {
           state.careerId = "skitarii";
           state.careerHistory.push("skitarii");
+          if (!state.tags.includes("mechanicus")) state.tags.push("mechanicus");
+          if (!state.tags.includes("bionic")) state.tags.push("bionic");
           addLog(state, "14세가 되어 기계교 견습 과정을 마치고 스키타리 예비대에 편입되었다.", "career", null, { badge: "직무 편입" });
         } else if (state.tags.includes("noble")) {
           state.careerId = "administratum";
           state.careerHistory.push("administratum");
+          if (!state.tags.includes("administratum")) state.tags.push("administratum");
           addLog(state, "14세가 되어 가문의 영지 실무와 제국 행정 서무를 맡기 시작했다. 이제 다양한 고위 직군을 노릴 수 있다.", "career", null, { badge: "직무 편입" });
         } else if (state.tags.includes("military_blood")) {
           state.careerId = "pdf_trooper";
@@ -926,10 +1159,39 @@
         }
       }
 
+      // 18세 스콜라 프로제니움 졸업 자동 배치 폴백 (수동 전직하지 않은 생도의 영구 child 고착 방지)
+      if (state.age >= 18 && state.careerId === "child") {
+        let gradCareerId = "pdf_trooper";
+        let gradMsg = "스콜라 프로제니움 과정을 수료하고 행성 방위군(PDF) 기간병으로 배치되었다. 이제 커미사르·사이온·소로리타스·심문소 등 상위 진로를 노릴 수 있다.";
+        if (state.tags.includes("schola")) {
+          if (state.faith >= 55 && state.stats.WP >= 38 && !state.tags.includes("heretic")) {
+            gradCareerId = "ecclesiarchy_priest";
+            gradMsg = "스콜라 프로제니움 신학 과정을 우수한 성적으로 수료해 에클레시아키 사제로 서품되었다.";
+          } else if (state.stats.Int >= 38 && !state.tags.includes("abhuman")) {
+            gradCareerId = "administratum";
+            gradMsg = "스콜라 프로제니움 행정 과정을 수료해 아드미니스트라툼 서기관으로 임관했다.";
+          }
+        } else {
+          gradCareerId = "menial_worker";
+          gradMsg = "성년에 도달해 제국 시민으로서 정규 직무에 편입되었다.";
+        }
+        const gradCareer = getCareer(gradCareerId);
+        state.careerId = gradCareer.id;
+        if (!state.careerHistory.includes(gradCareer.id)) state.careerHistory.push(gradCareer.id);
+        if (gradCareer.onJoin && gradCareer.onJoin.addTags) {
+          for (const t of gradCareer.onJoin.addTags) {
+            if (!state.tags.includes(t)) state.tags.push(t);
+          }
+        }
+        addLog(state, gradMsg, "career", null, { badge: "졸업 배치" });
+      }
+
+      const activeCareer = getCareer(state.careerId);
+
       // 연간 스탯 성장 (초점 + 현재 병종)
       for (const key of Object.keys(STAT_META)) {
         const fGain = (focus.statDelta && focus.statDelta[key]) || 0;
-        const cGain = (career.annualGrowth && career.annualGrowth[key]) || 0;
+        const cGain = (activeCareer.annualGrowth && activeCareer.annualGrowth[key]) || 0;
         const raw = fGain + cGain;
         if (raw > 0) {
           const whole = Math.floor(raw);
@@ -941,25 +1203,33 @@
         }
       }
 
-      // 체력, 신앙, 오염 연간 변동
-      state.wounds = clamp(state.wounds + (focus.woundsDelta || 0), 0, state.maxWounds);
+      // 하이브리드 체력 회복 · 노화 양극화 보정
+      const lifeExp = computeLifeExpectancy(state);
+      const baseNaturalHeal = state.age <= lifeExp * 0.72 ? 3 : 0;
+      let focusHeal = focus.woundsDelta || 0;
+      if (focusHeal > 0) {
+        if (state.age > lifeExp * 0.95) focusHeal = 0;
+        else if (state.age > lifeExp * 0.82) focusHeal = Math.floor(focusHeal * 0.5);
+      }
+      state.wounds = clamp(state.wounds + baseNaturalHeal + focusHeal, 0, state.maxWounds);
       state.faith = clamp(state.faith + (focus.faithDelta || 0), 0, 100);
       state.corruption = clamp(state.corruption + (focus.corruptionDelta || 0), 0, 100);
 
       if (state.year >= 999 && !state.globalFlags.greatRiftOpened) {
         state.globalFlags.greatRiftOpened = true;
+        syncImperialNihilus(state);
       }
 
-      // 노화 및 환경 위험 처리
-      const lifeExp = computeLifeExpectancy(state);
-      if (state.age > lifeExp * 0.72) {
-        const overRatio = (state.age - lifeExp * 0.72) / Math.max(12, lifeExp * 0.35);
-        const ageDamage = Math.max(1, Math.round(overRatio * (state.tags.includes("transhuman") ? 2.2 : 5.2)));
+      // 노화 처리 (기대수명 초과 시 점진적 비선형 노화, 초인은 절반 속도)
+      if (state.age > lifeExp * 0.78) {
+        const overRatio = (state.age - lifeExp * 0.78) / Math.max(10, lifeExp * 0.28);
+        const isTranshuman = state.tags.includes("transhuman");
+        const ageDamage = Math.max(1, Math.round((2.6 * overRatio + 3.2 * overRatio * overRatio) * (isTranshuman ? 0.45 : 1.0)));
         state.wounds = clamp(state.wounds - ageDamage, 0, state.maxWounds);
       }
 
       const nihilusHaz = state.tags.includes("imperial_nihilus") ? 0.008 : 0;
-      const totalHazard = Math.max(0.002, (world.annualHazard + (career.hazardMod || 0) + nihilusHaz) * (focus.hazardMult || 1));
+      const totalHazard = Math.max(0.002, (world.annualHazard + (activeCareer.hazardMod || 0) + nihilusHaz) * (focus.hazardMult || 1));
 
       if (Math.random() < totalHazard * 2.0) {
         const dmg = randInt(5, 13);
@@ -973,7 +1243,7 @@
 
     // 아스타르테스 드레드노트 긴급 발동 체크
     if (state.wounds <= 38 && state.wounds > 0 && state.tags.includes("astartes") && !state.tags.includes("dreadnought") && !state.seenEvents.includes("ev_dreadnought_choice")) {
-      const dreadEv = DATA.EVENTS.find((e) => e.id === "ev_dreadnought_choice");
+      const dreadEv = EVENT_BY_ID.get("ev_dreadnought_choice");
       if (dreadEv) {
         state.seenEvents.push(dreadEv.id);
         state.pendingEvent = Object.assign({ isTimeline: false }, dreadEv);
@@ -995,11 +1265,13 @@
       return { status: "dead" };
     }
 
+    const reqCtx = makeReqContext(state);
+
     // 1순위: 역사 연표(TIMELINE) 직접 체험 + 타 행성/성역 원격 아스트로패스 속보 전파
     for (const tl of DATA.TIMELINE) {
       const maxYear = tl.exactYear ? tl.year : (tl.endYear || tl.year + 1);
       if (state.year >= tl.year && state.year <= maxYear && !state.seenTimeline.includes(tl.id)) {
-        if (checkReq(state, tl.filter)) {
+        if (checkReq(state, tl.filter, reqCtx)) {
           state.seenTimeline.push(tl.id);
           if (!state.heardNews.includes(tl.id)) state.heardNews.push(tl.id);
           if (tl.characters) {
@@ -1018,7 +1290,7 @@
         state.age >= 6 &&
         !state.seenTimeline.includes(tl.id) &&
         !state.heardNews.includes(tl.id) &&
-        !world.tags.includes("feral")
+        !reqCtx.worldTagSet.has("feral")
       ) {
         const reaches =
           tl.dispatchScope === "galaxy" ||
@@ -1032,45 +1304,57 @@
       }
     }
 
-    // 2순위: 동적 조건 이벤트(EVENTS) 발동 — 한 생애 동일 선택지 이벤트 최대 2회 상한 + 최근 14개 중복 방지 + 현재 행성/직업 고유 2.6배 우대!
-    const countsMap = state.eventCounts || {};
-    const allEligible = DATA.EVENTS.filter((ev) => {
-      if (ev.once && state.seenEvents.includes(ev.id)) return false;
-      const limit = ev.once ? 1 : (ev.maxRepeats || 2);
-      if ((countsMap[ev.id] || 0) >= limit) return false;
-      return checkReq(state, ev.req);
-    });
-    const recentEvs = state.recentEvents || [];
-    const freshEvents = allEligible.filter((ev) => !recentEvs.includes(ev.id));
-    const shortFreshEvents = allEligible.filter((ev) => !recentEvs.slice(0, 6).includes(ev.id));
-    const eventPool = freshEvents.length > 0 ? freshEvents : shortFreshEvents;
-
-    // 1년 3분기 기준 매 분기 ~30% 확률 -> 1년당 평균 선택지 이벤트 약 1회 + 일상 연대기 약 2회 = 1년 3건!
+    // 2순위: 동적 조건 이벤트(EVENTS) 발동 — 확률 선판정으로 미발동 분기(~72%)의 전체 스캔 생략!
     const eventChance = state.age >= 12 && state.age <= 18 ? 0.34 : 0.28;
-    if (eventPool.length > 0 && Math.random() < eventChance) {
-      const weightedPool = eventPool.map((ev) => {
-        let w = ev.weight || 15;
-        const isWorldSpecific = ev.req && ev.req.anyWorlds && ev.req.anyWorlds.includes(state.worldId);
-        const isCareerSpecific = ev.req && ev.req.anyCareers && ev.req.anyCareers.includes(state.careerId);
-        const isChapterSpecific = ev.req && ev.req.anyChapters && state.chapterId && ev.req.anyChapters.includes(state.chapterId);
-        const isEraSpecific = ev.req && (ev.req.minYear !== undefined || ev.req.maxYear !== undefined);
-        const isNamedEncounter = Array.isArray(ev.characters) && ev.characters.length > 0;
-        if (isChapterSpecific || isNamedEncounter) w *= 3.0;
-        else if (isWorldSpecific || isCareerSpecific || isEraSpecific) w *= 2.6;
-        return { item: ev, w };
-      });
-      const picked = pickWeighted(weightedPool, "w").item;
-      if (picked.once) state.seenEvents.push(picked.id);
-      state.eventCounts = countsMap;
-      state.eventCounts[picked.id] = (state.eventCounts[picked.id] || 0) + 1;
-      state.recentEvents = [picked.id, ...recentEvs].slice(0, 14);
-      if (picked.characters) {
-        for (const cid of picked.characters) {
-          if (!state.metCharacters.includes(cid)) state.metCharacters.push(cid);
+    if (Math.random() < eventChance) {
+      const countsMap = state.eventCounts || {};
+      const seenSet = new Set(state.seenEvents || []);
+      const recentEvs = state.recentEvents || [];
+      const recentSet = new Set(recentEvs);
+      const recentShortSet = new Set(recentEvs.slice(0, 6));
+      const freshEvents = [];
+      const shortFreshEvents = [];
+
+      const buckets = getEventBuckets(state);
+      for (let b = 0; b < buckets.length; b++) {
+        const arr = buckets[b];
+        for (let i = 0; i < arr.length; i++) {
+          const ev = arr[i];
+          if (ev.once && seenSet.has(ev.id)) continue;
+          const limit = ev.once ? 1 : (ev.maxRepeats || 2);
+          if ((countsMap[ev.id] || 0) >= limit) continue;
+          if (!checkReq(state, ev.req, reqCtx)) continue;
+          if (!recentSet.has(ev.id)) freshEvents.push(ev);
+          if (!recentShortSet.has(ev.id)) shortFreshEvents.push(ev);
         }
       }
-      state.pendingEvent = Object.assign({ isTimeline: false }, picked);
-      return { status: "event", event: state.pendingEvent };
+
+      const eventPool = freshEvents.length > 0 ? freshEvents : shortFreshEvents;
+      if (eventPool.length > 0) {
+        const weightedPool = eventPool.map((ev) => {
+          let w = ev.weight || 15;
+          const isWorldSpecific = ev.req && ev.req.anyWorlds && ev.req.anyWorlds.includes(state.worldId);
+          const isCareerSpecific = ev.req && ev.req.anyCareers && ev.req.anyCareers.includes(state.careerId);
+          const isChapterSpecific = ev.req && ev.req.anyChapters && state.chapterId && ev.req.anyChapters.includes(state.chapterId);
+          const isEraSpecific = ev.req && (ev.req.minYear !== undefined || ev.req.maxYear !== undefined);
+          const isNamedEncounter = Array.isArray(ev.characters) && ev.characters.length > 0;
+          if (isChapterSpecific || isNamedEncounter) w *= 3.0;
+          else if (isWorldSpecific || isCareerSpecific || isEraSpecific) w *= 2.6;
+          return { item: ev, w };
+        });
+        const picked = pickWeighted(weightedPool, "w").item;
+        if (picked.once) state.seenEvents.push(picked.id);
+        state.eventCounts = countsMap;
+        state.eventCounts[picked.id] = (state.eventCounts[picked.id] || 0) + 1;
+        state.recentEvents = [picked.id, ...recentEvs].slice(0, 14);
+        if (picked.characters) {
+          for (const cid of picked.characters) {
+            if (!state.metCharacters.includes(cid)) state.metCharacters.push(cid);
+          }
+        }
+        state.pendingEvent = Object.assign({ isTimeline: false }, picked);
+        return { status: "event", event: state.pendingEvent };
+      }
     }
 
     // 2.5순위: 업무 특성 및 계급에 따른 강제 파견 / 작전 배치 / 성간 이주 기회
@@ -1088,7 +1372,7 @@
     }
 
     // 3순위: 본인 행성·직업·신분·시대에 딱 맞는 일상·부조리 연대기 기록
-    applyChronicle(state);
+    applyChronicle(state, reqCtx);
     return { status: "ok", isNewYear };
   }
 
@@ -1534,14 +1818,7 @@
       if (!state.visitedWorlds.includes(target.id)) state.visitedWorlds.push(target.id);
       if (target.segmentum !== "random") state.segmentum = target.segmentum;
 
-      if (state.globalFlags.greatRiftOpened) {
-        const seg = DATA.SEGMENTA[state.segmentum];
-        if (target.nihilusOverride || (seg && seg.nihilusAfterRift)) {
-          if (!state.tags.includes("imperial_nihilus")) state.tags.push("imperial_nihilus");
-        } else {
-          state.tags = state.tags.filter((t) => t !== "imperial_nihilus");
-        }
-      }
+      syncImperialNihilus(state);
 
       const modeText = evalRes.autoApprove ? "자율 지휘권으로" : `(${evalRes.authority} 승인)을 받아`;
       addLog(
@@ -2421,18 +2698,25 @@
   }
 
   function getContextualOptions(state) {
-    const selectable = DATA.CAREERS.filter((c) => c.selectable && c.id !== state.careerId);
-    const unlockedCareers = selectable.filter((c) => checkReq(state, c.req)).sort((a, b) => b.tier - a.tier);
+    const reqCtx = makeReqContext(state);
+    const unlockedCareers = [];
+    const lockedCareers = [];
+    for (let i = 0; i < DATA.CAREERS.length; i++) {
+      const c = DATA.CAREERS[i];
+      if (!c.selectable || c.id === state.careerId) continue;
+      if (checkReq(state, c.req, reqCtx)) unlockedCareers.push(c);
+      else lockedCareers.push(c);
+    }
+    unlockedCareers.sort((a, b) => b.tier - a.tier);
 
     // 앞으로 가장 가까운 추천 진로 2개 계산 (초보자 가이드용)
-    const locked = selectable.filter((c) => !checkReq(state, c.req));
-    const nearCareers = locked
+    const nearCareers = lockedCareers
       .filter((c) => {
         const r = c.req || {};
         if (r.gender && r.gender !== state.gender) return false;
         if (r.maxAge !== undefined && state.age > r.maxAge) return false;
-        if (r.excludeTags && r.excludeTags.some((t) => state.tags.includes(t))) return false;
-        if (r.allTags && !r.allTags.every((t) => state.tags.includes(t))) return false;
+        if (r.excludeTags && r.excludeTags.some((t) => reqCtx.tagSet.has(t))) return false;
+        if (r.allTags && !r.allTags.every((t) => reqCtx.tagSet.has(t))) return false;
         if (r.anyCareers && !r.anyCareers.includes(state.careerId)) return false;
         return true;
       })
@@ -2478,6 +2762,7 @@
 
     return {
       unlockedCareers,
+      lockedCareers,
       nearCareers,
       actions,
       travelProfile: getTravelProfile(state),
