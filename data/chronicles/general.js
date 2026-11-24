@@ -13,7 +13,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyCareers: ["astra_militarum", "pdf_trooper", "menial_worker", "underhive_ganger"] }
       ]
     },
-    text: "오늘 배급된 시체 녹말(Corpse-Starch) 통조림에서 묘하게 익숙한 금니 같은 것이 씹혔다. 아무것도 못 본 척 삼키는 것이 이 제국에서 장수하는 비결이다.",
+    text: "오늘 배급된 시체 전분 통조림에서 묘하게 익숙한 금니 같은 것이 씹혔다. 아무것도 못 본 척 삼키는 것이 이 제국에서 장수하는 비결이다.",
     effect: { stats: { T: 1 }, wounds: -2 }
   },
   {
@@ -74,7 +74,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       anyWorldTags: ["hive", "industrial", "civilised", "voidborn", "terra"],
       excludeTags: ["noble", "astartes", "custodes", "inquisitor", "commissar", "magos"]
     },
-    text: "해군 강제 징발단(Press-gang)이 선술집 골목을 통째로 봉쇄하고 손님 수십 명을 쇠사슬로 묶어 갔다. 다행히 뒷문으로 몸을 숨겨 평생 포탄 노예가 되는 신세는 면했다.",
+    text: "해군 강제 징발단이 선술집 골목을 통째로 봉쇄하고 손님 수십 명을 쇠사슬로 묶어 갔다. 다행히 뒷문으로 몸을 숨겨 평생 포탄 노예가 되는 신세는 면했다.",
     effect: { stats: { Ag: 1 } }
   },
   {
@@ -226,7 +226,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "금단의 탐구",
     priority: 2,
     req: { minAge: 15, anyFocus: ["forbidden"], excludeTags: ["custodes", "grey_knight"] },
-    text: "이단심문소가 금서로 지정한 고대 성도(星圖)와 외계 문헌의 필사본을 촛불 아래서 해독했다. 문장을 이해할 때마다 머리가 깨질 듯 울리지만 금지된 통찰이 열렸다.",
+    text: "이단심문소가 금서로 지정한 고대 성도와 외계 문헌의 필사본을 촛불 아래서 해독했다. 문장을 이해할 때마다 머리가 깨질 듯 울리지만 금지된 통찰이 열렸다.",
     effect: { stats: { Int: 2 }, corruption: 4, faith: -3 }
   },
   {
@@ -314,7 +314,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "제국 부조리",
     priority: 1,
     req: { minAge: 14, excludeTags: ["astartes", "custodes", "grey_knight", "inquisitor", "magos"], excludeWorldTags: ["feral", "krieg"] },
-    text: "배급소에서 '신메뉴 — 향신료 첨가 시체 녹말'을 특별 배급했다. 맛은 똑같이 잿빛 진흙이었지만, 불평하면 배급권이 몰수되기에 모두 감사 기도를 올렸다.",
+    text: "배급소에서 '신메뉴 — 향신료 첨가 시체 전분'을 특별 배급했다. 맛은 똑같이 잿빛 진흙이었지만, 불평하면 배급권이 몰수되기에 모두 감사 기도를 올렸다.",
     effect: { stats: { T: 1 } }
   },
   {
@@ -394,7 +394,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "오그린의 일상",
     priority: 3,
     req: { minAge: 14, allTags: ["ogryn"] },
-    text: "커다란 손으로 립퍼 건을 정성껏 닦은 뒤 커미사르가 가르쳐 준 '황제 폐하를 위하여!'를 우렁차게 복창하며 배급 식사를 비웠다.",
+    text: "커다란 손으로 리퍼 건을 정성껏 닦은 뒤 커미사르가 가르쳐 준 '황제 폐하를 위하여!'를 우렁차게 복창하며 배급 식사를 비웠다.",
     effect: { stats: { T: 1, WS: 1 }, faith: 2 }
   },
   {

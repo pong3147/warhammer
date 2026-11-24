@@ -5,10 +5,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_ork_waaagh",
     title: "녹색 파도 — 오크 와아아! 습격",
     category: "전투",
-    req: { minAge: 16, anyTags: ["militarum", "imperial_military", "astartes", "sororitas", "mechanicus"] },
-    reqLabel: "제국 군사/전투 직군",
+    req: {
+      minAge: 16,
+      anyTags: ["militarum", "imperial_military", "astartes", "sororitas", "mechanicus"],
+      excludeWorlds: ["terra", "mars"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "custodes", "grey_knight", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
+      ]
+    },
+    reqLabel: "16세 이상 · 제국 군사·전투 직군",
     weight: 17,
-    text: "지평선 너머로 귀청이 터질 듯한 '와아아아!!' 함성과 함께 녹색 오크 보이즈 무리가 붉은 트럭을 몰고 쇄도해 온다! 라스건 총열이 달아오른다.",
+    text: "지평선 너머로 귀청이 터질 듯한 '와아아아!' 함성과 함께 녹색 오크 보이즈 무리가 붉은 트럭을 몰고 쇄도해 온다! 흙먼지 너머로 낡은 기관총 탄환이 빗발처럼 쏟아지며 아군 화기의 총열이 뜨겁게 달아오른다. 덩치 큰 오크 노브가 초파를 치켜들며 방어선의 중앙을 향해 돌진한다.",
     choices: [
       {
         label: "[사격 판정] 침착하게 일제 사격을 퍼부어 선두 오크 노브를 저격한다",
@@ -31,12 +39,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { WS: 6, T: 4, WP: 4, Inf: 5 }
         },
         fail: {
-          text: "괴력을 지닌 오크의 쵸파에 깊은 상처를 입고 야전 병원으로 실려 갔다.",
+          text: "괴력을 지닌 오크의 초파에 깊은 상처를 입고 야전 병원으로 실려 갔다.",
           wounds: -28
         }
       },
       {
-        label: "[지성 48+ 해금] 오크 포병대의 연료 저장고를 역산해 궤도 포격을 유도한다",
+        label: "[지성 판정 · 지성 48+] 오크 포병대의 연료 저장고를 역산해 궤도 포격을 유도한다",
         req: { stats: { Int: 48 } },
         check: { stat: "Int", diff: 5 },
         success: {
@@ -53,40 +61,49 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_tyranid_scouts",
-    title: "그림자 속의 낫발톱 — 타이라니드 선봉대",
+    title: "궤도의 생체 강하 — 타이라니드 진스틸러 선봉대",
     category: "전투",
-    req: { minAge: 16, anyTags: ["militarum", "astartes", "sororitas", "inquisition_agent", "inquisitor", "mechanicus"] },
-    reqLabel: "전투/수사 직군",
+    req: {
+      minAge: 16,
+      minYear: 745,
+      anyTags: ["militarum", "astartes", "sororitas", "inquisition_agent", "inquisitor", "mechanicus"],
+      excludeWorlds: ["terra", "mars"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "custodes", "grey_knight", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
+      ]
+    },
+    reqLabel: "745.M41 이후 · 16세 이상 · 전투·수사·기계교 직군",
     weight: 14,
-    text: "갑자기 통신망이 정적으로 먹통이 되며 워프의 그림자가 내려앉았다. 숲과 폐허 사이로 카멜레온처럼 숨어든 타이라니드 릭터와 진스틸러 선봉대가 덮쳐 온다!",
+    text: "행성 궤도 경계망이 정적으로 먹통이 되며 워프의 그림자가 성계 전체에 내려앉았다. 대기권을 가르고 추락한 거대한 생체 포자낭이 하층 부두 구획에 꽂히더니, 갈라진 육벽 사이로 네 팔을 번뜩이는 타이라니드 진스틸러 선봉 무리가 쏟아져 나온다! 놈들이 하이브 함대의 유도 신호를 퍼뜨리기 전에 교두보를 끊어야 한다.",
     choices: [
       {
-        label: "[민첩 판정] 기습 발톱을 피하고 화염방사기와 볼터로 교전한다",
+        label: "[민첩 판정] 천장 철골을 타고 사각지대로 돌아 들어가 화염방사기와 볼터로 생체 포자낭을 집중 파괴한다",
         check: { stat: "Ag", diff: -5 },
         success: {
-          text: "괴수의 은신을 간파해 처치하고 하이브 함대의 침공 경보를 제때 발신했다!",
+          text: "진스틸러 무리의 급습을 피해 포자낭을 불태우고 하이브 함대 침공 경보를 제때 발신했다!",
           stats: { Ag: 5, BS: 4, Inf: 6 }
         },
         fail: {
-          text: "릭터의 낫발톱에 옆구리를 깊게 베였으나 지원 부대 덕분에 생존했다.",
+          text: "진스틸러의 예리한 발톱에 옆구리를 깊게 베였으나 지원 부대 덕분에 생존했다.",
           wounds: -28,
           stats: { T: 3 }
         }
       },
       {
-        label: "[의지 판정] 워프의 그림자가 주는 정신 압박을 견디고 수비진을 지휘한다",
+        label: "[의지 판정] 워프의 그림자가 가하는 정신 압박을 견디고 부두 격벽에 십자포화 수비진을 편성한다",
         check: { stat: "WP", diff: 0 },
         success: {
-          text: "공포에 질린 대원들을 진정시켜 완벽한 십자포화로 외계 괴수들을 섬멸했다.",
+          text: "공포에 질린 대원들을 진정시켜 완벽한 교차 사격으로 외계 선봉 무리를 섬멸했다.",
           stats: { WP: 5, Fel: 4, Inf: 5 }
         },
         fail: {
-          text: "정신적 압박에 순간 판단이 늦어져 부상을 입었다.",
+          text: "압도적인 정신적 중압감에 판단이 한 박자 늦어져 진스틸러의 돌격에 큰 부상을 입었다.",
           wounds: -20
         }
       }
     ],
-    source: "Codex: Tyranids"
+    source: "Lexicanum: Genestealer / Codex: Tyranids"
   },
   {
     id: "ev_xenos_trade",
@@ -94,18 +111,25 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     category: "교섭",
     req: {
       minAge: 20,
-      excludeTags: ["astartes", "custodes", "grey_knight", "sororitas", "commissar", "lord_commissar"],
+      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "sororitas", "canoness", "commissar", "lord_commissar", "commissar_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "cardinal"
+      ],
       or: [{ anyCareers: ["rogue_trader", "inquisitor"] }, { stats: { Fel: 48, Inf: 45 } }]
     },
-    reqLabel: "로그 트레이더/이단심문관 또는 교섭 48+ & 권위 45+",
+    reqLabel: "20세 이상 · 로그 트레이더·이단심문관 또는 교섭 48 이상과 권위 45 이상",
     weight: 15,
-    text: "성계 외곽 소행성대에서 아엘다리(엘다) 커세어 선장이 밀거래를 제안해 왔다. 황제의 법은 외계인과의 접촉을 이단으로 규정하지만, 저들이 내민 고대 기술과 정보는 거부하기 어렵다.",
+    text: "성계 외곽 소행성대에서 아엘다리 커세어 선장이 비밀 회동을 제안해 왔다. 황제의 법은 무역 영장이나 심문관의 특권이 없는 자의 외계인 접촉을 극형에 처할 이단으로 규정하지만, 저들이 내민 고대 성간 항로도와 외계 유물은 좀처럼 거부하기 어렵다. 공허 너머 정지해 있는 날렵한 외계 순양함이 그대의 답을 기다린다.",
     choices: [
       {
-        label: "[교섭 판정] 치열한 수싸움 끝에 외계 유물과 성간 지도를 유리하게 거래한다",
+        label: "[교섭 판정] 치열한 수싸움 끝에 외계 유물과 성간 항로도를 유리한 조건으로 거래한다",
         check: { stat: "Fel", diff: -5 },
         success: {
-          text: "막대한 부와 희귀 무구, 그리고 다가올 재앙에 대한 엘다의 예언을 손에 넣었다!",
+          text: "막대한 부와 희귀 무구, 그리고 다가올 재앙에 대한 아엘다리의 예언을 손에 넣었다!",
           stats: { Inf: 12, Int: 6, Fel: 5 },
           corruption: 6,
           addTags: ["xenos_contact"]
@@ -117,7 +141,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[신앙] 외계인과의 타협 따윈 없다! 즉시 함포와 무기로 사냥한다",
+        label: "[사격 판정] 외계인과의 타협은 없다! 즉시 함포와 무기로 커세어 해적선을 사냥한다",
         check: { stat: "BS", diff: 0 },
         success: {
           text: "배신감에 찬 외계 해적선을 격침시키고 제국 순수파의 뜨거운 찬사를 받았다!",
@@ -125,27 +149,36 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 12
         },
         fail: {
-          text: "민첩한 엘다 함선의 반격에 큰 피해를 입고 물러났다.",
+          text: "민첩한 아엘다리 함선의 반격에 큰 피해를 입고 물러났다.",
           wounds: -20
         }
       }
     ],
-    source: "Rogue Trader Core Rulebook"
+    source: "Rogue Trader Core Rulebook / Lexicanum: Aeldari Corsairs"
   },
   {
     id: "ev_xenos_necron_tomb",
-    title: "에메랄드빛 각성 — 네크론 무덤 지하실의 눈뜸",
+    title: "에메랄드빛 석실 — 고대 네크론 지하 묘실 탐사 교전",
     category: "전투",
-    req: { minAge: 16, anyTags: ["militarum", "imperial_military", "astartes", "custodes", "sororitas", "mechanicus", "inquisition_agent", "inquisitor", "rogue_trader"] },
-    reqLabel: "군사 · 기계교 · 심문소 · 초인 · 로그 트레이더",
+    req: {
+      minAge: 16,
+      minYear: 897,
+      anyTags: ["militarum", "imperial_military", "astartes", "custodes", "sororitas", "mechanicus", "inquisition_agent", "inquisitor", "rogue_trader"],
+      excludeWorlds: ["terra", "mars"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
+      ]
+    },
+    reqLabel: "897.M41 이후 · 16세 이상 · 군사·기계교·심문소·초인·로그 트레이더",
     weight: 16,
-    text: "채굴장 지하 깊숙한 곳에서 6천만 년 동안 잠들어 있던 흑요석 피라미드가 섬뜩한 녹색 빛을 내뿜으며 깨어났다! 총탄을 맞아도 은빛 금속 몸체가 스스로 재생되는 네크론 전사 행렬이 무음으로 걸어 나온다!",
+    text: "변방 사막 유적의 봉인된 석실에 진입한 순간, 6천만 년 동안 잠들어 있던 흑요석 관곽들이 섬뜩한 에메랄드빛으로 점화되었다! 정지장에서 깨어난 네크론 군주와 불멸자 호위대가 차가운 녹색 차원문을 등지고 무음의 대열을 펼친다. 치명적인 가우스 화기가 일제히 장전되며 석실의 공기에서 강렬한 금속 냄새가 번진다.",
     choices: [
       {
-        label: "[사격 판정] 가우스 화기가 장전되기 전 중화기 집중 사격으로 재생 회로를 과부하시킨다",
+        label: "[사격 판정] 가우스 화기가 발사되기 전 멜타와 플라즈마 집중 사격으로 네크론 군주의 차원문을 파괴한다",
         check: { stat: "BS", diff: -10 },
         success: {
-          text: "멜타와 플라즈마 집중 포화로 네크론 군주의 차원문을 닫아 버렸다! 전설적인 외계 토벌 전공이다.",
+          text: "집중 포화가 차원 전송 장치를 산산조각 내어 적 증원을 끊었다! 네크론 묘실의 위협을 초기에 꺾은 전설적인 외계 토벌 전공이다.",
           stats: { BS: 6, WP: 5, Inf: 8 }
         },
         fail: {
@@ -155,28 +188,40 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성 판정] 무덤 행성 각성 경보를 즉시 발신하고 지하 갱도를 붕괴시켜 봉쇄한다",
+        label: "[지성 판정] 석실 지지 기둥의 구조 약점을 파악해 발파 봉쇄하고 오르도 제노스에 좌표를 송신한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "적절한 폭파 공학으로 수만 네크론의 지상 진출을 수년간 지연시켰다! 오르도 제노스가 극찬했다.",
+          text: "정밀한 폭파 공학으로 고대 묘실 입구를 완벽히 매몰시켜 수만 네크론의 각성을 수년간 지연시켰다! 오르도 제노스가 극찬했다.",
           stats: { Int: 7, Inf: 7 }
         },
         fail: {
-          text: "스캐럽 군체의 습격에 휘말려 부상을 입고 간신히 탈출했다.",
+          text: "천장을 타고 쏟아진 스캐럽 군체의 습격에 휘말려 큰 부상을 입고 간신히 탈출했다.",
           wounds: -24
         }
       }
     ],
-    source: "Codex: Necrons"
+    source: "Codex: Necrons / Lexicanum: Sanctuary 101"
   },
   {
     id: "ev_xenos_tau_propaganda",
-    title: "동부 국경의 속삭임 — 타우(T'au) 제국의 '대의' 전단",
+    title: "동부 국경의 속삭임 — 타우 제국의 대의 선전 전단",
     category: "이단·외계",
-    req: { minAge: 15, excludeTags: ["custodes", "grey_knight"] },
-    reqLabel: "15세+ (쿠스토데스·그레이 나이트 제외)",
+    req: {
+      minAge: 15,
+      minYear: 742,
+      anySegmenta: ["ultima"],
+      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
+      ]
+    },
+    reqLabel: "742.M41 이후 · 15세 이상 · 울티마 세그멘툼 · 비야만 행성",
     weight: 14,
-    text: "밀수선을 타고 정교하게 인쇄된 외계어·로우 고딕 병기 전단이 나돌고 있다. '배고픔과 채찍뿐인 썩은 제국을 떠나, 타우 제국의 대의(Greater Good) 아래 깨끗한 식량과 첨단 의료를 누리라!' 커미사르와 아르비테스가 즉각 소지자 색출에 나섰다.",
+    text: "밀수선을 타고 정교하게 인쇄된 외계어와 로우 고딕 병기 전단이 항구 구역에 나돌고 있다. '배고픔과 채찍뿐인 썩은 제국을 떠나, 타우 제국의 대의 아래 깨끗한 식량과 첨단 의료를 누리라!'는 문구가 시민들을 흔들자 커미사르와 아르비테스가 즉각 소지자 색출에 나섰다.",
     choices: [
       {
         label: "[신앙] 외계인의 감언이설 따위는 역겨운 이단이다! 즉시 불태우고 유포자를 고발한다",
@@ -201,8 +246,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[금단] 솔직히 인류제국보다 나을지도… 몰래 외계 문물을 보관해 살펴본다",
-        req: { excludeTags: ["astartes", "sororitas", "commissar", "lord_commissar", "canoness"] },
+        label: "[금단] 솔직히 인류제국보다 나을지도 모른다는 의구심 속에 몰래 외계 문물을 보관해 살펴본다",
+        req: {
+          excludeTags: [
+            "astartes", "sororitas", "celestian", "canoness",
+            "commissar", "lord_commissar", "commissar_general",
+            "inquisitor", "lord_inquisitor", "cardinal"
+          ]
+        },
         effect: {
           text: "인류제국이 숨겨 온 외계 기술의 편리함에 묘한 의구심이 싹텄다. 심문소가 알면 즉시 총살감이다.",
           stats: { Int: 5 },
@@ -212,16 +263,26 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Codex: T'au Empire / Ciaphas Cain"
+    source: "Codex: T'au Empire / Ciaphas Cain: For the Emperor"
   },
   {
     id: "ev_absurd_xenos_weapon",
     title: "전장에 떨어진 외계인 무기의 유혹",
     category: "이단·외계",
-    req: { minAge: 16, anyTags: ["militarum", "imperial_military", "inquisition_agent", "inquisitor", "rogue_trader", "streetwise"] },
-    reqLabel: "전투/수사/지하세계 경험자",
+    req: {
+      minAge: 16,
+      anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant", "underhive_ganger", "underhive_boss", "menial_worker", "inquisition_acolyte"],
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "commissar", "lord_commissar", "commissar_general",
+        "inquisitor", "lord_inquisitor", "rogue_trader", "rt_lord_captain",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "general_rank", "warmaster"
+      ]
+    },
+    reqLabel: "16세 이상 · 하급 군인·언더하이브·심문소 수습 인원",
     weight: 15,
-    text: "격전이 끝난 폐허에서 아직 작동하는 정교한 외계인 펄스 카빈을 주웠다. 제식 라스건보다 세 배는 강력하지만, 커미사르나 기계교 사제에게 들키는 순간 '외계 기술 이단'으로 즉결 처형이다.",
+    text: "격전이 끝난 폐허에서 아직 작동하는 정교한 외계인 에너지 카빈을 주웠다. 제식 라스건보다 세 배는 강력한 화력을 품고 있지만, 커미사르나 기계교 사제에게 들키는 순간 외계 기술 이단으로 즉결 처형당할 위험한 물건이다. 폐허의 먼지 속에서 낯선 금속 총열이 차갑게 빛난다.",
     choices: [
       {
         label: "즉시 개머리판으로 부수어 폐기하고 황제의 제식 무기만 신뢰한다",
@@ -232,7 +293,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[민첩/사격 판정] 몰래 배낭에 숨겨 두었다가 치명적 위기 순간에 사용한다",
+        label: "[민첩 판정] 몰래 배낭에 숨겨 두었다가 치명적 위기 순간에 사용한다",
         check: { stat: "Ag", diff: 0 },
         success: {
           text: "아무도 모르게 외계 화력을 활용해 전투에서 대활약을 펼치고 전과를 가로챘다!",
@@ -241,59 +302,77 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["xenos_contact"]
         },
         fail: {
-          text: "군장 검사에서 적발되어 혹독한 징계와 심문을 당하고 무기를 압수당했다.",
+          text: "소지품 검문에서 적발되어 혹독한 징계와 심문을 당하고 무기를 압수당했다.",
           wounds: -20,
           stats: { Inf: -6 }
         }
       }
     ],
-    source: "Dark Heresy / Only War"
+    source: "Dark Heresy Core Rulebook / Only War Core Rulebook"
   },
   {
     id: "ev_drukhari_night_raid",
-    title: "비명의 밤 — 드루카리(다크 엘다) 노예 사냥 습격!",
+    title: "비명의 밤 — 드루카리 위치 컬트의 도심 사냥",
     category: "전투",
-    req: { minAge: 15, excludeWorlds: ["terra", "mars", "krieg"], excludeTags: ["custodes"] },
-    reqLabel: "15세+ (테라·화성·크리그·쿠스토데스 제외)",
+    req: {
+      minAge: 15,
+      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
+      ]
+    },
+    reqLabel: "15세 이상 · 테라·화성·크리그 제외 · 필멸자",
     weight: 14,
-    text: "하늘에 보랏빛 웹웨이 균열이 찢어지며 가시 돋친 드루카리 레이더 정들이 비명 소리와 함께 도시를 덮쳤다! 저들은 죽이기 위해서가 아니라 산 채로 코모라의 고문실로 끌고 가기 위해 사냥한다!",
+    text: "해 질 녘 구름을 찢고 열린 보랏빛 균열 너머로 칼날 달린 드루카리 리버 제트바이크와 위치 컬트 사냥꾼들이 광장으로 쏟아져 내렸다! 저들은 도시를 점령하려는 것이 아니라, 코모라 투기장의 유흥거리로 삼을 산 포로를 그물과 갈고리로 낚아채려 한다. 비명이 메아리치는 골목 위로 가시 돋친 강습정이 낮게 선회한다.",
     choices: [
       {
-        label: "[사격 판정] 어둠 속을 질주하는 약탈정에 화력을 퍼부어 이웃들의 도주로를 연다",
+        label: "[사격 판정] 저공으로 급강하하는 리버 제트바이크 편대에 집중 사격을 퍼부어 시민들의 도주로를 연다",
         check: { stat: "BS", diff: -5 },
         success: {
-          text: "레이더 추진기를 명중시켜 추락시켰다! 약탈자들이 전리품을 버리고 웹웨이로 철수했다.",
+          text: "선두 제트바이크의 추진기를 명중시켜 추락시켰다! 약탈자들이 맹렬한 반격에 전리품을 버리고 웹웨이로 철수했다.",
           stats: { BS: 6, WP: 5, Inf: 7 }
         },
         fail: {
-          text: "독가시 소총(스플린터 라이플)에 스쳐 극심한 신경 독에 시달렸다.",
+          text: "드루카리의 스플린터 소총 독가시에 스쳐 극심한 신경 독에 시달렸다.",
           wounds: -28
         }
       },
       {
-        label: "[민첩 판정] 그림자 속 지하 벙커로 숨어들어 새벽까지 숨소리조차 죽인다",
+        label: "[민첩 판정] 사냥용 전기 그물을 피해 그림자 속 지하 벙커로 숨어들어 새벽까지 숨소리조차 죽인다",
         check: { stat: "Ag", diff: 5 },
         success: {
           text: "사냥꾼들의 끔찍한 웃음소리가 멀어질 때까지 완벽히 숨어 살아남았다.",
           stats: { Ag: 5, WP: 3 }
         },
         fail: {
-          text: "도주 중 파편에 크게 다쳤으나 다행히 납치만은 면했다.",
+          text: "도주 중 폭발 파편에 크게 다쳤으나 다행히 생포만은 면했다.",
           wounds: -20
         }
       }
     ],
-    source: "Codex: Drukhari"
+    source: "Codex: Drukhari / Lexicanum: Wych Cult"
   },
   {
     id: "ev_arc_xenos_contact_echo",
     title: "외계인 접촉의 여파 — 오르도 제노스의 시선과 암거래 항로",
     category: "외계",
     once: true,
-    req: { allTags: ["xenos_contact"], excludeTags: ["custodes", "grey_knight"] },
-    reqLabel: "이력: 외계인 접촉",
+    req: {
+      allTags: ["xenos_contact"],
+      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord"
+      ]
+    },
+    reqLabel: "이력: 외계인 접촉 · 쿠스토데스·그레이 나이트 제외",
     weight: 34,
-    text: "과거 외계 종족과 얽혔던 기억이 다시 발목을 잡았다. 변방 항구 주점에서 낯선 자유 무역상이 그대만 알아볼 수 있는 외계 문양 메달을 꺼내 보이며 '콜드 트레이드(Cold Trade)' 비밀 거래를 제안하는 동시에, 저편에서는 이단심문소 첩자의 시선이 느껴진다.",
+    text: "과거 외계 종족과 얽혔던 기억이 다시 발목을 잡았다. 변방 항구 주점에서 낯선 자유 무역상이 그대만 알아볼 수 있는 외계 문양 메달을 꺼내 보이며 금지된 암거래인 '콜드 트레이드'를 제안한다. 그와 동시에 구석 자리에서는 정통파 이단심문소 감시자의 차가운 시선이 등줄기를 훑고 지나간다.",
     choices: [
       {
         label: "[지성 판정] 과거 얻은 외계 성계도와 기술 첩보를 역으로 오르도 제노스에 전략 보고서로 바쳐 공로를 세운다",
@@ -313,7 +392,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[교섭 판정] 감시자의 눈을 피해 아엘다리 영석과 외계 희귀 물자를 중개해 막대한 이윤을 챙긴다",
         check: { stat: "Fel", diff: -5 },
         success: {
-          text: "치명적인 위험을 뚫고 거래를 성사시켜 평생 쓸 재물과 지하 인맥을 거머쥐었다. 물론 심문소에 들키면 즉시 화형감이다.",
+          text: "치명적인 위험을 뚫고 거래를 성사시켜 평생 쓸 재물과 지하 인맥을 거머쥐었다. 물론 정통파 심문관에게 들키면 즉시 처형감이다.",
           stats: { Fel: 7, Inf: 8 },
           corruption: 6
         },
@@ -334,22 +413,30 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Rogue Trader RPG / Lexicanum: Cold Trade"
+    source: "Rogue Trader Core Rulebook / Lexicanum: Cold Trade"
   },
   {
     id: "ev_s5_xenos_tau_diplomat",
-    title: "타우 제국 물 카스트 사절 — '대의(Greater Good)'의 달콤한 회유",
+    title: "타우 제국 물 카스트 사절 — 대의의 달콤한 회유",
     category: "외계 조우",
     once: true,
     req: {
       minAge: 16,
+      minYear: 742,
       anySegmenta: ["ultima"],
-      excludeTags: ["astartes", "custodes", "grey_knight"],
-      excludeWorldTags: ["feral"]
+      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
+        "cardinal", "canoness", "lord_inquisitor"
+      ]
     },
-    reqLabel: "세그멘툼 울티마 · 동부 변경 교역지",
+    reqLabel: "742.M41 이후 · 16세 이상 · 울티마 세그멘툼 · 동부 변경 교역지",
     weight: 28,
-    text: "동부 변경의 중립 교역 정거장에서 푸른 피부에 정갈한 비단 예복을 걸친 타우 제국 물 카스트 사절이 그대에게 정중히 차를 권했다. 그는 제국의 끝없는 징집과 기아를 지적하며, 타우 제국의 '대의(Greater Good)' 아래 합류하면 가족의 안전과 첨단 의료를 보장하겠다고 속삭인다.",
+    text: "동부 변경의 중립 교역 정거장에서 푸른 피부에 정갈한 비단 예복을 걸친 타우 제국 물 카스트 사절이 그대에게 정중히 차를 권했다. 그는 제국의 끝없는 징집과 기아를 지적하며, 타우 제국의 대의 아래 합류하면 안락한 삶과 첨단 의료를 보장하겠다고 속삭인다. 차분한 미소 너머로 호위 중인 크루트 용병의 차가운 시선이 방 안을 맴돈다.",
     choices: [
       {
         label: "[의지 판정] 외계인의 감언이설을 단호히 꾸짖고 사절단의 밀수 접선 명단을 파악해 제국 정보부에 넘긴다",
@@ -388,7 +475,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Water Caste / Gue'vesa / Codex: T'au Empire"
+    source: "Lexicanum: Water Caste / Codex: T'au Empire"
   },
   {
     id: "ev_s5_xenos_tau_battlesuit",
@@ -397,12 +484,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 18,
+      minYear: 742,
       anySegmenta: ["ultima"],
-      excludeWorldTags: ["feral"]
+      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
+      ]
     },
-    reqLabel: "세그멘툼 울티마 · 동부 변경 전선",
+    reqLabel: "742.M41 이후 · 18세 이상 · 울티마 세그멘툼 · 동부 변경 전선",
     weight: 28,
-    text: "안개 낀 협곡 위에서 푸른 펄스 광선이 빗발처럼 쏟아졌다! 제트팩으로 절벽을 뛰어넘는 타우 제국 불 카스트의 크라이시스 배틀슈트 편대가 표적 지시 드론을 앞세워 아군 수송 종대를 완벽한 사거리 밖에서 유린하고 있다.",
+    text: "안개 낀 협곡 위에서 푸른 펄스 광선이 빗발처럼 쏟아졌다! 제트팩으로 절벽을 뛰어넘는 타우 제국 불 카스트의 크라이시스 배틀슈트 편대가 표적 지시 드론을 앞세워 아군 수송 종대를 완벽한 사거리 밖에서 유린하고 있다. 적의 정밀 화망이 선두 장갑차를 꿰뚫으며 협곡의 퇴로가 화염에 휩싸인다.",
     choices: [
       {
         label: "[사격 판정] 배틀슈트보다 먼저 공중에 떠 있는 마커라이트 표적 드론을 정밀 사격으로 격추해 적 화망을 눈멀게 한다",
@@ -412,7 +506,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { BS: 8, Int: 5, Inf: 6 }
         },
         fail: {
-          text: "플라스마 사격의 열풍에 화상을 입었으나, 드론 몇 기를 떨어뜨려 수송 차량 일부를 살려 냈다.",
+          text: "플라즈마 사격의 열풍에 화상을 입었으나, 드론 몇 기를 떨어뜨려 수송 차량 일부를 살려 냈다.",
           wounds: -18,
           stats: { BS: 4, T: 3 }
         }
@@ -438,40 +532,44 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: XV8 Crisis Battlesuit / Damocles Gulf Lore"
+    source: "Lexicanum: XV8 Crisis Battlesuit / Codex: T'au Empire"
   },
   {
     id: "ev_s5_xenos_drukhari_slavers",
-    title: "어둠 속의 비명 — 드루카리 코모라 노예 습격선",
+    title: "칠흑의 정전 — 드루카리 카발 노예 수송선 강습",
     category: "외계 조우",
     once: true,
     req: {
       minAge: 16,
-      excludeWorlds: ["terra", "mars"],
-      excludeTags: ["custodes"]
+      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord"
+      ]
     },
-    reqLabel: "제국 변경 · 밤의 외계 습격",
+    reqLabel: "16세 이상 · 제국 변경 · 테라·화성·크리그 제외",
     weight: 28,
-    text: "행성의 전력망이 일순간 먹통이 되더니, 찢어진 웹웨이 차원문 너머로 가시 돋친 칠흑의 함정들이 미끄러져 내려왔다. 드루카리(다크 엘다) 카발 약탈단이다! 그들은 행성을 정복할 생각 따위는 없다. 오직 산 채로 주민들을 사슬에 묶어 코모라의 고문장으로 끌고 가려는 것이다.",
+    text: "행성 우주항의 전력망이 일순간 암전되더니, 궤도에서 강하한 칠흑의 드루카리 카발 강습정들이 정박장을 포위했다! 차가운 그림자 속에서 쇠사슬을 끌고 걸어 나온 카발 전사들이 격납고 노동자들을 통째로 노예선에 싣기 위해 학살극을 벌인다. 공포에 질린 군중 사이로 암흑 광선 포화가 탐조등을 하나씩 지워 나간다.",
     choices: [
       {
-        label: "[사격 판정] 저공 비행하는 레이더 강습정의 반중력 엔진을 집중 사격해 노예 포획선을 격추한다",
+        label: "[사격 판정] 정박장 위에 정지해 포로를 싣고 있는 노예 수송정의 반중력 동력부를 집중 타격한다",
         check: { stat: "BS", diff: -5 },
         success: {
-          text: "약탈선이 불길에 휩싸여 추락하자 갇혀 있던 수백 명의 주민이 풀려났다! 드루카리들은 손실이 커지자 서둘러 차원문 너머로 철수했다.",
+          text: "거대한 강습정이 불길에 휩싸여 기울어지자 사슬에 묶여 있던 수백 명의 주민이 풀려났다! 카발 약탈단은 손실이 커지자 서둘러 차원문 너머로 철수했다.",
           stats: { BS: 8, WP: 5, Inf: 7 }
         },
         fail: {
-          text: "독침 파편탄(스플린터)에 스쳐 극심한 고통에 시달렸으나 끝내 구역 방어선은 지켜 냈다.",
+          text: "독침 스플린터 파편탄에 스쳐 극심한 고통에 시달렸으나 끝내 항구 방어선은 지켜 냈다.",
           wounds: -20,
           stats: { T: 4, WP: 4 }
         }
       },
       {
-        label: "[민첩 판정] 어둠 속 기습 칼날을 피해 지하 방공호 통로를 열어 주민 수백 명을 재빨리 피신시킨다",
+        label: "[민첩 판정] 어둠 속 기습 칼날을 피해 화물 승강기 비상 통로를 열어 노동자 수백 명을 지하 방공호로 대피시킨다",
         check: { stat: "Ag", diff: -5 },
         success: {
-          text: "눈 깜짝할 새에 피난민들을 철문 뒤로 대피시켰다! 산 채로 끌려가는 지옥보다 나은 길을 열어 주었다.",
+          text: "눈 깜짝할 새에 피난민들을 두꺼운 방폭문 뒤로 대피시켰다! 코모라로 산 채로 끌려가는 지옥보다 나은 길을 열어 주었다.",
           stats: { Ag: 8, Fel: 5, Inf: 5 }
         },
         fail: {
@@ -481,15 +579,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "단 한 명의 생포도 허용하지 않겠다는 각오로 최후의 방어 진지에 틀어박혀 새벽까지 버틴다",
+        label: "단 한 명의 생포도 허용하지 않겠다는 각오로 격납고 최후의 방어 진지에 틀어박혀 지원군이 올 때까지 버틴다",
         effect: {
-          text: "코모라에 끌려가느니 싸우다 죽겠다는 냉혹한 결의가 어둠 속 공포를 이겨 내게 했다.",
+          text: "코모라에 끌려가느니 싸우다 죽겠다는 냉혹한 결의가 암전 속 공포를 이겨 내게 했다.",
           stats: { WP: 6, T: 4 },
           wounds: -10
         }
       }
     ],
-    source: "Lexicanum: Drukhari / Commorragh Realspace Raid"
+    source: "Lexicanum: Kabal / Codex: Drukhari"
   },
   {
     id: "ev_s5_xenos_drukhari_haemonculus",
@@ -498,12 +596,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 20,
-      excludeWorlds: ["terra", "mars"],
-      excludeWorldTags: ["feral"]
+      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
+      ]
     },
-    reqLabel: "20세 이상 · 제국 전역 (테라·화성·야만 제외)",
+    reqLabel: "20세 이상 · 제국 전역 · 테라·화성·크리그·야만 행성 제외",
     weight: 24,
-    text: "실종자 수색 끝에 폐쇄된 지하 도축장 깊숙한 곳에서 섬뜩한 유리 배양관들과 기괴한 수술 기구가 늘어선 드루카리 호문쿨루스의 비밀 실험실을 발견했다. 뼈로 만든 가면을 쓴 외계 외과의는 황홀한 웃음을 흘리며, 아군 포로를 돌려주는 대가로 그대의 생명력이나 비밀 표본을 요구한다.",
+    text: "실종자 수색 끝에 폐쇄된 지하 도축장 깊숙한 곳에서 섬뜩한 유리 배양관들과 기괴한 수술 기구가 늘어선 드루카리 호문쿨루스의 비밀 실험실을 발견했다. 뼈로 만든 가면을 쓴 외계 외과의는 황홀한 웃음을 흘리며, 아군 포로를 돌려주는 대가로 그대의 생명력이나 비밀 표본을 요구한다. 어둠 속에서 살점이 뒤틀린 그로테스크 경호 괴물들이 쇠사슬을 흔들며 길을 막아선다.",
     choices: [
       {
         label: "[의지 판정] 역겨운 외계인의 농간에 흔들리지 않고 소이탄과 화염으로 실험실 전체를 정화 소각한다",
@@ -549,14 +652,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 18,
-      excludeWorlds: ["terra", "mars"]
+      minYear: 897,
+      excludeWorlds: ["terra", "mars", "voidborn"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord"
+      ]
     },
-    reqLabel: "18세 이상 · 행성 지하 유적 지대",
+    reqLabel: "897.M41 이후 · 18세 이상 · 행성 지하 채굴 지대",
     weight: 28,
-    text: "광산 발파 작업 도중 수천만 년 동안 잠들어 있던 검은 석재 피라미드가 드러났다. 이내 대지가 에메랄드빛 녹색 섬광으로 물들더니, 말 한마디 없는 살아 있는 금속 해골 전사들이 완벽한 대열을 이루어 걸어 나온다. 가우스 광선이 닿은 장갑차는 원자 단위로 벗겨지며 사라졌다.",
+    text: "대규모 심층 광산의 지반이 굉음과 함께 갈라지더니, 행성 지하 전체를 감싸고 있던 거대한 고대 금속 회랑이 에메랄드빛으로 깨어났다! 지표가 흔들리는 가운데 채굴 기지의 수직 갱도를 타고 무수한 스캐럽 군체와 살아 있는 금속 해골 전사들이 떼를 지어 쏟아져 오른다. 방어선 앞 장갑차가 녹색 가우스 광선에 닿자 원자 단위로 벗겨지며 흔적도 없이 사라졌다.",
     choices: [
       {
-        label: "[지성 판정] 찢어진 금속 육신이 스스로 재생하는 현상을 간파하고 지하 중앙 동력탑(모놀리스)의 위상 회로를 집중 타격한다",
+        label: "[지성 판정] 찢어진 금속 육신이 스스로 재생하는 현상을 간파하고 지하 중앙 재구축 코어의 위상 회로를 집중 타격한다",
         check: { stat: "Int", diff: -5 },
         success: {
           text: "위상 재구축 신호가 끊기자 불사신 같던 금속 전사들이 일제히 멈춰 섰다! 기계교가 그대의 전술 분석을 극찬했다.",
@@ -572,7 +681,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[강인 판정] 전선 붕괴를 막기 위해 중화기 화망을 유지하며 채굴 기지 주민들이 탈출할 시간을 몸으로 번다",
         check: { stat: "T", diff: -5 },
         success: {
-          text: "스카라브 떼와 가우스 포화 속에서도 한 치도 물러서지 않았다! 수송선 전원이 무사히 이륙하는 기적을 이루었다.",
+          text: "스캐럽 떼와 가우스 포화 속에서도 한 치도 물러서지 않았다! 수송선 전원이 무사히 이륙하는 기적을 이루었다.",
           stats: { T: 8, WP: 6, Inf: 6 }
         },
         fail: {
@@ -598,12 +707,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 22,
-      excludeWorlds: ["terra"],
-      excludeWorldTags: ["feral"]
+      minYear: 897,
+      excludeWorlds: ["terra", "mars"],
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "custodes", "grey_knight", "dreadnought", "high_lord_terra"
+      ]
     },
-    reqLabel: "22세 이상 · 고대 유물·전장 지대",
+    reqLabel: "897.M41 이후 · 22세 이상 · 테라·화성·야만 행성 제외",
     weight: 22,
-    text: "전투가 멎은 고대 폐허 한가운데, 시간이 멈춘 듯한 테서랙트 미궁의 불빛 사이로 은빛 외계 군주 한 명이 우아하게 지팡이를 짚고 나타났다. 스스로를 '무한한 자 트라진(Trazyn the Infinite)'이라 밝힌 네크론 오버로드는 그대의 사소한 유품 하나를 자신의 박물관에 기증하면, 이 성계를 덮칠 치명적인 재앙의 좌표 하나를 알려 주겠다고 흥미롭게 제안한다.",
+    text: "전투가 멎은 고대 폐허 한가운데, 시간이 멈춘 듯한 테서랙트 미궁의 불빛 사이로 은빛 외계 군주 한 명이 우아하게 지팡이를 짚고 나타났다. 스스로를 '무한한 자 트라진'이라 밝힌 네크론 오버로드는 그대의 사소한 유품 하나를 자신의 박물관에 기증하면, 이 성계를 덮칠 치명적인 재앙의 좌표 하나를 알려 주겠다고 흥미롭게 제안한다. 폐허의 먼지조차 공중에 정지한 기괴한 정적 속에 에메랄드빛 안광이 그대를 흥미롭게 훑는다.",
     choices: [
       {
         label: "[교섭 판정] 박물관 전시품으로 갇히지 않도록 교묘한 말솜씨로 낡은 제국 연대 깃발 조각만 건네고 핵심 정보를 챙긴다",
@@ -650,11 +764,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 18,
-      excludeWorlds: ["terra", "mars"]
+      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord"
+      ]
     },
-    reqLabel: "18세 이상 · 제국 전역 (테라·화성 제외)",
+    reqLabel: "18세 이상 · 제국 전역 · 테라·화성·크리그 제외",
     weight: 26,
-    text: "안개 속에서 정교한 레이스본(Wraithbone) 갑주를 걸친 아엘다리 크래프트월드 파시어와 호위대가 홀연히 나타났다. 오만한 외계 예언자는 공명하는 목소리로 '인류여, 오늘 밤 동쪽 발전소를 멈추지 않으면 열흘 뒤 악마가 이 성계를 삼킬 것이다'라는 난해한 경고를 던지고는 침묵한다.",
+    text: "안개 속에서 정교한 레이스본 갑주를 걸친 아엘다리 크래프트월드 파시어와 호위대가 홀연히 나타났다. 오만한 외계 예언자는 공명하는 목소리로 '인류여, 오늘 밤 동쪽 발전소를 멈추지 않으면 열흘 뒤 악마가 이 성계를 삼킬 것이다'라는 난해한 경고를 던지고는 침묵한다. 호위 전사들의 수리검 화기가 미세한 광채를 띤 채 그대의 다음 움직임을 주시하고 있다.",
     choices: [
       {
         label: "[지성 판정] 아엘다리의 속셈을 그대로 믿지 않고 동쪽 발전소 지하의 실제 워프 수치와 배관을 정밀 조사한다",
@@ -691,21 +810,27 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Farseer / Craftworld Aeldari Lore"
+    source: "Lexicanum: Farseer / Codex: Craftworlds"
   },
   {
     id: "ev_s5_xenos_votann_prospect",
-    title: "보탄 연맹 자원 탐사대 — 킨(Kin) 무장 상단과의 위험한 교섭",
+    title: "보탄 연맹 자원 탐사대 — 킨 무장 상단과의 위험한 교섭",
     category: "외계 조우",
     once: true,
     req: {
       minAge: 18,
-      excludeWorlds: ["terra", "krieg"],
-      excludeWorldTags: ["feral"]
+      minYear: 999,
+      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord"
+      ]
     },
-    reqLabel: "18세 이상 · 은하 핵 인접 변경 · 소행성대",
+    reqLabel: "999.M41 이후 · 18세 이상 · 은하 핵 인접 변경 · 소행성대",
     weight: 26,
-    text: "성계 외곽 소행성 채굴 기지에 땅딸막하고 중무장한 이방인들의 묵직한 탐사 함선이 접안했다. 제국 기록에서 '스쿼트' 혹은 '보탄 연맹의 킨(Kin)'이라 불리는 독자 세력의 자원 탐사대다. 그들은 제국법 따위는 안중에도 없지만, 공정한 거래와 희귀 광물 교환만큼은 철저히 지킨다고 제안한다.",
+    text: "성계 외곽 소행성 채굴 기지에 땅딸막하고 중무장한 이방인들의 묵직한 탐사 함선이 접안했다. 제국 기록에서 '스쿼트' 혹은 '데미우르그'라 혼칭되는, 스스로를 '킨'이라 부르는 보탄 연맹의 자원 탐사대다. 그들은 제국법 따위는 안중에도 없지만, 공정한 거래와 희귀 광물 교환만큼은 철저히 지킨다고 제안한다.",
     choices: [
       {
         label: "[교섭 판정] 무력 충돌 대신 엄격한 물물교환 계약을 맺어 제국 기술로도 얻기 힘든 고강도 합금과 정밀 장비를 확보한다",
@@ -727,8 +852,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 8, WP: 4 }
         },
         fail: {
-          text: "기술을 엿본다는 의심을 사 킨 전사들의 볼카이트 총구 앞에서 서둘러 물러나야 했다.",
-          stats: { Ag: 3, Int: 3 }
+          text: "기술을 엿본다는 의심을 사 킨 전사들의 볼카이트 총구 앞에서 경고 사격을 피하며 서둘러 물러나야 했다.",
+          wounds: -10,
+          stats: { Inf: -3, Int: 2 }
         }
       },
       {

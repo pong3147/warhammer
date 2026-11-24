@@ -54,7 +54,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "스페이스 울프",
     priority: 3,
     req: { allTags: ["astartes"], anyChapters: ["space_wolves"] },
-    text: "더 팽(The Fang) 연회장에서 펜리스 독주 묠드를 들이켜며 형제들과 지난 원정의 무용담 사가를 목청껏 합창했다.",
+    text: "더 팽 연회장에서 펜리스 독주 묠드를 들이켜며 형제들과 지난 원정의 무용담 사가를 목청껏 합창했다.",
     effect: { stats: { T: 1, Fel: 1 } }
   },
   {
@@ -86,7 +86,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "다크 엔젤",
     priority: 3,
     req: { allTags: ["astartes"], anyChapters: ["dark_angels"] },
-    text: "회랑 그림자 너머로 후드를 깊이 눌러쓴 작은 '어둠 속의 감시자(Watcher in the Dark)'가 말없이 지나갔다. 누구도 그 정체를 묻지 않는 것이 챕터의 불문율이다.",
+    text: "회랑 그림자 너머로 후드를 깊이 눌러쓴 작은 '어둠 속의 감시자'가 말없이 지나갔다. 누구도 그 정체를 묻지 않는 것이 챕터의 불문율이다.",
     effect: { stats: { WP: 2 } }
   },
   {
@@ -110,7 +110,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "임페리얼 피스트",
     priority: 3,
     req: { allTags: ["astartes"], anyChapters: ["imperial_fists"] },
-    text: "명상실에서 전사한 선배 형제의 뼈에 세밀한 전투 문양을 새기는 '스크림쇼(Scrimshaw)' 수행으로 손끝의 흔들림을 완전히 없앴다.",
+    text: "명상실에서 전사한 선배 형제의 뼈에 세밀한 전투 문양을 새기는 '스크림쇼' 수행으로 손끝의 흔들림을 완전히 없앴다.",
     effect: { stats: { WP: 1, BS: 1 } }
   },
   {

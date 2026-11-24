@@ -10,7 +10,48 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 18,
       stats: { Int: 50, WP: 50 },
       maxCorruption: 25,
-      excludeTags: ["inquisition_agent", "inquisitor", "astartes", "custodes", "grey_knight", "abhuman", "heretic", "magos", "rogue_trader", "canoness", "lord_commissar"]
+      excludeTags: [
+        "inquisition_agent",
+        "inquisitor",
+        "lord_inquisitor",
+        "astartes",
+        "custodes",
+        "grey_knight",
+        "abhuman",
+        "heretic",
+        "chaos_aligned",
+        "chaos_champion",
+        "renegade_marine",
+        "chaos_lord",
+        "daemon_prince",
+        "high_lord_terra",
+        "sector_lord",
+        "planetary_governor",
+        "warmaster",
+        "general_rank",
+        "navy_admiral",
+        "cardinal",
+        "arbites_marshal",
+        "departmento_head",
+        "rt_lord_captain",
+        "rogue_trader",
+        "mechanicus",
+        "magos",
+        "fabricator_locum",
+        "fabricator_general",
+        "sororitas",
+        "celestian",
+        "canoness",
+        "commissar",
+        "lord_commissar",
+        "commissar_general",
+        "officer",
+        "scion",
+        "tempestus_prime",
+        "psyker_primaris",
+        "guild_magnate",
+        "crime_lord"
+      ]
     },
     reqLabel: "18세+ · 지성 50+ · 의지 50+",
     weight: 14,
@@ -26,9 +67,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["inquisition_agent"]
         },
         fail: {
-          text: "암호 해독은 미완이었으나 충성심은 인정받아 심문소의 비공식 정보원으로 이름을 올렸다.",
-          stats: { Int: 3, Inf: 5 },
-          addTags: ["inquisition_favor"]
+          text: "제한 시간 안에 암호의 함정을 간파하지 못했다. 요원은 혹시 모를 기밀 유출을 막기 위해 그대에게 가혹한 신경 심문과 입단속 처분을 내린 뒤 어둠 속으로 사라졌다.",
+          wounds: -12,
+          stats: { Inf: -4, WP: -2 }
         }
       },
       {
@@ -43,16 +84,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_inquisitor_ordo",
-    title: "로제트 수여와 오르도(Ordo) 선택",
+    title: "로제트 수여와 오르도 선택",
     category: "이단심문소",
     once: true,
     req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"], excludeTags: ["ordo_hereticus", "ordo_xenos", "ordo_malleus"] },
     reqLabel: "병종: 정식 이단심문관",
     weight: 50,
-    text: "이제 절대 권력의 인장인 이단심문관 로제트가 그대의 손에 쥐어졌다. 은하계의 수많은 적 가운데 어떤 성스러운 오르도(Ordo)에 평생을 바칠 것인가?",
+    text: "이제 절대 권력의 인장인 이단심문관 로제트가 그대의 손에 쥐어졌다. 은하계의 수많은 적 가운데 어떤 성스러운 오르도에 평생을 바칠 것인가?",
     choices: [
       {
-        label: "오르도 헤레티쿠스 (마녀·이단·반역자 사냥꾼)",
+        label: "오르도 헤레티쿠스 — 마녀·이단·반역자 사냥꾼",
         effect: {
           text: "제국 내부의 부패와 이단을 불태우는 심판자가 되었다. 국교와 소로리타스와의 연대가 강화된다.",
           stats: { WP: 6, Fel: 5, Inf: 8 },
@@ -61,15 +102,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "오르도 제노스 (외계인 위협 근절자)",
+        label: "오르도 제노스 — 외계인 위협 근절자",
         effect: {
-          text: "타이라니드, 오크, 네크론, 엘다의 음모를 추적하는 외계 전문가로 거듭났다. 데스워치 소집 권한을 확보했다.",
+          text: "오크, 아엘다리, 진스틸러를 비롯한 미지의 외계 종족이 꾸미는 음모를 추적하는 외계 전문가로 거듭났다. 데스워치 소집 권한을 확보했다.",
           stats: { Int: 6, BS: 5, Inf: 8 },
           addTags: ["ordo_xenos"]
         }
       },
       {
-        label: "오르도 말레우스 (카오스 악마 사냥꾼)",
+        label: "오르도 말레우스 — 카오스 악마 사냥꾼",
         effect: {
           text: "워프의 악마와 정면으로 맞서는 가장 위험한 길을 택했다. 그레이 나이트와 비밀리에 공조한다.",
           stats: { WP: 10, WS: 5, Inf: 8 },
@@ -84,13 +125,30 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_inquisition_purge",
     title: "이단심문소의 새벽 급습!",
     category: "위기",
-    req: { minAge: 16, minCorruption: 42, excludeTags: ["custodes", "grey_knight"] },
-    reqLabel: "오염도 42+ (이단 의혹 경고)",
+    req: {
+      minAge: 16,
+      minCorruption: 42,
+      excludeTags: [
+        "heretic",
+        "chaos_aligned",
+        "chaos_champion",
+        "renegade_marine",
+        "chaos_lord",
+        "daemon_prince",
+        "astartes",
+        "custodes",
+        "grey_knight",
+        "high_lord_terra",
+        "inquisitor",
+        "lord_inquisitor"
+      ]
+    },
+    reqLabel: "오염도 42+ · 이단 의혹 경고",
     weight: 28,
     text: "거처의 철문이 폭음과 함께 뜯겨 나갔다! 아르비테스와 이단심문소 스톰트루퍼들이 핫샷 라스건을 겨눈 채 외친다. '무릎 꿇어라, 이단자여! 오르도 헤레티쿠스의 이름으로 심문을 집행한다!'",
     choices: [
       {
-        label: "[백병/사격 판정] 무기를 뽑고 포위망을 뚫어 지하로 도주한다",
+        label: "[백병 판정] 무기를 뽑고 포위망을 뚫어 지하로 도주한다",
         check: { stat: "WS", diff: -10 },
         success: {
           text: "추격대를 쓰러뜨리고 도시 하층으로 잠적했다! 이제 돌이킬 수 없는 배교자·컬티스트의 길뿐이다.",
@@ -105,7 +163,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[권위 58+ 또는 교섭 55+ 해금] 정치적 연줄과 완벽한 알리바이로 무고를 주장한다",
+        label: "[교섭 판정 · 권위 58+ 또는 교섭 55+] 정치적 연줄과 완벽한 알리바이로 무고를 주장한다",
         req: { or: [{ stats: { Inf: 58 } }, { stats: { Fel: 55 } }] },
         check: { stat: "Fel", diff: -5 },
         success: {
@@ -123,8 +181,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       {
         label: "순순히 무릎을 꿇고 자백하며 자비로운 처분을 구한다",
         effect: {
-          text: "이단심문소에 '무고함은 아무것도 증명하지 못한다.' 고문 끝에 그대는 아코-플래젤런트나 화장터로 보내졌다.",
-          instantDeath: "이단 혐의로 이단심문소에 체포되어 정화의 화형에 처해짐"
+          text: "이단심문소에 무고함은 아무것도 증명하지 못한다. 몇 달에 걸친 참혹한 심문과 정화 고문 끝에 겨우 목숨만 건졌으나, 육신은 만신창이가 되었고 이마에 징벌 낙인이 찍힌 채 풀려났다.",
+          wounds: -45,
+          stats: { Inf: -15 },
+          corruption: -25,
+          addTags: ["penal_mark"]
         }
       }
     ],
@@ -132,7 +193,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_job_inquisition_exterminatus",
-    title: "이단심문관의 서명 — 익스터미나투스(행성 정화) 딜레마",
+    title: "이단심문관의 서명 — 행성 정화 익스터미나투스 딜레마",
     category: "직업 고유",
     once: true,
     req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"] },
@@ -149,7 +210,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성/무력 판정] 폭격을 보류하고 직접 정예 강습대를 이끌어 컬트 수장을 암살한다",
+        label: "[지성 판정] 폭격을 보류하고 직접 정예 강습대를 이끌어 컬트 수장을 암살한다",
         check: { stat: "Int", diff: -10 },
         success: {
           text: "기적적인 참수 작전으로 하이브 월드의 40억 시민을 구해 냈다! 이단심문소 내 청교도파의 영웅이 되었다.",
@@ -173,26 +234,26 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { anyCareers: ["inquisition_acolyte"] },
     reqLabel: "계급: 이단심문소 어콜라이트",
     weight: 26,
-    text: "스승 이단심문관이 암호 전문으로 하층 귀족 사교계에 숨어든 진스틸러·카오스 혼합 컬트에 위장 잠입하라고 명했다. '정체가 탄로 나면 나는 너를 모른다고 답할 것이다. 로제트를 원한다면 살아서 증거를 가져오라.'",
+    text: "스승 이단심문관이 암호 전문으로 우주 항구 화물선단에 숨어든 금지된 외계 유물 밀수 조직에 위장 잠입하라고 명했다. '정체가 탄로 나면 나는 너를 모른다고 답할 것이다. 배후 후원자의 명단과 밀수 항로 장부를 살아서 가져오라.'",
     choices: [
       {
-        label: "[교섭 판정] 타락한 귀족 행세를 완벽히 연기해 컬트 간부 명단을 통째로 빼낸다",
+        label: "[교섭 판정] 탐욕스러운 암시장 중개인 행세를 완벽히 연기해 밀수 조직의 거래 장부를 통째로 빼낸다",
         check: { stat: "Fel", diff: -5 },
         success: {
-          text: "아무 의심도 받지 않고 핵심 명단을 탈취했다! 스승 이단심문관이 그대를 차기 심문관 후보(인터로게이터)로 격상했다.",
+          text: "아무 의심도 받지 않고 핵심 거래 장부와 접선 좌표를 탈취했다! 스승 이단심문관이 그대의 냉철한 위장 실력을 높이 평가하며 핵심 현장 요원으로 신임했다.",
           stats: { Fel: 6, Int: 6, Inf: 10 }
         },
         fail: {
-          text: "정체가 발각되어 암살자들의 포위망을 피투성이로 뚫고 겨우 탈출했다.",
+          text: "정체가 발각되어 부두 창고에서 암살자들의 포위망을 피투성이로 뚫고 겨우 탈출했다.",
           wounds: -28,
           stats: { WS: 4 }
         }
       },
       {
-        label: "[지성 판정] 직접 잠입 대신 통신 감청과 회계 장부 추적만으로 배후를 밝혀낸다",
+        label: "[지성 판정] 직접 잠입 대신 화물 통관 기록과 항구 통신 감청만으로 배후를 밝혀낸다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "치밀한 데스크 수사로 3개 은신처를 정확히 특정해 깔끔한 급습을 이끌었다.",
+          text: "치밀한 기록 대조로 밀수 은신처 세 곳을 정확히 특정해 깔끔한 급습을 이끌었다.",
           stats: { Int: 7, Inf: 7 }
         },
         fail: {
@@ -205,15 +266,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_inquisition_radical_puritan",
-    title: "이단심문소 비밀 회의 — 청교도파 vs 급진파",
+    title: "이단심문소 비밀 회의 — 청교도파와 급진파의 충돌",
     category: "이단심문소",
     req: { anyCareers: ["inquisition_acolyte", "inquisition_interrogator", "inquisitor", "lord_inquisitor", "inquisitor_representative"] },
     reqLabel: "이단심문소 소속",
     weight: 22,
-    text: "오르도 비밀 콘클라베에서 격론이 터졌다. 급진파 심문관이 '다가오는 악마 군단을 막기 위해 포획한 데몬호스트(악마 빙의체)를 역이용하자'고 주장하자 청교도파가 볼터를 빼 들며 대치한다!",
+    text: "오르도 비밀 콘클라베에서 격론이 터졌다. 급진파 심문관이 '다가오는 악마 군단을 막기 위해 포획한 데몬호스트를 역이용하자'고 주장하자 청교도파가 볼터를 빼 들며 대치한다!",
     choices: [
       {
-        label: "[청교도파] 악마의 힘을 빌리는 자는 이미 이단이다! 단호히 숙청 편에 선다",
+        label: "[의지 판정 · 청교도파] 악마의 힘을 빌리는 자는 이미 이단이다! 단호히 숙청 편에 선다",
         check: { stat: "WP", diff: 0 },
         success: {
           text: "청교도파 다수의 지지를 얻어 위험한 데몬호스트 실험을 봉쇄하고 명성을 쌓았다!",
@@ -227,7 +288,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[급진파] 제국이 살아남을 수 있다면 지옥의 불이라도 훔쳐 써야 한다! 급진파에 동조한다",
+        label: "[지성 판정 · 급진파] 제국이 살아남을 수 있다면 지옥의 불이라도 훔쳐 써야 한다! 급진파에 동조한다",
         check: { stat: "Int", diff: 0 },
         success: {
           text: "금지된 지식과 비밀 정보망을 공유받으며 압도적 성과를 올렸지만 영혼에 어둠이 스몄다.",
@@ -246,45 +307,50 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_rank_inquisitor_conclave",
-    title: "이단심문관 — 성역 비밀 회의(Conclave)와 급진파 탄핵 표결",
+    title: "이단심문관 — 성역 콘클라베와 행성 총독의 항명",
     category: "계급 고유",
     once: true,
-    req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"] },
-    reqLabel: "계급: 제국 이단심문관(인퀴지터)",
+    req: { anyCareers: ["inquisitor", "lord_inquisitor"] },
+    reqLabel: "계급: 제국 이단심문관",
     weight: 28,
-    text: "성역 이단심문관 12명이 모인 극비 콘클라베(회의). 같은 오르도 소속 선배 이단심문관이 악마 무기를 사용해 카오스 침공을 막아 낸 사건을 두고 '이단 선고(익스커뮤니케이트 트레이터리스)' 찬반 표결이 6 대 5로 팽팽하다. 마지막 한 표가 그대의 손에 달렸다!",
+    text: "성역 이단심문관들이 모인 극비 콘클라베에 긴급 안건이 상정되었다. 핵심 군수 하이브 월드의 행성 총독이 이단 혐의가 짙은 귀족 가문을 비호하며 이단심문소의 수사관 출입과 로제트 권한마저 정면으로 거부한 것이다. 무력 징벌에 나서면 성전군 보급이 끊기고, 물러서면 심문소의 절대 권위가 무너진다.",
     choices: [
       {
-        label: "[의지 판정] 청교도파의 이름으로 '카오스의 도구는 결국 주인을 삼킨다'며 단호히 탄핵에 표를 던진다",
-        check: { stat: "WP", diff: 0 },
+        label: "[권위 판정] 콘클라베의 합동 칙령을 이끌어 내어 궤도 함대와 아르비테스 강습대를 총독궁에 직접 투입한다",
+        check: { stat: "Inf", diff: -5 },
         success: {
-          text: "청교도파 다수의 지지를 얻어 성역 내 오염된 급진파 인맥을 일소했다! 오르도 내 권위와 순결함이 드높아졌다.",
-          stats: { WP: 7, Inf: 9 },
-          faith: 12,
-          corruption: -10
+          text: "황제의 이름으로 성채 정문을 부수고 항명한 총독을 현장에서 파면 체포했다! 성역 전역의 귀족들이 다시 이단심문소 로제트 앞에 무릎을 꿇었다.",
+          stats: { Inf: 10, WP: 6 },
+          faith: 8
         },
         fail: {
-          text: "표결 후 급진파 자객의 암살 시도를 가까스로 막아 냈다. 이단심문소 내부 전쟁은 언제나 그림자 속에서 벌어진다.",
+          text: "총독 측 사병대와 유혈 시가전이 벌어지며 부상을 입었고, 군수 보급이 일시 마비되어 성역 원로회의 질책을 받았다.",
           wounds: -18,
-          stats: { WS: 4, Inf: 4 }
+          stats: { Inf: -4, Fel: -3 }
         }
       },
       {
-        label: "[지성 판정] 현실적 급진파의 입장에서 '인류를 구한 공적과 금단의 지식을 회수·통제하자'고 중재한다",
+        label: "[지성 판정] 전면 충돌을 피하고 총독의 경쟁 귀족 가문과 은밀히 결탁해 하룻밤 사이에 무혈 정변으로 총독을 교체한다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "탄핵 대신 비밀 봉인 및 감시 조건으로 타협안을 이끌어 내고, 막강한 급진파 정보망의 빚을 받아 냈다!",
-          stats: { Int: 7, Inf: 10, Fel: 5 },
-          corruption: 6
+          text: "포성 한 번 울리지 않고 반항적인 총독을 실각시킨 뒤 심문소에 충성하는 새 총독을 앉혔다! 콘클라베 원로들이 그대의 정치적 수완에 감탄했다.",
+          stats: { Int: 8, Inf: 9, Fel: 5 }
         },
         fail: {
-          text: "청교도파 원로들이 그대마저 의심의 눈초리로 기록부에 올렸다.",
-          stats: { Inf: -5, Int: 3 },
-          corruption: 5
+          text: "밀약이 사전에 누설되어 반격 자객의 습격을 받았다. 총독은 결국 숙청했으나 현지 정보망의 절반을 잃었다.",
+          wounds: -14,
+          stats: { Inf: -4 }
+        }
+      },
+      {
+        label: "행성 십일조를 관할하는 아드미니스트라툼 감사국과 공조해 총독의 자금줄과 궤도 통행권을 합법적으로 동결한다",
+        effect: {
+          text: "시간은 다소 걸렸으나 병참 손실 없이 총독을 굴복시키고 이단 혐의자 전원을 넘겨받았다.",
+          stats: { Int: 5, Inf: 6 }
         }
       }
     ],
-    source: "Dark Heresy / Eisenhorn & Ravenor Lore"
+    source: "Lexicanum: Conclave / Dark Heresy Core Rulebook"
   },
   {
     id: "ev_arc_ordo_hereticus",
@@ -300,7 +366,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[지성 판정] 아뎁타 소로리타스 전투 수녀 분견대와 함께 대성당 지하 서고를 급습해 이단 장부를 압수한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "지하 납골당에서 가짜 성유물과 배교 추기경의 카오스 서약서를 찾아냈다! 오르도 헤레티쿠스 의회가 그대의 단호한 정화를 찬사했다.",
+          text: "지하 납골당에서 가짜 성유물과 배교 추기경의 카오스 서약서를 찾아냈다! 오르도 헤레티쿠스 의회가 그대의 단호한 정화에 찬사를 보냈다.",
           stats: { Int: 6, WP: 5, Inf: 8 },
           faith: 10
         },
@@ -343,15 +409,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"], allTags: ["ordo_xenos"] },
     reqLabel: "이단심문관 · 오르도 제노스",
     weight: 38,
-    text: "변방 광산 위성의 노동자 조합이 3대에 걸쳐 '네 팔의 황제'를 숭배하며 외부 감찰관을 살해했다는 보고가 올라왔다. 전형적인 진스틸러 교단의 봉기 직전 징후이며, 방치하면 하이브 함대를 불러들일 재앙이다.",
+    text: "변방 광산 위성의 노동자 조합이 3대에 걸쳐 '네 팔의 황제'를 숭배하며 외부 감찰관을 살해했다는 보고가 올라왔다. 전형적인 진스틸러 교단의 봉기 직전 징후이며, 방치하면 성계 전체를 삼킬 대규모 외계 침공을 불러들일 재앙이다.",
     choices: [
       {
         label: "[권위 판정] 인근 워치 포트리스에 데스워치 킬 팀 파견을 요청해 패트리아크 둥지를 직접 소탕한다",
         check: { stat: "Inf", diff: -5 },
         success: {
-          text: "검은 갑주의 데스워치 베테랑들과 합동 강습을 감행해 지하 패트리아크의 머리를 베어 냈다! 성계 전체를 포식의 위기에서 구해 냈다.",
+          text: "검은 갑주의 데스워치 베테랑들과 합동 강습을 감행해 지하 패트리아크의 머리를 베어 냈다! 성계 전체를 외계 침공의 위기에서 구해 냈다.",
           stats: { Inf: 8, BS: 5, WS: 4 },
-          addTags: ["tyranic_war_vet"]
+          addTags: ["xenos_contact"]
         },
         fail: {
           text: "패트리아크의 발톱에 중상을 입었으나 데스워치 킬 팀의 엄호로 둥지를 멜타 폭탄으로 붕괴시키는 데 성공했다.",
@@ -373,7 +439,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "궤도 함대에 광산 구역 정밀 폭격을 명령해 하이브 함대 유인 신호를 원천 차단한다",
+        label: "궤도 함대에 광산 구역 정밀 폭격을 명령해 대규모 외계 침공을 부를 유인 신호를 원천 차단한다",
         effect: {
           text: "수십만 명의 광부가 붕괴한 갱도와 함께 묻혔으나, 성역은 외계 포식자의 시선을 피했다. 이것이 오르도 제노스의 냉혹한 계산이다.",
           stats: { Inf: 5, Int: 4, Fel: -4 }
@@ -384,7 +450,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_arc_ordo_malleus",
-    title: "오르도 말레우스 — 악마숙주 소환 의식과 타이탄의 은빛 전사들",
+    title: "오르도 말레우스 — 데몬호스트 소환 의식과 타이탄의 은빛 전사들",
     category: "이단심문소",
     once: true,
     req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"], allTags: ["ordo_malleus"] },
@@ -438,7 +504,49 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "심문소 신임의 대가 — 검은 인장이 찍힌 비밀 소환장",
     category: "이단심문소",
     once: true,
-    req: { allTags: ["inquisition_favor"], excludeTags: ["inquisitor", "custodes", "grey_knight", "heretic"] },
+    req: {
+      allTags: ["inquisition_favor"],
+      excludeTags: [
+        "inquisitor",
+        "lord_inquisitor",
+        "astartes",
+        "custodes",
+        "grey_knight",
+        "heretic",
+        "chaos_aligned",
+        "chaos_champion",
+        "renegade_marine",
+        "chaos_lord",
+        "daemon_prince",
+        "high_lord_terra",
+        "sector_lord",
+        "planetary_governor",
+        "warmaster",
+        "general_rank",
+        "navy_admiral",
+        "cardinal",
+        "arbites_marshal",
+        "departmento_head",
+        "rt_lord_captain",
+        "rogue_trader",
+        "mechanicus",
+        "magos",
+        "fabricator_locum",
+        "fabricator_general",
+        "sororitas",
+        "celestian",
+        "canoness",
+        "commissar",
+        "lord_commissar",
+        "commissar_general",
+        "officer",
+        "scion",
+        "tempestus_prime",
+        "psyker_primaris",
+        "guild_magnate",
+        "crime_lord"
+      ]
+    },
     reqLabel: "이력: 심문소 신임",
     weight: 34,
     text: "이단심문소의 호의는 결코 공짜가 아니다. 한밤중 문틈으로 검은 밀랍 인장이 찍힌 암호 서신이 밀려 들어왔다. '그대가 과거 쌓은 신임을 증명할 때가 왔다. 부패한 성계 징세관의 비밀 장부를 회수하라.'",
@@ -510,7 +618,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "심문소 수배령 — 우주 항구의 포위망과 암살자 추격",
     category: "위기",
     once: true,
-    req: { allTags: ["wanted_by_inquisition"] },
+    req: {
+      allTags: ["wanted_by_inquisition"],
+      excludeTags: [
+        "custodes",
+        "grey_knight",
+        "astartes",
+        "renegade_marine",
+        "chaos_lord",
+        "daemon_prince",
+        "high_lord_terra"
+      ]
+    },
     reqLabel: "이력: 심문소 수배",
     weight: 38,
     text: "우주 항구 전광판과 아르비테스 검문소마다 그대의 얼굴과 체포 영장이 송출되고 있다! 설상가상으로 어두운 골목 위 난간에서 정체를 알 수 없는 검은 신스스킨 차림의 추적자가 저격 조준경을 맞춘 섬광이 번쩍였다.",
@@ -559,13 +678,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   // =========================================================================
   {
     id: "ev_s12_acolyte_interrogator",
-    title: "이단심문소 어콜라이트 — 심문자(Interrogator) 승격 최종 시험",
+    title: "이단심문소 어콜라이트 — 심문자 승격 최종 시험",
     category: "이단심문소",
     once: true,
     req: { anyCareers: ["inquisition_acolyte"], excludeTags: ["interrogator_rank"] },
     reqLabel: "직군: 이단심문소 어콜라이트",
     weight: 36,
-    text: "수년간 그대를 지켜본 주군 이단심문관이 밀실로 불러 세 가지 봉인 파일을 내밀었다. '귀족 살인 사건의 배후에 카오스 교단이 숨어 있다. 지원도 신분 보장도 없이 48시간 안에 주모자의 진짜 이름을 가져온다면 그대를 정식 심문자(Interrogator)로 임명하마.'",
+    text: "수년간 그대를 지켜본 주군 이단심문관이 밀실로 불러 세 가지 봉인 파일을 내밀었다. '상층 첨탑의 연쇄 귀족 살인 사건 배후에 이단 교단이 숨어 있다. 지원도 신분 보장도 없이 48시간 안에 주모자의 진짜 이름을 가져온다면 그대를 정식 심문자로 임명하마.'",
     choices: [
       {
         label: "[지성 판정] 시신의 룬 문양과 성당 헌금 장부를 역추적해 귀족 가문 집사가 배후 교주임을 완벽히 입증한다",
@@ -576,10 +695,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["interrogator_rank"]
         },
         fail: {
-          text: "교단의 거짓 단서에 속아 함정에 빠졌으나 간신히 살아 돌아와 주모자의 정체를 밝혀냈다.",
+          text: "교단의 거짓 단서에 속아 매복에 빠지는 바람에 기한 안에 주모자를 밝혀내지 못했다. 목숨만 건져 돌아오자 주군은 심문자 승격을 무기한 보류했다.",
           wounds: -18,
-          stats: { Int: 4, Inf: 5 },
-          addTags: ["interrogator_rank"]
+          stats: { Inf: -4 }
         }
       },
       {
@@ -591,9 +709,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["interrogator_rank"]
         },
         fail: {
-          text: "정보상이 배신해 추격전을 치렀으나 끝내 사건을 해결해 신뢰를 얻었다.",
+          text: "정보상이 배신해 유혈 추격전을 치르는 사이 주모자가 자취를 감추었다. 주군은 실망을 감추지 않으며 승격을 미루었다.",
           wounds: -14,
-          stats: { Fel: 4, Ag: 4 }
+          stats: { Inf: -3 }
         }
       },
       {
@@ -659,7 +777,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { anyCareers: ["inquisition_acolyte"] },
     reqLabel: "직군: 이단심문소 어콜라이트",
     weight: 30,
-    text: "늦은 밤 스승 이단심문관의 지하 연구실에 보고서를 올리러 들어갔다가 충격적인 장면을 보았다. 스승이 묶어 둔 죄수의 몸에 워프 악마를 가두는 '악마숙주(Daemonhost)' 소환진을 그리고 있었다! 스승은 돌아보며 '제국을 구할 거대한 적을 막기 위한 불가피한 무기다'라고 속삭인다.",
+    text: "늦은 밤 스승 이단심문관의 지하 연구실에 보고서를 올리러 들어갔다가 충격적인 장면을 보았다. 스승이 묶어 둔 죄수의 몸에 워프 악마를 가두는 '데몬호스트' 소환진을 그리고 있었다! 스승은 돌아보며 '제국을 구할 거대한 적을 막기 위한 불가피한 무기다'라고 속삭인다.",
     choices: [
       {
         label: "[의지 판정] 스승이라 해도 선을 넘었다 — 즉시 라스피스톨을 겨누고 소환진을 파괴한 뒤 콘클라베에 고발한다",
@@ -701,7 +819,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s12_inquisitor_retinue",
-    title: "제국 이단심문관 — 새 수행단(Retinue) 편성과 결함 있는 정예들",
+    title: "제국 이단심문관 — 새 수행단 편성과 결함 있는 정예들",
     category: "이단심문소",
     once: true,
     req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"] },
@@ -717,8 +835,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Fel: 8, Inf: 8, Int: 5 }
         },
         fail: {
-          text: "추방자 기계교도가 기밀 장비를 건드리다 사고를 냈으나 나머지는 훌륭히 정착했다.",
-          stats: { Inf: 4, Int: 4 }
+          text: "추방자 기계교도가 기밀 장비를 무단 개조하다 폭주 사고를 일으켜 수행단이 반파되었고, 사건 은폐에 적지 않은 권위를 소모했다.",
+          wounds: -10,
+          stats: { Inf: -3, Fel: -3 }
         }
       },
       {
@@ -730,8 +849,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 6
         },
         fail: {
-          text: "인원이 부족해 수사가 다소 길어졌으나 끝내 배신 없는 신뢰 관계를 구축했다.",
-          stats: { WP: 4, Inf: 3 }
+          text: "배제된 두 후보가 원한을 품고 성역 암흑가에 수사 동선을 흘리는 바람에 핵심 단서를 놓치고 체면을 구겼다.",
+          stats: { Inf: -3, Fel: -3 }
         }
       },
       {

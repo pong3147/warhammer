@@ -6,16 +6,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "울트라마린 — 《코덱스 아스타르테스》 교리 이탈 논쟁",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["ultramarines"] },
-    reqLabel: "챕터: 울트라마린",
+    req: {
+      minYear: 745,
+      allTags: ["astartes"],
+      anyChapters: ["ultramarines"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "chapter_master"]
+    },
+    reqLabel: "745.M41 이후 · 챕터: 울트라마린",
     weight: 34,
-    text: "타이라니드 돌연변이 무리가 아군 방어선의 측면을 파고들었다. 1중대 선배는 《코덱스 아스타르테스》 정석대로 사각 방진을 유지하라 명하지만, 그대의 전술안은 교리에 없는 우회 역포위가 훨씬 적은 피해를 낳는다고 가리킨다.",
+    text: "타이라니드 생체 괴수 무리가 아군 방어선의 측면을 파고들었다. 1중대 선배는 《코덱스 아스타르테스》 정석대로 사각 방진을 유지하라 명하지만, 그대의 전술안은 교리에 없는 우회 역포위가 훨씬 적은 피해를 낳는다고 가리킨다.",
     choices: [
       {
         label: "[지성 판정] 코덱스의 정신을 유연하게 재해석해 변칙 역포위 기동을 감행한다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "'용기와 명예로!' 기습 우회가 적 시냅스 괴수를 단칼에 절단했다! 챕터 지휘부도 로부테 길리먼이 원한 진정한 실용주의라며 그대의 전술안을 공식 주석에 등재했다.",
+          text: "'용기와 명예로!' 기습 우회가 적 시냅스 괴수를 단칼에 절단했다! 챕터 지휘부도 프라이마크 로부테 길리먼이 생전에 설파한 진정한 실용주의라며 그대의 전술안을 공식 주석에 등재했다.",
           stats: { Int: 6, Inf: 6, BS: 3 },
           addTags: ["tyrannic_veteran"]
         },
@@ -39,14 +44,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Ultramarines / Codex: Space Marines"
+    source: "Lexicanum: Ultramarines / Codex Supplement: Ultramarines"
   },
   {
     id: "ev_chap_blood_angels",
     title: "블러드 엔젤 — '붉은 갈증'과 '검은 분노'의 속삭임",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["blood_angels"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["blood_angels"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 블러드 엔젤",
     weight: 34,
     text: "치열한 근접전 한복판, 시야가 온통 선홍빛으로 물들며 1만 년 전 프라이마크 생귀니우스가 호루스에게 쓰러지던 최후의 기억이 뇌리를 찢고 밀려든다. 적 병사들이 모두 반역자 호루스로 보이기 시작했다!",
@@ -60,49 +69,53 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 10
         },
         fail: {
-          text: "잠시 이성을 잃고 적진을 도륙했다. 전투 후 며칠간 고독의 탑에 갇혀 피의 갈증을 진정시켜야 했다.",
+          text: "잠시 이성을 잃고 적진을 도륙했다. 전투 후 며칠간 리클루시움 석실에 격리되어 채플린의 영창 아래 피의 갈증을 진정시켜야 했다.",
           wounds: -15,
           stats: { WS: 6, Fel: -4 }
         }
       },
       {
-        label: "[백병 판정] 붉은 갈증을 해방해 적 지휘부를 일격에 분쇄하고 채플린의 인도를 받는다",
+        label: "[백병 판정] 붉은 갈증의 광기를 적 지휘부에 쏟아부은 뒤 채플린의 인도에 몸을 맡긴다",
         check: { stat: "WS", diff: 0 },
         success: {
-          text: "황제와 생귀니우스를 위하여! 검은 분노의 문턱에서 폭발한 초인적 맹공이 적군을 전멸시켰다. 전투 후 채플린의 축성 아래 데스 컴퍼니의 위험한 영광을 가슴에 새겼다.",
+          text: "황제와 생귀니우스를 위하여! 검은 분노의 문턱에서 폭발한 초인적 맹공이 적군을 전멸시켰다. 전투 후 채플린은 그대가 완전한 광기에 삼켜지지 않고 되돌아온 기적을 확인하며 데스 컴퍼니 분노를 이겨 낸 전사로 기록했다.",
           stats: { WS: 8, Ag: 4, T: 3 },
           wounds: -10,
           addTags: ["death_company"]
         },
         fail: {
-          text: "분노에 눈이 멀어 적의 집중 포화에 정면으로 뛰어들었다가 간신히 아포세카리에게 회수되었다.",
+          text: "분노에 눈이 멀어 적의 집중 포화에 정면으로 뛰어들었다가 간신히 생귀너리 사제에게 회수되었다.",
           wounds: -28,
           stats: { WS: 4 }
         }
       }
     ],
-    source: "Lexicanum: Black Rage / Codex: Blood Angels"
+    source: "Lexicanum: Black Rage / Codex Supplement: Blood Angels"
   },
   {
     id: "ev_chap_space_wolves",
-    title: "스페이스 울프 — 카니스 헬릭스와 심문소의 시민 숙청령",
+    title: "스페이스 울프 — 늑대의 의협심과 이단심문소의 시민 숙청령",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["space_wolves"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["space_wolves"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "chapter_master"]
+    },
     reqLabel: "챕터: 스페이스 울프",
     weight: 34,
-    text: "악마 침공을 막아 낸 직후, 오르도 말레우스 심문관이 '카오스를 목격한 행성 방위군과 민간인 전원을 처형하라'는 냉혹한 명령을 내렸다. 늑대의 피가 끓어오른다. 펜리스의 전사들은 용감히 싸운 필멸자를 배신하지 않는다!",
+    text: "악마 침공을 막아 낸 직후, 오르도 말레우스 이단심문관이 '카오스를 목격한 행성 방위군과 민간인 전원을 처형하라'는 냉혹한 명령을 내렸다. 늑대의 피가 끓어오른다. 펜리스의 전사들은 용감히 싸운 필멸자를 배신하지 않는다!",
     choices: [
       {
-        label: "[백병/위압 판정] 프로스트 액스를 뽑아 민간인 피난선을 몸으로 막아선다",
+        label: "[백병 판정] 프로스트 액스를 뽑아 민간인 피난선을 몸으로 막아선다",
         check: { stat: "WS", diff: 0 },
         success: {
-          text: "'펜리스 효르다!' 압도적인 기세 앞에 심문관의 수행원들이 뒷걸음질쳤다. 민간인 수송선은 무사히 성계를 이탈했고, 그대의 이름은 펜리스의 사가에 새겨졌다!",
+          text: "'펜리스 효르다!' 압도적인 기세 앞에 이단심문관의 수행원들이 뒷걸음질쳤다. 민간인 수송선은 무사히 성계를 이탈했고, 그대의 이름은 펜리스의 사가에 새겨졌다!",
           stats: { WS: 5, Fel: 6, WP: 5 },
           addTags: ["wolf_guard"]
         },
         fail: {
-          text: "심문소 폭풍병들과의 충돌 끝에 부상을 입었으나, 그 틈에 민간인 절반은 목숨을 건졌다.",
+          text: "이단심문소 폭풍병들과의 충돌 끝에 부상을 입었으나, 그 틈에 민간인 절반은 목숨을 건졌다.",
           wounds: -20,
           stats: { Inf: -4, WP: 4 }
         }
@@ -111,29 +124,33 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[의지 판정] 룬 프리스트와 함께 워프의 흔적을 정화해 숙청의 명분을 없앤다",
         check: { stat: "WP", diff: 0 },
         success: {
-          text: "펜리스 룬의 바람이 잔여 오염을 깨끗이 씻어 내자 심문관도 어쩔 수 없이 처형 명령을 철회했다.",
+          text: "펜리스 룬의 바람이 잔여 오염을 깨끗이 씻어 내자 이단심문관도 어쩔 수 없이 처형 명령을 철회했다.",
           stats: { WP: 6, Int: 4, Inf: 4 }
         },
         fail: {
-          text: "정화가 불완전해 일부 격리 수용을 막지 못했다. 차가운 분노를 가슴에 묻었다.",
-          stats: { WP: 3, Fel: -2 }
+          text: "정화가 불완전해 일부 격리 수용을 막지 못했고, 이단심문관과의 대립으로 외교적 마찰만 깊어졌다.",
+          stats: { Fel: -3, Inf: -2 }
         }
       }
     ],
-    source: "Lexicanum: Months of Shame / Codex: Space Wolves"
+    source: "Lexicanum: Months of Shame / Codex Supplement: Space Wolves"
   },
   {
     id: "ev_chap_dark_angels",
-    title: "다크 엔젤 — '폴른(The Fallen)'의 그림자와 이너 서클",
+    title: "다크 엔젤 — 폴른의 그림자와 이너 서클",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["dark_angels"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["dark_angels"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "chapter_master"]
+    },
     reqLabel: "챕터: 다크 엔젤",
     weight: 34,
-    text: "제국군 연합 작전 도중, 무너진 성당 폐허에서 1만 년 전 대성전 시절의 검은 파워 아머를 입은 정체불명의 아스타르테스가 포착되었다. 채플린-인터로게이터가 암호 채널로 속삭인다. '우군에게 알리지 마라. 지금 당장 그 자를 생포하라.'",
+    text: "제국군 연합 작전 도중, 무너진 성당 폐허에서 1만 년 전 대성전 시절의 검은 파워 아머를 입은 정체불명의 아스타르테스가 포착되었다. 인터로게이터-채플린이 암호 채널로 속삭인다. '우군에게 알리지 마라. 지금 당장 그 자를 생포하라.'",
     choices: [
       {
-        label: "[지성/의지 판정] 제국 동맹군을 속여 현장을 봉쇄하고 검은 갑주의 배반자를 생포한다",
+        label: "[의지 판정] 제국 동맹군을 속여 현장을 봉쇄하고 검은 갑주의 배반자를 생포한다",
         check: { stat: "WP", diff: -5 },
         success: {
           text: "'회개하라! 내일이면 그대는 죽으리니!' 극비리에 목표를 생포해 '더 락' 지하 감방으로 이송했다. 챕터 고위층이 그대의 침묵을 인정해 비밀 결사 '이너 서클'의 문턱을 열어 주었다!",
@@ -149,19 +166,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       {
         label: "비밀 사냥보다 현재 아군 전선의 사수를 우선해 정면 돌파를 지휘한다",
         effect: {
-          text: "제국군 수만 명을 구해 냈으나, 채플린-인터로게이터의 싸늘한 눈초리가 오랫동안 등 뒤에 머물렀다.",
+          text: "제국군 수만 명을 구해 냈으나, 인터로게이터-채플린의 싸늘한 눈초리가 오랫동안 등 뒤에 머물렀다.",
           stats: { BS: 4, Fel: 4, Inf: -2 }
         }
       }
     ],
-    source: "Lexicanum: The Fallen / Codex: Dark Angels"
+    source: "Lexicanum: The Fallen / Codex Supplement: Dark Angels"
   },
   {
     id: "ev_chap_imperial_fists",
-    title: "임페리얼 피스트 — 고통의 장갑(Pain Glove)과 무너지지 않는 성벽",
+    title: "임페리얼 피스트 — 고통의 장갑과 무너지지 않는 성벽",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["imperial_fists"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["imperial_fists"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "chapter_master"]
+    },
     reqLabel: "챕터: 임페리얼 피스트",
     weight: 34,
     text: "아이언 워리어 공성군의 맹포격 속에 외곽 요새 성벽 하나가 붕괴해 아군 포대가 후퇴했다. 임페리얼 피스트에게 후퇴는 수치다. 채플린이 신경기계 고문 장치 '고통의 장갑'을 가리키며 묻는다. '네 결함을 고통으로 태울 것인가, 성벽의 설계로 갚을 것인가?'",
@@ -170,7 +191,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[강인 판정] 고통의 장갑에 몸을 맡겨 순수한 신경 고통 속에서 영혼을 단련한다",
         check: { stat: "T", diff: -5 },
         success: {
-          text: "'테라와 돈을 위하여!' 뼈를 깎는 전류 속에서 단 한 번의 비명도 내지 않고 깨달음을 얻었다. 육신과 의지가 강철 요새처럼 단단해졌다!",
+          text: "'테라와 로갈 돈을 위하여!' 뼈를 깎는 전류 속에서 단 한 번의 비명도 내지 않고 깨달음을 얻었다. 육신과 의지가 강철 요새처럼 단단해졌다!",
           stats: { T: 7, WP: 7, Inf: 4 },
           wounds: -12,
           addTags: ["huscarl_oath"]
@@ -182,7 +203,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[사격/지성 판정] 붕괴된 요새의 화망을 재설계하고 최선두 참호에서 직접 역포격을 지휘한다",
+        label: "[사격 판정] 붕괴된 요새의 화망을 재설계하고 최선두 참호에서 직접 역포격을 지휘한다",
         check: { stat: "BS", diff: 0 },
         success: {
           text: "완벽한 교차 사격망이 반역 공성 전차대를 고철로 만들었다! 챕터 지휘부가 그대의 공성학 식견을 높이 평가했다.",
@@ -195,14 +216,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Pain Glove / Codex: Imperial Fists"
+    source: "Lexicanum: Pain Glove / Codex Supplement: Imperial Fists"
   },
   {
     id: "ev_chap_salamanders",
     title: "샐러맨더 — 프로메테우스 교단: 화염 속의 피난 열차",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["salamanders"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["salamanders"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 샐러맨더",
     weight: 34,
     text: "오크 기갑 부대가 하이브 외곽의 민간인 피난 열차를 포위했다. 상급 사령부는 '민간인은 포기하고 적 탄약고부터 타격하라'고 무전하지만, 녹턴의 아들이자 불칸의 후예로서 아이들을 불길 속에 버려둘 수는 없다!",
@@ -236,23 +261,27 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Promethean Cult / Codex: Salamanders"
+    source: "Lexicanum: Promethean Cult / Codex Supplement: Salamanders"
   },
   {
     id: "ev_chap_black_templars",
-    title: "블랙 템플러 — '황제의 투사(Emperor's Champion)'의 계시",
+    title: "블랙 템플러 — 황제의 투사의 계시",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["black_templars"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["black_templars"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "chapter_master"]
+    },
     reqLabel: "챕터: 블랙 템플러",
     weight: 34,
-    text: "성전 출정 전야의 철야 기도 도중, 눈부신 황금빛 환상이 눈앞에 펼쳐졌다! 1만 년 전 지기스문트가 휘둘렀던 흑검(Black Sword)과 황제의 천둥 같은 음성이 적 카오스 군주의 목을 베라 명하고 있다!",
+    text: "성전 출정 전야의 철야 기도 도중, 눈부신 황금빛 환상이 눈앞에 펼쳐졌다! 1만 년 전 지기스문트가 휘둘렀던 검은 검과 황제의 천둥 같은 음성이 적 카오스 군주의 목을 베라 명하고 있다!",
     choices: [
       {
-        label: "[백병 판정] 채플린에게 계시를 고하고 흑검을 하사받아 '황제의 투사'로 적장 일기토에 나선다",
+        label: "[백병 판정] 채플린에게 계시를 고하고 검은 검을 하사받아 '황제의 투사'로 적장 일기토에 나선다",
         check: { stat: "WS", diff: -5 },
         success: {
-          text: "'자비도, 후회도, 두려움도 없다!' 검은 갑주와 흑검의 일섬이 카오스 군주의 투구를 두 동강 냈다! 전 성전군이 그대의 이름으로 승전의 성가를 외쳤다!",
+          text: "'자비도, 후회도, 두려움도 없다!' 검은 갑주와 검은 검의 일섬이 카오스 군주의 투구를 두 동강 냈다! 전 성전군이 그대의 이름으로 승전의 성가를 외쳤다!",
           stats: { WS: 9, WP: 7, Inf: 8 },
           faith: 18,
           addTags: ["emperors_champion"]
@@ -273,20 +302,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Emperor's Champion / Codex: Black Templars"
+    source: "Lexicanum: Emperor's Champion / Codex Supplement: Black Templars"
   },
   {
     id: "ev_chap_raven_guard",
     title: "레이븐 가드 — 그림자 걸음과 침묵의 참수 작전",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["raven_guard"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["raven_guard"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 레이븐 가드",
     weight: 34,
     text: "반역 행성 총독의 철옹성 요새에 정면으로 돌격하면 아스트라 밀리타룸 3개 연대가 전멸할 상황이다. 제국군 장군은 포격 소모전을 고집하지만, 코르부스 코락스의 아들들에게는 더 우아하고 치명적인 방법이 있다.",
     choices: [
       {
-        label: "[민첩 판정] 그림자 걸음(Shadow-Walk)으로 단신 잠입해 반역 총독의 목을 조용히 벤다",
+        label: "[민첩 판정] 그림자 걸음으로 단신 잠입해 반역 총독의 목을 조용히 벤다",
         check: { stat: "Ag", diff: -5 },
         success: {
           text: "'그림자로부터 승리를!' 단 한 발의 경보도 울리지 않은 채 반역 지휘부가 몰살당했다. 동틀 녘 요새 성문이 스스로 열리며 무혈 입성이 이뤄졌다!",
@@ -313,23 +346,27 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Raven Guard / Codex: Raven Guard"
+    source: "Lexicanum: Raven Guard / Codex Supplement: Raven Guard"
   },
   {
     id: "ev_chap_white_scars",
-    title: "화이트 스카 — 폭풍의 바이크 돌격과 스톰시어의 시(詩)",
+    title: "화이트 스카 — 폭풍의 바이크 돌격과 스톰시어의 시문",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["white_scars"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["white_scars"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 화이트 스카",
     weight: 34,
     text: "끝없이 펼쳐진 잿빛 평원 너머로 오크 스피드 프릭 대부대가 먼지 구름을 일으키며 몰려온다. 아군 요새에 갇혀 방어하는 것은 초고리스의 전사에게 죽음보다 못하다. 폭풍은 기다리는 것이 아니라 먼저 몰아치는 법이다!",
     choices: [
       {
-        label: "[민첩 판정] 아웃라이더 바이크의 가속기를 끝까지 당겨 적 측면을 번개처럼 베고 지나간다",
+        label: "[민첩 판정] 스페이스 마린 전투 바이크의 가속기를 끝까지 당겨 적 측면을 번개처럼 베고 지나간다",
         check: { stat: "Ag", diff: 0 },
         success: {
-          text: "'칸과 황제를 위하여!' 시속 200km의 기동 사격과 파워 란스 일격이 오크 버기 대열을 잿더미로 만들었다. 바람 속에서 터져 나온 웃음소리가 평원을 울렸다!",
+          text: "'칸과 황제를 위하여!' 시속 200킬로미터의 기동 사격과 파워 란스 일격이 오크 버기 대열을 잿더미로 만들었다. 바람 속에서 터져 나온 웃음소리가 평원을 울렸다!",
           stats: { Ag: 7, WS: 6, BS: 4 },
           addTags: ["khan_rider"]
         },
@@ -340,58 +377,66 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[의지/교섭 판정] 스톰시어와 함께 출정 전야의 시(詩)와 서예 의식으로 형제들의 기세를 다스린다",
+        label: "[의지 판정] 스톰시어와 함께 출정 전야의 시문과 서예 의식으로 형제들의 기세를 다스린다",
         check: { stat: "WP", diff: 5 },
         success: {
           text: "붓끝에서 흘러나온 고요한 절제가 다음 날 전장의 광풍을 완벽히 통제했다. 자가타이 칸이 사랑한 문무겸비의 경지였다.",
           stats: { WP: 6, Fel: 6, Int: 4 }
         },
         fail: {
-          text: "전투를 향한 조급함을 다스리지 못해 붓을 부러뜨리고 말았으나, 전장에서는 누구보다 사납게 싸웠다.",
-          stats: { WS: 4 }
+          text: "전투를 향한 조급함을 다스리지 못해 붓을 부러뜨리고 말았고, 스톰시어로부터 평정심을 더 닦으라는 꾸지람을 들었다.",
+          stats: { Fel: -2, WP: -2 }
         }
       }
     ],
-    source: "Lexicanum: White Scars / Codex: White Scars"
+    source: "Lexicanum: White Scars / Codex Supplement: White Scars"
   },
   {
     id: "ev_chap2_ultramarines",
-    title: "울트라마린 — 울트라마 500 행성 테트라크 행정 순찰",
+    title: "울트라마린 — 울트라마 영지 행정 순찰과 전후 재건",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["ultramarines"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["ultramarines"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 울트라마린",
     weight: 28,
-    text: "전투가 끝난 울트라마 변경 행성의 재건 현장. 여타 챕터라면 즉시 철수했겠지만, 울트라마린은 로부테 길리먼의 가르침대로 행성의 식량 배급과 방위군(울트라마 보조군) 재편까지 검수한다. 지역 귀족 의회가 재건 예산을 빼돌린 정황이 포착되었다!",
+    text: "전투가 끝난 울트라마 변경 행성의 재건 현장. 여타 챕터라면 즉시 철수했겠지만, 울트라마린은 프라이마크 로부테 길리먼의 오래된 가르침대로 행성의 식량 배급과 울트라마 보조군 재편까지 검수한다. 지역 귀족 의회가 재건 예산을 빼돌린 정황이 포착되었다!",
     choices: [
       {
-        label: "[지성/교섭 판정] 귀족 의회 장부를 직접 감사해 횡령범을 파면하고 시민 재건 기금을 복구한다",
+        label: "[지성 판정] 귀족 의회 장부를 직접 감사해 횡령범을 파면하고 시민 재건 기금을 복구한다",
         check: { stat: "Int", diff: 0 },
         success: {
           text: "전사일 뿐 아니라 통치자이기도 한 울트라마린의 품격! 행성 전체가 3년 앞당겨 복구되며 울트라마의 질서가 빛났다.",
           stats: { Int: 6, Fel: 6, Inf: 7 }
         },
         fail: {
-          text: "부패 귀족들의 복잡한 서류 술수에 시간을 허비해 결국 강제 군정으로 수습해야 했다.",
-          stats: { Int: 3, Inf: 2 }
+          text: "부패 귀족들의 복잡한 서류 술수에 시간을 허비해 재건 일정이 지연되고 말았다.",
+          stats: { Inf: -3, Fel: -2 }
         }
       },
       {
-        label: "행정 감사는 테트라크 보좌관에게 맡기고 행성 방위군 정예 사격 훈련을 직접 지도한다",
+        label: "행정 감사는 울트라마 영지 행정관에게 맡기고 행성 방위군 정예 사격 훈련을 직접 지도한다",
         effect: {
           text: "울트라마 보조군의 실전 전투력이 눈에 띄게 상승했다. '용기와 명예로!'",
           stats: { BS: 5, Fel: 4, Inf: 4 }
         }
       }
     ],
-    source: "Codex: Ultramarines / Dark Imperium"
+    source: "Codex Supplement: Ultramarines / Lexicanum: Ultramar"
   },
   {
     id: "ev_chap2_blood_angels",
-    title: "블러드 엔젤 — 바알 황금 탑의 조각과 고귀한 절제",
+    title: "블러드 엔젤 — 아르크스 안젤리쿰의 조각과 고귀한 절제",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["blood_angels"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["blood_angels"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 블러드 엔젤",
     weight: 28,
     text: "연속된 혈전 끝에 아스타르테스 형제들의 혈관에 '붉은 갈증'이 거세게 맥동한다. 생귀너리 사제가 그대에게 대리석 끌과 붓을 건네며 말한다. '생귀니우스께서는 아름다움을 빚는 손으로 내면의 야수를 다스리라 가르치셨다. 전투 전까지 네 영혼을 예술로 정화하라.'",
@@ -406,8 +451,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           corruption: -8
         },
         fail: {
-          text: "치밀어 오른 갈증에 대리석을 산산조각 내고 말았으나, 그 격정을 훈련장 검술 대련으로 쏟아부었다.",
-          stats: { WS: 5, WP: 2 }
+          text: "치밀어 오른 갈증에 대리석을 산산조각 내고 말아 생귀너리 사제의 엄숙한 근신 권고를 받았다.",
+          stats: { Fel: -3, WP: -2 }
         }
       },
       {
@@ -419,17 +464,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Dante / Codex: Blood Angels"
+    source: "Dante / Codex Supplement: Blood Angels"
   },
   {
     id: "ev_chap2_space_wolves",
-    title: "스페이스 울프 — 더 팽(The Fang)의 대연회와 묠드 사가 경연",
+    title: "스페이스 울프 — 더 팽의 대연회와 묠드 사가 경연",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["space_wolves"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["space_wolves"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 스페이스 울프",
     weight: 28,
-    text: "거대한 화산 요새 '더 팽'의 대연회장. 늑대 모피와 불꽃이 넘실대는 가운데, 울프 로드와 형제들이 아스타르테스의 독극물 면역마저 취하게 만드는 펜리스 독주 '묠드(Mjod)'를 들이켜며 무용담 사가(Saga)와 팔씨름을 겨루고 있다!",
+    text: "거대한 화산 요새 '더 팽'의 대연회장. 늑대 모피와 불꽃이 넘실대는 가운데, 울프 로드와 형제들이 아스타르테스의 독극물 면역마저 취하게 만드는 펜리스 독주 묠드를 들이켜며 무용담 사가와 팔씨름을 겨루고 있다!",
     choices: [
       {
         label: "[강인 판정] 묠드 두 통을 들이켠 채 베테랑 울프 가드와 정면 대련 및 팔씨름을 겨룬다",
@@ -445,32 +494,36 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[교섭/의지 판정] 스칼드(음유시인)처럼 쓰러진 형제들의 위대한 사가를 장엄하게 읊어 올린다",
+        label: "[교섭 판정] 스칼드 음유시인처럼 쓰러진 형제들의 위대한 사가를 장엄하게 읊어 올린다",
         check: { stat: "Fel", diff: 5 },
         success: {
           text: "거친 늑대 전사들이 일제히 잔을 높이 들며 경의를 표했다. 룬 프리스트가 그대의 목소리에 깊은 영혼이 담겼다고 평했다.",
           stats: { Fel: 6, WP: 5, Inf: 5 }
         },
         fail: {
-          text: "운율이 어긋나 야유와 폭소가 터졌지만, 묠드 한 잔에 모든 것이 유쾌하게 넘어갔다.",
-          stats: { Fel: 3, WP: 3 }
+          text: "운율이 크게 어긋나 연회장에 야유와 폭소가 터졌고, 다음 연회까지 묠드 통을 나르는 벌칙을 떠안았다.",
+          stats: { Fel: -2, Inf: -2 }
         }
       }
     ],
-    source: "Lexicanum: The Fang / Codex: Space Wolves"
+    source: "Lexicanum: The Fang / Codex Supplement: Space Wolves"
   },
   {
     id: "ev_chap2_dark_angels",
-    title: "다크 엔젤 — 데스윙(Deathwing) 골백색 터미네이터의 시험",
+    title: "다크 엔젤 — 데스윙 골백색 터미네이터의 시험",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["dark_angels"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["dark_angels"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "chapter_master"]
+    },
     reqLabel: "챕터: 다크 엔젤",
     weight: 28,
     text: "제1중대 '데스윙'의 골백색 터미네이터 갑주들이 침묵 속에 그대를 둘러쌌다. 챕터 최고 정예 중대인 데스윙의 전사는 최악의 적진에 텔레포트 강습할 무위뿐만 아니라, 제1군단이 1만 년간 짊어진 비밀을 무덤까지 지킬 철의 의지를 증명해야 한다.",
     choices: [
       {
-        label: "[의지 판정] 심문관 채플린의 혹독한 정신 감찰과 데스윙 근접 시험을 정면 돌파한다",
+        label: "[의지 판정] 인터로게이터-채플린의 혹독한 정신 감찰과 데스윙 근접 시험을 정면 돌파한다",
         check: { stat: "WP", diff: -5 },
         success: {
           text: "티끌 없는 충성과 강철 같은 침묵을 증명했다! 골백색 터미네이터 갑주에 버금가는 제1중대 영예 표식을 하사받았다!",
@@ -484,21 +537,25 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "데스윙 입단 대신 고속 추격 중대 '레이븐윙(Ravenwing)'의 기동 정찰 훈련에 자원한다",
+        label: "데스윙 입단 대신 고속 추격 중대 '레이븐윙'의 기동 정찰 훈련에 자원한다",
         effect: {
           text: "칠흑 같은 바이크와 랜드 스피더 편대 속에서 번개 같은 추적 감각을 익혔다.",
           stats: { Ag: 6, BS: 5, Int: 3 }
         }
       }
     ],
-    source: "Lexicanum: Deathwing / Codex: Dark Angels"
+    source: "Lexicanum: Deathwing / Codex Supplement: Dark Angels"
   },
   {
     id: "ev_chap2_imperial_fists",
-    title: "임페리얼 피스트 — 이동 요새 '팔랑크스(Phalanx)'의 방어전",
+    title: "임페리얼 피스트 — 이동 요새 팔랑크스의 방어전",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["imperial_fists"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["imperial_fists"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 임페리얼 피스트",
     weight: 28,
     text: "인류제국 최대의 고대 이동 요새이자 달만 한 크기의 성간 성채 '팔랑크스'. 워프 폭풍을 뚫고 출현한 카오스 강습선들이 팔랑크스 외곽 3번 도킹 베이에 달라붙어 내부로 침투를 시도하고 있다!",
@@ -507,7 +564,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[사격 판정] 황금 갑판의 자동 방어 포탑망과 볼터 화력을 통합 지휘해 적 강습정을 분쇄한다",
         check: { stat: "BS", diff: 0 },
         success: {
-          text: "'테라와 돈을 위하여!' 단 한 명의 이단자도 성스러운 팔랑크스 내벽을 넘지 못하고 우주로 쓸려 나갔다!",
+          text: "'테라와 로갈 돈을 위하여!' 단 한 명의 이단자도 성스러운 팔랑크스 내벽을 넘지 못하고 우주로 쓸려 나갔다!",
           stats: { BS: 7, Int: 5, Inf: 6 }
         },
         fail: {
@@ -517,7 +574,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[백병 판정] 폭풍 방패를 맞대고 좁은 격벽 통로에서 한 걸음도 물러서지 않는 철벽 방진을 세운다",
+        label: "[강인 판정] 폭풍 방패를 맞대고 좁은 격벽 통로에서 한 걸음도 물러서지 않는 철벽 방진을 세운다",
         check: { stat: "T", diff: 0 },
         success: {
           text: "로갈 돈의 방패처럼 미동조차 없는 방어선 앞에 카오스 광전사들이 차례로 쓰러졌다!",
@@ -530,20 +587,26 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Phalanx / Codex: Imperial Fists"
+    source: "Lexicanum: Phalanx / Codex Supplement: Imperial Fists"
   },
   {
     id: "ev_chap2_salamanders",
-    title: "샐러맨더 — 녹턴 고향 마을의 대장간과 필멸자 가족",
+    title: "샐러맨더 — 녹턴 성소 도시의 대장간과 부족민의 유대",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["salamanders"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["salamanders"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 샐러맨더",
     weight: 28,
-    text: "대부분의 스페이스 마린이 필멸자 시절의 가족을 잊는 것과 달리, 샐러맨더는 작전이 없을 때 녹턴의 일곱 성소 도시로 돌아가 부족민들과 어울리며 스스로 무구를 단조한다. 지진으로 무너진 마을 대장간에서 노장 대장장이가 그대의 거대한 망치를 반긴다.",
+    text: "대부분의 스페이스 마린이 필멸자 시절의 연고를 잊는 것과 달리, 샐러맨더는 작전이 없을 때 녹턴의 일곱 성소 도시로 돌아가 부족민과 필멸자 친족들 곁에서 어울리며 스스로 무구를 단조한다. 지진으로 무너진 마을 대장간에서 노장 대장장이가 그대의 거대한 망치를 반긴다.",
     choices: [
       {
-        label: "[지성/강인 판정] 용암 화덕 앞에서 사흘 밤낮을 두드려 자신만의 마스터 크래프트 무구를 단조한다",
+        label: "[지성 판정] 용암 화덕 앞에서 사흘 밤낮을 두드려 자신만의 마스터 크래프트 무구를 단조한다",
         check: { stat: "Int", diff: 0 },
         success: {
           text: "불칸의 장인 정신이 깃든 걸작 무구가 탄생했다! 전장에서 단 한 번도 오작동하지 않을 완벽한 동반자다.",
@@ -551,8 +614,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["promethean_smith"]
         },
         fail: {
-          text: "담금질 온도가 어긋나 칼날에 미세한 금이 갔으나, 불완전함을 다듬는 과정 자체가 프로메테우스 교단의 수행이다.",
-          stats: { Int: 3, T: 4 }
+          text: "담금질 온도가 어긋나 칼날이 갈라지며 튄 쇳조각에 화상을 입었고, 처음부터 다시 단조해야 했다.",
+          wounds: -8,
+          stats: { Int: -2 }
         }
       },
       {
@@ -565,20 +629,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Salamanders / Codex: Salamanders"
+    source: "Lexicanum: Salamanders / Codex Supplement: Salamanders"
   },
   {
     id: "ev_chap2_black_templars",
     title: "블랙 템플러 — 영원한 성전 함대와 네오파이트 도제 서약",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["black_templars"] },
-    reqLabel: "챕터: 블랙 템플러",
+    req: {
+      allTags: ["astartes", "battle_brother"],
+      anyChapters: ["black_templars"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "chapter_master"]
+    },
+    reqLabel: "배틀 브라더 · 챕터: 블랙 템플러",
     weight: 28,
     text: "블랙 템플러에는 코덱스식 스카웃 중대가 없다. 대신 정식 이니시에이트가 신참 네오파이트 한 명을 직접 제자로 거두어 전장의 불길 속에서 가르친다. 성전선 '이터널 크루세이더' 예배당에서 패기 넘치는 소년 네오파이트가 그대 앞에 무릎 꿇고 쇠사슬을 바친다.",
     choices: [
       {
-        label: "[백병/교섭 판정] 네오파이트를 직접 제자로 받아들여 최전선 돌격에서 검술과 신앙을 전수한다",
+        label: "[백병 판정] 네오파이트를 직접 제자로 받아들여 최전선 돌격에서 검술과 신앙을 전수한다",
         check: { stat: "WS", diff: 0 },
         success: {
           text: "'자비도, 후회도, 두려움도 없다!' 스승과 제자가 함께 쇠사슬로 무기를 묶고 적진을 뚫었다! 훗날 훌륭한 검 형제로 성장할 인재를 길러 냈다.",
@@ -602,17 +670,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Black Templars / Codex: Black Templars"
+    source: "Lexicanum: Black Templars / Codex Supplement: Black Templars"
   },
   {
     id: "ev_chap2_raven_guard",
-    title: "레이븐 가드 — 칠흑 눈동자의 저주 '세이블 브랜드(Sable Brand)'",
+    title: "레이븐 가드 — 칠흑 눈동자의 저주 세이블 브랜드",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["raven_guard"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["raven_guard"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 레이븐 가드",
     weight: 28,
-    text: "거울 속 자신의 눈동자가 완전한 칠흑으로 물들며 말수가 줄어들고 죽음만을 갈망하는 유전적 우울, '세이블 브랜드'의 전조가 찾아왔다! 이 저주에 사로잡힌 레이븐 가드 전사는 침묵의 암살 부대 '모리타트(Moritat)'가 되어 홀로 죽음을 찾아 적진으로 뛰어든다.",
+    text: "거울 속 자신의 눈동자가 완전한 칠흑으로 물들며 말수가 줄어들고 죽음만을 갈망하는 유전적 우울, 세이블 브랜드의 전조가 찾아왔다! 이 저주에 사로잡힌 레이븐 가드 전사는 침묵의 암살 부대 섀도우 킬러가 되어 홀로 죽음을 찾아 적진으로 뛰어든다.",
     choices: [
       {
         label: "[의지 판정] 코르부스 코락스의 가르침을 되새기며 어둠의 충동을 차가운 집중력으로 제어한다",
@@ -642,20 +714,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Sable Brand / Codex: Raven Guard"
+    source: "Lexicanum: Sable Brand / Codex Supplement: Raven Guard"
   },
   {
     id: "ev_chap2_white_scars",
-    title: "화이트 스카 — 초고리스 콴 저우(Quan Zhou)의 매 사냥 의식",
+    title: "화이트 스카 — 초고리스 콴 저우의 매 사냥 의식",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes"], anyChapters: ["white_scars"] },
+    req: {
+      allTags: ["astartes"],
+      anyChapters: ["white_scars"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "챕터: 화이트 스카",
     weight: 28,
-    text: "구름 위의 요새 수도원 '콴 저우' 첨탑 아래 광활한 초고리스 초원이 펼쳐져 있다. 스톰시어가 그대에게 사나운 초원 검독수리(버크트)를 건네며 말한다. '묶어 두면 매는 날개를 잃고, 놓아주면 바람을 타고 돌아온다. 칸의 아들들이 싸우는 이치도 이와 같느니라.'",
+    text: "구름 위의 요새 수도원 '콴 저우' 첨탑 아래 광활한 초고리스 초원이 펼쳐져 있다. 스톰시어가 그대에게 사나운 초원 검독수리 버크트를 건네며 말한다. '묶어 두면 매는 날개를 잃고, 놓아주면 바람을 타고 돌아온다. 칸의 아들들이 싸우는 이치도 이와 같느니라.'",
     choices: [
       {
-        label: "[민첩/교섭 판정] 바이크를 몰아 초원을 질주하며 하늘의 사냥매와 호흡을 맞춰 거대 야수를 추적한다",
+        label: "[민첩 판정] 바이크를 몰아 초원을 질주하며 하늘의 사냥매와 호흡을 맞춰 거대 야수를 추적한다",
         check: { stat: "Ag", diff: 0 },
         success: {
           text: "바람과 매, 그리고 전사가 하나가 되었다! 전장 전체를 조감하는 화이트 스카 고유의 사냥 본능이 완성되었다.",
@@ -676,17 +752,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Quan Zhou / Codex: White Scars"
+    source: "Lexicanum: Quan Zhou / Codex Supplement: White Scars"
   },
   {
     id: "ev_arc_death_company_last_charge",
     title: "검은 갑주의 성가 — 채플린의 인도와 호루스의 환영",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes", "death_company"], anyChapters: ["blood_angels"] },
+    req: {
+      allTags: ["astartes", "death_company"],
+      anyChapters: ["blood_angels"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "블러드 엔젤 · 데스 컴퍼니 분노 극복",
     weight: 40,
-    text: "전투 전야, 다시금 귀울림과 함께 테라 공성전의 불바다가 시야를 뒤덮는다. 채플린이 붉은 X자 문장이 그려진 검은 갑주 앞에서 그대의 어깨에 손을 얹고 묻는다. '형제여, 지금 내 얼굴이 보이는가, 아니면 반역자 호루스가 보이는가?'",
+    text: "전투 전야, 다시금 귀울림과 함께 테라 공성전의 불바다가 시야를 뒤덮는다. 채플린이 붉은 교차 문장이 그려진 검은 갑주 앞에서 그대의 어깨에 손을 얹고 묻는다. '형제여, 지금 내 얼굴이 보이는가, 아니면 반역자 호루스가 보이는가?'",
     choices: [
       {
         label: "[의지 판정] 채플린의 영창에 정신을 집중해 검은 분노의 광기를 정확한 적 지휘관 참수로 승화시킨다",
@@ -726,20 +806,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Death Company / Codex: Blood Angels"
+    source: "Lexicanum: Death Company / Codex Supplement: Blood Angels"
   },
   {
     id: "ev_arc_inner_circle_hunt",
     title: "이너 서클의 비밀 칙령 — '더 락' 최심부의 회개 심문",
     category: "챕터 고유",
     once: true,
-    req: { allTags: ["astartes", "inner_circle"], anyChapters: ["dark_angels"] },
+    req: {
+      allTags: ["astartes", "inner_circle"],
+      anyChapters: ["dark_angels"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
     reqLabel: "다크 엔젤 · 이너 서클",
     weight: 40,
-    text: "이동 요새 '더 락'의 빛 한 점 들지 않는 지하 석실로 비밀 소집령이 떨어졌다. 제국 심문관조차 눈치채지 못하게 생포해 온 고대의 폴른 한 명이 철제 의자에 묶인 채, 1만 년 전 칼리반 파괴의 진실을 비웃으며 입을 다물고 있다.",
+    text: "이동 요새 '더 락'의 빛 한 점 들지 않는 지하 석실로 비밀 소집령이 떨어졌다. 제국 이단심문관조차 눈치채지 못하게 생포해 온 고대의 폴른 한 명이 철제 의자에 묶인 채, 1만 년 전 칼리반 파괴의 진실을 비웃으며 입을 다물고 있다.",
     choices: [
       {
-        label: "[의지 판정] 인테로게이터-채플린을 보좌해 폴른의 기만과 회개를 가려내며 제1군단의 명예를 지킨다",
+        label: "[의지 판정] 인터로게이터-채플린을 보좌해 폴른의 기만과 회개를 가려내며 제1군단의 명예를 지킨다",
         check: { stat: "WP", diff: -5 },
         success: {
           text: "흔들림 없는 신념으로 폴른의 궤변을 꺾고 마침내 회개의 자백과 배후 워밴드의 좌표를 받아 냈다! 이너 서클 내 위상이 굳건해졌다.",
@@ -772,15 +856,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Inner Circle / Codex: Dark Angels"
+    source: "Lexicanum: Inner Circle / Codex Supplement: Dark Angels"
   },
   {
     id: "ev_s4_tag_emperors_champion",
     title: "황제의 투사 — 검은 검이 가리킨 적 군주와의 일기토",
     category: "명예 태그 연작",
     once: true,
-    req: { allTags: ["emperors_champion"] },
-    reqLabel: "이력: 황제의 투사 (블랙 템플러)",
+    req: {
+      allTags: ["emperors_champion"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
+    reqLabel: "이력: 블랙 템플러 황제의 투사",
     weight: 38,
     text: "황제의 계시를 받아 검은 갑주와 검은 검을 수여받은 그대의 눈앞에, 전장 한복판에서 붉은 깃발을 휘두르는 적의 카오스 군주가 나타났다. 성전군 형제들이 일제히 길을 터 주며 황제의 투사가 치를 신성한 일기토를 지켜본다.",
     choices: [
@@ -824,17 +911,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Emperor's Champion / Codex: Black Templars"
+    source: "Lexicanum: Emperor's Champion / Codex Supplement: Black Templars"
   },
   {
     id: "ev_s4_tag_wolf_guard",
     title: "울프 가드의 서약 — 대연회장의 룬 점괘와 출정 명령",
     category: "명예 태그 연작",
     once: true,
-    req: { allTags: ["wolf_guard"] },
-    reqLabel: "이력: 울프 가드 (스페이스 울프)",
+    req: {
+      allTags: ["wolf_guard"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
+    reqLabel: "이력: 스페이스 울프 울프 가드",
     weight: 38,
-    text: "대중대 연회장에서 묠드(Mjod) 술잔이 부딪히는 가운데, 룬 프리스트가 뼈 조각을 던져 불길한 사냥의 예언을 읽어 냈다. 울프 로드 직속 친위대인 울프 가드로서 그대가 선봉 타격대를 이끌 차례가 다가왔다.",
+    text: "대중대 연회장에서 묠드 술잔이 부딪히는 가운데, 룬 프리스트가 뼈 조각을 던져 불길한 사냥의 예언을 읽어 냈다. 울프 로드 직속 친위대인 울프 가드로서 그대가 선봉 타격대를 이끌 차례가 다가왔다.",
     choices: [
       {
         label: "[백병 판정] 프로스트 블레이드를 치켜들고 가장 거대한 적 괴수의 숨통을 끊는 사냥을 선포한다",
@@ -870,17 +960,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Wolf Guard / Codex: Space Wolves"
+    source: "Lexicanum: Wolf Guard / Codex Supplement: Space Wolves"
   },
   {
     id: "ev_s4_tag_huscarl_oath",
-    title: "후스카를의 맹세 — 무너지는 성벽과 강철의 최후 방벽",
+    title: "허스칼의 맹세 — 무너지는 성벽과 강철의 최후 방벽",
     category: "명예 태그 연작",
     once: true,
-    req: { allTags: ["huscarl_oath"] },
-    reqLabel: "이력: 후스카를 (임페리얼 피스트)",
+    req: {
+      allTags: ["huscarl_oath"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
+    reqLabel: "이력: 임페리얼 피스트 허스칼",
     weight: 38,
-    text: "로갈 돈의 방어 철학을 계승한 후스카를로서 그대가 보강을 지휘하던 요새 성벽에 적의 공성 포화가 집중되었다. 외벽 제3보루에 균열이 번지며 지휘부가 2선 철수를 건의한다.",
+    text: "로갈 돈의 오랜 방어 철학을 계승한 허스칼로서 그대가 보강을 지휘하던 요새 성벽에 적의 공성 포화가 집중되었다. 외벽 제3보루에 균열이 번지며 지휘부가 2선 철수를 건의한다.",
     choices: [
       {
         label: "[지성 판정] 붕괴 각도를 즉석 계산해 무너지는 외벽 잔해를 역으로 살상 지대 바리케이드로 전환한다",
@@ -916,17 +1009,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Huscarls / Codex: Imperial Fists"
+    source: "Lexicanum: Huscarls / Codex Supplement: Imperial Fists"
   },
   {
     id: "ev_s4_tag_promethean_smith",
-    title: "프로메테안 대장장이 — 용암로의 명검 주조와 불의 시련",
+    title: "프로메테우스 대장장이 — 용암로의 명검 주조와 불의 시련",
     category: "명예 태그 연작",
     once: true,
-    req: { allTags: ["promethean_smith"] },
-    reqLabel: "이력: 프로메테안 대장장이 (샐러맨더)",
+    req: {
+      allTags: ["promethean_smith"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
+    reqLabel: "이력: 샐러맨더 프로메테우스 대장장이",
     weight: 38,
-    text: "전투가 끝난 뒤에도 샐러맨더의 사명은 끝나지 않는다. 프로메테안 교단의 장인으로서 그대는 손상된 고대 유물 무구와 새 마스터크래프트 병기를 벼려 내기 위해 화산 용광로 앞에 섰다. 동시에 인근 민간 정착지가 약탈자들의 습격을 받고 있다는 긴급 구조 신호가 날아들었다.",
+    text: "전투가 끝난 뒤에도 샐러맨더의 사명은 끝나지 않는다. 프로메테우스 교단의 장인으로서 그대는 손상된 고대 유물 무구와 새 마스터크래프트 병기를 벼려 내기 위해 화산 용광로 앞에 섰다. 동시에 인근 민간 정착지가 약탈자들의 습격을 받고 있다는 긴급 구조 신호가 날아들었다.",
     choices: [
       {
         label: "[강인 판정] 밤새 용광로의 열기를 견뎌 유물 무구를 완성한 뒤 즉시 구원군 선봉으로 출격한다",
@@ -963,66 +1059,72 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Promethean Cult / Codex: Salamanders"
+    source: "Lexicanum: Promethean Cult / Codex Supplement: Salamanders"
   },
   {
     id: "ev_s4_tag_shadow_master",
-    title: "그림자 마스터 — 적 사령부 심장부로의 무음 침투",
+    title: "그림자 마스터 — 적 궤도 기함 사령부로의 무음 침투",
     category: "명예 태그 연작",
     once: true,
-    req: { allTags: ["shadow_master"] },
-    reqLabel: "이력: 그림자 마스터 (레이븐 가드)",
+    req: {
+      allTags: ["shadow_master"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
+    reqLabel: "이력: 레이븐 가드 그림자 마스터",
     weight: 38,
-    text: "정면 공성전으로 치르면 수만 명의 필멸자 병사가 희생될 난공불락의 반란 요새. 그림자 걸음의 극의에 오른 그대에게 야음을 틈타 적 총사령관의 목만 조용히 거두고 방어망을 무력화하라는 단독 임무가 하달되었다.",
+    text: "제국 수송 항로를 봉쇄한 반란 함대의 궤도 기함. 정면 함대전으로 부딪히면 아군 호위함대 절반이 부서질 위기에서, 그림자 걸음의 극의에 오른 그대에게 무음 침투 셔틀로 적 기함 함교에 단독 잠입해 함대 사령관을 제거하고 방어막을 무력화하라는 극비 임무가 하달되었다.",
     choices: [
       {
-        label: "[민첩 판정] 감시 서보스컬과 레이저 격자 사이를 그림자처럼 스쳐 지나가 적 지휘관을 단신 암살한다",
+        label: "[민첩 판정] 기함 내부 감시 서보스컬과 레이저 격자 사이를 그림자처럼 스쳐 지나가 적 함대 사령관을 단신 암살한다",
         check: { stat: "Ag", diff: -10 },
         success: {
-          text: "경보 한 번 울리지 않은 채 적 사령부가 침묵했다! 다음 날 새벽, 아군 정규군은 총 한 발 쏘지 않고 요새를 접수했다.",
+          text: "경보 한 번 울리지 않은 채 적 기함 함교가 침묵했다! 다음 날 새벽, 지휘를 잃은 반란 함대는 아군 정규 함대 앞에 무릎을 꿇었다.",
           stats: { Ag: 9, WS: 5, Inf: 8 }
         },
         fail: {
-          text: "경비대의 탐조등에 포착되어 난전 끝에 겨우 탈출했으나, 핵심 통신탑만은 폭파해 적을 혼란에 빠뜨렸다.",
+          text: "선내 경비대의 탐조등에 포착되어 난전 끝에 겨우 탈출했으나, 핵심 통신 안테나만은 폭파해 적을 혼란에 빠뜨렸다.",
           wounds: -18,
           stats: { Ag: 5, BS: 3 }
         }
       },
       {
-        label: "[지성 판정] 암살 대신 적 보급망과 암호 통신을 교란해 반란군 내부에서 서로 총구를 겨누게 만든다",
+        label: "[지성 판정] 암살 대신 적 함대의 보이드 실드 제어망과 암호 통신을 교란해 반란 함선들이 서로 포격을 퍼붓게 만든다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "코락스의 계략이 빛을 발했다! 의심에 사로잡힌 반란군 분파들이 자중지란을 일으키며 스스로 무너졌다.",
+          text: "코락스의 계략이 빛을 발했다! 의심에 사로잡힌 반란 함장들이 자중지란을 일으키며 스스로 무너졌다.",
           stats: { Int: 8, Ag: 5, Inf: 7 }
         },
         fail: {
-          text: "기만 공작이 일부 간파되었으나, 시간을 벌어 아군 기습 강하를 성공시켰다.",
+          text: "기만 공작이 일부 간파되었으나, 시간을 벌어 아군 강습정의 기습 접현을 성공시켰다.",
           wounds: -12,
           stats: { Int: 4, Ag: 3 }
         }
       },
       {
-        label: "요새 내부 취약 지점의 좌표만 완벽히 정찰해 본대 정밀 폭격에 넘긴다",
+        label: "기함 내부 보이드 실드 발전기의 취약 좌표만 완벽히 정찰해 아군 본대의 정밀 랜스 포격에 넘긴다",
         effect: {
-          text: "불필요한 모험 대신 확실한 정보를 가져왔다. 본대의 정밀 타격으로 요새의 동력로가 순식간에 증발했다.",
+          text: "불필요한 모험 대신 확실한 정보를 가져왔다. 본대의 정밀 타격으로 적 기함의 동력로가 순식간에 증발했다.",
           stats: { Ag: 5, Int: 5 }
         }
       }
     ],
-    source: "Lexicanum: Shadowmasters / Codex: Raven Guard"
+    source: "Lexicanum: Shadowmasters / Codex Supplement: Raven Guard"
   },
   {
     id: "ev_s4_tag_khan_rider",
     title: "칸의 기수 — 모래 폭풍을 가르는 기갑 섬멸전",
     category: "명예 태그 연작",
     once: true,
-    req: { allTags: ["khan_rider"] },
-    reqLabel: "이력: 칸의 기수 (화이트 스카)",
+    req: {
+      allTags: ["khan_rider"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
+    },
+    reqLabel: "이력: 화이트 스카 칸의 기수",
     weight: 38,
     text: "광활한 평원에 거대한 모래 폭풍이 몰아치며 시야가 완전히 닫혔다. 다른 제국 부대들이 진격을 멈추고 참호에 숨어든 사이, 칸의 기수로 인정받은 그대는 폭풍을 방패 삼아 적 중기갑 사단의 측면을 베어 낼 절호의 기회를 포착했다.",
     choices: [
       {
-        label: "[민첩 판정] 아웃라이더 바이크의 엔진을 한계까지 끌어올려 폭풍 한가운데로 고속 돌파한다",
+        label: "[민첩 판정] 스페이스 마린 전투 바이크의 엔진을 한계까지 끌어올려 폭풍 한가운데로 고속 돌파한다",
         check: { stat: "Ag", diff: -5 },
         success: {
           text: "웃음소리와 함께 번개처럼 스쳐 지나간 기습이 적 기갑 행렬을 산산조각 냈다! 적들은 무엇에게 당했는지조차 알지 못했다.",
@@ -1055,52 +1157,61 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: White Scars / Codex: White Scars"
+    source: "Lexicanum: White Scars / Codex Supplement: White Scars"
   },
   {
     id: "ev_s4_tag_ultramar_scholar",
-    title: "울트라마르 학자 — 500세계 행정 재건과 썩은 총독의 장부",
+    title: "울트라마 장학생 — 영지 재건 의회와 병참 개혁안",
     category: "명예 태그 연작",
     once: true,
-    req: { allTags: ["ultramar_scholar"] },
-    reqLabel: "이력: 울트라마르 학자",
+    req: {
+      minAge: 18,
+      allTags: ["ultramar_scholar"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "sector_lord", "planetary_governor",
+        "inquisitor", "lord_inquisitor", "cardinal", "canoness", "magos", "fabricator_locum", "fabricator_general",
+        "navy_admiral", "arbites_marshal", "departmento_head", "rt_lord_captain"
+      ]
+    },
+    reqLabel: "18세 이상 · 이력: 울트라마 장학생",
     weight: 36,
-    text: "울트라마르의 실용 행정과 법학을 익힌 그대의 명성이 알려져, 보급난에 시달리는 인근 행성의 전시 행정 감사 위원으로 초빙되었다. 감사 첫날 밤, 그대는 현지 총독 가문이 군량미를 암시장에 빼돌려 온 이중 장부를 발견하고 말았다.",
+    text: "울트라마의 실용 행정과 법학을 익힌 그대의 명성이 알려져, 전후 복구와 방위선 재편을 논의하는 울트라마 영지 변경 행성의 재건 의회에 자문 위원으로 초빙되었다. 회의장에 들어서자 토착 귀족 원로들은 호화 기념비 건립을, 군수 위원회는 무리한 징집을 외치며 정면으로 충돌해 정작 무너진 수로와 울트라마 보조군 보급망 복구가 멈춰 서 있었다.",
     choices: [
       {
-        label: "[지성 판정] 10년 치 세금과 수송 기록을 완벽히 대조해 반박 불가능한 탄핵 조서를 작성한다",
+        label: "[지성 판정] 로부테 길리먼의 병참론을 토대로 수로 복구와 식량 비축, 보조군 훈련을 통합한 5개년 재건안을 발표한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "총독의 변명이 한 줄도 통하지 않았다! 부패한 관리들이 일제히 숙청되고, 압수한 군량미가 전선으로 즉시 수송되었다.",
+          text: "치밀한 수치와 논리 앞에 양측 파벌의 궤변이 한 줄도 통하지 않았다! 그대의 개혁안이 만장일치로 채택되어 행성 전체의 방위와 민생이 함께 살아났다.",
           stats: { Int: 8, Inf: 8, WP: 4 }
         },
         fail: {
-          text: "증거 일부가 방화로 소실되어 완전한 숙청엔 실패했으나, 군량미 유출만은 틀어막았다.",
-          stats: { Int: 4, Inf: -2 },
-          wounds: -10
+          text: "보수파 원로들의 조직적인 절차 방해에 발목이 잡혀 핵심 예산안 절반이 삭감되고 의회 내 입지가 좁아졌다.",
+          stats: { Inf: -3, Fel: -2 }
         }
       },
       {
-        label: "[교섭 판정] 총독의 목숨은 살려 주는 조건으로 가문 사재 전액을 전시 구호 기금으로 헌납하게 압박한다",
+        label: "[교섭 판정] 귀족 원로들의 명예를 세워 주는 대신 공공 토목 기금을 출자하도록 중재해 양측의 대타협을 이끌어 낸다",
         check: { stat: "Fel", diff: -5 },
         success: {
-          text: "행성 행정 마비 없이 막대한 군자금과 식량을 단숨에 확보했다! 울트라마르다운 실리적 해결이었다.",
+          text: "행성 행정의 마비 없이 막대한 복구 자금과 보조군 장비를 단숨에 확보했다! 울트라마 영지 행정관들이 그대의 실리적 경륜을 극찬했다.",
           stats: { Fel: 8, Inf: 7, Int: 4 }
         },
         fail: {
-          text: "총독 측과 거친 신경전을 벌이다 정치적 앙금을 남겼으나, 일부 물자는 회수했다.",
-          stats: { Fel: 3, Inf: -3 }
+          text: "양쪽 파벌 사이를 조율하다 정치적 앙금을 사며 자문 위원직에서 밀려나고 말았다.",
+          stats: { Inf: -3, Fel: -2 }
         }
       },
       {
-        label: "장부 사본을 봉인해 상급 아드미니스트라툼 감사국에 정식 이관하고 절차대로 처분을 맡긴다",
+        label: "정치적 공방에서 한 발 물러나 재건 백서와 보급 진단서만 울트라마 영지 행정관에게 정식 제출한다",
         effect: {
-          text: "개인적 복수나 정치 개입을 피하고 법과 절차의 원칙을 지켰다.",
+          text: "개인적 공명심 대신 정확한 기록과 절차의 원칙을 지켰다. 실무 관료들이 그대의 냉철한 분석을 높이 샀다.",
           stats: { Int: 5, WP: 4, Inf: 3 }
         }
       }
     ],
-    source: "Lexicanum: Ultramar / Codex: Ultramarines"
+    source: "Lexicanum: Ultramar / Codex Supplement: Ultramarines"
   },
   {
     id: "ev_s6_chap_rivalry_da_sw",
@@ -1109,14 +1220,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       allTags: ["astartes"],
-      anyChapters: ["dark_angels", "space_wolves"]
+      anyChapters: ["dark_angels", "space_wolves"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
     },
     reqLabel: "챕터: 다크 엔젤 또는 스페이스 울프",
     weight: 36,
-    text: "합동 원정 작전 직전, 다크 엔젤과 스페이스 울프 타격 순양함이 같은 궤도에 나란히 정박했다. 1만 년 전 두 프라이마크 라이온 엘 존슨과 리만 러스의 격돌 이래 내려온 오래된 관습에 따라, 양 챕터 대표 전사가 첫 피가 흐를 때까지 겨루는 의례적 명예 결투의 차례가 돌아왔다. 형제들의 시선이 그대에게 모였다.",
+    text: "합동 원정 작전 직전, 다크 엔젤과 스페이스 울프 타격 순양함이 같은 궤도에 나란히 정박했다. 1만 년 전 대성전 시절 두 프라이마크 라이온 엘 존슨과 리만 러스가 격돌한 고대의 전통에 따라, 양 챕터 대표 전사가 첫 피가 흐를 때까지 겨루는 의례적 명예 결투의 차례가 돌아왔다. 형제들의 시선이 그대에게 모였다.",
     choices: [
       {
-        label: "[백병 판정] 챕터의 자존심을 걸고 검을 뽑아 상대 챕터 투사와 정정당당한 첫 피(First Blood) 결투에 나선다",
+        label: "[백병 판정] 챕터의 자존심을 걸고 검을 뽑아 상대 챕터 투사와 정정당당한 첫 피 결투에 나선다",
         check: { stat: "WS", diff: -5 },
         success: {
           text: "불꽃 튀는 공방 끝에 상대의 어깨 장갑을 정확히 베어 냈다! 두 챕터 형제들 모두 호쾌한 환호와 함께 서로의 무예에 경의를 표했다.",
@@ -1129,7 +1241,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[강인 판정] 치명적 부상을 피하기 위해 무장 대신 맨손 격투로 승부를 제안해 두 프라이마크의 혈투를 재현한다",
+        label: "[강인 판정] 치명적 부상을 피하기 위해 무장 대신 맨손 격투로 승부를 제안해 두 프라이마크의 고대 혈투를 재현한다",
         check: { stat: "T", diff: -5 },
         success: {
           text: "수십 분의 난타전 끝에 두 거인이 나란히 웃음을 터뜨리며 쓰러졌다! 1만 년 묵은 앙금이 유쾌한 연대로 녹아내렸다.",
@@ -1149,7 +1261,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Lion El'Jonson & Leman Russ Honor Duel"
+    source: "Lexicanum: Lion El'Jonson / Codex Supplement: Space Wolves"
   },
   {
     id: "ev_s6_chap_rivalry_um_bt",
@@ -1158,11 +1270,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       allTags: ["astartes"],
-      anyChapters: ["ultramarines", "black_templars"]
+      anyChapters: ["ultramarines", "black_templars"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
     },
     reqLabel: "챕터: 울트라마린 또는 블랙 템플러",
     weight: 36,
-    text: "이단 요새 공략을 앞두고 울트라마린 중대와 블랙 템플러 성전군이 합동 작전실에 마주 앉았다. 《코덱스 아스타르테스》의 정밀 포위·보급 차단 교리를 고집하는 측과, 지기스문트의 정신을 이어 즉각적인 쇄도와 적 수괴 참수를 외치는 측이 팽팽하게 맞서며 회의가 얼어붙었다.",
+    text: "이단 요새 공략을 앞두고 울트라마린 중대와 블랙 템플러 성전군이 합동 작전실에 마주 섰다. 《코덱스 아스타르테스》의 정밀 포위·보급 차단 교리를 고집하는 측과, 지기스문트의 정신을 이어 즉각적인 쇄도와 적 수괴 참수를 외치는 측이 팽팽하게 맞서며 회의가 얼어붙었다.",
     choices: [
       {
         label: "[지성 판정] 울트라마린의 정밀 포격으로 성벽을 붕괴시키는 동시에 블랙 템플러가 돌파구로 쇄도하는 절충안을 설계한다",
@@ -1186,8 +1299,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 8
         },
         fail: {
-          text: "끝내 서로의 방식을 존중한 채 독자 구역으로 갈라져 싸워야 했으나, 내분만은 막았다.",
-          stats: { WP: 5 }
+          text: "격앙된 양측 지휘부의 고집을 끝내 꺾지 못해 공조가 깨졌고, 합동 작전실의 신뢰에 깊은 금이 갔다.",
+          stats: { Inf: -3, Fel: -2 }
         }
       },
       {
@@ -1198,7 +1311,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Codex Astartes / Black Templars & Ultramarines Lore"
+    source: "Lexicanum: Codex Astartes / Codex Supplement: Black Templars"
   },
   {
     id: "ev_s6_chap_rivalry_sal_civilians",
@@ -1207,7 +1320,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       allTags: ["astartes"],
-      anyChapters: ["salamanders", "imperial_fists", "blood_angels"]
+      anyChapters: ["salamanders", "imperial_fists", "blood_angels"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
     },
     reqLabel: "챕터: 샐러맨더 · 임페리얼 피스트 · 블러드 엔젤",
     weight: 34,
@@ -1249,7 +1363,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Salamanders / Blood Angels / Imperial Fists Lore"
+    source: "Codex Supplement: Salamanders / Codex Supplement: Imperial Fists"
   },
   {
     id: "ev_s6_chap_rivalry_rg_ws",
@@ -1258,7 +1372,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       allTags: ["astartes"],
-      anyChapters: ["raven_guard", "white_scars"]
+      anyChapters: ["raven_guard", "white_scars"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought"]
     },
     reqLabel: "챕터: 레이븐 가드 또는 화이트 스카",
     weight: 36,
@@ -1298,6 +1413,6 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Raven Guard / White Scars / Damocles Campaign"
+    source: "Codex Supplement: Raven Guard / Codex Supplement: White Scars"
   }
 );

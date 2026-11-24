@@ -7,10 +7,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     category: "행정",
     req: {
       minAge: 18,
-      excludeTags: ["astartes", "custodes", "grey_knight", "sororitas", "heretic"],
-      or: [{ anyCareers: ["administratum", "militarum_officer", "inquisition_acolyte", "inquisitor"] }, { stats: { Int: 44 }, anyTags: ["citizen", "noble"] }]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
+        "sororitas", "celestian", "canoness", "cardinal",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "inquisitor", "lord_inquisitor", "magos", "fabricator_locum", "fabricator_general",
+        "navy_captain", "navy_admiral", "arbites_marshal", "departmento_head",
+        "planetary_governor", "sector_lord", "rogue_trader", "rt_lord_captain", "guild_magnate", "crime_lord"
+      ],
+      or: [{ anyCareers: ["administratum", "admin_prefect_rank", "militarum_officer", "inquisition_acolyte"] }, { stats: { Int: 44 }, anyTags: ["citizen", "noble"] }]
     },
-    reqLabel: "관료·장교·심문소 또는 지성 44+ 시민/귀족",
+    reqLabel: "관료·장교·어콜라이트 또는 지성 44 이상 시민·귀족",
     weight: 15,
     text: "십일조 장부를 검수하던 중, 30년 전 선임 서기관의 잉크 번짐 때문에 인접 아그리 월드의 식량 할당량이 10배로 잘못 청구되어 반란이 임박했다는 사실을 발견했다!",
     choices: [
@@ -22,7 +30,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 6, Inf: 10, Fel: 3 }
         },
         fail: {
-          text: "과로로 쓰러졌고 서류는 결국 '재검토 보류(예상 대기 42년)' 서랍에 처박혔다.",
+          text: "과로로 쓰러졌고 서류는 결국 예상 대기 기간 42년짜리 재검토 보류 서랍에 처박혔다.",
           wounds: -12,
           stats: { WP: 2 }
         }
@@ -43,16 +51,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_navy_pirate_battle",
     title: "소행성대의 교전 — 드루카리 해적선 기습",
     category: "우주",
-    req: { minAge: 16, or: [{ anyCareers: ["imperial_navy", "rogue_trader"] }, { anyTags: ["voidborn"] }] },
-    reqLabel: "임페리얼 네이비 / 로그 트레이더 / 보이드본",
+    req: {
+      minAge: 16,
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general", "cardinal"
+      ],
+      or: [{ anyCareers: ["imperial_navy", "navy_captain", "rt_seneschal", "rogue_trader"] }, { anyTags: ["voidborn"] }]
+    },
+    reqLabel: "임페리얼 네이비 · 로그 트레이더 · 보이드본",
     weight: 16,
-    text: "근거리 오스펙스에 날카로운 가시 모양의 드루카리(다크 엘다) 습격선 편대가 포착되었다! 붙잡히면 죽음보다 끔찍한 코모라의 노예 신세다.",
+    text: "근거리 오스펙스에 날카로운 가시 모양의 드루카리 습격선 편대가 포착되었다! 붙잡히면 죽음보다 끔찍한 코모라의 노예 신세다.",
     choices: [
       {
         label: "[사격 판정] 랜스 포대와 매크로 캐논의 일제 사격으로 적 기함을 격침한다",
         check: { stat: "BS", diff: -5 },
         success: {
-          text: "교묘한 기동을 예측한 포격이 적 순양함을 두 동강 냈다! 성계 함대에 명성이 떨쳤다.",
+          text: "교묘한 기동을 예측한 포격이 적 순양함을 두 동강 냈다! 성계 함대에 명성을 떨쳤다.",
           stats: { BS: 6, Int: 4, Inf: 7 }
         },
         fail: {
@@ -74,19 +90,29 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Battlefleet Gothic / Rogue Trader"
+    source: "Battlefleet Gothic Rulebook / Rogue Trader Core Rulebook"
   },
   {
     id: "ev_arbites_riot",
     title: "배급 축소와 하층 구역 대폭동",
     category: "치안",
-    req: { minAge: 16, excludeTags: ["astartes", "custodes", "grey_knight"], or: [{ anyCareers: ["arbites", "pdf_trooper", "militarum_officer"] }, { stats: { Inf: 42 } }] },
-    reqLabel: "아르비테스 / PDF / 장교 또는 권위 42+ (필멸자)",
+    req: {
+      minAge: 16,
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "sector_lord", "planetary_governor",
+        "fabricator_locum", "fabricator_general", "navy_admiral", "rt_lord_captain", "cardinal",
+        "departmento_head", "crime_lord"
+      ],
+      or: [{ anyCareers: ["arbites", "arbites_judge_rank", "pdf_trooper", "militarum_officer"] }, { stats: { Inf: 42 } }]
+    },
+    reqLabel: "아르비테스 · 행성 방위군 · 장교 또는 권위 42 이상 필멸자",
     weight: 14,
-    text: "십일조 증액으로 시체 녹말 배급이 반 토막 나자 분노한 노동자 수만 명이 총독궁으로 몰려들었다. 군중 속에는 정체불명의 이단 선동가가 섞여 있다는 첩보가 있다.",
+    text: "십일조 증액으로 시체 전분 배급이 반 토막 나자 분노한 노동자 수만 명이 총독궁으로 몰려들었다. 군중 속에는 정체불명의 이단 선동가가 섞여 있다는 첩보가 있다.",
     choices: [
       {
-        label: "[이단심문관/커미사르 전용] 광장 연단에 올라 배후 컬트 선동가를 즉석 색출·처단해 폭동을 5분 만에 잠재운다",
+        label: "[이단심문관·커미사르 전용] 광장 연단에 올라 배후 컬트 선동가를 즉석 색출·처단해 폭동을 5분 만에 잠재운다",
         req: { anyTags: ["inquisitor", "commissar", "lord_commissar"] },
         effect: {
           text: "단 한 발의 볼트 탄환이 선동가의 가면을 꿰뚫자 군중이 일제히 무릎을 꿇었다! 압도적 위엄으로 사태를 종결했다.",
@@ -107,7 +133,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[백병 판정] 제국법(Lex Imperialis)의 이름으로 무자비하게 진압 작전을 감행한다",
+        label: "[백병 판정] 제국법의 이름으로 무자비하게 진압 작전을 감행한다",
         check: { stat: "WS", diff: 5 },
         success: {
           text: "쇼크 마울과 샷건의 벽 앞에 폭동은 3시간 만에 진압되었다. 냉혹한 질서가 회복되었다.",
@@ -126,7 +152,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "매뉴팩토룸의 용광로 사고 — '기계부터 구해라!'",
     category: "직업 고유",
     once: true,
-    req: { anyCareers: ["menial_worker"] },
+    req: {
+      anyCareers: ["menial_worker"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직업: 행성 노동자 · 길드원",
     weight: 24,
     text: "탄약 조립 라인의 압력 밸브가 터지며 뜨거운 쇳물이 쏟아졌다! 동료 둘이 쇳물 앞에 고립되었지만, 공장 감독관과 기계교 사제가 고함을 지른다. '멍청이들아, 사람보다 성스러운 4번 프레스 기계령부터 냉각시켜! 노동자는 내일 다시 뽑으면 된다!'",
@@ -157,10 +186,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_job_arbites_governor",
-    title: "제국법(Lex Imperialis)의 저울 — 총독 아들의 폭주",
+    title: "제국법의 저울 — 총독 아들의 폭주",
     category: "직업 고유",
     once: true,
-    req: { anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal"] },
+    req: {
+      anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직업: 아뎁투스 아르비테스",
     weight: 24,
     text: "만취한 행성 총독의 장남이 고급 반중력 차량으로 십일조 노동자 행렬을 들이받아 40명이 즉사했다! 총독은 막대한 금괴를 보내며 사건 무마를 요구하고 있다. 하지만 죽은 자들은 '황제의 십일조 생산 자산'이었다.",
@@ -169,7 +201,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[의지 판정] 총독궁 문을 부수고 들어가 '제국 십일조 자산 훼손죄'로 아들을 체포한다",
         check: { stat: "WP", diff: -5 },
         success: {
-          text: "제국법은 행성 총독 위에도 군림한다! 하이 마샬이 그대의 철두철미한 법 집행을 극찬했다.",
+          text: "제국법은 행성 총독 위에도 군림한다! 성역 로드 마셜이 그대의 철두철미한 법 집행을 극찬했다.",
           stats: { WP: 6, Inf: 10, WS: 4 }
         },
         fail: {
@@ -195,13 +227,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "임페리얼 네이비 — 하층 포갑판 노예 선원의 반란",
     category: "직업 고유",
     once: true,
-    req: { anyCareers: ["imperial_navy", "navy_captain", "navy_admiral"] },
+    req: {
+      anyCareers: ["imperial_navy"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직업: 임페리얼 네이비",
     weight: 24,
-    text: "18개월째 항구 없는 성간 항해에 내몰린 하층 포갑판 강제 징발 노역자 2,000명이 쇠사슬을 끊고 무기고를 점거했다! 함장은 차갑게 말한다. '해병대를 투입할 필요 없소. 4번 구역의 공기 배출 레버만 당기시오.'",
+    text: "18개월째 항구 없는 성간 항해에 내몰린 하층 포갑판 강제 징발 노역자 2,000명이 쇠사슬을 끊고 무기고를 점거했다! 함장은 차갑게 말한다. '해군 육전대를 투입할 필요 없소. 4번 구역의 공기 배출 레버만 당기시오.'",
     choices: [
       {
-        label: "[백병/교섭] 진공 사살 대신 직접 해병대를 이끌고 진입해 주동자만 제압한다",
+        label: "[백병 판정] 진공 사살 대신 직접 해군 육전대를 이끌고 진입해 주동자만 제압한다",
         check: { stat: "WS", diff: -5 },
         success: {
           text: "유혈을 최소화하고 폭동을 진압했다! 살아남은 노역자들 덕분에 다음 전투에서 함포 장전 속도가 오히려 빨라졌다.",
@@ -222,16 +257,30 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Battlefleet Gothic / Rogue Trader"
+    source: "Battlefleet Gothic Rulebook / Rogue Trader Core Rulebook"
   },
   {
     id: "ev_absurd_medicae_triage",
     title: "야전 의무소의 냉혹한 분류 — '약은 장교용, 병사는 기도뿐'",
     category: "부조리",
-    req: { minAge: 15, excludeTags: ["astartes", "custodes", "noble", "inquisitor", "rogue_trader", "magos"] },
-    reqLabel: "일반 시민 · 하급 군인",
+    req: {
+      minAge: 15,
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
+        "noble", "wealthy", "officer", "commissar", "lord_commissar", "commissar_general",
+        "general_rank", "warmaster", "sororitas", "celestian", "canoness", "cardinal",
+        "inquisitor", "lord_inquisitor", "inquisition_agent",
+        "mechanicus", "tech_priest", "magos", "fabricator_locum", "fabricator_general",
+        "navy_captain", "navy_admiral", "arbites_judge", "arbites_marshal",
+        "admin_prefect", "departmento_head", "planetary_governor", "sector_lord",
+        "rogue_trader", "rt_seneschal", "rt_lord_captain", "guild_magnate", "crime_lord",
+        "tempestus_prime", "psyker_primaris", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "일반 시민 · 하급 병사",
     weight: 16,
-    text: "고열과 부상으로 제국 메디케아(의무소)에 실려 갔다. 의무관은 차트를 훑더니 덤덤히 말한다. '장교·귀족 전용 항생제는 재고가 부족하네. 하급 시민용 표준 처방은 진통제 반 알과 《황제 치유 기도문》 10회 암송이야. 아니면 바로 서비터 부서로 넘길까?'",
+    text: "고열과 부상으로 제국 야전 의무소에 실려 갔다. 의무관은 차트를 훑더니 덤덤히 말한다. '장교·귀족 전용 항생제는 재고가 부족하네. 하급 시민용 표준 처방은 진통제 반 알과 《황제 치유 기도문》 10회 암송이야. 아니면 바로 서비터 부서로 넘길까?'",
     choices: [
       {
         label: "[강인 판정] 치욕과 고통을 악물고 진통제 반 알만으로 자력 회복에 버틴다",
@@ -266,13 +315,26 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_absurd_servitor_sentence",
     title: "서비터 전환 재판 — 이웃의 사소한 죄",
     category: "부조리",
-    req: { minAge: 15, excludeTags: ["astartes", "custodes"] },
-    reqLabel: "15세+ (초인 제외)",
+    req: {
+      minAge: 15,
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "canoness", "cardinal", "inquisitor", "lord_inquisitor",
+        "magos", "fabricator_locum", "fabricator_general",
+        "navy_captain", "navy_admiral", "arbites_judge", "arbites_marshal",
+        "departmento_head", "planetary_governor", "sector_lord",
+        "rogue_trader", "rt_lord_captain", "guild_magnate", "crime_lord",
+        "tempestus_prime", "psyker_primaris"
+      ]
+    },
+    reqLabel: "15세 이상 일반 제국 시민",
     weight: 16,
-    text: "평소 알고 지내던 성실한 기술공이 '배급 빵 두 덩이 절도 및 작업 7분 지각' 죄목으로 기계교 서비터 전환형(뇌엽 절제 후 영구 기계 노예화)을 선고받았다. 탄원서를 낼 마지막 10분이 남아 있다.",
+    text: "평소 알고 지내던 성실한 기술공이 '배급 빵 두 덩이 절도 및 작업 7분 지각' 죄목으로 뇌엽을 절제해 영구 기계 노예로 만드는 기계교 서비터 전환형을 선고받았다. 탄원서를 낼 마지막 10분이 남아 있다.",
     choices: [
       {
-        label: "[권위/교섭 판정] 재판관 앞에 나서 작업장 핵심 인력임을 설득해 벌금형으로 감형시킨다",
+        label: "[교섭 판정] 재판관 앞에 나서 작업장 핵심 인력임을 설득해 벌금형으로 감형시킨다",
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "기적적으로 서비터 개조 명령이 철회되었다! 구역 사람들 사이에서 그대의 덕망이 높아졌다.",
@@ -298,8 +360,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_absurd_upper_lottery",
     title: "10만 분의 1의 희망 — '상층 첨탑 이주권' 추첨 축제",
     category: "부조리",
-    req: { minAge: 14, anyWorldTags: ["hive", "industrial", "civilised", "terra"], excludeTags: ["noble", "astartes", "custodes", "inquisitor"] },
-    reqLabel: "도시/하이브 일반 시민",
+    req: {
+      minAge: 14,
+      anyWorldTags: ["hive", "industrial", "civilised", "terra"],
+      excludeTags: [
+        "noble", "wealthy",
+        "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "general_rank", "commissar", "lord_commissar", "commissar_general",
+        "sororitas", "celestian", "canoness", "cardinal",
+        "inquisitor", "lord_inquisitor",
+        "mechanicus", "tech_priest", "magos", "fabricator_locum", "fabricator_general",
+        "navy_captain", "navy_admiral", "arbites_judge", "arbites_marshal",
+        "admin_prefect", "departmento_head", "planetary_governor", "sector_lord",
+        "rogue_trader", "rt_seneschal", "rt_lord_captain", "guild_magnate", "crime_lord",
+        "tempestus_prime", "psyker_primaris"
+      ]
+    },
+    reqLabel: "도시 · 하이브 일반 시민",
     weight: 15,
     text: "행성 총독부가 하층민의 불만을 달래기 위해 '모범 시민 1명에게 상층 첨탑 이주권 지급' 추첨을 열었다! 하지만 소문에 따르면 당첨자는 이미 총독 친인척으로 내정되어 있거나, 실은 제국 해군 징발함으로 보낸다는 흉흉한 이야기도 돈다.",
     choices: [
@@ -307,7 +385,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[지성 판정] 공고문 깨알 약관을 분석해 함정이 있는지 확인한다",
         check: { stat: "Int", diff: 5 },
         success: {
-          text: "역시나 하단 0.5mm 글씨에 '당첨자는 궤도 군수선 종신 봉사 영광 부여'라고 적혀 있었다! 함정을 피해 주변에 귀띔했다.",
+          text: "역시나 하단 0.5밀리미터 글씨에 '당첨자는 궤도 군수선 종신 봉사 영광 부여'라고 적혀 있었다! 함정을 피해 주변에 귀띔했다.",
           stats: { Int: 5, Fel: 4 }
         },
         fail: {
@@ -316,7 +394,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "황제께서 굽어살피시리라 믿고 당당히 응모함에 이름을 넣는다",
+        label: "[의지 판정] 황제께서 굽어살피시리라 믿고 당당히 응모함에 이름을 넣는다",
         check: { stat: "WP", diff: -15 },
         success: {
           text: "뜻밖에도 진짜 소액 장려금과 작업장 반장 표창에 당첨되어 소소한 행운을 누렸다!",
@@ -335,10 +413,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_absurd_pension_receipt",
     title: "제국 군부의 '120년 뒤 연금 지급 영수증'",
     category: "부조리",
-    req: { minAge: 24, anyTags: ["militarum", "navy", "arbites", "administratum"] },
-    reqLabel: "24세+ · 군인 / 해군 / 치안대 / 관료",
+    req: {
+      minAge: 24,
+      anyTags: ["militarum", "navy", "arbites", "administratum"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "inquisitor", "lord_inquisitor", "navy_admiral", "arbites_marshal", "departmento_head",
+        "planetary_governor", "sector_lord", "rt_lord_captain", "cardinal", "canoness",
+        "magos", "fabricator_locum", "fabricator_general"
+      ]
+    },
+    reqLabel: "24세 이상 · 군인 · 해군 · 치안대 · 관료",
     weight: 15,
-    text: "오랜 복무 공로로 아드미니스트라툼 재무국에서 '명예 공로 연금 증서'가 도착했다. 기쁜 마음으로 열어 보니 '현재 대기 순번 4억 1,200만 번, 예상 수령 시점 124년 후 (본인 사망 시 영수증 자동 말소)'라고 적혀 있다.",
+    text: "오랜 복무 공로로 아드미니스트라툼 재무국에서 '명예 공로 연금 증서'가 도착했다. 기쁜 마음으로 열어 보니 현재 대기 순번 4억 1,200만 번, 예상 수령 시점 124년 후이며 본인 사망 시 영수증 자동 말소라고 적혀 있다.",
     choices: [
       {
         label: "[교섭 판정] 재무 서기관에게 훈장과 언변으로 매달려 당장 쓸 수 있는 현물 보급표로 맞바꾼다",
@@ -349,8 +438,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           wounds: 8
         },
         fail: {
-          text: "서기관이 '불경한 재촉'이라며 대기 순번을 6억 번대로 밀어 버렸다.",
-          stats: { WP: 2 }
+          text: "서기관이 '불경한 재촉'이라며 대기 순번을 6억 번대로 밀어 버리고 소란 벌금까지 매겼다.",
+          stats: { Inf: -3, Fel: -2 }
         }
       },
       {
@@ -361,13 +450,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Astra Militarum / Imperial Bureaucracy Lore"
+    source: "Codex: Astra Militarum / Lexicanum: Adeptus Administratum"
   },
   {
     id: "ev_admin_paper_avalanche",
     title: "아드미니스트라툼의 물리적 재앙 — '서류 산사태'",
     category: "부조리",
-    req: { anyCareers: ["administratum"] },
+    req: {
+      anyCareers: ["administratum"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직업: 아드미니스트라툼 관료",
     weight: 24,
     text: "100년째 쌓아 올린 높이 20미터짜리 세금 장부 탑이 진동을 견디지 못하고 무너져 내렸다! 수십만 장의 양피지 눈사태 속에 하급 서기관 셋이 파묻혔다.",
@@ -404,8 +496,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_career_menial_guild",
     title: "행성 노동자 · 길드원 — 작업반장 자리와 배급권 암투",
     category: "직군 고유",
-    req: { anyCareers: ["menial_worker"] },
-    reqLabel: "직군: 행성 노동자·길드원",
+    req: {
+      anyCareers: ["menial_worker"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
+    reqLabel: "직군: 행성 노동자 · 길드원, 크리그 제외",
     weight: 24,
     text: "공장 4교대 작업반장이 프레스 사고로 팔을 잃고 퇴출되자 그 자리가 비었다. 길드 감독은 '누구든 동료들의 불평불만 명단을 바치거나 생산 할당량을 140% 달성하면 반장 완장을 주겠다'고 공언했다.",
     choices: [
@@ -445,13 +542,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Imperium Maledictum / Hive World Labor Lore"
+    source: "Imperium Maledictum Core / Lexicanum: Hive World"
   },
   {
     id: "ev_career_ganger_turf",
     title: "언더하이브 갱단원 — 고대 아키오테크 밀수 화물 쟁탈전",
     category: "직군 고유",
-    req: { anyCareers: ["underhive_ganger"] },
+    req: {
+      anyCareers: ["underhive_ganger"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 언더하이브 갱단원",
     weight: 26,
     text: "폐쇄된 하층 배수관 아래에서 황금빛 에너지 셀이 달린 고대 아키오테크 상자가 발견되었다! 적대 갱단 20여 명이 샷건과 도끼를 들고 몰려오고 있으며, 저편에서는 아르비테스 순찰대의 사이렌 소리마저 울려 퍼진다.",
@@ -470,10 +570,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[백병 판정] 정면으로 들이받아 적 갱단 두목을 꺾고 이 구역의 패권을 차지한다",
+        label: "[백병 판정] 정면으로 들이받아 적 갱단 두목을 꺾고 아키오테크 상자를 독차지한다",
         check: { stat: "WS", diff: -5 },
         success: {
-          text: "피투성이 혈투 끝에 하층 3개 구역의 지배권을 차지했다! 공포와 존경이 동시에 뒤따른다.",
+          text: "피투성이 혈투 끝에 적 두목을 쓰러뜨리고 고대 아키오테크 화물을 온전히 손에 넣었다! 암시장 거상들이 그대의 배짱에 찬사를 보냈다.",
           stats: { WS: 7, T: 4, Inf: 6 }
         },
         fail: {
@@ -496,13 +596,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_career_navy_boarding",
     title: "임페리얼 네이비 — 워프 출구 앞 해적 강습정 방어전",
     category: "직군 고유",
-    req: { anyCareers: ["imperial_navy", "navy_captain", "navy_admiral"] },
+    req: {
+      anyCareers: ["imperial_navy"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 임페리얼 네이비",
     weight: 26,
     text: "순양함이 워프에서 빠져나와 겔러 필드를 끄는 바로 그 순간, 소행성대 뒤에 숨어 있던 드루카리 해적 강습정 세 척이 선체 측면에 강제 도킹했다! 기관실과 함교 중 어느 쪽을 먼저 막아야 할지 단 몇 초 안에 결단해야 한다.",
     choices: [
       {
-        label: "[민첩/사격 판정] 퓨리 요격기 편대를 긴급 발진시켜 적 모함의 엔진을 먼저 찢어 놓는다",
+        label: "[민첩 판정] 퓨리 요격기 편대를 긴급 발진시켜 적 모함의 엔진을 먼저 찢어 놓는다",
         check: { stat: "Ag", diff: 0 },
         success: {
           text: "화려한 무중력 기동으로 외계 약탈선을 격침했다! 해군 제독이 직접 은빛 날개 훈장을 달아 주었다.",
@@ -535,39 +638,42 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Battlefleet Gothic / Execution Hour"
+    source: "Battlefleet Gothic Rulebook / Execution Hour"
   },
   {
     id: "ev_career_arbites_tithe",
-    title: "아뎁투스 아르비테스 — 십일조 체납 행성 총독궁 강제 진입",
+    title: "아뎁투스 아르비테스 — 십일조 선적 거부 항구 봉쇄 강제 진압",
     category: "직군 고유",
-    req: { anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal"] },
+    req: {
+      anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 아뎁투스 아르비테스",
     weight: 26,
-    text: "행성 총독이 사치에 빠져 3년째 제국 십일조 곡물과 병력 납부를 지연시키고 있다. 행성 경찰들은 총독 편에 서서 길을 막았지만, 제국법(Lex Imperialis) 아래 행성 총독이라 해도 반역자일 뿐이다.",
+    text: "행성 재무의회와 결탁한 반란 귀족 파벌이 3년째 제국 십일조 곡물과 군수 물자 선적을 거부한 채, 부패한 행성 경비대를 동원해 궤도 우주공항의 진입로를 봉쇄했다. 제국법 아래 십일조를 가로막는 자는 지위 고하를 막론하고 반역자일 뿐이다.",
     choices: [
       {
-        label: "[백병/위압 판정] 쇼크 마울과 컴뱃 샷건을 장전하고 아르비테스 장갑차로 총독궁 정문을 부순다",
+        label: "[백병 판정] 쇼크 마울과 컴뱃 샷건을 장전하고 아르비테스 장갑차로 봉쇄선 정문을 돌파한다",
         check: { stat: "WS", diff: 0 },
         success: {
-          text: "'제국법의 이름으로 체포한다!' 사병 부대를 순식간에 진압하고 총독을 공개 처형했다. 제국 치안대의 절대 권위가 행성 전역에 각인되었다!",
+          text: "'제국법의 이름으로 체포한다!' 반란 경비대를 순식간에 진압하고 주모 귀족들을 공개 처형했다. 십일조 수송선이 다시 궤도로 솟아오르며 제국 치안대의 절대 권위가 행성 전역에 각인되었다!",
           stats: { WS: 5, BS: 4, Inf: 8, WP: 4 }
         },
         fail: {
-          text: "총독 사병대의 중화기 매복에 장갑차가 대파되어 중상을 입었으나, 결국 궤도 증원군이 내려와 총독을 끌어냈다.",
+          text: "반란 경비대의 중화기 매복에 장갑차가 대파되어 중상을 입었으나, 결국 궤도 증원군이 내려와 봉쇄선을 무너뜨렸다.",
           wounds: -22,
           stats: { T: 4, Inf: 3 }
         }
       },
       {
-        label: "[지성 판정] 총독의 비밀 계좌와 밀수 장부를 먼저 압수해 귀족 의회가 스스로 총독을 내치게 만든다",
+        label: "[지성 판정] 재무의회의 비밀 계좌와 밀수 장부를 먼저 압수해 가담 귀족들이 스스로 항복하게 만든다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "피 한 방울 흘리지 않고 십일조 전액을 회수하고 부패 관료 일당을 일망타진했다!",
+          text: "피 한 방울 흘리지 않고 십일조 전액을 회수하고 부패 의회 일당을 일망타진했다!",
           stats: { Int: 6, Inf: 7, Fel: 4 }
         },
         fail: {
-          text: "장부 일부가 소각되어 증거가 부족해졌고, 결국 지루한 시가전 진압으로 넘어갔다.",
+          text: "장부 일부가 소각되어 증거가 부족해졌고, 결국 지루한 항구 시가전 진압으로 넘어갔다.",
           wounds: -12,
           stats: { Int: 2 }
         }
@@ -577,9 +683,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_career_admin_munitorum",
-    title: "아드미니스트라툼 — 데파트멘토 무니토룸 전시 징발 분쟁",
+    title: "아드미니스트라툼 — 데파르트멘토 무니토룸 전시 징발 분쟁",
     category: "직군 고유",
-    req: { anyCareers: ["administratum"] },
+    req: {
+      anyCareers: ["administratum"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 아드미니스트라툼",
     weight: 26,
     text: "인접 전선의 아스트라 밀리타룸 장군과 포지 월드 마고스가 동시에 같은 수송 선단과 프로메튬 연료 할당량을 요구하며 청원서를 들이밀었다! 어느 쪽에 우선 배정 도장을 찍느냐에 따라 한 전선이 무너지거나 기계교와 원수가 된다.",
@@ -614,10 +723,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "언더하이브 갱단원 — 정화수 공급관 쟁탈전과 구역 두목 등극",
     category: "직군 심화",
     once: true,
-    req: { anyCareers: ["underhive_ganger"], excludeTags: ["ganger_baron"] },
+    req: {
+      anyCareers: ["underhive_ganger"],
+      excludeTags: ["ganger_baron", "heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 언더하이브 갱단원",
     weight: 34,
-    text: "하층 돔의 생명줄인 정화수 배관 교차점을 두고 라이벌 갱단 세 곳이 피비린내 나는 전쟁을 벌이고 있다. 지금 이 교차점을 장악하면 하층 구역 전체의 통행세와 암시장을 주무르는 구역 두목(Underhive Baron)이 된다!",
+    text: "하층 돔의 생명줄인 정화수 배관 교차점을 두고 라이벌 갱단 세 곳이 피비린내 나는 전쟁을 벌이고 있다. 지금 이 교차점을 장악하면 하층 구역 전체의 통행세와 암시장을 주무르는 구역 두목이 된다!",
     choices: [
       {
         label: "[백병 판정] 체인 액스와 샷건을 들고 적 두목의 은신처에 정면으로 쳐들어가 일기토로 결판낸다",
@@ -659,12 +771,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s12_ganger_bounty_guild",
-    title: "언더하이브 갱단원 — 상층 귀족의 도망친 아들 현상금 의뢰",
+    title: "언더하이브 갱단원 — 상층 귀족의 도망친 후계자 현상금 의뢰",
     category: "직군 심화",
-    req: { anyCareers: ["underhive_ganger"] },
+    req: {
+      anyCareers: ["underhive_ganger"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 언더하이브 갱단원",
     weight: 26,
-    text: "상층 첨탑 귀족 가문의 밀사가 거액의 쓰론 겔트를 들고 찾아왔다. 가출해 언더하이브 이단 모임에 빠져든 귀족 아들을 산 채로 잡아 오라는 의뢰다. 그런데 막상 은신처를 덮쳐 보니 그 청년은 부패한 아버지의 세금 횡령 장부를 훔쳐 도망친 상태였다.",
+    text: "상층 첨탑 귀족 가문의 밀사가 거액의 쓰론 겔트를 들고 찾아왔다. 가출해 언더하이브 이단 모임에 빠져든 귀족 장남을 산 채로 잡아 오라는 의뢰다. 그런데 막상 은신처를 덮쳐 보니 그 청년은 부패한 가주인 귀족 영주의 세금 횡령 장부를 훔쳐 도망친 상태였다.",
     choices: [
       {
         label: "[민첩 판정] 의뢰대로 청년을 깔끔하게 제압해 귀족 가문에 넘기고 거액의 현상금을 받는다",
@@ -707,7 +822,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "아드미니스트라툼 — 성계 십일조 특별 감사관 파견",
     category: "직군 심화",
     once: true,
-    req: { anyCareers: ["administratum"], excludeTags: ["admin_prefect"] },
+    req: {
+      anyCareers: ["administratum"],
+      excludeTags: ["admin_prefect", "heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 아드미니스트라툼",
     weight: 34,
     text: "인접 공업 행성의 십일조 납부량이 3년 연속 12% 미달되었다. 본부 고위 서기관이 그대에게 특별 감사 권한을 위임하며 원인을 밝혀내라 명했다. 현지 총독은 막대한 뇌물을 내밀며 '기후 이상으로 인한 일시적 감산'으로 처리해 달라 속삭인다.",
@@ -716,13 +834,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[지성 판정] 10년 치 운송 전표와 전력 소모량을 교차 대조해 총독의 비밀 밀수 창고를 적발한다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "완벽한 회계 감사로 총독의 횡령을 입증했다! 본부에서 그대를 정식 감사관(Prefect)으로 승진시켰다.",
+          text: "완벽한 회계 감사로 총독의 횡령을 입증했다! 본부에서 그대를 정식 감사관으로 승진시켰다.",
           stats: { Int: 8, Inf: 9, WP: 4 },
           addTags: ["admin_prefect"]
         },
         fail: {
-          text: "총독 측이 장부 창고에 방화를 저질러 결정적 증거 일부가 탔으나, 미납분 징수에는 성공했다.",
-          stats: { Int: 4, Inf: 4 }
+          text: "총독 측이 장부 창고에 방화를 저질러 결정적 증거가 모두 타 버렸고, 성과 부진으로 본부의 질책을 받았다.",
+          stats: { Inf: -4, WP: -2 }
         }
       },
       {
@@ -734,8 +852,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["admin_prefect"]
         },
         fail: {
-          text: "협상이 결렬되어 아르비테스 강제 징수대를 호출하는 소동을 겪었다.",
-          stats: { Inf: 2, WP: 3 }
+          text: "협상이 결렬되어 아르비테스 강제 징수대를 호출하는 소동을 겪으며 감사국 내 평판이 깎였다.",
+          stats: { Inf: -3, Fel: -2 }
         }
       },
       {
@@ -750,70 +868,75 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s12_admin_lost_planet",
-    title: "아드미니스트라툼 — 400년 전 오타로 '사라진 행성' 발견",
+    title: "아드미니스트라툼 — 400년 전 누락으로 잊힌 행성 재발견",
     category: "직군 심화",
-    req: { anyCareers: ["administratum"] },
+    req: {
+      anyCareers: ["administratum"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 아드미니스트라툼",
     weight: 26,
-    text: "지하 서고 정리 중 400년 전 서기관이 성계 코드의 마지막 숫자 하나를 잘못 적어, 인구 8억의 아그리 월드가 제국 장부에서 '멸망 및 삭제' 처리된 사실을 발견했다! 그 행성은 지금까지 4세기 동안 십일조를 한 푼도 내지 않은 채 평화롭게 번영하고 있다.",
+    text: "지하 서고의 고대 천체 대장을 정리하던 중, 400년 전 워프 폭풍 이후 관할 이관이 누락되어 제국 장부에서 영구 말소되었던 인구 8억의 변경 광산 행성이 실은 멀쩡히 번영 중임을 발견했다. 그 행성은 4세기 동안 십일조를 한 푼도 내지 않은 채 독자적인 자치 문명을 일구어 온 상태다.",
     choices: [
       {
         label: "[지성 판정] 즉시 정정 보고서를 올려 400년 치 체납 십일조 재산정과 제국 편입 절차를 개시한다",
         check: { stat: "Int", diff: 5 },
         success: {
-          text: "제국 국고에 막대한 식량 공급원이 복구되었다! 대서기관장이 그대의 매서운 눈썰미를 격찬했다.",
+          text: "제국 국고에 막대한 광물과 십일조 공급원이 복구되었다! 대서기관장이 그대의 매서운 눈썰미를 격찬했다.",
           stats: { Int: 7, Inf: 8, WP: 4 }
         },
         fail: {
-          text: "오류를 인정하기 싫어한 상급 부서가 보고서를 3년째 심의 보류함에 처박아 두었다.",
-          stats: { Int: 3, WP: 3 }
+          text: "오류를 인정하기 싫어한 상급 부서가 보고서를 심의 보류함에 처박고 그대에게 월권 경고를 내렸다.",
+          stats: { Inf: -4, WP: -2 }
         }
       },
       {
         label: "[권위 판정] 급격한 소급 징수로 반란이 나지 않게 '신규 발견 개척 행성'으로 재등록해 완만한 과세를 설계한다",
         check: { stat: "Inf", diff: 0 },
         success: {
-          text: "제국은 새로운 식량 창고를 얻고 행성은 반란을 피했다! 진정한 제국 행정의 달인이다.",
+          text: "제국은 새로운 자원 창고를 얻고 행성은 반란을 피했다! 진정한 제국 행정의 달인이다.",
           stats: { Inf: 8, Fel: 6, Int: 5 }
         },
         fail: {
-          text: "감사부에서 절차 위반을 지적받아 시말서를 썼으나 행성 재편입 자체는 통과되었다.",
-          stats: { Int: 4, Inf: 2 }
+          text: "감사부에서 절차 위반을 지적받아 시말서를 쓰고 징계 감봉을 당했다.",
+          stats: { Inf: -4, Fel: -2 }
         }
       },
       {
         label: "400년 된 낡은 철자에 손을 댔다가 선배 부서들의 책임을 건드릴 수 있으니 조용히 서고 깊숙이 되돌려 놓는다",
         effect: {
-          text: "은하계 어딘가의 평화로운 농부들은 자신이 어떤 거대한 재앙을 피했는지 영원히 모를 것이다.",
+          text: "은하계 어딘가의 평화로운 변경 주민들은 자신이 어떤 거대한 재앙을 피했는지 영원히 모를 것이다.",
           stats: { WP: 3, Fel: 3 }
         }
       }
     ],
-    source: "Lexicanum: Adeptus Administratum / Warhammer 40k Lore"
+    source: "Dark Heresy / Lexicanum: Adeptus Administratum"
   },
   {
     id: "ev_s12_arbites_judge_seat",
-    title: "아뎁투스 아르비테스 — 판관(Judge) 승진 심사와 제국법의 무게",
+    title: "아뎁투스 아르비테스 — 판관 승진 심사와 제국법의 무게",
     category: "직군 심화",
     once: true,
-    req: { anyCareers: ["arbites"], excludeTags: ["arbites_judge"] },
+    req: {
+      anyCareers: ["arbites"],
+      excludeTags: ["arbites_judge", "heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 아뎁투스 아르비테스",
     weight: 34,
     text: "행성 최고 법정에서 12년간 묵혀 온 대형 십일조 횡령·반역 사건의 최종 판결이 그대의 손에 맡겨졌다. 피고인은 행성 상공회의소 의장이며, 유죄를 선고하면 당장 내일 하이브 상층 길드들이 파업할 것이라 협박하고 있다.",
     choices: [
       {
-        label: "[의지 판정] 제국법(Lex Imperialis)에 예외는 없다 — 흔들림 없이 즉결 사형과 전 재산 몰수를 선고한다",
+        label: "[의지 판정] 제국법에 예외는 없다 — 흔들림 없이 즉결 사형과 전 재산 몰수를 선고한다",
         check: { stat: "WP", diff: 0 },
         success: {
-          text: "법정의 위엄 앞에 길드들이 굴복했다! 마샬이 그대의 냉혹한 공정함을 인정해 판관(Judge) 배지를 수여했다.",
+          text: "법정의 위엄 앞에 길드들이 굴복했다! 마셜이 그대의 냉혹한 공정함을 인정해 판관 배지를 수여했다.",
           stats: { WP: 8, Inf: 9, Int: 4 },
           addTags: ["arbites_judge"]
         },
         fail: {
-          text: "판결 직후 상층 길드가 고용한 용병대가 법정 밖을 습격해 부상을 입었으나 끝내 법을 집행했다.",
+          text: "판결 직후 상층 길드가 고용한 용병대가 법정 밖을 습격해 부상을 입었고, 소요 사태 책임으로 판관 임명이 보류되었다.",
           wounds: -18,
-          stats: { WP: 6, Inf: 6 },
-          addTags: ["arbites_judge"]
+          stats: { Inf: -3, Fel: -2 }
         }
       },
       {
@@ -825,8 +948,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["arbites_judge"]
         },
         fail: {
-          text: "법리 논쟁이 길어지며 판결이 연기되었으나 결국 피고인 유죄를 이끌어 냈다.",
-          stats: { Int: 4, Inf: 4 }
+          text: "법리 논쟁이 길어지며 판결이 연기되었고, 그 틈에 길드 측이 증거를 은멸해 승진 심사에서 탈락했다.",
+          stats: { Inf: -3, Fel: -2 }
         }
       },
       {
@@ -837,19 +960,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Book of Judgement (Dark Heresy) / Lexicanum: Adeptus Arbites"
+    source: "Dark Heresy: Book of Judgement / Lexicanum: Adeptus Arbites"
   },
   {
     id: "ev_s12_arbites_precinct_siege",
     title: "아뎁투스 아르비테스 — 폭동군에 포위된 치안 요새 사수전",
     category: "직군 심화",
-    req: { anyCareers: ["arbites"] },
+    req: {
+      anyCareers: ["arbites"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 아뎁투스 아르비테스",
     weight: 26,
-    text: "이단 선동가들의 선동으로 수만 명의 무장 폭동군이 아르비테스 치안 요새(Precinct Fortress) 정문을 포위했다! 외부 증원은 이틀 뒤에나 도착한다. 요새의 두꺼운 아다만티움 방벽 너머로 폭도들의 공성 차량이 밀려든다.",
+    text: "이단 선동가들의 책동으로 수만 명의 무장 폭동군이 아르비테스 치안 요새 정문을 포위했다! 외부 증원은 이틀 뒤에나 도착한다. 요새의 두꺼운 아다만티움 방벽 너머로 폭도들의 공성 차량이 밀려든다.",
     choices: [
       {
-        label: "[사격 판정] 요새 방벽 위에서 익스큐셔너 샷건과 헤비 스터버 교차 화망으로 공성 차량을 분쇄한다",
+        label: "[사격 판정] 요새 방벽 위에서 익스큐셔너 탄환을 장전한 컴뱃 샷건과 헤비 스터버 교차 화망으로 공성 차량을 분쇄한다",
         check: { stat: "BS", diff: 0 },
         success: {
           text: "정확한 제압 사격으로 폭동 주동자들과 공성 차량을 무력화했다! 이틀을 단 한 치도 밀리지 않고 버텨 냈다.",
@@ -886,11 +1012,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s12_navy_commodore_fleet",
-    title: "임페리얼 네이비 — 제국 함대 준장(Commodore) 임시 지휘권",
+    title: "임페리얼 네이비 — 제국 함대 준장 임시 지휘권",
     category: "직군 심화",
     once: true,
-    req: { anyCareers: ["imperial_navy"], minAge: 24, excludeTags: ["navy_commodore"] },
-    reqLabel: "24세+ 임페리얼 네이비",
+    req: {
+      anyCareers: ["imperial_navy"],
+      minAge: 24,
+      excludeTags: ["navy_commodore", "heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
+    reqLabel: "24세 이상 임페리얼 네이비",
     weight: 34,
     text: "성계 외곽에서 카오스 순양함 전대와 조우한 순간, 기함의 사령관이 적 랜스 포격으로 전사했다! 6척의 제국 호위함과 경순양함이 지휘 공백 속에 흩어지려는 찰나, 함교에서 가장 침착한 그대에게 임시 전대 지휘권이 넘어왔다.",
     choices: [
@@ -898,7 +1028,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[지성 판정] 3차원 궤도 기동으로 적 순양함의 현측 사각을 파고들어 6척 동시 어뢰 일제 발사를 지휘한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "수십 발의 어뢰가 적 기함의 보이드 실드를 뚫고 허리를 두 동강 냈다! 전투 후 정식 준장(Commodore)으로 추서되었다.",
+          text: "수십 발의 어뢰가 적 기함의 보이드 실드를 뚫고 허리를 두 동강 냈다! 전투 후 정식 함대 준장으로 승진했다.",
           stats: { Int: 8, Inf: 10, BS: 5 },
           addTags: ["navy_commodore"]
         },
@@ -909,10 +1039,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[사격 판정] 선수 노바 캐논과 매크로 포대의 장거리 정밀 포격으로 적 전대 기함부터 침묵시킨다",
+        label: "[사격 판정] 선수 랜스 포대와 매크로 포대의 장거리 정밀 포격으로 적 전대 기함부터 침묵시킨다",
         check: { stat: "BS", diff: 0 },
         success: {
-          text: "1만 킬로미터 밖에서 명중한 노바 캐논 탄두가 적 전대 전체를 공황에 빠뜨렸다! 함대 준장의 영예를 거머쥐었다.",
+          text: "1만 킬로미터 밖에서 명중한 선수 랜스 포대의 집중 광선이 적 전대 전체를 공황에 빠뜨렸다! 함대 준장의 영예를 거머쥐었다.",
           stats: { BS: 8, Inf: 10, WP: 4 },
           addTags: ["navy_commodore"]
         },
@@ -936,7 +1066,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_navy_void_salvage",
     title: "임페리얼 네이비 — 300년 전 표류 순양함 수색 작전",
     category: "직군 심화",
-    req: { anyCareers: ["imperial_navy"] },
+    req: {
+      anyCareers: ["imperial_navy"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 임페리얼 네이비",
     weight: 26,
     text: "워프 조류가 잠잠해진 구역에서 300년 전 실종되었던 제국 루나급 순양함의 선체가 유령처럼 떠올랐다. 자동 구조 신호는 여전히 울리고 있지만, 선내 생체 반응은 불규칙하고 불길한 워프 잔류 파동이 감지된다.",
@@ -962,8 +1095,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 7, Inf: 6, BS: 3 }
         },
         fail: {
-          text: "서보 스컬이 선내 자동 방어 포탑에 파괴되어 절반의 기록만 건졌다.",
-          stats: { Int: 3, Inf: 2 }
+          text: "서보 스컬이 선내 자동 방어 포탑에 모조리 파괴되어 값비싼 탐사 장비를 잃고 빈손으로 철수했다.",
+          stats: { Inf: -3, Int: -2 }
         }
       },
       {
@@ -975,14 +1108,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Battlefleet Gothic / Rogue Trader: Space Hulks Lore"
+    source: "Battlefleet Gothic Rulebook / Rogue Trader: Edge of the Abyss"
   },
   {
     id: "ev_s12_menial_shift_strike",
     title: "행성 노동자 — 18시간 연장 노역과 지하 매뉴팩토룸 파업 모의",
     category: "직군 심화",
-    req: { anyCareers: ["menial_worker"], excludeWorlds: ["krieg"] },
-    reqLabel: "직군: 행성 노동자 (크리그 제외)",
+    req: {
+      anyCareers: ["menial_worker"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
+    reqLabel: "직군: 행성 노동자, 크리그 제외",
     weight: 26,
     text: "전시 증산령으로 하루 18시간 연속 조업이 보름째 이어지자, 과로로 쓰러진 동료 셋이 컨베이어 벨트 아래로 사라졌다. 분노한 야간 조장들이 내일 새벽 용광로 밸브를 잠그고 집단 파업을 벌이자며 그대에게 동참을 요구한다. 아르비테스가 알면 전원 처형이다.",
     choices: [

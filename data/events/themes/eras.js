@@ -3,14 +3,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
 (window.IMPERIUM_DATA.EVENTS = window.IMPERIUM_DATA.EVENTS || []).push(
   {
     id: "ev_era_sabbat_bloodpact",
-    title: "사바트 성전기 — '피의 서약(Blood Pact)' 카오스 정규군의 야습",
+    title: "사바트 성전기 — '피의 서약' 카오스 정규군의 야습",
     category: "시기·장소 고유",
     once: true,
     req: {
       minAge: 14,
       minYear: 755,
       maxYear: 790,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "custodes", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [{ anySegmenta: ["pacificus"] }, { anyTags: ["sabbat_veteran", "tanith_ghost"] }]
     },
     reqLabel: "755~790.M41 · 세그멘툼 파시피쿠스",
@@ -52,14 +55,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 14,
       minYear: 901,
       maxYear: 912,
-      anySegmenta: ["ultima"]
+      anySegmenta: ["ultima"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "901~912.M41 · 울티마 세그멘툼",
     weight: 28,
-    text: "아스트랄 클로 챕터 마스터 루프트 휴론이 제국 십일조 납부를 거부하고 마엘스트롬 일대를 봉쇄하면서 울티마 세그멘툼 전역에 계엄령이 떨어졌다! 스페이스 마린끼리 서로 총부리를 겨누는 충격적인 내전 소식에 상선 항로가 끊기고 식량과 탄약이 폭등했다.",
+    text: "아스트랄 클로 챕터 마스터 루프트 휴론이 제국 십일조 납부를 거부하고 마엘스트롬 일대를 봉쇄하면서 울티마 세그멘툼 전역에 계엄령이 떨어졌다! 스페이스 마린끼리 서로 총부리를 겨누는 충격적인 내전 소식에 상선 항로가 끊기고 식량과 탄약 값이 폭등했다.",
     choices: [
       {
-        label: "[지성/교섭 판정] 봉쇄망을 피해 우회 보급 항로를 개척하고 충성파 함대에 물자를 조달한다",
+        label: "[지성 판정] 봉쇄망을 피해 우회 보급 항로를 개척하고 충성파 함대에 물자를 조달한다",
         check: { stat: "Int", diff: 0 },
         success: {
           text: "충성파 챕터와 제국 해군의 보급난을 크게 덜어 주었다! 성역 총독부로부터 훈장과 두둑한 보상을 받았다.",
@@ -67,7 +73,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["badab_veteran"]
         },
         fail: {
-          text: "타이거 클로 해적 함대의 기습을 받아 화물선 일부를 잃고 간신히 귀환했다.",
+          text: "아스트랄 클로 봉쇄 함대의 기습을 받아 화물선 일부를 잃고 간신히 귀환했다.",
           wounds: -15,
           stats: { Inf: -2 }
         }
@@ -91,17 +97,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 12,
       minYear: 942,
       maxYear: 958,
-      anyWorlds: ["armageddon"]
+      anyWorlds: ["armageddon"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "942~958.M41 · 아마겟돈",
     weight: 30,
     text: "가즈쿨의 대군은 물러났지만, 잿더미가 된 하데스 하이브 외곽 적도 밀림에서는 죽은 오크들이 남긴 포자가 끊임없이 야생 페럴 오크로 자라나고 있다! 화염방사 소각대와 재건 작업반이 매일 목숨을 걸고 잿빛 황무지로 나선다.",
     choices: [
       {
-        label: "[사격/강인 판정] 화염 소각대에 합류해 야생 오크 둥지를 뿌리째 불태운다",
+        label: "[강인 판정] 화염 소각대에 합류해 야생 오크 둥지를 뿌리째 불태운다",
         check: { stat: "T", diff: 0 },
         success: {
-          text: "유독 가스와 페럴 오크의 매복을 뚫고 세 구역의 포자를 완전히 정화했다! 강철 군단 베테랑의 인정을 받았다.",
+          text: "유독 가스와 페럴 오크의 매복을 뚫고 세 구역의 포자를 완전히 정화했다! 스틸 리전 베테랑의 인정을 받았다.",
           stats: { T: 6, BS: 4, WS: 4 }
         },
         fail: {
@@ -129,11 +138,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 12,
       minYear: 990,
       maxYear: 998,
+      excludeTags: [
+        "custodes", "grey_knight",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [{ anyWorlds: ["cadia"] }, { anySegmenta: ["obscurus"] }]
     },
     reqLabel: "990~998.M41 · 카디아 / 세그멘툼 옵스쿠루스",
     weight: 30,
-    text: "밤하늘을 가득 채운 공포의 눈(Eye of Terror)이 전례 없이 붉고 거대하게 부풀어 올랐다. 아스트로패스들이 매일 밤 피눈물을 흘리며 비명을 지르고, 카디안 게이트 전역에 최후의 결전을 앞둔 총동원령이 내려졌다!",
+    text: "밤하늘을 가득 채운 공포의 눈이 전례 없이 붉고 거대하게 부풀어 올랐다. 아스트로패스들이 매일 밤 피눈물을 흘리며 비명을 지르고, 카디안 게이트 전역에 최후의 결전을 앞둔 총동원령이 내려졌다!",
     choices: [
       {
         label: "[의지 판정] 폭풍 전야의 광기를 억누르고 요새 방어선 점검과 탄약 비축을 주도한다",
@@ -163,17 +176,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_era_noctis_aeterna",
-    title: "영원한 밤(Noctis Aeterna) — 아스트로노미칸이 꺼진 33일",
+    title: "영원한 밤 — 아스트로노미칸이 꺼진 33일",
     category: "시기·장소 고유",
     once: true,
     req: {
       minAge: 10,
       minYear: 999,
-      maxYear: 1001
+      maxYear: 999,
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "imperial_nihilus", "rift_survivor",
+        "astartes", "grey_knight", "custodes", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "999.M41~001.M42 · 대균열 직후 전 제국",
+    reqLabel: "999.M41 · 임페리움 상크투스",
     weight: 34,
-    text: "대균열(시카트릭스 말레딕툼)이 은하를 가른 직후, 1만 년 동안 단 한 번도 꺼진 적 없던 테라의 아스트로노미칸 등불이 소멸했다! 33일 동안 모든 성간 항해와 통신이 끊기고, 행성 곳곳에서 종말론 폭동과 악마의 속삭임이 터져 나온다!",
+    text: "대균열 시카트릭스 말레딕툼이 은하를 가른 직후, 1만 년 동안 단 한 번도 꺼진 적 없던 테라의 아스트로노미칸 등불이 소멸했다! 33일 동안 모든 성간 항해와 통신이 끊기고, 행성 곳곳에서 종말론 폭동과 악마의 속삭임이 터져 나온다!",
     choices: [
       {
         label: "[의지 판정] 칠흑 같은 절망 속에서 등불을 높이 들고 치안과 신앙을 사수한다",
@@ -205,18 +224,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_era_terra_hexarchy",
-    title: "신성한 테라 — 육두정치(Hexarchy) 쿠데타 음모",
+    title: "신성한 테라 — 육두정치 쿠데타 음모",
     category: "시기·장소 고유",
     once: true,
     req: {
       minAge: 16,
       minYear: 1001,
       maxYear: 1006,
-      anyWorlds: ["terra"]
+      anyWorlds: ["terra"],
+      excludeTags: [
+        "high_lord_terra", "custodes",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "001~006.M42 · 신성한 테라",
     weight: 34,
-    text: "로부테 길리먼이 인도미투스 성전을 떠나자, 권력을 잃은 구(舊) 테라 하이 로드 6명이 '육두정치' 반란을 꾸미며 황궁 외곽의 치안군과 어쌔신들을 은밀히 움직이기 시작했다! 테라 상층 구역 전체에 살벌한 첩보전이 벌어지고 있다.",
+    text: "로부테 길리먼이 인도미투스 성전을 떠나자, 섭정의 개혁에 반발한 보수파 전·현직 테라 하이 로드 여섯 명이 '육두정치' 쿠데타를 꾸미며 황궁 외곽의 반란 병력과 사설 무장대를 은밀히 움직이기 시작했다! 테라 상층 첨탑 전역에 숨 막히는 첩보전과 암살 음모가 번지고 있다.",
     choices: [
       {
         label: "[지성 판정] 육두정치 반역파의 비밀 전령을 추적해 섭정 충성파와 황궁 사령부에 보고한다",
@@ -249,15 +272,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       minYear: 1001,
-      maxYear: 1016,
-      excludeTags: ["imperial_nihilus", "heretic", "chaos_aligned"]
+      maxYear: 1012,
+      excludeTags: [
+        "imperial_nihilus", "indomitus_crusader",
+        "custodes", "high_lord_terra", "warmaster",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "001~016.M42 · 임페리움 상크투스",
+    reqLabel: "001~012.M42 · 임페리움 상크투스",
     weight: 28,
     text: "수백 척의 거대 전함과 새로운 회색 갑주의 프라이머리스 스페이스 마린을 실은 인도미투스 성전 함대가 행성 궤도에 집결했다! 제국 역사상 대성전 이후 최대 규모의 반격 작전이 시작되며 막대한 병력과 자원, 지원자를 끌어모으고 있다.",
     choices: [
       {
-        label: "[교섭/의지 판정] 성전 함대의 선봉 보급·작전 지원에 자원해 '인도미투스 성전군' 휘장을 받는다",
+        label: "[의지 판정] 성전 함대의 선봉 보급·작전 지원에 자원해 '인도미투스 성전군' 휘장을 받는다",
         check: { stat: "WP", diff: 5 },
         success: {
           text: "새로운 시대의 반격에 이름을 올렸다! 거대한 성전 함대의 위용 아래 사기와 권위가 크게 치솟았다.",
@@ -291,14 +318,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 14,
       minYear: 1000,
       maxYear: 1045,
-      allTags: ["imperial_nihilus"]
+      allTags: ["imperial_nihilus"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "000~045.M42 · 임페리움 니힐루스 (암흑 고립)",
+    reqLabel: "000~045.M42 · 임페리움 니힐루스 암흑 고립",
     weight: 32,
     text: "아스트로노미칸의 빛이 완전히 차단된 임페리움 니힐루스. 테라의 지원이 끊긴 지 수년째, 궤도에 정체불명의 카오스 약탈선과 아엘다리 해적이 번갈아 나타나 물자를 뜯어 가고 있다. 이제 이 성계의 생존은 오직 자신들의 손에 달렸다.",
     choices: [
       {
-        label: "[사격/전술 판정] 행성 잔존 궤도 포대와 민병대를 규합해 약탈 함대에 피비린내 나는 매복을 건다",
+        label: "[사격 판정] 행성 잔존 궤도 포대와 민병대를 규합해 약탈 함대에 피비린내 나는 매복을 건다",
         check: { stat: "BS", diff: -5 },
         success: {
           text: "방심하고 저궤도로 내려온 해적 호위함 두 척을 격추했다! 노획한 워프 엔진 부품으로 성계가 수년 더 버틸 숨통을 텄다!",
@@ -318,22 +348,26 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Spear of the Emperor / Imperium Nihilus Lore"
+    source: "Spear of the Emperor / Imperium Nihilus: Vigilus Defiant"
   },
   {
     id: "ev_era_pariah_stilling",
-    title: "파리아 넥서스의 '정적(The Stilling)' — 영혼이 메마르는 파동",
+    title: "파리아 넥서스의 '정적' — 영혼이 메마르는 파동",
     category: "시기·장소 고유",
     once: true,
     req: {
       minAge: 12,
       minYear: 1016,
       maxYear: 1040,
-      anySegmenta: ["ultima", "tempestus"]
+      anySegmenta: ["ultima", "tempestus"],
+      excludeTags: [
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "016~040.M42 · 울티마·템페스투스 세그멘툼",
     weight: 28,
-    text: "네크론의 거대한 흑요석 파일런들이 성역 어딘가에서 깨어나며 워프를 완전히 억누르는 기괴한 반(反)사이킥 파동 '정적(The Stilling)'이 밀려왔다! 거리마다 시민들이 의욕을 잃고 멍하니 주저앉아 죽어 가고, 사이커들은 끔찍한 고통을 호소한다.",
+    text: "네크론의 거대한 블랙스톤 파일런들이 성역 어딘가에서 깨어나며 워프를 완전히 억누르는 기괴한 반사이킥 파동 '정적'이 밀려왔다! 거리마다 시민들이 의욕을 잃고 멍하니 주저앉아 죽어 가고, 사이커들은 끔찍한 고통을 호소한다.",
     choices: [
       {
         label: "[의지 판정] 황제에 대한 불타는 신앙과 의지로 영혼의 무기력을 정면으로 뚫고 나아간다",
@@ -345,7 +379,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           corruption: -10
         },
         fail: {
-          text: "뼈 속까지 시린 공허감에 쓰러져 며칠간 앓아누웠으나, 워프 오염만큼은 기묘하게 씻겨 나갔다.",
+          text: "뼛속까지 시린 공허감에 쓰러져 며칠간 앓아누웠으나, 워프 오염만큼은 기묘하게 씻겨 나갔다.",
           wounds: -14,
           corruption: -10,
           stats: { WP: 2 }
@@ -355,7 +389,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[블랭크/기계교 전용] 영혼 공허 파동의 주파수를 역측정해 대항 차폐막 데이터를 확보한다",
         req: { anyTags: ["blank", "mechanicus", "tech_priest", "magos"] },
         effect: {
-          text: "남들이 쓰러지는 동안 냉정히 네크론 흑요석 파장을 분석해 제국 학술부에 귀중한 자료를 넘겼다!",
+          text: "남들이 쓰러지는 동안 냉정히 네크론 블랙스톤 파장을 분석해 제국 학술부에 귀중한 자료를 넘겼다!",
           stats: { Int: 8, Inf: 6 },
           corruption: -8
         }
@@ -377,17 +411,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 12,
-      minYear: 1015,
+      minYear: 1020,
       maxYear: 1050,
-      excludeTags: ["heretic", "chaos_aligned"],
-      or: [{ allTags: ["imperial_nihilus"] }, { anyChapters: ["dark_angels"] }]
+      allTags: ["imperial_nihilus"],
+      excludeTags: [
+        "astartes", "grey_knight", "custodes", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "015~050.M42 · 임페리움 니힐루스 / 다크 엔젤",
+    reqLabel: "020~050.M42 임페리움 니힐루스",
     weight: 28,
     text: "빛 없는 암흑 제국에 기적 같은 소식이 퍼졌다. 전설 속 프라이마크 라이온 엘 존슨이 깨어나 고립된 행성들을 묶어 '라이온의 보호령'을 세우고 있으며, 오늘 밤 제1군단 기사단의 깃발 아래 이 행성의 방어망을 재건하는 작전이 시작된다!",
     choices: [
       {
-        label: "[교섭/의지 판정] 행성 방어 지도와 생존자 명단을 정비해 보호령 수비 협정 수립에 앞장선다",
+        label: "[교섭 판정] 행성 방어 지도와 생존자 명단을 정비해 보호령 수비 협정 수립에 앞장선다",
         check: { stat: "Fel", diff: 5 },
         success: {
           text: "제1군단의 깃발이 궤도에 걸리며 식량과 탄약 보급선이 다시 열렸다! 그대는 보호령 수호 연락관으로 임명되었다.",
@@ -395,8 +432,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 10
         },
         fail: {
-          text: "엄격한 보안 심문에 진땀을 뺐으나, 행성 방어 지원만은 무사히 확보했다.",
-          stats: { WP: 4, Inf: 3 }
+          text: "엄격한 보안 심문 끝에 협상 대표 자리에서는 밀려났으나, 행성 방어 지원만은 가까스로 확보했다.",
+          stats: { WP: 3, Inf: -2 }
         }
       },
       {
@@ -412,18 +449,29 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_era_scarus_xenos",
-    title: "스카루스 섹터 격동기 — 외계 종족 사루티(Saruthi) 유물 밀수망",
+    title: "스카루스 섹터 격동기 — 외계 종족 사루티 유물 밀수망",
     category: "시기·장소 고유",
     once: true,
     req: {
       minAge: 14,
-      minYear: 225,
-      maxYear: 520,
-      excludeTags: ["heretic", "chaos_aligned"]
+      minYear: 238,
+      maxYear: 248,
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeTags: [
+        "inquisitor", "lord_inquisitor",
+        "astartes", "grey_knight", "custodes", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      or: [
+        { anySegmenta: ["obscurus"] },
+        { anyTags: ["inquisition_agent", "inquisition_favor", "arbites"] }
+      ]
     },
-    reqLabel: "225~520.M41 · 아이젠혼 시대",
+    reqLabel: "238~248.M41 · 세그멘툼 옵스쿠루스 · 심문소·아르비테스",
     weight: 30,
-    text: "M41 초중반, 스카루스 섹터 전역에서 기하학적으로 뒤틀린 정체불명의 외계 유물과 금지된 서적 '네크로테크(Necroteuch)' 관련 밀수 소문이 퍼지고 있다! 오르도 제노스 요원들이 항구마다 비밀 검문을 강화하는 중이다.",
+    text: "스카루스 섹터 전역에서 기하학적으로 뒤틀린 정체불명의 외계 유물과 금지된 서적 '네크로텍' 관련 밀수 소문이 퍼지고 있다! 오르도 제노스 요원들이 항구마다 비밀 검문을 강화하는 중이다.",
     choices: [
       {
         label: "[지성 판정] 수상한 골동품 상인의 거래 장부를 추적해 오르도 제노스 지부에 제보한다",
@@ -456,15 +504,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 14,
-      minYear: 392,
-      maxYear: 465
+      minYear: 400,
+      maxYear: 470,
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "392~465.M41 · 마카리우스 성전 및 내전기",
+    reqLabel: "400~470.M41 · 마카리우스 이단 내전기",
     weight: 30,
-    text: "전설적인 로드 솔라 마카리우스가 단 7년 만에 1,000여 행성을 정복한 위대한 대성전이 막을 내린 뒤, 그의 후계 장군들이 패권을 다투며 70년에 걸친 참혹한 '마카리우스 이단 내전'의 불길이 은하 서부와 보급로에 번지고 있다!",
+    text: "전설적인 로드 솔라 마카리우스가 단 7년 만에 1,000여 행성을 정복한 위대한 대성전이 막을 내린 뒤, 그의 후계 장군들이 패권을 다투며 끝없는 참혹한 '마카리우스 이단 내전'의 불길이 은하 서부와 보급로에 번지고 있다!",
     choices: [
       {
-        label: "[의지/사격 판정] 테라 중앙 충성파 수비대에 합류해 군벌들의 십일조 약탈을 저지한다",
+        label: "[사격 판정] 테라 중앙 충성파 수비대에 합류해 군벌들의 십일조 약탈을 저지한다",
         check: { stat: "BS", diff: 0 },
         success: {
           text: "혼란한 군벌 내전 속에서도 제국 충성파의 보급선을 지켜 내며 훈장과 공적을 인정받았다!",
@@ -489,18 +540,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_era_vraks_gas",
-    title: "브락스 공성전기 — 17년 참호전의 보급 징발과 독가스 경보",
+    title: "브락스 공성전기 — 끝없는 참호전의 보급 징발과 독가스 경보",
     category: "시기·장소 고유",
     once: true,
     req: {
       minAge: 14,
       minYear: 813,
       maxYear: 830,
+      excludeTags: [
+        "vraks_veteran",
+        "astartes", "grey_knight", "custodes", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [{ anyWorlds: ["krieg"] }, { anySegmenta: ["obscurus", "tempestus"] }]
     },
     reqLabel: "813~830.M41 · 크리그 / 옵스쿠루스·템페스투스",
     weight: 28,
-    text: "무기고 행성 브락스의 17년 참호전이 너글의 역병 독가스와 카오스 타이탄까지 얽힌 지옥으로 번지면서, 주변 성역과 크리그 전역에 끝없는 병력·포탄·방독면 추가 징발령이 떨어졌다!",
+    text: "무기고 행성 브락스의 끝없는 참호전이 너글의 역병 독가스와 카오스 타이탄까지 얽힌 지옥으로 번지면서, 주변 성역과 크리그 전역에 막대한 병력·포탄·방독면 추가 징발령이 떨어졌다!",
     choices: [
       {
         label: "[강인 판정] 화학 방호복을 입고 전선 보급 및 오염 제독 작업에 뛰어든다",
@@ -535,17 +591,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 14,
       minYear: 998,
       maxYear: 999,
-      anyWorlds: ["armageddon"]
+      anyWorlds: ["armageddon"],
+      excludeTags: [
+        "armageddon_3_vet",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "998~999.M41 · 아마겟돈",
     weight: 34,
-    text: "아마겟돈의 생명줄인 거대 항만 도시 '헬스리치' 부두에 수십만 오크 대군이 밀려들었다! 블랙 템플러와 강철 군단, 심지어 민간 부두 노동자 민병대까지 용접기와 샷건을 들고 불타는 성당 앞 최후의 바리케이드를 세우고 있다.",
+    text: "아마겟돈의 생명줄인 거대 항만 도시 '헬스리치' 부두에 수십만 오크 대군이 밀려들었다! 블랙 템플러와 스틸 리전, 심지어 민간 부두 노동자 민병대까지 용접기와 샷건을 들고 불타는 성당 앞 최후의 바리케이드를 세우고 있다.",
     choices: [
       {
-        label: "[백병/사격 판정] 부두 민병대와 스틸 리전 곁에서 오크 가간트의 발밑까지 맞서 싸운다",
+        label: "[사격 판정] 부두 민병대와 스틸 리전 곁에서 오크 가간트의 발밑까지 맞서 싸운다",
         check: { stat: "BS", diff: -5 },
         success: {
-          text: "인페르누스급 타이탄 '스톰헤럴드'의 포효와 함께 오크 선봉을 꺾어 놓았다! 헬스리치는 무너지지 않았다!",
+          text: "임페라토르급 타이탄 '스톰헤럴드'의 포효와 함께 오크 선봉을 꺾어 놓았다! 헬스리치는 무너지지 않았다!",
           stats: { BS: 6, WP: 7, Inf: 7 },
           faith: 12,
           addTags: ["armageddon_3_vet"]
@@ -576,12 +636,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 12,
       minYear: 998,
-      maxYear: 1000,
-      anyWorlds: ["baal"]
+      maxYear: 999,
+      anyWorlds: ["baal"],
+      excludeTags: [
+        "baal_survivor",
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "998~1000.M41 · 바알",
+    reqLabel: "998~999.M41 · 바알",
     weight: 32,
-    text: "하이브 함대 레비아탄의 그림자가 바알 성계를 덮기 직전, 생귀니우스의 피를 이은 30여 개 블러드 엔젤 후계 챕터 — 플레시 티어러, 엔젤스 버밀리온, 라멘터의 남은 전사들까지 — 가 모두 바알의 붉은 하늘 아래 집결했다!",
+    text: "하이브 함대 레비아탄의 그림자가 바알 성계를 덮기 직전, 생귀니우스의 피를 이은 30여 개 블러드 엔젤 후계 챕터가 바알의 붉은 하늘 아래 집결했다! 플레시 티어러, 블러드 드링커, 엔젤스 생귄, 심지어 파문당한 나이츠 오브 블러드까지 성채로 몰려들고 있다!",
     choices: [
       {
         label: "[의지 판정] 붉은 천사들의 거대한 요새 방어선 구축과 탄약 운반에 전력을 바친다",
@@ -616,14 +681,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 14,
       minYear: 1006,
       maxYear: 1014,
-      anySegmenta: ["obscurus"]
+      anySegmenta: ["obscurus"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "006~014.M42 · 세그멘툼 옵스쿠루스",
     weight: 28,
     text: "임페리움 상크투스와 암흑의 니힐루스를 잇는 거의 유일한 안정 워프 통로 '나흐문드 회랑'에 블랙 리전과 해적 함대가 몰려들며 성역 전체의 항로가 마비 직전이다! 구원 물자를 실은 호송 선단이 긴급 호위와 항법 지원을 요청한다.",
     choices: [
       {
-        label: "[사격/지성 판정] 나흐문드 회랑 호송 선단 방어 작전에 참여해 암흑 제국행 보급로를 뚫는다",
+        label: "[사격 판정] 나흐문드 회랑 호송 선단 방어 작전에 참여해 암흑 제국행 보급로를 뚫는다",
         check: { stat: "BS", diff: 0 },
         success: {
           text: "카오스 약탈선의 기습을 격퇴하고 수송선을 통과시켰다! 니힐루스 전선 사령부가 깊은 감사를 표했다.",
@@ -654,14 +722,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       minYear: 1010,
-      maxYear: 1020
+      maxYear: 1020,
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: [
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "inquisitor", "lord_inquisitor", "high_lord_terra",
+        "arbites", "arbites_judge", "arbites_marshal",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "010~020.M42 · 사이킥 각성기 전 제국",
     weight: 28,
     text: "대균열 이후 인류 종 전체에서 사이커 발현율이 폭증하면서, 시장 한복판에서 어린 소녀의 손끝에 푸른 워프 불꽃이 튀어 올랐다! 공포에 질린 군중이 쇠파이프를 들고 몰려들며 폭동 직전의 마녀사냥이 벌어지고 있다.",
     choices: [
       {
-        label: "[의지/권위 판정] 폭도를 진정시키고 규정대로 아뎁투스 아스트라 텔레파티카 검은 함선 인계 절차에 넘긴다",
+        label: "[의지 판정] 폭도를 진정시키고 규정대로 아뎁투스 아스트라 텔레파티카 검은 함선 인계 절차에 넘긴다",
         check: { stat: "WP", diff: 0 },
         success: {
           text: "소녀가 공포로 폭주해 악마를 소환하기 전에 침착하게 제압·인계했다! 구역 전체를 워프 재앙에서 구해 냈다.",
@@ -695,24 +772,28 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_era_tyranic_bastior",
-    title: "제4차 타이라니드 전쟁 — 바스티오르(Bastior) 서브섹터의 워프 그림자",
+    title: "제4차 타이라니드 전쟁 — 바스티오르 서브섹터의 워프 그림자",
     category: "시기·장소 고유",
     once: true,
     req: {
       minAge: 14,
-      minYear: 1025,
+      minYear: 1028,
       maxYear: 1045,
-      anySegmenta: ["pacificus", "solar"]
+      anySegmenta: ["pacificus", "solar"],
+      excludeTags: [
+        "tyranic_war_vet",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "025~045.M42 · 파시피쿠스·솔라 (4차 타이라니드 전쟁)",
+    reqLabel: "028~045.M42 · 파시피쿠스·솔라 · 제4차 타이라니드 전쟁",
     weight: 30,
-    text: "서부 은하 바스티오르 서브섹터로부터 거대한 '워프의 그림자(Shadow in the Warp)'가 밀려오며 아스트로패스 통신이 일제히 끊어졌다! 하이브 함대 레비아탄의 서부 대촉수가 테라를 향해 진격하는 가운데, 솔블레이드(Solblade) 긴급 대응 함대가 전 성역에서 병력과 물자를 징집하고 있다.",
+    text: "서부 은하 바스티오르 서브섹터로부터 거대한 '워프의 그림자'가 밀려오며 아스트로패스 통신이 일제히 끊어졌다! 하이브 함대 레비아탄의 서부 대촉수가 테라를 향해 진격하는 가운데, 솔블레이드 긴급 대응 함대가 전 성역에서 병력과 물자를 징집하고 있다.",
     choices: [
       {
-        label: "[사격/의지 판정] 솔블레이드 기동 방어선에 합류해 레비아탄 선봉 생체 괴수들과 맞선다",
+        label: "[사격 판정] 솔블레이드 기동 방어선에 합류해 레비아탄 선봉 생체 괴수들과 맞선다",
         check: { stat: "BS", diff: -5 },
         success: {
-          text: "거대한 노른 에미서리(Norn Emissary)급 생체 괴수의 기습을 막아 내며 테라 방면 최후 방어선을 지켜 냈다!",
+          text: "거대한 노른 에미서리급 생체 괴수의 기습을 막아 내며 테라 방면 최후 방어선을 지켜 냈다!",
           stats: { BS: 6, WP: 6, Inf: 8 },
           addTags: ["tyranic_war_vet"]
         },
@@ -738,10 +819,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "찢어진 밤하늘 — 시카트릭스 말레딕툼 아래 무너진 별자리",
     category: "대균열 후유증",
     once: true,
-    req: { minAge: 14, greatRift: true, excludeWorldTags: ["feral"] },
-    reqLabel: "대균열(999.M41) 개방 이후",
+    req: {
+      minAge: 14,
+      greatRift: true,
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "custodes", "grey_knight",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "999.M41 대균열 개방 이후",
     weight: 28,
-    text: "카디아 붕괴 이후 밤하늘을 동서로 가른 거대한 핏빛 상처, '시카트릭스 말레딕툼'이 오늘 밤따라 기괴하게 맥동한다. 천문대 시계탑들이 서로 다른 시각을 가리키며 멈춰 섰고, 아스트로패스 탑에서는 사이커들의 비명이 끊이지 않는다.",
+    text: "카디아 성문이 무너진 뒤 밤하늘을 동서로 가른 거대한 핏빛 상처, '시카트릭스 말레딕툼'이 오늘 밤따라 기괴하게 맥동한다. 천문대 시계탑들이 서로 다른 시각을 가리키며 멈춰 섰고, 아스트로패스 탑에서는 사이커들의 비명이 끊이지 않는다.",
     choices: [
       {
         label: "[의지 판정] 찢어진 하늘을 똑바로 바라보며 동요하는 구역 사람들에게 황제의 빛은 꺼지지 않았다고 외친다",
@@ -766,8 +855,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 7, Inf: 6 }
         },
         fail: {
-          text: "시간 왜곡이 계산 범위를 넘어 일부 보급 창고가 혼선에 빠졌으나, 큰 참사만은 막았다.",
-          stats: { Int: 3 }
+          text: "시간 왜곡이 계산 범위를 넘어 일부 보급 창고가 혼선에 빠졌고, 행정부의 질책을 받았으나 큰 참사만은 막았다.",
+          stats: { Int: 2, Inf: -2 }
         }
       },
       {
@@ -785,10 +874,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "암흑 제국의 겨울 — 테라의 빛이 끊긴 고립 행성의 배급 붕괴",
     category: "대균열 후유증",
     once: true,
-    req: { minAge: 14, greatRift: true, allTags: ["imperial_nihilus"] },
-    reqLabel: "대균열 이후 · 임페리움 니힐루스 고립",
+    req: {
+      minAge: 14,
+      minYear: 1002,
+      greatRift: true,
+      allTags: ["imperial_nihilus"],
+      excludeWorlds: ["fenris", "baal", "krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "death", "krieg"],
+      excludeTags: [
+        "planetary_governor", "sector_lord",
+        "astartes", "grey_knight", "custodes", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "002.M42+ · 임페리움 니힐루스 고립",
     weight: 34,
-    text: "아스트로노미칸의 등불이 닿지 않는 암흑 제국(임페리움 니힐루스)에 고립된 지 오래다. 제국 식량 수송선이 3년째 끊기며 비축 창고가 바닥을 드러냈고, 일부 절망한 구역에서는 총독을 몰아내려는 반란의 불씨가 피어오르고 있다.",
+    text: "아스트로노미칸의 등불이 닿지 않는 암흑 제국 임페리움 니힐루스에 고립된 지 오래다. 제국 식량 수송선이 3년째 끊기며 비축 창고가 바닥을 드러냈고, 일부 절망한 구역에서는 총독을 몰아내려는 반란의 불씨가 피어오르고 있다.",
     choices: [
       {
         label: "[교섭 판정] 귀족 비축고와 길드 창고를 개방하게 설득해 공정한 전시 배급 체계를 세운다",

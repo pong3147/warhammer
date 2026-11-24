@@ -8,11 +8,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 15,
-      anyCareers: ["astra_militarum", "pdf_trooper", "militarum_officer", "tempestus_scion", "commissar", "lord_commissar", "skitarii"]
+      anyCareers: ["astra_militarum", "pdf_trooper", "militarum_officer", "tempestus_scion", "commissar", "lord_commissar", "skitarii"],
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince", "astartes", "transhuman", "custodes", "grey_knight", "dreadnought", "high_lord_terra"]
     },
-    reqLabel: "전선 군인 · 스키타리 · 커미사르",
+    reqLabel: "15세 이상 · 전선 군인 · 스키타리 · 커미사르",
     weight: 15,
-    text: "하늘이 찢어지는 굉음과 함께 적의 바실리스크급 중포탄 수십 발이 그대가 선 참호 구역을 정밀 타격했다! 흙벽이 무너져 내리고 산산조각 난 파편과 유독 연기가 시야를 완전히 삼킨다.",
+    text: "하늘이 찢어지는 굉음과 함께 적의 바실리스크급 중포탄 수십 발이 그대가 선 참호 구역을 정밀 타격했다! 흙벽이 무너져 내리고 산산조각 난 파편과 유독 연기가 시야를 완전히 삼킨다. 진동에 고막이 얼얼한 가운데 2차 일제 사격의 포성이 다시 지평선 너머에서 울려 퍼진다.",
     choices: [
       {
         label: "[지성 판정] 탄착 간격과 포성 각도를 계산해 포탄이 떨어진 직후의 분화구로 분대를 유도한다",
@@ -54,20 +55,26 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s8_crisis_tyranid_ambush",
-    title: "치명적 위기 — 어둠 속 리크터와 생체 포자 매복",
+    title: "치명적 위기 — 어둠 속 릭터와 생체 포자 매복",
     category: "치명 위기",
     once: true,
     req: {
       minAge: 16,
+      minYear: 745,
       anySegmenta: ["ultima", "tempestus", "pacificus"],
-      excludeTags: ["custodes"]
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "dreadnought", "grey_knight", "custodes",
+        "high_lord_terra", "chapter_master", "planetary_governor", "sector_lord", "warmaster"
+      ]
     },
-    reqLabel: "16세+ · 울티마/템페스투스/파시피쿠스",
+    reqLabel: "745.M41 이후 · 16세 이상 · 울티마·템페스투스·파시피쿠스 · 비야만 행성",
     weight: 14,
-    text: "야간 경계 구역의 복스 통신이 돌연 생체 잡음으로 끊겼다! 공기가 카멜레온처럼 일그러지더니, 낫 같은 발톱을 펼친 타이라니드 리크터와 생체 포자 떼가 순식간에 목덜미를 노리고 덮쳐 든다.",
+    text: "야간 경계 구역의 복스 통신이 돌연 생체 잡음으로 끊겼다! 공기가 카멜레온처럼 일그러지더니, 낫 같은 발톱을 펼친 타이라니드 릭터와 생체 포자 떼가 순식간에 목덜미를 노리고 덮쳐 든다. 어둠 속에서 날카로운 키틴질 마찰음이 사방의 퇴로를 조여 온다.",
     choices: [
       {
-        label: "[백병 판정] 정면으로 돌진하는 리크터의 발톱을 받아내며 급소를 찌른다",
+        label: "[백병 판정] 정면으로 돌진하는 릭터의 발톱을 받아 내며 급소를 찌른다",
         check: { stat: "WS", diff: -10 },
         success: {
           text: "처절한 사투 끝에 외계 포식자의 두개골을 꿰뚫었다! 피투성이가 된 채 동이 틀 때까지 구역을 지켰다.",
@@ -75,15 +82,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { WS: 6, T: 3, Inf: 5 }
         },
         fail: {
-          text: "인간의 반응 속도를 아득히 웃도는 낫 발톱이 흉곽을 갈라 놓았다. 타이라니드의 차가운 포자 안개 속에 의식이 꺼졌다.",
-          instantDeath: "야간 매복한 타이라니드 리크터의 낫 발톱에 치명상을 입고 순직"
+          text: "예상을 아득히 웃도는 낫 발톱이 방어를 찢고 흉곽을 갈라 놓았다. 타이라니드의 차가운 포자 안개 속에 의식이 꺼졌다.",
+          instantDeath: "야간 매복한 타이라니드 릭터의 낫 발톱에 치명상을 입고 순직"
         }
       },
       {
         label: "[지성 판정] 산성 포자의 열감지 패턴을 역이용해 조명탄과 유류 드럼을 연쇄 폭파한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "거대한 화염 장벽이 리크터의 광학 위장을 태워 버렸고, 지원 화력이 괴수를 벌집으로 만들었다!",
+          text: "거대한 화염 장벽이 릭터의 광학 위장을 태워 버렸고, 지원 화력이 괴수를 벌집으로 만들었다!",
           wounds: -14,
           stats: { Int: 6, BS: 3, Inf: 4 }
         },
@@ -114,11 +121,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       or: [
         { anyWorlds: ["armageddon", "valhalla"] },
         { anyTags: ["militarum", "commissar", "astartes", "sororitas", "arbites"] }
+      ],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "chapter_master",
+        "cardinal", "fabricator_general", "fabricator_locum"
       ]
     },
-    reqLabel: "아마겟돈·발할라 또는 제국 무장 인원",
+    reqLabel: "16세 이상 · 아마겟돈·발할라 또는 제국 무장 인원",
     weight: 14,
-    text: "녹색 괴성 '와아아아!!'가 대지를 울리며 거대한 오크 배틀왜건이 바리케이드를 박살 냈다! 수백 명의 오크 보이즈와 쵸파를 치켜든 노브들이 틈새로 물밀듯 쏟아져 들어온다.",
+    text: "녹색 괴성 '와아아아!'가 대지를 울리며 거대한 오크 배틀왜건이 바리케이드를 박살 냈다! 수백 명의 오크 보이즈와 초파를 치켜든 노브들이 틈새로 물밀듯 쏟아져 들어온다. 굉음 속에 전선의 좌익이 흔들리며 방어선이 무너지기 일보 직전이다.",
     choices: [
       {
         label: "[사격 판정] 중화기 거치대를 붙잡고 선두 오크 노브의 미간에 집중 사격을 퍼붓는다",
@@ -129,7 +142,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { BS: 6, WP: 4, Inf: 5 }
         },
         fail: {
-          text: "과열된 총신이 터지며 반격에 노출되었고, 오크 대군의 쵸파 물결에 휩쓸려 쓰러졌다.",
+          text: "과열된 총신이 터지며 반격에 노출되었고, 오크 대군의 초파 물결에 휩쓸려 쓰러졌다.",
           instantDeath: "방어선을 돌파한 오크 '와아아!' 대군에 정면으로 맞서다 장렬히 전사"
         }
       },
@@ -165,11 +178,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 14,
-      anyWorlds: ["catachan"]
+      anyWorlds: ["catachan"],
+      excludeTags: [
+        "power_armor", "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "inquisitor", "lord_inquisitor", "cardinal", "canoness", "magos", "fabricator_locum", "fabricator_general"
+      ]
     },
-    reqLabel: "행성: 카타찬 (14세+)",
+    reqLabel: "14세 이상 · 행성: 카타찬 · 필멸자",
     weight: 17,
-    text: "정찰로가 갑자기 들썩이더니 갑각 전갈 괴수 '카타찬 데블'의 집게발이 튀어나왔고, 피하려던 발목에는 신경독을 뿜는 붉은 덩굴 가시가 깊숙이 박혔다! 1분 안에 대처하지 않으면 심장이 멎는다.",
+    text: "정찰로가 갑자기 들썩이더니 갑각 전갈 괴수 '카타찬 데블'의 집게발이 튀어나왔고, 피하려던 발목에는 신경독을 뿜는 붉은 덩굴 가시가 깊숙이 박혔다! 1분 안에 대처하지 않으면 심장이 멎는다. 눅눅한 밀림의 정적 속에서 거대한 절지동물이 두 번째 일격을 준비하며 몸을 웅크린다.",
     choices: [
       {
         label: "[민첩 판정] 대검으로 덩굴을 단칼에 끊고 괴수의 갑각 틈새로 뛰어올라 눈을 찌른다",
@@ -216,14 +235,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 14,
-      anyWorlds: ["baal"]
+      anyWorlds: ["baal"],
+      excludeTags: [
+        "power_armor", "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "inquisitor", "lord_inquisitor", "cardinal", "canoness", "magos", "fabricator_locum", "fabricator_general"
+      ]
     },
-    reqLabel: "행성: 바알 (14세+)",
+    reqLabel: "14세 이상 · 행성: 바알 · 필멸자",
     weight: 17,
-    text: "붉은 하늘이 순식간에 검붉은 유리 가루 폭풍으로 뒤집혔다! 바알 사막 최악의 치사량 방사능 폭풍이 야영지를 집어삼키고 있으며, 방호 천막이 종잇장처럼 찢어져 날아간다.",
+    text: "붉은 하늘이 순식간에 검붉은 유리 가루 폭풍으로 뒤집혔다! 바알 사막 최악의 치사량 방사능 폭풍이 야영지를 집어삼키고 있으며, 방호 천막이 종잇장처럼 찢어져 날아간다. 숨을 들이쉴 때마다 목구멍이 타들어 가는 듯한 열기와 방사선 진동이 사막을 덮친다.",
     choices: [
       {
-        label: "[지성 판정] 낡은 지도와 지형 풍식을 읽어내어 모래 아래 묻힌 암흑기 지하 벙커 입구를 찾아낸다",
+        label: "[지성 판정] 낡은 지도와 지형 풍식을 읽어 내어 모래 아래 묻힌 암흑기 지하 벙커 입구를 찾아낸다",
         check: { stat: "Int", diff: -5 },
         success: {
           text: "녹슨 방폭문을 열어젖히고 생존자들과 함께 폭풍을 피했다! 내부에서 귀한 정제수까지 확보했다.",
@@ -267,11 +292,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 14,
-      anyWorlds: ["fenris"]
+      anyWorlds: ["fenris"],
+      excludeTags: [
+        "power_armor", "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "inquisitor", "lord_inquisitor", "cardinal", "canoness", "magos", "fabricator_locum", "fabricator_general"
+      ]
     },
-    reqLabel: "행성: 펜리스 (14세+)",
+    reqLabel: "14세 이상 · 행성: 펜리스 · 필멸자",
     weight: 17,
-    text: "펜리스의 혹독한 겨울 '헬윈터'가 정점에 달하며 밟고 서 있던 거대 빙하 대륙이 굉음과 함께 두 동강 났다! 갈라진 검은 바다 밑에서 산처럼 거대한 펜리스 크라켄의 촉수가 솟구쳐 오른다.",
+    text: "펜리스의 혹독한 겨울 '헬윈터'가 정점에 달하며 밟고 서 있던 거대 빙하 대륙이 굉음과 함께 두 동강 났다! 갈라진 검은 바다 밑에서 산처럼 거대한 펜리스 크라켄의 촉수가 솟구쳐 오른다. 뼈를 에는 눈보라 속에서 얼음판이 급속도로 가라앉으며 부족의 배마저 소용돌이에 휘말리려 한다.",
     choices: [
       {
         label: "[민첩 판정] 무너지는 유빙 위를 뛰어넘어 해안 고지대 암벽까지 단숨에 주파한다",
@@ -291,7 +322,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[백병 판정] 도끼와 작살을 쥐고 크라켄의 촉수를 베어 내며 부족의 배를 지켜 낸다",
         check: { stat: "WS", diff: -10 },
         success: {
-          text: "괴수의 촉수를 절단하고 전설적인 영웅담(사가)을 썼다! 부족민들이 그대의 이름을 노래한다.",
+          text: "괴수의 촉수를 절단하고 전설적인 영웅담을 썼다! 부족민들이 그대의 이름을 노래한다.",
           wounds: -20,
           stats: { WS: 6, WP: 4, Inf: 5 }
         },
@@ -318,11 +349,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 16,
-      excludeTags: ["heretic", "chaos_aligned"]
+      excludeWorlds: ["terra", "mars"],
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
+      ]
     },
-    reqLabel: "16세+ · 충성파 제국 인물",
+    reqLabel: "16세 이상 · 충성파 제국 인물 · 테라·화성·야만 행성 제외",
     weight: 12,
-    text: "사이렌이 울리기도 전에 피와 해골 문양을 단 카오스 강습정이 구역 한복판에 착륙했다! 저주받은 워프 불꽃과 체인액스의 굉음 속에 무자비한 학살이 시작된다.",
+    text: "사이렌이 울리기도 전에 피와 해골 문양을 단 카오스 강습정이 구역 한복판에 착륙했다! 저주받은 워프 불꽃과 체인액스의 굉음 속에 무자비한 학살이 시작된다. 대피하던 시민들의 비명이 거리를 가득 메우는 사이, 뿔 달린 갑주를 두른 배신자들이 성당 광장으로 진격해 온다.",
     choices: [
       {
         label: "[백병 판정] 무기를 움켜쥐고 황제의 이름을 외치며 이단 습격대와 정면 격돌한다",
@@ -354,7 +391,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "무너진 성당 잔해 아래 숨어 제국 치안대가 반격할 때까지 이를 악물고 버틴다",
+        label: "무너진 성당 잔해 뒤 엄폐물에 몸을 낮추고 제국 방위대가 반격해 올 때까지 이를 악물고 버틴다",
         effect: {
           text: "화재 연기와 파편에 큰 상처를 입고 불경한 참극의 악몽을 안은 채 살아남았다.",
           wounds: -24,
@@ -363,7 +400,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Chaos Space Marines / Dark Heresy"
+    source: "Lexicanum: Chaos Space Marines / Dark Heresy Core Rulebook"
   },
   {
     id: "ev_s8_crisis_psyker_meltdown",
@@ -372,11 +409,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 15,
-      excludeWorldTags: ["feral"]
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord"
+      ]
     },
-    reqLabel: "15세+ · 비야만 행성",
+    reqLabel: "15세 이상 · 비야만 행성 · 충성파 필멸자",
     weight: 12,
-    text: "인근 구획에서 숨어 지내던 무등록 사이커가 통제력을 잃고 비명과 함께 보랏빛 워프 번개를 사방으로 토해 냈다! 중력이 뒤틀리고 벽면에서 피가 흐르며, 악마의 발톱이 현실의 막을 찢고 나오려 한다!",
+    text: "인근 구획에서 숨어 지내던 무등록 사이커가 통제력을 잃고 비명과 함께 보랏빛 워프 번개를 사방으로 토해 냈다! 중력이 뒤틀리고 벽면에서 피가 흐르며, 악마의 발톱이 현실의 막을 찢고 나오려 한다. 대기가 오존과 유황 냄새로 짙어지며 주변 인원들이 하나둘 환각 속에 쓰러진다.",
     choices: [
       {
         label: "[블랭크 전용] 영혼 없는 공허의 기운을 정면으로 밀어붙여 워프 균열을 즉각 소멸시킨다",
@@ -417,7 +459,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "귀를 틀어막고 방화 격벽 바깥으로 필사적으로 도주해 정화반이 도착하길 기다린다",
+        label: "방화 격벽 바깥으로 신속히 철수해 구획을 봉쇄하고 정화반이 도착하길 기다린다",
         effect: {
           text: "튀어 오른 워프 파편에 크게 다치고 오랫동안 기괴한 환청에 시달려야 했다.",
           wounds: -24,
@@ -426,7 +468,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Perils of the Warp / Dark Heresy Core"
+    source: "Lexicanum: Perils of the Warp / Dark Heresy Core Rulebook"
   },
   {
     id: "ev_s8_crisis_hive_collapse",
@@ -436,11 +478,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 15,
       anyWorldTags: ["hive"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "commissar_general", "lord_inquisitor", "inquisitor", "cardinal", "canoness",
+        "fabricator_locum", "fabricator_general", "magos", "navy_admiral", "arbites_marshal",
+        "departmento_head", "rt_lord_captain"
+      ]
     },
-    reqLabel: "하이브 월드 거주자 (필멸자)",
+    reqLabel: "15세 이상 · 하이브 월드 거주자 · 필멸자",
     weight: 14,
-    text: "수천 년 된 하이브 중층 지지 기둥이 피로 파열을 일으키며 천장 강철판이 통째로 무너져 내리기 시작했다! 수만 톤의 콘크리트와 녹슨 배관이 머리 위로 쏟아진다.",
+    text: "수천 년 된 하이브 중층 지지 기둥이 피로 파열을 일으키며 천장 강철판이 통째로 무너져 내리기 시작했다! 수만 톤의 콘크리트와 녹슨 배관이 머리 위로 쏟아진다. 자욱한 석면 먼지와 끊어진 고압 전선의 불꽃이 통로의 출구를 집어삼키고 있다.",
     choices: [
       {
         label: "[지성 판정] 붕괴 하중 방향을 즉시 계산해 붕괴하지 않을 주 배관 아치 밑으로 대피로를 뚫는다",
@@ -493,7 +542,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Hive World / Necromunda"
+    source: "Lexicanum: Hive World / Necromunda Core Rulebook"
   },
   {
     id: "ev_s8_crisis_manufactorum_blast",
@@ -506,11 +555,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyCareers: ["menial_worker", "skitarii", "tech_priest"] },
         { anyWorldTags: ["industrial", "forge"] }
       ],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "commissar_general", "lord_inquisitor", "inquisitor", "cardinal", "canoness",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral", "arbites_marshal",
+        "departmento_head", "rt_lord_captain", "guild_magnate", "crime_lord"
+      ]
     },
-    reqLabel: "공업·포지 월드 또는 노동자·기계교",
+    reqLabel: "15세 이상 · 공업·포지 월드 또는 노동자·기계교",
     weight: 14,
-    text: "무리한 군수 할당량 독촉 끝에 제4 주조 용광로의 압력계가 적색 한계를 돌파했다! 감독 서비터는 생산 중단을 거부하고, 시뻘건 쇳물과 고압 증기가 작업장 바닥으로 쏟아지기 시작한다.",
+    text: "무리한 군수 할당량 독촉 끝에 제4 주조 용광로의 압력계가 적색 한계를 돌파했다! 감독 서비터는 생산 중단을 거부하고, 시뻘건 쇳물과 고압 증기가 작업장 바닥으로 쏟아지기 시작한다. 열기에 쇠파이프가 비틀리며 주 배관이 연쇄 파열을 일으키기 직전이다.",
     choices: [
       {
         label: "[지성 판정] 수동 감압 밸브와 비상 냉각 회로를 역순으로 개방해 연쇄 대폭발을 막는다",
@@ -521,7 +577,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 6, Inf: 5 }
         },
         fail: {
-          text: "증기 밸브가 손앞에서 터지며 심각한 전신 화상을 입고 작업장 구석으로 튕겨 나갔다.",
+          text: "증기 밸브가 손 앞에서 터지며 심각한 전신 화상을 입고 작업장 구석으로 튕겨 나갔다.",
           wounds: -40,
           stats: { T: 2 }
         }
@@ -542,13 +598,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       {
         label: "젖은 작업복으로 얼굴을 감싸고 비상 대피 열차의 가장자리에 매달려 현장을 벗어난다",
         effect: {
-          text: "열기와 화상으로 심한 상처를 입었고, 길드로부터 '생산 손실 배상' 벌금까지 떠안았다.",
+          text: "열기와 화상으로 심한 상처를 입었고, 감독부로부터 '생산 손실 책임' 징계까지 떠안았다.",
           wounds: -26,
           stats: { Inf: -3, T: 2 }
         }
       }
     ],
-    source: "Lexicanum: Manufactorum / Imperium Maledictum"
+    source: "Lexicanum: Manufactorum / Imperium Maledictum Core Rulebook"
   },
   {
     id: "ev_s8_crisis_plague_quarantine",
@@ -557,12 +613,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 15,
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "mark_nurgle"]
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince", "mark_nurgle",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "commissar_general", "lord_inquisitor", "inquisitor", "cardinal", "canoness",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral", "arbites_marshal",
+        "departmento_head", "rt_lord_captain"
+      ]
     },
-    reqLabel: "15세+ · 비야만 행성 (필멸자)",
+    reqLabel: "15세 이상 · 비야만 행성 · 크리그 제외 · 필멸자",
     weight: 14,
-    text: "거주 구획에 살갗이 잿빛으로 썩어 들어가는 치명적 역병이 퍼졌다! 아르비테스가 구역 사방을 장갑벽으로 봉쇄하고 '무단 이탈자는 즉결 사살 후 화염 정화'를 포고했다.",
+    text: "거주 구획에 살갗이 잿빛으로 썩어 들어가는 치명적 역병이 퍼졌다! 아르비테스가 구역 사방을 장갑벽으로 봉쇄하고 '무단 이탈자는 즉결 사살 후 화염 정화'를 포고했다. 확성기에서 흘러나오는 격리 경고음 아래 기침 소리와 절망 섞인 기도가 골목마다 번진다.",
     choices: [
       {
         label: "[지성 판정] 오염된 급수관을 차단하고 소독 증류수와 임시 격리 병동을 설계해 확산을 꺾는다",
@@ -579,7 +644,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[권위/교섭 판정] 인맥과 통행 서류를 총동원해 검역 장교를 설득하고 상층 청정 구역으로 빠져나간다",
+        label: "[교섭 판정] 인맥과 통행 서류를 총동원해 검역 장교를 설득하고 상층 청정 구역으로 빠져나간다",
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "완벽한 서류와 노련한 화술로 검역선을 합법적으로 통과해 역병 지대에서 벗어났다.",
@@ -588,7 +653,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: -3
         },
         fail: {
-          text: "위조·청탁 의혹으로 검문소에서 구타당하고 가장 위험한 격리 수용소로 내던져졌다.",
+          text: "위조와 청탁 의혹으로 검문소에서 구타당하고 가장 위험한 격리 수용소로 내던져졌다.",
           wounds: -36,
           stats: { Inf: -5 }
         }
@@ -597,7 +662,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[강인 판정] 밀폐된 거처에서 정제수와 약초만으로 역병의 고비를 정면으로 이겨 낸다",
         check: { stat: "T", diff: -10 },
         success: {
-          text: "수주간의 끔찍한 고열을 이겨 내고 항체를 얻어 살아남았다!",
+          text: "수 주간의 끔찍한 고열을 이겨 내고 항체를 얻어 살아남았다!",
           wounds: -20,
           stats: { T: 6, WP: 4 }
         },
@@ -616,7 +681,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Nurgle Plagues / Dark Heresy"
+    source: "Lexicanum: Nurgle Plagues / Dark Heresy Core Rulebook"
   },
   {
     id: "ev_s8_crisis_void_decompression",
@@ -629,11 +694,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyWorlds: ["voidborn"] },
         { anyTags: ["voidborn", "navy", "rogue_trader"] }
       ],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
+        "fabricator_general", "cardinal", "lord_inquisitor", "navy_admiral", "rt_lord_captain"
+      ]
     },
-    reqLabel: "보이드본 · 해군 · 로그 트레이더",
+    reqLabel: "15세 이상 · 보이드본 · 제국 해군 · 로그 트레이더",
     weight: 16,
-    text: "미세 운석군 충돌로 갑판 외벽이 찢어지며 폭발적 감압 경보가 울렸다! 공기가 비명처럼 우주 공간으로 빨려 나가고, 자동 방화 격벽이 오작동으로 반쯤 열린 채 멈춰 버렸다!",
+    text: "미세 운석군 충돌로 갑판 외벽이 찢어지며 폭발적 감압 경보가 울렸다! 공기가 비명처럼 우주 공간으로 빨려 나가고, 자동 방화 격벽이 오작동으로 반쯤 열린 채 멈춰 버렸다. 얼어붙는 진공의 기류가 장비와 선원들을 파열구 쪽으로 거칠게 끌어당긴다.",
     choices: [
       {
         label: "[지성 판정] 벽면 보조 단말기에 매달려 비상 유압 제어 코드를 수동 오버라이드한다",
@@ -644,7 +714,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 6, Inf: 5, Fel: 3 }
         },
         fail: {
-          text: "단말기 합선으로 감전되고 저산소증으로 의식을 잃기 직전 겨우 구조반에 끌려 나왔다.",
+          text: "단말기 합선으로 감전되어 저산소증으로 의식을 잃기 직전, 겨우 구조반에 구출되었다.",
           wounds: -38,
           stats: { Int: 2 }
         }
@@ -681,11 +751,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 15,
       anyWorldTags: ["forge", "mechanicus"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
+        "lord_inquisitor", "inquisitor", "cardinal", "canoness",
+        "magos", "fabricator_locum", "fabricator_general"
+      ]
     },
-    reqLabel: "포지 월드 · 기계교 영역",
+    reqLabel: "15세 이상 · 포지 월드 · 기계교 영역",
     weight: 16,
-    text: "거대 플라즈마 원자로의 차폐막에 균열이 생겨 청백색 방사선이 복도 전체를 휩쓸고 있다! 기계교 경보음이 '장비 보전 최우선, 유기체 손실 허용'을 기계적으로 반복 송출한다.",
+    text: "거대 플라즈마 원자로의 차폐막에 균열이 생겨 청백색 방사선이 복도 전체를 휩쓸고 있다! 기계교 경보음이 '장비 보전 최우선, 유기체 손실 허용'을 기계적으로 반복 송출한다. 공기 중에 이온화된 불꽃이 튀고 선량계 바늘이 치사 구역을 향해 치솟는다.",
     choices: [
       {
         label: "[지성 판정] 누스피어 비상 정지 의례를 송신해 차폐 셔터를 수동으로 내려 누출을 봉인한다",
@@ -748,17 +824,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 15,
       anyWorldTags: ["agri"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "transhuman", "power_armor", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "commissar_general", "lord_commissar", "lord_inquisitor", "inquisitor", "cardinal", "canoness",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral", "arbites_marshal",
+        "departmento_head", "rt_lord_captain", "rogue_trader", "guild_magnate"
+      ]
     },
-    reqLabel: "행성 유형: 아그리 월드",
+    reqLabel: "15세 이상 · 행성 유형: 아그리 월드 · 필멸자",
     weight: 16,
-    text: "아드미니스트라툼의 좌표 오기로 인해 초강력 제초·살충 화학 안개가 작업 중인 평원 한복판에 통째로 살포되었다! 누런 독성 구름이 들판을 덮치며 농작물과 호흡기를 동시에 녹여 낸다.",
+    text: "아드미니스트라툼의 좌표 오기로 인해 초강력 제초·살충 화학 안개가 작업 중인 평원 한복판에 통째로 살포되었다! 누런 독성 구름이 들판을 덮치며 농작물과 호흡기를 동시에 녹여 낸다. 궤도 수송선의 엔진 굉음이 멀어지는 사이 코를 찌르는 염소 악취가 지면을 낮게 타고 밀려든다.",
     choices: [
       {
         label: "[지성 판정] 풍향과 지형 경사를 파악해 독성 구름이 고이지 않는 상류 수로 제방으로 대피로를 낸다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "정확한 기상 판단으로 동료 농부들과 함께 안전 고지대에 도달했다!",
+          text: "정확한 기상 판단으로 현장 인부들과 함께 안전 고지대에 도달했다!",
           wounds: -12,
           stats: { Int: 6, Fel: 4 }
         },
@@ -786,7 +869,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[강인 판정] 물에 적신 천을 입에 묶고 들판 끝 지하 사일로까지 숨을 참으며 달린다",
         check: { stat: "T", diff: -10 },
         success: {
-          text: "눈물과 기침을 견디고 지하 사일로 해치를 닫아 걸었다!",
+          text: "눈물과 기침을 견디고 지하 사일로 해치를 닫아걸었다!",
           wounds: -20,
           stats: { T: 6, Ag: 3 }
         },
@@ -804,7 +887,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Agri World / Lords of Silence"
+    source: "Lexicanum: Agri World / The Lords of Silence"
   },
   {
     id: "ev_s8_crisis_underhive_ambush",
@@ -817,11 +900,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyWorldTags: ["underhive", "gang"] },
         { anyCareers: ["underhive_ganger"] }
       ],
-      excludeTags: ["astartes", "custodes", "grey_knight", "inquisitor"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "transhuman", "power_armor", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "commissar_general", "lord_commissar", "inquisitor", "lord_inquisitor", "cardinal", "canoness",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral", "arbites_marshal",
+        "departmento_head", "rt_lord_captain", "rogue_trader"
+      ]
     },
-    reqLabel: "언더하이브 · 갱단 구역",
+    reqLabel: "15세 이상 · 언더하이브 · 갱단 구역",
     weight: 16,
-    text: "폐수 집수조 인근 좁은 철골 다리에서 무장한 적대 갱단과 현상금 사냥꾼 무리가 앞뒤 퇴로를 완전히 틀어막았다! 발밑에서는 녹색 부식성 가스가 피어오르고 사방에서 오토건 노리쇠 소리가 울린다.",
+    text: "폐수 집수조 인근 좁은 철골 다리에서 무장한 적대 갱단과 현상금 사냥꾼 무리가 앞뒤 퇴로를 완전히 틀어막았다! 발밑에서는 녹색 부식성 가스가 피어오르고 사방에서 오토건 노리쇠 소리가 울린다. 낡은 나트륨 조명 아래 무법자들의 총구가 일제히 그대를 겨눈다.",
     choices: [
       {
         label: "[교섭 판정] 갱단 두목의 약점과 더 큰 길드 수송대 정보를 미끼로 즉석 휴전 거래를 성사시킨다",
@@ -873,7 +965,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Necromunda / Underhive Lore"
+    source: "Lexicanum: Necromunda / Necromunda Core Rulebook"
   },
   {
     id: "ev_s8_crisis_feral_beast",
@@ -883,11 +975,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       anyWorldTags: ["feral"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "transhuman", "power_armor", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "inquisitor", "lord_inquisitor", "cardinal", "canoness", "magos", "fabricator_locum", "fabricator_general"
+      ]
     },
-    reqLabel: "행성 유형: 야만 행성 (14세+)",
+    reqLabel: "14세 이상 · 행성 유형: 야만 행성 · 필멸자",
     weight: 16,
-    text: "어스름한 숲속에서 거대한 뿔과 강철 같은 가죽을 지닌 원시 포식수가 울부짖으며 달려들었다! 사냥 일행이 흩어지고, 피에 굶주린 짐승의 붉은 눈이 오직 그대만을 향한다.",
+    text: "어스름한 숲속에서 거대한 뿔과 강철 같은 가죽을 지닌 원시 포식수가 울부짖으며 달려들었다! 사냥 일행이 흩어지고, 피에 굶주린 짐승의 붉은 눈이 오직 그대만을 향한다. 대지를 울리는 발굽 소리와 함께 거수가 굵은 나무줄기를 부러뜨리며 쇄도해 온다.",
     choices: [
       {
         label: "[백병 판정] 창과 도끼를 엇걸어 짐승의 돌진 무게를 역이용해 심장을 꿰뚫는다",
@@ -925,7 +1022,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Feral World / Dark Heresy 1e"
+    source: "Lexicanum: Feral World / Dark Heresy Core Rulebook"
   },
   {
     id: "ev_s8_crisis_admin_audit",
@@ -939,12 +1036,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyTags: ["administratum", "noble"] }
       ],
       excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "commissar_general", "lord_commissar", "inquisitor", "lord_inquisitor", "cardinal", "canoness",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral", "arbites_marshal",
+        "departmento_head", "rt_lord_captain", "rogue_trader"
+      ]
     },
-    reqLabel: "행정·관료·귀족·노동자 (비전투 위기)",
+    reqLabel: "16세 이상 · 행정·관료·귀족·노동자 · 크리그·야만 행성 제외",
     weight: 16,
-    text: "성역 특별 감사관이 무장 아르비테스를 대동하고 청사에 들이닥쳤다! 그대가 서명한 3년 전 행성 십일조 장부에서 곡물 40만 톤의 소수점 누락이 발견되었다며, '반역적 직무 유기 — 즉각 서비터 개조형'을 선고하려 한다!",
+    text: "성역 특별 감사관이 무장 아르비테스를 대동하고 청사에 들이닥쳤다! 그대가 서명한 3년 전 행성 십일조 장부에서 곡물 40만 톤의 소수점 누락이 발견되었다며, '반역적 직무 유기 — 즉각 서비터 개조형'을 선고하려 한다. 차가운 수갑을 든 집행관들이 집무실 출입구를 에워싸고 있다.",
     choices: [
       {
         label: "[지성 판정] 3년 치 원본 양피지와 궤도 화물선 선하증권을 밤새 대조해 상급 부서의 조작 흔적을 입증한다",
@@ -995,7 +1100,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Adeptus Administratum / Imperium Maledictum"
+    source: "Lexicanum: Adeptus Administratum / Imperium Maledictum Core Rulebook"
   },
   {
     id: "ev_s8_crisis_noble_poison",
@@ -1009,12 +1114,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyCareers: ["administratum", "rogue_trader"] }
       ],
       excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "planetary_governor", "sector_lord", "magos", "fabricator_locum", "fabricator_general",
+        "high_lord_terra", "warmaster", "cardinal", "lord_inquisitor"
+      ]
     },
-    reqLabel: "귀족 · 상류층 · 로그 트레이더 · 관료",
+    reqLabel: "18세 이상 · 귀족 · 상류층 · 로그 트레이더 · 관료",
     weight: 16,
-    text: "총독궁 연회장에서 건배한 아말섹 포도주 잔을 내려놓은 순간, 손끝이 저려 오며 시야가 흐려진다! 정적 가문이 암시장 신경독을 탔고, 연회장 출입구에는 이미 매수된 자객들이 칼자루를 쥐고 서 있다.",
+    text: "총독궁 연회장에서 건배한 아마섹 증류주 잔을 내려놓은 순간, 손끝이 저려 오며 시야가 흐려진다! 정적 가문이 암시장 신경독을 탔고, 연회장 출입구에는 이미 매수된 자객들이 칼자루를 쥐고 서 있다. 음악과 웃음소리가 울려 퍼지는 화려한 홀 한가운데서 식은땀이 등줄기를 타고 흐른다.",
     choices: [
       {
         label: "[지성 판정] 혀끝의 미세한 금속 맛으로 독의 계열을 판별하고, 식탁 위 향신료와 식초로 즉시 구토·중화한다",
@@ -1048,7 +1159,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         req: { stats: { Inf: 50 } },
         check: { stat: "Inf", diff: 0 },
         success: {
-          text: "압도적인 권력과 무력이 자객들을 단숨에 제압하고 전담 메디케아 의사의 해독 시술을 이끌어 냈다!",
+          text: "압도적인 권력과 무력이 자객들을 단숨에 제압하고 전담 메디카에 의무관의 해독 시술을 이끌어 냈다!",
           wounds: -14,
           stats: { Inf: 6, WP: 4 }
         },
@@ -1067,7 +1178,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Highborn / Dark Heresy 2e"
+    source: "Lexicanum: Highborn / Dark Heresy Second Edition Core Rulebook"
   },
   {
     id: "ev_s8_crisis_heresy_tribunal",
@@ -1077,18 +1188,25 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 18,
       excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "inquisitor"]
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "custodes", "grey_knight", "astartes", "transhuman", "dreadnought",
+        "high_lord_terra", "inquisitor", "lord_inquisitor", "cardinal", "warmaster", "sector_lord",
+        "planetary_governor", "fabricator_general", "canoness", "commissar_general", "navy_admiral",
+        "arbites_marshal", "departmento_head"
+      ]
     },
-    reqLabel: "18세+ · 비야만 행성 (필멸자)",
+    reqLabel: "18세 이상 · 비야만 행성 · 크리그 제외 · 필멸자",
     weight: 14,
-    text: "시기심에 눈먼 정적이 조작한 고발장 한 통으로, 그대는 오르도 헤레티쿠스 심문관과 국교 주교가 앉은 지하 심문 법정에 사슬로 묶여 끌려왔다. '무고함은 아무것도 증명하지 못한다. 변론하라!'",
+    text: "시기심에 눈먼 정적이 조작한 고발장 한 통으로, 그대는 오르도 헤레티쿠스 심문관과 국교 주교가 앉은 지하 심문 법정에 사슬로 묶여 끌려왔다. '무고함은 아무것도 증명하지 못한다. 변론하라!' 차가운 쇠사슬 소리와 화로에서 피어오르는 향 연기 너머로 서기 서비터의 펜촉이 판결문을 기록할 준비를 마쳤다.",
     choices: [
       {
-        label: "[의지 판정] 《황제 성전》의 정통 교리를 한 글자도 틀리지 않고 암송하며 꺾이지 않는 신앙으로 결백을 증명한다",
+        label: "[의지 판정] 《렉티티오 디비니타투스》의 정통 교리를 한 글자도 틀리지 않고 암송하며 꺾이지 않는 신앙으로 결백을 증명한다",
         check: { stat: "WP", diff: -5 },
         success: {
-          text: "강철 같은 신앙심과 당당한 기개에 주교가 고개를 끄덕였다! 오히려 무고한 고발자가 이단 선동죄로 체포되었다.",
+          text: "강철 같은 신앙심과 당당한 기개에 주교가 고개를 끄덕였다! 오히려 거짓 고발을 꾸민 정적이 이단 선동죄로 체포되었다.",
           stats: { WP: 7, Inf: 6 },
           faith: 10
         },
@@ -1127,18 +1245,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       {
         label: "끝없는 신앙 고백과 가혹한 참회 채찍형을 순순히 받아들여 자비로운 방면을 호소한다",
         effect: {
-          text: "등짝이 피투성이가 되는 혹독한 참회형을 견뎌 내고 석방되었다. 살아남았으나 명예에 큰 흠집이 남았다.",
+          text: "등이 피투성이가 되는 혹독한 참회형을 견뎌 내고 석방되었다. 살아남았으나 명예에 큰 흠집이 남았다.",
           wounds: -26,
           faith: 6,
           stats: { Inf: -6, WP: 3 }
         }
       }
     ],
-    source: "Lexicanum: Inquisition / Ordo Hereticus"
+    source: "Lexicanum: Ordo Hereticus / Dark Heresy Core Rulebook"
   },
   {
     id: "ev_s8_crisis_tech_machine_spirit",
-    title: "비전투 치명 위기 — 폭주한 고대 기계령과 방어 포탑 봉쇄",
+    title: "비전투 치명 위기 — 폭주한 중기갑 원자로 기계령과 격납고 봉쇄",
     category: "비전투 위기",
     once: true,
     req: {
@@ -1149,63 +1267,67 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyFocus: ["lore"] }
       ],
       excludeWorldTags: ["feral"],
-      excludeTags: ["custodes"]
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "fabricator_general", "warmaster", "sector_lord"
+      ]
     },
-    reqLabel: "기계교 · 학문 초점 (비전투 위기)",
+    reqLabel: "16세 이상 · 기계교 · 학문 초점 · 비야만 행성",
     weight: 16,
-    text: "복구하던 암흑기 데이터 코어에서 정체불명의 이단적 자의식이 깨어나며 작업실 방폭문이 잠겼다! 천장 자동 방어 볼터 포탑이 그대를 조준하고, 성스러운 기계령이 비명 같은 이진법 폭주를 쏟아낸다.",
+    text: "정비 중이던 임페리얼 나이트급 원자로 격납고에서 호전적인 고대 기계령이 성유 의식을 거부하며 격렬히 폭주했다! 강철 방폭문이 저절로 닫히고, 격납고 천장의 자동 방어 볼터 포탑과 과열된 플라즈마 배출구가 그대를 향해 일제히 작동한다. 귀청을 찢는 이진법 굉음이 복스 스피커를 타고 작업장을 뒤흔든다.",
     choices: [
       {
-        label: "[지성 판정] 정통 메카니쿠스 성유와 이진법 정화 코드를 직결해 폭주하는 기계령을 완벽히 진압한다",
+        label: "[지성 판정] 정통 메카니쿠스 성유와 이진법 진정 코드를 원자로 단말기에 직결해 폭주하는 기계령을 진압한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "정확한 교리 프로토콜이 고대 코어의 오류를 잠재웠다! 방어 포탑이 멈추고 귀중한 암흑기 설계 단편까지 확보했다.",
+          text: "정확한 교리 의례가 격노한 기계령의 맥동을 잠재웠다! 방어 포탑과 과열 밸브가 멈추고, 나이트 원자로의 고유 조율 수치까지 완벽히 복원했다.",
           stats: { Int: 8, Inf: 6 }
         },
         fail: {
-          text: "제어 코드가 튕겨 나가며 천장 자동 볼터 포탑이 일제 사격을 퍼부었다. 작업실은 붉은 연무에 잠겼다.",
-          instantDeath: "폭주한 고대 기계령의 자동 방어 포탑 사격에 휘말려 순직"
+          text: "진정 코드가 거부되며 천장 자동 볼터 포탑이 일제 사격을 퍼부었다. 정비 격납고는 붉은 연무와 불꽃에 잠겼다.",
+          instantDeath: "격납고에서 폭주한 중기갑 원자로 기계령의 자동 방어 포탑 사격에 휘말려 순직"
         }
       },
       {
-        label: "[의지 판정] 신경 데이터 케이블을 직접 접속해 정신력으로 폭주 코어의 주도권을 짓누른다",
+        label: "[의지 판정] 신경 접속 케이블을 직접 연결해 강철 같은 정신력으로 호전적인 기계령의 주도권을 짓누른다",
         check: { stat: "WP", diff: -5 },
         success: {
-          text: "코피를 쏟으면서도 고대 기계의 광기를 정신으로 제압했다! 포탑이 침묵하고 잠금문이 열렸다.",
+          text: "코피를 쏟으면서도 전쟁 기계의 맹렬한 투지를 정신으로 길들였다! 포탑이 침묵하고 봉쇄된 방폭문이 열렸다.",
           wounds: -14,
           stats: { WP: 7, Int: 4 }
         },
         fail: {
-          text: "신경 역류 충격이 뇌를 강타해 기절했고, 중상을 입은 채 기계교 정화반에 의해 끌려 나왔다.",
+          text: "신경 역류 충격이 뇌를 강타해 의식을 잃었고, 중상을 입은 채 기계교 수습반에 실려 격납고 밖으로 나왔다.",
           wounds: -38,
           corruption: 6
         }
       },
       {
-        label: "[권위 판정] 상급 포지 사령부 채널로 긴급 봉쇄 코드를 전송해 외부에서 주전력을 원격 차단한다",
+        label: "[권위 판정] 상급 포지 사령부 채널로 비상 봉쇄 인장을 전송해 외부에서 격납고 주전력을 원격 차단한다",
         req: { stats: { Inf: 42 } },
         check: { stat: "Inf", diff: 0 },
         success: {
-          text: "즉각적인 원격 차단으로 위기를 넘겼다. 다만 귀중한 고대 코어는 소각 처분되었다.",
+          text: "즉각적인 원격 차단으로 위기를 넘겼다. 다만 폭주한 원자로 노심은 강제 냉각 과정에서 영구 손상되었다.",
           wounds: -10,
           stats: { Inf: 4, Int: 2 }
         },
         fail: {
-          text: "관료적 승인 지연 사이에 포탑 유탄을 맞고 중상을 입었다.",
+          text: "포지 사령부의 승인 절차가 지연되는 사이 포탑 유탄을 맞고 중상을 입었다.",
           wounds: -34,
           stats: { Inf: -4 }
         }
       },
       {
-        label: "고대 유물과 장비를 모두 포기하고 비상 소화 가스를 터뜨려 시야를 가린 채 강제로 문을 뜯고 탈출한다",
+        label: "정비 도구와 장비를 모두 포기하고 비상 소화 가스를 터뜨려 시야를 가린 채 수동 탈출구로 빠져나간다",
         effect: {
-          text: "포탑 유탄에 어깨가 찢기고 기술 손실 책임을 추궁받았으나, 목숨만은 건졌다.",
+          text: "포탑 파편에 어깨가 찢기고 설비 손실 책임을 추궁받았으나, 목숨만은 건졌다.",
           wounds: -26,
           stats: { Inf: -6, T: 2 }
         }
       }
     ],
-    source: "Lexicanum: Abominable Intelligence / Machine Spirit"
+    source: "Lexicanum: Machine Spirit / Codex: Adeptus Mechanicus"
   },
   {
     id: "ev_s8_crisis_ecclesiarchy_riot",
@@ -1220,12 +1342,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyFocus: ["faith", "politics"] }
       ],
       excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
+        "cardinal", "canoness", "lord_inquisitor", "fabricator_general"
+      ]
     },
-    reqLabel: "국교 · 행정 · 귀족 · 신앙/인맥 초점",
+    reqLabel: "17세 이상 · 국교 · 행정 · 귀족 · 신앙·인맥 초점",
     weight: 15,
-    text: "십일조 과징으로 굶주린 하층민 수천 명이 횃불과 쇠파이프를 들고 그대가 머무는 대성당 겸 행정 청사를 포위했다! 경비병들은 이미 도주했고, 불붙은 기름병이 정문을 향해 날아든다.",
+    text: "십일조 과징으로 굶주린 하층민 수천 명이 횃불과 쇠파이프를 들고 그대가 머무는 대성당 겸 행정 청사를 포위했다! 경비병들은 이미 흩어졌고, 불붙은 기름병이 정문을 향해 날아든다. 철문 빗장이 흔들리는 굉음 너머로 굶주림과 광기가 뒤섞인 성난 함성이 광장을 메운다.",
     choices: [
       {
         label: "[교섭 판정] 성단 위로 올라가 황제의 이름으로 폭도들의 분노를 다독이는 사자후 연설을 펼친다",
@@ -1236,7 +1364,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 8
         },
         fail: {
-          text: "성난 군중 속 배교 선동가가 쏜 화염병과 투석에 휩쓸렸다. 불타는 청사 앞에서 끝내 일어나지 못했다.",
+          text: "성난 군중 속 배교 선동가가 던진 화염병과 돌팔매에 휩쓸렸다. 불타는 청사 앞에서 끝내 일어나지 못했다.",
           instantDeath: "기근 폭동으로 불타오른 청사 앞에서 성난 폭도들에게 휩쓸려 순직"
         }
       },
@@ -1277,7 +1405,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Ecclesiarchy / Imperial Hive Riots"
+    source: "Lexicanum: Ecclesiarchy / Dark Heresy Core Rulebook"
   },
   {
     id: "ev_s8_crisis_rt_mutiny",
@@ -1290,11 +1418,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyCareers: ["rogue_trader", "imperial_navy"] },
         { anyTags: ["rogue_trader", "rogue_trader_blood", "navy", "voidborn"] }
       ],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "navy_admiral"
+      ]
     },
-    reqLabel: "로그 트레이더 · 제국 해군 · 보이드본",
+    reqLabel: "18세 이상 · 로그 트레이더 · 제국 해군 · 보이드본",
     weight: 16,
-    text: "보급이 끊긴 채 3개월째 변방 성계에 표류하자, 하층 기관실 선원 수백 명이 무기고를 털고 함교를 향해 반란을 일으켰다! 설상가상으로 궤도 밖에서는 정체불명의 해적 사략선이 항복을 요구해 온다.",
+    text: "보급이 끊긴 채 3개월째 변방 성계에 표류하자, 하층 기관실 선원 수백 명이 무기고를 털고 함교를 향해 반란을 일으켰다! 설상가상으로 궤도 밖에서는 정체불명의 해적 사략선이 항복을 요구해 온다. 함교 방폭문 너머로 용접 불꽃이 튀어 오르며 선내 복스망이 반란군의 고함으로 뒤덮였다.",
     choices: [
       {
         label: "[교섭 판정] 반란 주동자들의 이해관계를 파고들어 선원들을 이간질하고 사면·포상으로 전열을 되돌린다",
@@ -1322,7 +1454,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[권위 판정] 무역 영장과 막대한 현상금을 내걸어 선내 용병 경비대와 사략선 간부를 역매수한다",
+        label: "[권위 판정] 지휘 권한과 막대한 현상금을 내걸어 선내 용병 경비대와 사략선 간부를 역매수한다",
         req: { stats: { Inf: 48 } },
         check: { stat: "Inf", diff: 0 },
         success: {
@@ -1345,7 +1477,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Rogue Trader / Battlefleet Gothic"
+    source: "Lexicanum: Rogue Trader / Battlefleet Gothic Rulebook"
   },
   {
     id: "ev_s8_crisis_blackmail_syndicate",
@@ -1359,12 +1491,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyFocus: ["politics", "lore"] }
       ],
       excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "inquisitor"]
+      excludeTags: [
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
+        "commissar_general", "lord_commissar", "inquisitor", "lord_inquisitor", "cardinal", "canoness",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral", "arbites_marshal",
+        "departmento_head", "rt_lord_captain"
+      ]
     },
-    reqLabel: "비전투 직군 · 인맥/학문 초점",
+    reqLabel: "18세 이상 · 비전투 직군 · 인맥·학문 초점 · 크리그·야만 행성 제외",
     weight: 15,
-    text: "거처 문틈으로 검은 밀랍 인장이 찍힌 협박장과 암살 청부 계약서 사본이 밀려 들어왔다! 행성 지하를 주무르는 암흑 길드가 그대의 비밀 장부를 손에 넣었다며, 내일 새벽까지 굴복하지 않으면 자객을 보내겠다고 경고한다.",
+    text: "거처 문틈으로 검은 밀랍 인장이 찍힌 협박장과 암살 청부 계약서 사본이 밀려 들어왔다! 행성 지하를 주무르는 암흑 길드가 그대의 비밀 장부를 손에 넣었다며, 내일 새벽까지 굴복하지 않으면 자객을 보내겠다고 경고한다. 어두운 창밖 골목 건너편에서 감시자의 매서운 시선이 번뜩인다.",
     choices: [
       {
         label: "[지성 판정] 길드의 자금 세탁 암호와 은신처 동선을 역추적해 오히려 길드 간부의 치명적 비리를 손에 넣는다",
@@ -1414,7 +1554,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Imperial Crime Syndicates / Dark Heresy"
+    source: "Lexicanum: Cold Trade / Dark Heresy Core Rulebook"
   },
   {
     id: "ev_s8_crisis_forbidden_archive",
@@ -1427,13 +1567,29 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         { anyCareers: ["administratum", "tech_priest", "inquisition_acolyte", "inquisitor", "ecclesiarchy_priest", "sanctioned_psyker"] },
         { anyFocus: ["lore", "forbidden"] }
       ],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["custodes", "grey_knight"]
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "high_lord_terra", "warmaster", "sector_lord",
+        "custodes", "grey_knight", "dreadnought"
+      ]
     },
-    reqLabel: "서고·기계교·심문소·국교·학문/금단 초점",
+    reqLabel: "16세 이상 · 서고·기계교·심문소·국교·학문·금단 초점",
     weight: 15,
-    text: "고대 서고 깊숙이 보관되었던 봉인 사본의 납 인장이 저절로 녹아내렸다! 펼쳐진 양피지에서 피처럼 붉은 문자가 허공에 떠올라 서고 사서들의 눈을 불태우고, 차가운 워프의 속삭임이 정신을 잠식하기 시작한다.",
+    text: "고대 서고 깊숙이 보관되었던 봉인 사본의 납 인장이 저절로 녹아내렸다! 펼쳐진 양피지에서 피처럼 붉은 문자가 허공에 떠올라 서고 사서들의 눈을 불태우고, 차가운 워프의 속삭임이 정신을 잠식하기 시작한다. 천장의 성유 등불이 일제히 꺼지며 촛농 냄새 사이로 끔찍한 이계의 냉기가 번진다.",
     choices: [
+      {
+        label: "[이단심문관 전용] 로제트를 들어 올려 서고 전체에 즉결 봉쇄령을 선포하고 오르도 말레우스 성수 정화반을 직접 지휘한다",
+        req: { anyTags: ["inquisitor", "lord_inquisitor"] },
+        effect: {
+          text: "이단심문관의 절대 권한 아래 서고 방화 격벽이 즉시 폐쇄되고, 수행원들이 축성 화염으로 저주받은 사본을 흔적 없이 소각했다!",
+          wounds: -10,
+          stats: { WP: 5, Inf: 5 },
+          faith: 6
+        }
+      },
       {
         label: "[지성 판정] 고대 육망성 봉인 술식의 구문을 역설계해 저주받은 사본을 납 함 속에 재봉인한다",
         check: { stat: "Int", diff: -5 },
@@ -1476,9 +1632,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "양피지를 보지 않으려 눈을 질끈 감은 채 서고 바깥으로 뛰쳐나가 이단심문소에 비상 신고한다",
+        label: "양피지를 보지 않으려 눈을 질끈 감은 채 서고 바깥으로 물러나 외부 봉쇄 경보를 울린다",
         effect: {
-          text: "워프 잔향에 정신이 크게 상하고 심문소의 혹독한 기억 검사를 버텨야 했다.",
+          text: "워프 잔향에 정신이 크게 상하고 사후 오르도 말레우스 정화반의 혹독한 오염 검증 절차를 버텨야 했으나 목숨만은 건졌다.",
           wounds: -22,
           corruption: 8,
           stats: { WP: 2 }

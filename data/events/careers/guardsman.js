@@ -6,7 +6,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "《제국 보병 입문서》와 병참의 부조리",
     category: "직업 고유",
     once: true,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "직업: 아스트라 밀리타룸 보병",
     weight: 24,
     text: "전선 투입 직전, 병참부에서 지급한 라스건 전지팩 절반이 불량품이고 탄약 상자에는 300년 전 봉건 행성용 화살촉이 들어 있었다! 그런데도 대대장은 《제국 보병 입문서》의 '제국 보급품에 의심을 품는 자는 총살' 조항을 낭독하고 있다.",
@@ -44,7 +49,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_career_guard_salvage",
     title: "아스트라 밀리타룸 — 포격 뒤 무주지의 보급품과 전우의 군번줄",
     category: "직군 고유",
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "직군: 아스트라 밀리타룸",
     weight: 25,
     text: "양측의 포격이 잠시 멎은 틈, 철조망 너머 무주지에 부서진 보급 수송차와 쓰러진 선임 병사의 시신이 보인다. 적 저격수가 노리고 있을 것이 분명하지만, 분대에는 탄약과 깨끗한 붕대가 바닥난 상태다.",
@@ -87,52 +95,54 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s4_career_guard_ration",
-    title: "아스트라 밀리타룸 — 빗물 고인 참호의 보급 오발송",
+    title: "아스트라 밀리타룸 — 오염된 참호 식수와 야전 배급 위기",
     category: "직군 심화",
     once: true,
     req: {
       minAge: 16,
       anyCareers: ["astra_militarum", "militarum_sergeant"],
-      excludeWorlds: ["krieg"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
     },
     reqLabel: "직군: 아스트라 밀리타룸",
     weight: 30,
-    text: "진흙탕 참호에서 사흘째 비를 맞고 있던 중대에 드디어 제국 병참 보급 상자가 투하되었다. 그러나 뚜껑을 열어 보니 라스건 동력팩과 전투 식량 대신, 어째서인지 사막 행성용 방열 망토와 타 연대용 탄약이 가득 들어 있다. 행정 착오다.",
+    text: "장마철 참호에 고인 빗물 저장 탱크에 화학 탄막의 잔류 독성이 스며들고, 비상 시체 전분 통조림마저 절반이 부패해 버렸다. 야전 메디카에가 도착하기까지 이틀을 버텨야 하는데, 갈증에 지친 신병들이 오염된 물을 그대로 퍼 마시려 한다.",
     choices: [
       {
-        label: "[교섭 판정] 옆 참호에 주둔 중인 타 연대 보급 하사관을 찾아가 기막힌 물물교환 거래를 성사시킨다",
+        label: "[교섭 판정] 인접 포병대 보급 하사관과 담판해 정수 정제와 뜨거운 리카프 한 통을 끌어온다",
         check: { stat: "Fel", diff: 0 },
         success: {
-          text: "방열 망토를 따끈한 리카프(Recaf) 커피와 동력팩, 여분 양말로 바꿔 왔다! 분대원들이 그대를 최고의 보급 천재라 환호했다.",
+          text: "기막힌 수완으로 정수 정제와 따뜻한 리카프, 여분 건조 식량까지 확보했다! 분대원들이 병마를 피하고 그대를 믿음직한 전우로 치켜세웠다.",
           stats: { Fel: 7, Int: 4, Inf: 4 }
         },
         fail: {
-          text: "거래 도중 군기 담당 상사에게 들켜 훈계를 들었으나, 식량 몇 상자는 챙겨 돌아왔다.",
-          stats: { Fel: 3, WP: 3 }
+          text: "거래를 시도하다 헌병 상사에게 적발되어 징계 경고를 받고 빈손으로 돌아왔다.",
+          stats: { Inf: -2, Fel: -2, WP: 2 }
         }
       },
       {
-        label: "[지성 판정] 방열 망토를 참호 방수 천막으로 개조하고 남은 동력팩을 화톳불에 충전해 밤을 넘긴다",
+        label: "[지성 판정] 숯과 붕대로 간이 여과기를 만들고 부패하지 않은 비상 식량만 선별해 분대 배급표를 짠다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "교본엔 없지만 전장에서는 통하는 야전 지혜! 부대 전체가 감기와 동상을 피하고 다음 날 전투에 완벽히 대비했다.",
-          stats: { Int: 6, T: 5, BS: 3 }
+          text: "교본에 없는 야전 지혜가 분대 전원의 생명을 지켰다! 야전 메디카에 장교가 위생 관리 수완을 극찬했다.",
+          stats: { Int: 6, T: 5, WP: 3 }
         },
         fail: {
-          text: "동력팩 하나가 과열되어 터지는 바람에 손등을 데었으나, 천막은 제법 쓸 만했다.",
+          text: "여과가 불완전했던 물 한 모금을 먼저 시음했다가 심한 복통으로 밤새 앓아누웠다.",
           wounds: -10,
-          stats: { Int: 3, T: 3 }
+          stats: { Int: 2, T: 2 }
         }
       },
       {
-        label: "불평하지 않고 병참 오발송 보고서를 써 올린 뒤 있는 탄약만으로 경계 근무를 선다",
+        label: "오염된 탱크를 즉시 봉쇄하고 규정대로 최소 수분만 배급하며 야전 메디카에 증원을 기다린다",
         effect: {
-          text: "아스트라 밀리타룸의 병사는 보급이 오지 않아도 싸우는 법을 안다. 인내심이 한층 깊어졌다.",
+          text: "갈증과 허기가 뼈를 깎았지만 단 한 명의 중독자도 내지 않고 전선을 지켰다. 인내심이 한층 깊어졌다.",
           stats: { T: 5, WP: 5 }
         }
       }
     ],
-    source: "Lexicanum: Departmento Munitorum / Astra Militarum Lore"
+    source: "Lexicanum: Imperial Guard Rations / Codex: Astra Militarum"
   },
   // =========================================================================
   // 12단계: 6대 유명 연대별 전용 분기 사건 (anyHomeWorlds + astra_militarum)
@@ -142,7 +152,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "카디안 쇼크 트루퍼 — 붕괴 직전 방어선의 일제 사격",
     category: "연대 특화",
     once: true,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], anyHomeWorlds: ["cadia"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      anyHomeWorlds: ["cadia"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "카디아 출신 아스트라 밀리타룸",
     weight: 34,
     text: "타 행성 신병 연대가 카오스 이단군의 맹공에 무너지며 퇴각하기 시작했다. 카디아식 제식으로 단련된 그대의 소대는 빗발치는 볼트탄 속에서 자색 눈동자를 번뜩이며 최후의 흉벽을 지키고 있다.",
@@ -165,7 +179,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[교섭 판정] 무너지는 타 연대 병사들에게 카디아의 전투 함성을 외쳐 전열을 재편시킨다",
         check: { stat: "Fel", diff: 0 },
         success: {
-          text: "'카디아는 서 있다!' 그대의 외침에 공포에 질린 신병들이 총검을 꽂고 다시 흉벽에 섰다.",
+          text: "'카디아를 위하여!' 그대의 외침에 공포에 질린 신병들이 총검을 꽂고 다시 흉벽에 섰다.",
           stats: { Fel: 7, WP: 5, Inf: 5 }
         },
         fail: {
@@ -189,7 +203,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "데스 코어 오브 크리그 — 탄막 아래 14일째의 참호 굴착",
     category: "연대 특화",
     once: true,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], anyHomeWorlds: ["krieg"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      anyHomeWorlds: ["krieg"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "크리그 출신 아스트라 밀리타룸",
     weight: 34,
     text: "아군 어스쉐이커 공성포의 연속 포격이 적 요새를 짓이기고 있다. 타 연대라면 엄폐호에 숨을 포화 속이지만, 크리그 연대의 교리는 포탄이 떨어지는 바로 그 자리까지 14일 밤낮으로 전진 참호를 파 내려가라고 명한다.",
@@ -237,7 +255,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "카타찬 정글 파이터 — 귀족 장교의 제식 행진과 정글식 매복",
     category: "연대 특화",
     once: true,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], anyHomeWorlds: ["catachan"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      anyHomeWorlds: ["catachan"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "카타찬 출신 아스트라 밀리타룸",
     weight: 34,
     text: "타 행성에서 새로 부임한 귀족 출신 중대장이 밀림 전선 한복판에서 붉은 예복과 정식 열병 대열로 진군하라고 명령했다! 카타찬 병사들 눈에는 적 저격수와 맹독 식물의 먹잇감이 되겠다는 자살 행위나 다름없다.",
@@ -246,7 +268,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[민첩 판정] 대열을 벗어나 덤불 속으로 우회해 적 매복조의 목을 카타찬 대검으로 먼저 따낸다",
         check: { stat: "Ag", diff: 5 },
         success: {
-          text: "적 매복조의 수급을 장교 발앞에 던져 놓자 귀족 장교가 얼굴이 하얗게 질린 채 작전권을 베테랑들에게 넘겼다!",
+          text: "적 매복조의 수급을 장교 발 앞에 던져 놓자 귀족 장교가 얼굴이 하얗게 질린 채 작전권을 베테랑들에게 넘겼다!",
           stats: { Ag: 7, WS: 5, Fel: 4 },
           addTags: ["catachan_blooded"]
         },
@@ -264,8 +286,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Fel: 6, Int: 5, Inf: 4 }
         },
         fail: {
-          text: "항명 직전의 경고를 들었으나 정찰 선봉 자리를 얻어 스스로 살아남을 길을 확보했다.",
-          stats: { WP: 4, Ag: 3 }
+          text: "귀족 장교에게 항명 직전의 질책을 받아 징계 기록이 남았으나, 정찰 선봉으로 빠져나와 스스로 살아남을 길은 확보했다.",
+          stats: { Inf: -3, Fel: -2, Ag: 2 }
         }
       },
       {
@@ -283,10 +305,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "발할라 아이스 워리어 — 영하 60도의 타나 차와 오크 야습",
     category: "연대 특화",
     once: true,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], anyHomeWorlds: ["valhalla"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      anyHomeWorlds: ["valhalla"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "발할라 출신 아스트라 밀리타룸",
     weight: 34,
-    text: "눈보라가 시야를 집어삼킨 빙원 전선. 다른 행성 병사들이 동상으로 총을 놓칠 때, 발할라 아이스 워리어들은 펄펄 끓인 타나(Tanna) 차를 나눠 마시며 묵묵히 볼터 거치대를 손질하고 있다. 바로 그때 눈보라 너머에서 오크 워트럭의 엔진 소리가 울린다!",
+    text: "눈보라가 시야를 집어삼킨 빙원 전선. 다른 행성 병사들이 동상으로 총을 놓칠 때, 발할라 아이스 워리어들은 펄펄 끓인 타나 차를 나눠 마시며 묵묵히 헤비 볼터 거치대를 손질하고 있다. 바로 그때 눈보라 너머에서 오크 워트럭의 엔진 소리가 울린다!",
     choices: [
       {
         label: "[사격 판정] 시야가 10미터뿐인 눈보라 속에서 소리로 조준해 오크 선두 차량의 바퀴를 꿰뚫는다",
@@ -329,10 +355,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "타니스 퍼스트 앤드 온리 — 위장 망토와 안개 속 백파이프",
     category: "연대 특화",
     once: true,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], anyHomeWorlds: ["tanith"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      anyHomeWorlds: ["tanith"],
+      minYear: 765,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "타니스 출신 아스트라 밀리타룸",
     weight: 34,
-    text: "잿빛 안개가 깔린 적 후방 삼림. 타니스 고유의 카멜레올린 위장 망토(Camo-Cloak)를 두른 정찰 분대가 적 포병 진지 30미터 앞까지 숨어들었다. 은빛 타니스 단검(Straight Silver)을 쥔 손끝에 긴장이 흐른다.",
+    text: "잿빛 안개가 깔린 적 후방 삼림. 타니스 고유의 카멜레올린 위장 망토를 두른 정찰 분대가 적 포병 진지 30미터 앞까지 숨어들었다. 은빛 타니스 단검을 쥔 손끝에 긴장이 흐른다.",
     choices: [
       {
         label: "[민첩 판정] 그림자처럼 스며들어 소리 없이 적 보초를 제압하고 포병 탄약고에 시한폭탄을 설치한다",
@@ -349,7 +380,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[사격 판정] 고배율 롱라스(Long-Las)로 적 포병 장교와 관측병만 정확히 저격해 지휘 체계를 마비시킨다",
+        label: "[사격 판정] 고배율 롱라스로 적 포병 장교와 관측병만 정확히 저격해 지휘 체계를 마비시킨다",
         check: { stat: "BS", diff: 5 },
         success: {
           text: "세 발의 뜨거운 라스 광선이 안개를 뚫고 적 지휘관 셋을 쓰러뜨렸다! 아군 주력이 무혈로 진지를 점령했다.",
@@ -362,7 +393,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "교전 없이 적 포대의 정확한 좌표만 복스(Vox)로 송신하고 은밀히 철수한다",
+        label: "교전 없이 적 포대의 정확한 좌표만 복스로 송신하고 은밀히 철수한다",
         effect: {
           text: "10분 뒤 아군 대포병 사격이 적 진지를 지도에서 지워 버렸다. 정찰병의 본분을 완벽히 다했다.",
           stats: { Int: 5, Ag: 4 }
@@ -376,7 +407,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "보스트로얀 퍼스트본 — 가문의 공예 라스건과 장자의 맹세",
     category: "연대 특화",
     once: true,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], anyHomeWorlds: ["vostroya"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      anyHomeWorlds: ["vostroya"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "보스트로야 출신 아스트라 밀리타룸",
     weight: 34,
     text: "시가전 도중 그대가 물려받은 보스트로야 전통 공예 라스건의 목재 개머리판에 탄환이 박혀 갈라졌다. 1만 년 전 호루스 헤러시의 빚을 갚기 위해 모든 장자가 바쳐지는 보스트로얀 퍼스트본에게, 선조의 총기를 잃는 것은 곧 가문의 치욕이다.",
@@ -390,8 +425,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 5
         },
         fail: {
-          text: "총열 정렬이 다소 어긋나 보급창 장인의 도움을 받아야 했으나 무기는 지켜 냈다.",
-          stats: { Int: 3, WP: 3 }
+          text: "총열 정렬이 어긋나 시사 도중 약실이 역화해 손을 데었고, 보급창 장인의 질책 속에 수리를 맡겨야 했다.",
+          wounds: -6,
+          stats: { Inf: -2, Int: 2 }
         }
       },
       {
@@ -424,7 +460,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_guard_leman_russ",
     title: "리만 러스 전차대 호위 — 강철 거수의 사각지대",
     category: "직군 심화",
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "직군: 아스트라 밀리타룸",
     weight: 26,
     text: "아군 리만 러스 주력 전차가 폐허 시가지로 진격하고 있다. 육중한 장갑은 적 소총탄을 튕겨 내지만, 무너진 건물 2층에서 적 대전차 특공조가 멜타 폭탄을 들고 전차 후면 엔진실로 뛰어내리려 한다!",
@@ -469,7 +508,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_guard_night_sentry",
     title: "무주지의 야간 보초 — 철조망 너머의 기척과 조명탄",
     category: "직군 심화",
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "직군: 아스트라 밀리타룸",
     weight: 25,
     text: "새벽 3시, 비와 진흙으로 뒤덮인 최전방 감시 초소. 15미터 앞 철조망에서 쇠가 긁히는 희미한 소리가 들렸다. 적 야습 척후조일 수도, 혹은 길을 잃고 돌아오는 아군 정찰병일 수도 있다. 경보를 울리면 포격이 쏟아질 것이다.",
@@ -513,7 +555,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_guard_heavy_weapons",
     title: "중화기 분대 긴급 차출 — 과열된 라스캐논과 적 기갑 돌격",
     category: "직군 심화",
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "직군: 아스트라 밀리타룸",
     weight: 26,
     text: "적 중전차가 방어선 중앙으로 밀고 들어오는데, 중화기 진지의 라스캐논 사수가 포탄 파편에 쓰러졌다! 냉각 코일이 붉게 달아오른 삼각대 라스캐논이 주인을 잃고 방치되어 있다.",
@@ -558,16 +603,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_guard_bunker_siege",
     title: "72시간 봉쇄된 토치카 — 마지막 동력팩과 총검 돌격",
     category: "직군 심화",
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "직군: 아스트라 밀리타룸",
     weight: 24,
-    text: "아군 주력과 고립된 전방 콘크리트 토치카에서 사흘 밤낮을 버텼다. 물도 식량도 떨어졌고, 분대원마다 남은 라스건 동력팩은 단 하나뿐이다. 무전기 너머로 아군 구원대가 20분 뒤 도착한다는 잡음이 섞여 들린다.",
+    text: "아군 주력과 고립된 전방 콘크리트 토치카에서 사흘 밤낮을 버텼다. 물도 식량도 떨어졌고, 분대원마다 남은 라스건 동력팩은 단 하나뿐이다. 복스 너머로 아군 구원대가 20분 뒤 도착한다는 잡음이 섞여 들린다.",
     choices: [
       {
         label: "[의지 판정] 황제께 기도하며 마지막 동력팩을 단발 사격으로 아껴 20분을 버텨 낸다",
         check: { stat: "WP", diff: 0 },
         success: {
-          text: "총열이 녹아내릴 듯한 사격전 끝에 마침내 아군 발키리 건십의 로터 소리가 하늘을 갈랐다! 불굴의 수비대로 훈장을 받았다.",
+          text: "총열이 녹아내릴 듯한 사격전 끝에 마침내 아군 발키리 건십의 추력 엔진 굉음이 하늘을 갈랐다! 불굴의 수비대로 훈장을 받았다.",
           stats: { WP: 7, BS: 5, Inf: 6 },
           faith: 7
         },
@@ -598,15 +646,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Only War: Hammer of the Emperor / Astra Militarum Lore"
+    source: "Only War: Hammer of the Emperor / Codex: Astra Militarum"
   },
   {
     id: "ev_s12_guard_ogryn_squad",
     title: "분대에 배속된 오그린 거한 — 수송차 탑승 소동",
     category: "직군 심화",
     once: true,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], excludeTags: ["ogryn"] },
-    reqLabel: "직군: 아스트라 밀리타룸 (비오그린)",
+    req: {
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: ["ogryn", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    reqLabel: "직군: 아스트라 밀리타룸 · 비오그린",
     weight: 26,
     text: "돌파 작전을 앞두고 키 3미터가 넘는 오그린 보조병 '노크'가 분대에 배속되었다. 그런데 좁고 어두운 키메라 장갑차 문 앞에 서자, 폐소공포증에 걸린 거한이 '어두운 쇳덩이 안엔 괴물이 있어!'라며 버티기 시작했다. 출발까지 2분 남았다!",
     choices: [
@@ -632,8 +685,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 5, Fel: 4 }
         },
         fail: {
-          text: "식량 두 캔을 더 뜯기고서야 겨우 문이 닫혔지만 출발 시간은 지켰다.",
-          stats: { Int: 2, Fel: 2 }
+          text: "식량을 다 뜯기고도 문이 늦게 닫혀 소대장에게 호된 질책을 받았으나, 가까스로 대열에 합류했다.",
+          stats: { Inf: -2, Fel: -2, Int: 2 }
         }
       },
       {
@@ -651,7 +704,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "지휘부 전멸 후 야전 분대장 대행 — 퇴각인가 사수인가",
     category: "직군 심화",
     once: true,
-    req: { anyCareers: ["astra_militarum"], minAge: 19 },
+    req: {
+      anyCareers: ["astra_militarum"],
+      minAge: 19,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "19세+ 아스트라 밀리타룸",
     weight: 28,
     text: "적 직격탄이 소대 지휘 벙커를 날려 버렸다. 소대장과 선임 하사가 모두 전사하고, 남은 18명의 병사들이 혼란 속에서 가장 오래 살아남은 그대를 바라보고 있다. 우익 언덕의 적 중화기 진지가 방어선을 내려다보고 있다.",
@@ -660,7 +717,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[교섭 판정] 즉시 임시 지휘권을 인수해 연막 차폐 아래 우익 언덕 우회 점령을 지휘한다",
         check: { stat: "Fel", diff: 0 },
         success: {
-          text: "완벽한 지휘로 적 중화기 진지를 탈취했다! 대대장이 그대를 정식 분대장으로 승진시키고 장교 후보 명단에 올렸다.",
+          text: "완벽한 지휘로 적 중화기 진지를 탈취했다! 대대장이 야전 공훈 표창을 수여하며 정식 분대장 진급과 장교 후보 추천 명단에 그대의 이름을 올렸다.",
           stats: { Fel: 7, Int: 5, Inf: 7, WP: 4 }
         },
         fail: {

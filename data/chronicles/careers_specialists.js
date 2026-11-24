@@ -31,7 +31,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "발할라 아이스 워리어",
     priority: 3,
     req: { anyCareers: ["astra_militarum", "militarum_sergeant"], anyHomeWorlds: ["valhalla"] },
-    text: "눈발이 휘날리는 야영지에서 금속 머그잔에 진하게 우린 타나(Tanna) 차를 나누어 마셨다. 몸속까지 스미는 쌉싸름한 온기가 발할라 병사들의 사기를 지탱한다.",
+    text: "눈발이 휘날리는 야영지에서 금속 머그잔에 진하게 우린 타나 차를 나누어 마셨다. 몸속까지 스미는 쌉싸름한 온기가 발할라 병사들의 사기를 지탱한다.",
     effect: { stats: { T: 1, Fel: 1 } }
   },
   {
@@ -73,7 +73,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "챕터 아포세카리",
     priority: 3,
     req: { allTags: ["astartes", "role_apothecary"] },
-    text: "배틀 바지 아포세카리온에서 회수한 진시드의 유전 순도를 정밀 검수했다. 단 하나의 돌연변이 징후도 허락하지 않는 치밀함이 챕터의 천 년을 지탱한다.",
+    text: "배틀 바지 아포세카리움에서 회수한 진시드의 유전 순도를 정밀 검수했다. 단 하나의 돌연변이 징후도 허락하지 않는 치밀함이 챕터의 천 년을 지탱한다.",
     effect: { stats: { Int: 1, T: 1 } }
   },
   {
@@ -285,7 +285,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "사이온 모의 강하",
     priority: 3,
     req: { anyCareers: ["tempestus_scion", "tempestus_prime_cmd"] },
-    text: "무중력 강하 훈련실에서 그래브 슈트(Grav-Chute) 점화 타이밍을 0.1초 단위로 반복 숙달했다. 스콜라의 채찍이 빚은 근육은 실수를 모른다.",
+    text: "무중력 강하 훈련실에서 그라브 슈트 점화 타이밍을 0.1초 단위로 반복 숙달했다. 스콜라의 채찍이 빚은 근육은 실수를 모른다.",
     effect: { stats: { Ag: 1, BS: 1 } }
   },
   {

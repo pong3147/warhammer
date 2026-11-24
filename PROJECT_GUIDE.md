@@ -127,7 +127,7 @@
 * **은하·성역 원격 속보:** 타 행성 체류 중에도 제국 전역(`galaxy`) 또는 같은 성역(`sector`)의 대형 역사 사건이 발생하면 아스트로패스 속보(`heardNews`)가 연대기에 수신됨(야만 행성 제외).
 
 ### 4.2 `checkReq(state, req)` 지원 조건 키
-`minAge`, `maxAge`, `minYear`, `maxYear`, `gender` (`"male"`/`"female"`), `stats` (`{ WS, BS, T, Ag, Int, WP, Fel, Inf }`), `minFaith`, `maxFaith`, `minCorruption`, `maxCorruption`, `minWounds`, `maxWounds`, `allTags`, `anyTags`, `excludeTags`, `anyCareers`, `anyPastCareers`, `excludePastCareers`, `anyChapters`, `excludeChapters`, `anyWorlds`, `anyHomeWorlds`, `excludeWorlds`, `anyWorldTags`, `excludeWorldTags`, `anySegmenta`, `anyFocus`, `greatRift` (`true`/`false`), `or` (재귀 배열).
+`minAge`, `maxAge`, `minYear`, `maxYear`, `gender` (`"male"`/`"female"`), `stats` (`{ WS, BS, T, Ag, Int, WP, Fel, Inf }`), `minFaith`, `maxFaith`, `minCorruption`, `maxCorruption`, `minWounds`, `maxWounds`, `allTags`, `anyTags`, `excludeTags`, `anyCareers`, `anyPastCareers`, `excludePastCareers`, `anyChapters`, `excludeChapters`, `anyWorlds`, `anyHomeWorlds`, `excludeWorlds`, `excludeHomeWorlds`, `anyWorldTags`, `excludeWorldTags`, `anySegmenta`, `anyFocus`, `greatRift` (`true`/`false`), `or` (재귀 배열).
 
 ### 4.3 `applyOutcome(state, outcome)` 지원 효과 키
 `text`, `stats`, `wounds`, `woundsBonus`, `faith`, `corruption`, `corruptionReset`, `lifeBonusExtra` (또는 `extraLifeBonus`), `incrementRejuvenat`, `addTags` (`met_<charId>` 자동 `metCharacters` 등록), `moveWorld`, `warpYearShift` (생물학적 연령 유지한 워프 시간 도약), `forceCareer`, `acceptCareerOffer`, `declineCareerOffer`, `trialFailFor`, `chooseChapter`, `instantDeath` (사망 사유 문자열).
@@ -402,12 +402,13 @@
 | **13단계 (5차 2단계)** | 전 세력 풀 계급도(78종) · 이벤트 기반 진로 제안 · 평행 횡단 · 엔진/UI 개편 | `[완료]` | 100% (**78종 선택 직군 · 17개 트리 · +39태그 · +4연대기 · 6대 QA 0오류/0경고**) | 17개 트리 78종 선택 직군(하이 로드 10석·워마스터·행성 총독/섹터 로드·CSM/컬트 분리·데몬 프린스), `createDynamicCareerOfferEvent`, `anyPastCareers`/`excludePastCareers`, 엔진 데이터 주도화, UI `<details>` 그룹화·`careerHistory` 도감 집계·기존 `anyCareers` 호환 보정 · 밸런스 튜닝 |
 | **13.5단계 (선행 보정)** | 1,500생애 심층 감사 기반 밸런스 · 도달성 정밀 보정 | `[완료]` | 100% (**하이 로드 22.8% -> 4.0% · T6 44.6% -> 9.7% · forbidden 이단 1% -> 77% · 데몬 프린스 0 -> 38명 · QA `--deep` 0오류**) | `forbidden` 유년기(12세 미만) 오염 완화·고오염 제어, 길드/심문소/국교/총독/하이 로드 인플레이션 차단, `ev_chaos_whispers` 미낙인 이단자 우선도·저항 조건 교정, `adeptus_custodes`·`daemon_prince` 도달 창 보정, `anyPastCareers` 사건 가중치 우대 |
 | **14단계 (5차 3단계)** | 계급별 · 전 계급 대비(`anyPastCareers`) 전용 서사 & 연대기 대확장 | `[완료]` | 100% (목표 +60/+55 초과 달성: **+68사건 · +61연대기 · 78/78 직군 100% · 167/167 태그 100% 회수 · 2종 독립 감사 P0/P1 전량 해소 · QA `--deep` 0오류**) | 신규 사건 5파일(`high_lords`, `governor`, `militarum_ranks`, `transhuman_faith_ranks`, `chaos_ranks`) + 연대기 1파일(`careers_ranks`) 신설, 직접 사건 0건이던 19개 직군 및 미회수 태그 전량 해소, 하이 로드 10석·총독/섹터 로드·로그 트레이더·초인/신앙/카오스 중상위 및 `anyPastCareers` 대비 연작 완비 |
+| **14.5단계 (전수 검수)** | 전체 500사건 · 590연대기 고증 · 연대기 · 신분 정합 · 문체 · TTS 일괄 교정 | `[완료]` | 100% (**33개 파일 교정 · 기존 ID 100% 보존 · 발화 괄호/약어/오표기 0건 · `qa.js --deep` 7대 게이트 0오류·0경고**) | Read-Only 독립 교차 감사 8기 전수 분석 후 7개 병렬 작성 슬라이스 + 공유 파일 일괄 교정: `excludeHomeWorlds` 엔진/QA 가드, 쿠스토데스·그레이 나이트 오염 면역, 카오스 상위 강등 차단, M41~M42 연대기·신분 누수·중복 플롯·동음이의어·표준 표기·단일 판정 라벨 전면 정비 |
 | **15단계 (5차 4단계)** | 네임드 15행성 & 파견 전용 연작 대확장 | `[예정]` | 0% | 테라 외 14개 네임드 행성 최소 5~7건+ 보강, 핵심 행성(`terra`/`cadia`/`krieg`/`armageddon`) 1:1 승격, 파견(`anyWorlds`) 체감 극대화 (`+48사건 · +45연대기`) |
 | **16단계 (5차 5단계)** | 9대 챕터 1:1 승격 · 초인 초장수기 · 카오스 4대 신/CSM 엔드게임 | `[예정]` | 0% | 9대 챕터별 단독 파일 승격 + 다단계 아크(각 7~8건+), 150~500세 초장수기 연작, 카오스 4대 신·배신자 군단·데몬 프린스 엔드게임 심화 (`+45사건 · +36연대기`) |
 | **17단계 (5차 6단계)** | 인류제국 신규 4대 세력 풀 트리 & 기사 행성 추가 | `[예정]` | 0% | `navis_navigator`(파테르노발 특사 하이 로드 포함), `officio_assassinorum`(4대 클레이드·그랜드 마스터 하이 로드 포함), `imperial_knight`(+`generic_knight` 행성), `living_saint` 풀 트리 + 엔진/도감 연동 (`+4세력 · +1행성 · +36사건 · +32연대기`) |
 | **18단계 (5차 7단계)** | M41~M42 핵심 역사 5종 · 신규 네임드 8인 · 정사 크로스오버 · 거시 파장 | `[예정]` | 0% | 고딕 전쟁·1차 아마겟돈(수치의 달들)·3차 타이라니드·옥타리우스·역병 전쟁 추가, 네임드 8인(28인 체제) 단독 조우·정사 크로스오버·거시 결단 파장 연계, 시대 프리셋 2종 (`+5역사 · +8인물 · +28사건 · +28연대기`) |
 
-* **5차 인류제국 대확장 전체 누적 완성도:** `4 / 8 단계 완료 (50.0% · 12~14단계 완료, 잔여: 15~18단계)`
+* **5차 인류제국 대확장 전체 누적 완성도:** `5 / 9 단계 완료 (55.6% · 12~14.5단계 완료, 잔여: 15~18단계)`
 
 ### 12단계 (5차 1단계): 기존 27개 직군 전면 심화 · 아스타르테스 4대 직책 · 가드맨 연대 특화 `[완료]`
 * **완성도:** **100% 완료** (예정 목표 `+54사건`을 초과해 **+64사건 · +40연대기 · +12태그 · 1:1 파일 승격 2종 · 아스타르테스 4대 직책 부고 4종** 구현, `sync-scripts --check` 및 `qa.js` 6대 게이트 0오류·0경고, 신규 전 항목 도달 가능성 100% 검증 완료)
@@ -511,6 +512,25 @@
      * **Gate 7A/7B:** 79직군 전직 도달 그래프 `65 anyPastCareers` 모순 0건, 전체 조건식 **1,288종** 합성 도달성 증명 완료, **`directCareerMatch(events = 78/78, chronicles = 78/78)` 100% 달성**.
      * **Gate 6/7C (1,500생애 멀티-초점):** `maxRepeat = 2`, `nihilusMismatch = 0`, `scholaStuck = 0`, `careerOffers = 5,711`, `reachedCareers = 59/78`, `naturalEvents = 417/476`, `1,000분기 = 264.7ms`.
      * 분포 지표: `T4+ = 969`, `T5+ = 868`, `T6 = 147 (9.8%)`, `HighLord = 74 (4.9%)`, `Gov = 283`, `RT = 292`, `Astartes = 71`, `Custodes = 1`, `GK = 7`, `Chaos = 261`, `DaemonPrince = 25 (1.7%)`, `Focus=forbidden (allMed = 26세, heretic = 85%)`. **0 ERRORS · 0 WARNINGS.**
+
+### 14.5단계 (전수 검수): 전체 500사건 · 590연대기 고증 · 연대기 · 신분 정합 · 문체 · TTS 일괄 교정 `[완료]`
+* **완성도:** **100% 완료** (전체 분기 사건 476종 + 역사 대사건 24종 = **500사건** 및 일상 연대기 **590종** 대상 독립 Read-Only 감사 8기 교차 전수 분석 후 33개 파일 일괄 수정 완료, 기존 ID 100% 보존, 발화 텍스트 영문/한자 괄호·영문 약어·단위 약어·비표준 표기·이중 판정 라벨·장식 기호 **전 항목 0건**, `sync-scripts --check` 및 `qa.js --deep` 7대 게이트 **0오류·0경고** 통과)
+* **완료 내역 (엔진·QA 보강, 33개 파일 교정 및 최종 QA 검증 결과):**
+  1. **시스템 레벨 3대 원천 가드 구축 (`js/engine.js`, `scripts/qa.js`):**
+     * `checkReq`/`describeReq` 및 QA Gate 4·7B에 `excludeHomeWorlds` 지원 추가: 타 행성 파견 중인 크리그 출생자(`homeWorldId === "krieg"`)에게도 비타-움 정합성 보호 적용.
+     * `applyOutcome`에서 쿠스토데스(`custodes`) 및 그레이 나이트(`grey_knight`)의 양(+) 오염 면역 강제, 카오스 상위 계급(`daemon_prince`/`chaos_lord`/`chaos_champion`)의 `forceCareer` 하위 강등 원천 차단.
+  2. **전수 고증 · 연대기 · 신분 정합성 · 플롯 중복 교정 (`data/events/**` 22파일, `data/timeline.js`, `data/chronicles/**` 8파일):**
+     * **연대기 보정:** 타이라니드(`minYear: 745`), 타우(`minYear: 742`·울티마), 네크론(`minYear: 897`), 아마겟돈 전후 사건·연대기(`minYear: 942`), 보탄 연맹(`minYear: 999`), 카디아 존속 사건(`maxYear: 999`), 타니스 멸망(`exactYear: true`·`765.M41`), 아이젠혼(`maxYear: 495`), 라이온 귀환(`minYear: 1020`), 바스티오르(`minYear: 1028`), 대균열 상크투스 33일 vs 니힐루스 영구 암흑, 바알 시간 왜곡, 비질루스 80일 악몽 공성전, 루비콘 프라이머리스 제외 조건, 테라 통합 전쟁(`1만 년 전`) 및 보스트로야 서약(`1만 년째`) 고증 정합화.
+     * **신분·세력 누수 차단 & 밸런스:** 78직군 체계에서 잔류 태그로 발생하던 카오스·데몬 프린스·드레드노트·하이 로드·쿠스토데스·그레이 나이트·상위 지휘관 신분 불일치 전면 차단, 유년기 8사건 `anyCareers: ["child"]` 고정, 아스타르테스 성별(남성 `geneseed_compatible`) 분기 분리, `ev_inquisition_purge` 무조건 즉사 완화, 중복 플롯 15쌍 현장 차별화, 무위험 실패 분기 실질 페널티 보정.
+  3. **한국어 문체 · 표준 표기 · 스크린 리더(TTS) 접근성 전면 정비:**
+     * 치명적 오역·동음이의어 교정(`테라와 돈을 위하여` -> `테라와 로갈 돈을 위하여`, `무고한 고발자가` -> `거짓 고발을 꾸민 정적이`, `성별 의식` -> `영혼 결속 의식`, `함정들이` -> `강습정들이`, `수석 라이브러리` -> `수석 라이브러리안`, `육방정계` -> `육망성`, `추서되었다` -> `승진했다`, `무명이 떨쳤다` -> `명성을 떨쳤다`, `교관 수도사이` -> `드릴-애벗이`).
+     * 발화 영역 영문·한자 괄호 병기(125건+), 영문 약어(`PDF`/`DAoT`/`AI`/`vs`), 단위 약어(`km`/`mm` -> `킬로미터`/`밀리미터`) 전량 제거 및 표준 표기(`시체 전분`, `울트라마`, `누스피어`, `플라즈마`, `프로메튬`, `매크로`, `아마섹`, `메디카에`, `릭터`, `스캐럽`, `리퍼 건`, `초파`, `마셜`, `아우라마이트`, `데파르트멘토`, `인터로게이터-채플린`, `허스칼`, `프로메테우스`, `스카웃`, `아포세카리움`, `잊힌`, `데었다` 등) 통일.
+     * 전체 500사건의 모든 판정 선택지 라벨을 실제 `check.stat`과 일치하는 단일 브래킷(`[XX 판정]`)으로 100% 정렬.
+  4. **최종 QA `--deep` 7대 게이트 검증 결과 (`node scripts/sync-scripts.js --check && node scripts/qa.js --deep`):**
+     * **Gate 1~5:** `index.html` 45개 스크립트(사건 26 + 연대기 10) 동기화 일치, 고아 파일 0건, `maxEv = 90.0KB`, `maxCh = 44.5KB`, UI `#id` 91종 0오류, 소프트락 0건, 유년기 중복률 `18.8%`, `TAG_LABELS` **167/167 미회수 0건**.
+     * **Gate 7A/7B:** 79직군 전직 그래프 `65 anyPastCareers` 모순 0건, 전체 조건식 **1,300종** 합성 도달성 증명 완료, **`directCareerMatch(events = 78/78, chronicles = 78/78)` 100% 유지**.
+     * **Gate 6/7C (1,500생애 멀티-초점):** `maxRepeat = 2`, `nihilusMismatch = 0`, `scholaStuck = 0`, `careerOffers = 5,751`, `reachedCareers = 55/78`, `naturalEvents = 402/476`, `1,000분기 = 326.9ms`.
+     * 분포 지표: `T4+ = 880`, `T5+ = 811`, `T6 = 129`, `HighLord = 77`, `Gov = 287`, `RT = 304`, `Astartes = 56`, `GK = 7`, `Chaos = 243`, `DaemonPrince = 9`, `Focus=forbidden (allMed = 23세, heretic = 80%)`, 비금단 초점 이단 `0~6%`. **0 ERRORS · 0 WARNINGS.**
 
 ---
 

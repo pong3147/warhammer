@@ -6,7 +6,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "카타찬 밀림 성인식 — 카타찬 데블과의 조우",
     category: "행성",
     once: true,
-    req: { minAge: 12, maxAge: 20, anyWorlds: ["catachan"], anyHomeWorlds: ["catachan"], excludeTags: ["astartes", "custodes", "dreadnought"] },
+    req: {
+      minAge: 12,
+      maxAge: 20,
+      anyWorlds: ["catachan"],
+      anyHomeWorlds: ["catachan"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 카타찬 · 나이 12~20세",
     weight: 26,
     text: "식인 덩굴과 독개구리가 우글거리는 밀림 한복판, 거대한 절지 괴수 '카타찬 데블'이 앞을 가로막았다. 여기서 살아 돌아와야 비로소 카타찬의 어른으로 인정받는다.",
@@ -45,11 +54,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "마크라그 원로원의 시민 강연과 전술 시험",
     category: "행성",
     once: true,
-    req: { minAge: 12, anyWorlds: ["macragge"], excludeTags: ["astartes", "custodes", "dreadnought"] },
-    reqLabel: "행성: 마크라그",
+    req: {
+      minAge: 12,
+      maxAge: 35,
+      minYear: 700,
+      anyWorlds: ["macragge"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 마크라그 · 12~35세 · 700.M41 이후",
     weight: 22,
     characters: ["calgar"],
-    text: "헤라의 요새 아래 대리석 광장에서 울트라마 행정관들과 울트라마린 베테랑들이 시민들을 대상으로 로부테 길리먼의 《코덱스 아스타르테스》와 통치론을 강연한다.",
+    text: "헤라의 요새 아래 대리석 광장에서 울트라마 행정관들과 울트라마린 베테랑들이 시민들을 대상으로 위대한 프라이마크 로부테 길리먼이 남긴 《코덱스 아스타르테스》와 고전 통치론을 강연한다. 1만 년 전 울트라마의 기틀을 세운 군주의 가르침을 놓고 젊은 학도들 사이에 열띤 전술 문답이 오간다.",
     choices: [
       {
         label: "[지성 판정] 모의 전술 반론에 참여해 날카로운 전략안을 발표한다",
@@ -60,8 +79,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["ultramar_scholar", "met_calgar"]
         },
         fail: {
-          text: "엄격한 울트라마 교관의 지적을 받았지만 귀중한 학문적 기초를 다졌다.",
-          stats: { Int: 3, WP: 2 }
+          text: "울트라마 교관의 매서운 반박에 논리가 무너져 청중 앞에서 체면을 구겼지만, 냉철한 전술의 기초만은 뼈저리게 깨달았다.",
+          stats: { Int: 2, Inf: -3 }
+        }
+      },
+      {
+        label: "연단에 나서기보다 광장 대리석 계단에 앉아 강연을 끝까지 필기하며 통치와 병법의 토대를 다진다",
+        effect: {
+          text: "질서와 합리 위에 세워진 울트라마의 통치 철학을 차분히 흡수했다. 화려한 주목은 없었으나 내실이 깊어졌다.",
+          stats: { Int: 3, WP: 3 }
         }
       }
     ],
@@ -72,10 +98,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "발할라 — 빙하 지하 터널의 동면 오크 둥지",
     category: "행성 고유",
     once: true,
-    req: { minAge: 15, anyWorlds: ["valhalla"] },
+    req: {
+      minAge: 15,
+      anyWorlds: ["valhalla"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 발할라",
     weight: 24,
-    text: "지열 발전관 확장 공사 도중 영구 동토층 아래 수백 년 전 침공 당시 얼어붙었던 오크들이 열기에 녹아 깨어나고 말았다! 지하 도시 전체가 위험하다.",
+    text: "지열 발전관 확장 공사 도중 영구 동토층 아래 수천 년 전 침공 당시 얼어붙었던 오크들이 열기에 녹아 깨어나고 말았다! 지하 도시 전체가 위험하다.",
     choices: [
       {
         label: "[사격 판정] 좁은 얼음 터널에 방어선을 치고 집중 사격으로 막아 낸다",
@@ -107,19 +140,29 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_world_nocturne_salamander",
-    title: "녹턴 — 화산 대장간과 불도마뱀(Firedrake) 사냥",
+    title: "녹턴 — 화산 대장간과 파이어드레이크 사냥",
     category: "행성 고유",
     once: true,
-    req: { minAge: 14, anyWorlds: ["nocturne"], anyHomeWorlds: ["nocturne"], excludeTags: ["astartes", "custodes", "dreadnought"] },
-    reqLabel: "행성: 녹턴",
+    req: {
+      minAge: 14,
+      maxAge: 35,
+      anyWorlds: ["nocturne"],
+      anyHomeWorlds: ["nocturne"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 녹턴 · 14~35세",
     weight: 25,
-    text: "용암 강이 흐르는 데스파이어 산기슭에서 거대한 화염 파충류 '파이어드레이크'가 성소 마을을 위협하고 있다. 녹턴의 전사들과 샐러맨더 아스타르테스 후보생에게는 최고의 시련이다.",
+    text: "용암 강이 흐르는 데스파이어 산기슭에서 거대한 화염 파충류 파이어드레이크가 성소 마을을 위협하고 있다. 뜨거운 흑요석 바위를 딛고 거수를 물리치는 일은 녹턴의 모든 전사에게 최고의 명예이자, 젊은 소년들에게는 샐러맨더 아스타르테스 후보생으로 발탁될 시련이기도 하다.",
     choices: [
       {
-        label: "[백병 판정] 직접 벼린 흑요석 창을 들고 불도마뱀의 심장을 노린다",
+        label: "[백병 판정 · 남성 후보생 전용] 직접 벼린 흑요석 창으로 파이어드레이크의 심장을 노려 샐러맨더 선발 시련에 응한다",
+        req: { gender: "male", maxAge: 17 },
         check: { stat: "WS", diff: -5 },
         success: {
-          text: "용암 비늘을 뚫고 거수를 쓰러뜨렸다! 샐러맨더 대장장이가 그대의 강인함과 자비로운 용기를 칭송했다.",
+          text: "용암 비늘을 뚫고 거수를 쓰러뜨렸다! 샐러맨더 대장장이가 그대의 강인함과 자비로운 용기를 칭송하며 아스타르테스 후보생 명단에 이름을 올렸다.",
           stats: { WS: 7, T: 6, WP: 5, Inf: 6 },
           addTags: ["geneseed_compatible"]
         },
@@ -130,28 +173,48 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성 판정] 대장간의 쇠사슬 그물과 용암 수로를 이용해 괴수를 몰아낸다",
+        label: "[백병 판정] 직접 벼린 흑요석 창을 들고 성소 마을을 지키기 위해 파이어드레이크와 정면으로 맞선다",
+        check: { stat: "WS", diff: -5 },
+        success: {
+          text: "용암 비늘을 뚫고 거수를 쓰러뜨려 마을을 지켜 냈다! 녹턴의 장로들과 대장장이들이 그대를 성소 마을의 수호자로 칭송했다.",
+          stats: { WS: 7, T: 6, WP: 5, Inf: 6 }
+        },
+        fail: {
+          text: "화염 숨결에 심각한 화상을 입었지만 주민들을 대피시키는 데는 성공했다.",
+          wounds: -26,
+          stats: { T: 4, Fel: 3 }
+        }
+      },
+      {
+        label: "[지성 판정] 대장간의 쇠사슬 그물과 용암 수로를 이용해 파이어드레이크를 몰아낸다",
         check: { stat: "Int", diff: 5 },
         success: {
           text: "뛰어난 장인 기술로 마을 피해 없이 괴수를 쫓아냈다!",
           stats: { Int: 5, Fel: 5, T: 3 }
         },
         fail: {
-          text: "용암이 튀어 팔을 크게 데였다.",
+          text: "용암이 튀어 팔을 크게 데었다.",
           wounds: -18
         }
       }
     ],
-    source: "Lexicanum: Nocturne / Codex: Salamanders"
+    source: "Lexicanum: Nocturne / Codex Supplement: Salamanders"
   },
   {
     id: "ev_baal_red_thirst_pilgrim",
     title: "바알 — 방사능 사막의 천사 석상과 변이 약탈단",
     category: "행성 고유",
-    req: { minAge: 14, anyWorlds: ["baal"], excludeTags: ["astartes", "custodes"] },
-    reqLabel: "행성: 바알 (부족민/방문자)",
+    req: {
+      minAge: 14,
+      anyWorlds: ["baal"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 바알 · 필멸자",
     weight: 26,
-    text: "붉은 사막 한가운데 우뚝 선 생귀니우스 석상 아래 오아시스에서 방사능에 미쳐 버린 돌연변이 약탈단이 식수를 독차지하고 있다!",
+    text: "바알 세쿤두스 위성의 붉은 방사능 사막 한가운데 우뚝 선 생귀니우스 석상 아래 오아시스에서 방사능에 미쳐 버린 돌연변이 약탈단이 식수를 독차지하고 있다!",
     choices: [
       {
         label: "[백병 판정] 창과 칼을 빼 들고 오아시스를 되찾기 위해 돌격한다",
@@ -185,7 +248,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_catachan_brainleaf",
     title: "카타찬 — 밀림의 악몽, 정신 기생 덩굴 '브레인리프'",
     category: "행성 고유",
-    req: { minAge: 14, anyWorlds: ["catachan"] },
+    req: {
+      minAge: 14,
+      anyWorlds: ["catachan"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 카타찬",
     weight: 26,
     text: "밀림 정찰 중 기괴한 덩굴 '브레인리프'가 나뭇가지에서 떨어져 동료의 목덜미를 감았다! 신경계에 뿌리를 내리면 동료를 꼭두각시로 조종해 아군을 공격하게 만든다.",
@@ -203,7 +273,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[사격 판정] 화염방사기와 라스건으로 주변 덩굴 군락을 통째로 소각한다",
+        label: "[사격 판정] 화염방사기와 개인 화기로 주변 덩굴 군락을 통째로 소각한다",
         check: { stat: "BS", diff: 5 },
         success: {
           text: "화염의 장벽으로 기생 식물을 모조리 태워 야영지 안전을 확보했다.",
@@ -219,36 +289,43 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s6_world_macragge_hera",
-    title: "마크라그 헤라의 요새 — 대리석 광장의 시민 평의회와 500세계의 자부심",
+    title: "마크라그 헤라의 요새 — 대리석 광장의 시민 평의회와 울트라마의 자부심",
     category: "행성 고유 심화",
     once: true,
-    req: { minAge: 16, anyWorlds: ["macragge"] },
-    reqLabel: "거주 행성: 마크라그 (Macragge)",
+    req: {
+      minAge: 16,
+      anyWorlds: ["macragge"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "거주 행성: 마크라그",
     weight: 30,
-    text: "눈 덮인 봉우리 아래 대리석 기둥이 늘어선 마크라그 시비타스. 제국의 다른 하이브 월드와 달리 질서와 실용주의가 살아 숨 쉬는 이곳 시민 평의회에서, 전란으로 몰려든 울트라마르 외곽 피난민들의 정착 예산과 방위군 증편안을 놓고 격론이 벌어지고 있다.",
+    text: "눈 덮인 봉우리 아래 대리석 기둥과 프라이마크의 거대한 석상이 늘어선 마크라그 시비타스. 제국의 하이브 월드들과 달리 질서와 실용주의가 살아 숨 쉬는 이곳 시민 평의회에서, 전란으로 몰려든 울트라마 외곽 피난민들의 정착 예산과 방위군 증편안을 놓고 격론이 벌어지고 있다.",
     choices: [
       {
         label: "[교섭 판정] 피난민의 기술 인력을 즉시 방어선 보수와 공방 생산에 편입하는 상생 법안을 발의해 통과시킨다",
         check: { stat: "Fel", diff: -5 },
         success: {
-          text: "질서와 자비가 조화를 이룬 울트라마르다운 해법! 평의회 의원들이 기립 박수를 보내며 그대의 이름을 시정에 새겼다.",
+          text: "질서와 자비가 조화를 이룬 울트라마다운 해법! 평의회 의원들이 기립 박수를 보내며 그대의 이름을 시정에 새겼다.",
           stats: { Fel: 7, Int: 5, Inf: 7 }
         },
         fail: {
-          text: "예산 분배를 둘러싼 구역 대표들의 반발로 법안이 반쪽짜리로 수정되었으나, 구호소 설치만은 관철했다.",
-          stats: { Fel: 4, Inf: 2 }
+          text: "예산 분배를 둘러싼 구역 대표들의 거센 반발에 법안이 후퇴하며 체면을 구겼으나, 최소한의 구호소 설치만은 관철했다.",
+          stats: { Fel: 2, Inf: -3 }
         }
       },
       {
-        label: "[지성 판정] 500세계 표준 병참표를 대조해 낭비되는 관청 지출을 도려내고 방위군 장비 현대화 재원을 마련한다",
+        label: "[지성 판정] 울트라마 표준 병참표를 대조해 낭비되는 관청 지출을 도려내고 방위군 장비 현대화 재원을 마련한다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "흠잡을 데 없는 효율성에 울트라마르 보좌관들이 감탄했다! 길리먼의 행정 철학이 살아 있음을 증명했다.",
+          text: "흠잡을 데 없는 효율성에 울트라마 보좌관들이 감탄했다! 고대 프라이마크 길리먼이 남긴 《코덱스》와 행정 철학이 여전히 살아 있음을 증명했다.",
           stats: { Int: 7, Inf: 6 }
         },
         fail: {
-          text: "감사 과정에서 일부 관료들의 반감을 샀으나, 방위군 예산 증액만은 이루어 냈다.",
-          stats: { Int: 4 }
+          text: "감사 과정에서 자료 오류를 지적받아 일부 관료들의 반감을 사고 입지가 좁아졌으나, 방위군 예산 증액만은 이루어 냈다.",
+          stats: { Int: 2, Inf: -3 }
         }
       },
       {
@@ -259,15 +336,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Macragge / Ultramar Lore"
+    source: "Lexicanum: Macragge / Codex: Space Marines"
   },
   {
     id: "ev_s6_world_macragge_polar",
     title: "마크라그 북극 요새 추모 — 제1중대 전원 옥쇄의 절벽",
     category: "행성 고유 심화",
     once: true,
-    req: { minAge: 18, anyWorlds: ["macragge"] },
-    reqLabel: "거주 행성: 마크라그 (Macragge)",
+    req: {
+      minAge: 18,
+      minYear: 746,
+      anyWorlds: ["macragge"],
+      excludeTags: [
+        "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "거주 행성: 마크라그 · 746.M41 이후",
     weight: 30,
     text: "칼바람이 휘몰아치는 마크라그 북극 방어 요새 유적. 745.M41 제1차 타이라니드 전쟁 당시, 울트라마린 제1중대 베테랑 전원 한 명도 물러서지 않고 최후까지 싸워 전멸했던 전설의 절벽 앞에 그대가 섰다. 눈보라 속에서 고대 볼터 탄피 하나가 발끝에 걸렸다.",
     choices: [
@@ -294,9 +379,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 8
         },
         fail: {
-          text: "거센 바람에 목소리가 흩어졌으나, 마음속 다짐만큼은 단단해졌다.",
-          stats: { WP: 4 },
-          faith: 4
+          text: "매서운 눈보라에 숨이 턱 막히고 목소리가 흩어져 냉기에 크게 떨었으나, 마음속 다짐만큼은 단단해졌다.",
+          wounds: -8,
+          stats: { WP: 2 },
+          faith: 2
         }
       },
       {
@@ -315,10 +401,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "녹턴의 '시련의 계절' — 갈라지는 용암 지각과 지하 피난처",
     category: "행성 고유 심화",
     once: true,
-    req: { minAge: 15, anyWorlds: ["nocturne"] },
-    reqLabel: "거주 행성: 녹턴 (Nocturne)",
+    req: {
+      minAge: 15,
+      anyWorlds: ["nocturne"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "거주 행성: 녹턴",
     weight: 32,
-    text: "거대한 위성 프로메테우스가 녹턴에 최근접하며 15년 주기의 대격변 '시련의 계절(Time of Trial)'이 시작되었다! 대지가 갈라지고 화산재가 하늘을 가리는 가운데, 외곽 광산 마을의 피난 행렬이 흘러내리는 용암 줄기에 가로막혀 고립되었다.",
+    text: "거대한 위성 프로메테우스가 녹턴에 최근접하며 15년 주기의 대격변 '시련의 계절'이 시작되었다! 대지가 갈라지고 화산재가 하늘을 가리는 가운데, 외곽 광산 마을의 피난 행렬이 흘러내리는 용암 줄기에 가로막혀 고립되었다.",
     choices: [
       {
         label: "[강인 판정] 뜨거운 화산재 폭풍과 유독 가스를 견디며 직접 밧줄 다리를 매어 고립된 주민들을 건너오게 한다",
@@ -364,22 +457,26 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 15,
       anyWorlds: ["nocturne"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "거주 행성: 녹턴 (필멸자 주민)",
+    reqLabel: "거주 행성: 녹턴 · 필멸자 주민",
     weight: 32,
     text: "다른 수많은 챕터와 달리 샐러맨더는 고향의 필멸자 씨족과 연을 끊지 않는다. 화산재가 날리는 저녁, 숯처럼 검은 피부에 붉게 빛나는 눈동자를 지닌 거대한 배틀 브라더 한 명이 파워 아머를 벗고 평범한 가죽 앞치마를 두른 채 마을 대장간에 찾아와 낡은 농기구와 방벽 경첩 수리를 돕고 있다.",
     choices: [
       {
-        label: "[지성 판정] 거인의 옆에서 풀무질을 도우며 프로메테안 금속 제련과 화염 단조의 비결을 정중히 묻는다",
+        label: "[지성 판정] 거인의 옆에서 풀무질을 도우며 프로메테우스 교단의 금속 제련과 화염 단조의 비결을 정중히 묻는다",
         check: { stat: "Int", diff: 0 },
         success: {
           text: "샐러맨더 전사가 굵고 따뜻한 웃음을 터뜨리며 강철의 결을 읽는 법을 손수 가르쳐 주었다! 평생의 기술이 몸에 배었다.",
           stats: { Int: 7, T: 5, Inf: 4 }
         },
         fail: {
-          text: "초인의 망치질을 따라가다 손목이 뻐근해졌으나, 거인의 넉넉한 격려에 용기를 얻었다.",
-          stats: { T: 4, Int: 3 }
+          text: "초인의 묵직한 망치질을 따라가다 손목이 삐고 뜨거운 불티에 팔을 데었지만, 거인의 넉넉한 격려에 용기를 얻었다.",
+          wounds: -10,
+          stats: { T: 2, Int: 2 }
         }
       },
       {
@@ -391,8 +488,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 8
         },
         fail: {
-          text: "초인의 압도적인 체격 앞에 말이 잠시 막혔으나, 따뜻한 눈빛 덕분에 긴장이 풀렸다.",
-          stats: { Fel: 4, WP: 3 }
+          text: "초인의 압도적인 체격 앞에서 혀가 꼬여 어색한 침묵이 흘렀으나, 따뜻한 눈빛 덕분에 겨우 긴장이 풀렸다.",
+          stats: { Fel: -2, WP: 2 }
         }
       },
       {

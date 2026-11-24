@@ -6,10 +6,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "스콜라 프로제니움의 검은 마차",
     category: "성장",
     once: true,
-    req: { minAge: 8, maxAge: 14, excludeWorlds: ["krieg"], excludeWorldTags: ["feral"], excludeTags: ["schola", "astartes", "custodes", "abhuman"], or: [{ stats: { WP: 34 } }, { stats: { Int: 34 } }, { anyTags: ["military_blood", "pious"] }] },
+    req: {
+      minAge: 8,
+      maxAge: 14,
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeTags: [
+        "schola", "astartes", "grey_knight", "custodes", "dreadnought", "abhuman",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      or: [{ stats: { WP: 34 } }, { stats: { Int: 34 } }, { anyTags: ["military_blood", "pious"] }]
+    },
     reqLabel: "나이 8~14세 · 의지 또는 지성 34+",
     weight: 18,
-    text: "아뎁투스 미니스토룸의 드릴-애벗(교관 수도사)이 그대의 또렷한 눈빛과 기개를 눈여겨보았다. 스콜라 프로제니움 편입 시험에 응시하면 커미사르, 소로리타스, 템페스투스 사이온, 심지어 이단심문관으로 가는 엘리트 관문이 열린다.",
+    text: "아뎁투스 미니스토룸의 드릴-애벗이 그대의 또렷한 눈빛과 기개를 눈여겨보았다. 스콜라 프로제니움 편입 시험에 응시하면 커미사르, 소로리타스, 템페스투스 사이온, 심지어 이단심문관으로 가는 엘리트 관문이 열린다.",
     choices: [
       {
         label: "[의지 판정] 가혹한 교관의 시련을 견디고 스콜라에 입학한다",
@@ -41,10 +52,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "상층 첨탑의 비술 — 수명 연장 시술 제안",
     category: "일상",
     once: true,
-    req: { minAge: 54, stats: { Inf: 74 }, excludeTags: ["astartes", "custodes", "dreadnought", "daemon_prince"] },
-    reqLabel: "나이 54세+ · 권위 74+ (필멸자 최상류층)",
+    req: {
+      minAge: 54,
+      stats: { Inf: 74 },
+      excludeTags: [
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "mechanicus", "magos", "fabricator_locum", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "나이 54세+ · 권위 74+ · 필멸자 최상류층",
     weight: 16,
-    text: "황혼기에 접어든 그대에게 저명한 마고스 바이올로기스가 은밀히 '리주버냇(Rejuvenat)' 세포 회춘 시술을 제안했다. 제국의 평민은 꿈도 꾸지 못할 200년 수명의 특권이다.",
+    text: "황혼기에 접어든 그대에게 저명한 마고스 바이올로기스가 은밀히 리주버냇 세포 회춘 시술을 제안했다. 제국의 평민은 꿈도 꾸지 못할 200년 수명의 특권이다.",
     choices: [
       {
         label: "막대한 영향력을 지불하고 수명 연장 시술을 받는다",
@@ -76,13 +95,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 6,
       maxAge: 13,
-      anyWorldTags: ["hive", "industrial", "civilised", "agri"],
+      anyCareers: ["child"],
+      anyWorldTags: ["hive", "industrial"],
       excludeTags: ["noble", "schola"],
-      excludeWorlds: ["krieg"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"]
     },
     reqLabel: "6~13세 · 일반/하층 유년기",
     weight: 34,
-    text: "끝없이 늘어선 시체 녹말 배급소 줄 옆으로 고장 난 기계 계수기와 버려진 공구 상자가 눈에 들어온다. 감독관이 딴청을 피우는 찰나, 어린 손끝이 어떤 길을 고르느냐에 따라 앞으로의 생존 방식이 갈릴 것이다.",
+    text: "끝없이 늘어선 시체 전분 배급소 줄 옆으로 고장 난 기계 계수기와 버려진 공구 상자가 눈에 들어온다. 감독관이 딴청을 피우는 찰나, 어린 손끝이 어떤 길을 고르느냐에 따라 앞으로의 생존 방식이 갈릴 것이다.",
     choices: [
       {
         label: "[민첩 판정] 감독관의 시선을 피해 버려진 공구와 예비 배급표를 재빨리 챙긴다",
@@ -119,14 +140,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Imperium Maledictum / Warhammer 40k Hive Daily Life"
+    source: "Imperium Maledictum Core / Necromunda Core Rulebook"
   },
   {
     id: "ev_s2_child_blackship_sky",
     title: "유년기 — 궤도를 가로지른 검은 함선의 그림자",
     category: "유년기",
     once: true,
-    req: { minAge: 6, maxAge: 13, excludeWorldTags: ["feral", "krieg"] },
+    req: {
+      minAge: 6,
+      maxAge: 13,
+      anyCareers: ["child"],
+      excludeWorlds: ["terra", "voidborn", "baal", "catachan", "mars", "krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"]
+    },
     reqLabel: "6~13세 · 비야만 행성 유년기",
     weight: 30,
     text: "갑자기 하늘빛이 서늘하게 가라앉더니, 구름 너머로 거대한 검은 전함들이 정박하는 그림자가 드리워졌다. 어른들은 '아뎁투스 아스트라 텔레파티카의 검은 함선이 십일조를 거두러 왔다'며 굳은 얼굴로 아퀼라 성호를 긋는다.",
@@ -153,8 +181,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 5, WP: 3 }
         },
         fail: {
-          text: "아르비테스 순찰대의 매서운 호통에 놀라 골목으로 뒷걸음질쳤다.",
-          stats: { Ag: 2, Int: 2 }
+          text: "아르비테스 순찰대의 매서운 호통에 놀라 골목으로 뒷걸음질치다 돌부리에 넘어져 무릎을 까였다.",
+          wounds: -5,
+          stats: { Ag: 2 }
         }
       },
       {
@@ -172,10 +201,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "유년기 — 스콜라 프로제니움의 교관 회초리와 기숙사 서열",
     category: "유년기",
     once: true,
-    req: { minAge: 7, maxAge: 13, allTags: ["schola"] },
+    req: { minAge: 7, maxAge: 13, anyCareers: ["child"], allTags: ["schola"] },
     reqLabel: "7~13세 · 스콜라 프로제니움 생도",
     weight: 38,
-    text: "스콜라 프로제니움의 차가운 석조 기숙사에서 상급 생도들이 신입 기수의 구두를 빼앗으며 복종을 강요한다. 드릴 아보트 교관은 '약자는 황제의 엘리트 자리를 차지할 자격이 없다'며 못 본 척 팔짱을 끼고 있다.",
+    text: "스콜라 프로제니움의 차가운 석조 기숙사에서 상급 생도들이 신입 기수의 구두를 빼앗으며 복종을 강요한다. 드릴-애벗은 '약자는 황제의 엘리트 자리를 차지할 자격이 없다'며 못 본 척 팔짱을 끼고 있다.",
     choices: [
       {
         label: "[백병 판정] 훈련용 목검을 들고 상급생의 도발에 정면으로 맞서 결투를 벌인다",
@@ -219,7 +248,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "유년기 — 첨탑 저택의 가정교사와 독이 든 과자 상자",
     category: "유년기",
     once: true,
-    req: { minAge: 7, maxAge: 13, allTags: ["noble"], excludeTags: ["schola"], excludeWorlds: ["krieg"] },
+    req: {
+      minAge: 7,
+      maxAge: 13,
+      anyCareers: ["child"],
+      allTags: ["noble"],
+      excludeTags: ["schola"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"]
+    },
     reqLabel: "7~13세 · 귀족 가문 유년기",
     weight: 36,
     text: "상층 첨탑의 호화로운 저택 서재로 방계 숙부가 보낸 고급 설탕 과자 상자가 도착했다. 귀족 가문의 어린 후계자에게 호의는 언제나 칼날을 품고 있는 법이다.",
@@ -244,8 +281,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Fel: 6, Inf: 5 }
         },
         fail: {
-          text: "예법 호칭을 한 마디 헷갈려 가정교사의 냉엄한 꾸중을 들었으나 귀한 공부가 되었다.",
-          stats: { Fel: 2, Int: 2 }
+          text: "예법 호칭을 한 마디 헷갈려 사교계의 은근한 비웃음과 가정교사의 냉엄한 꾸중을 들었다.",
+          stats: { Int: 2, Inf: -2 }
         }
       },
       {
@@ -263,7 +300,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "유년기 — 야만 행성의 첫 밤사냥과 뼈 부적",
     category: "유년기",
     once: true,
-    req: { minAge: 7, maxAge: 13, anyWorldTags: ["feral", "death"], excludeWorlds: ["krieg"] },
+    req: {
+      minAge: 7,
+      maxAge: 13,
+      anyCareers: ["child"],
+      anyWorldTags: ["feral", "death"],
+      excludeWorlds: ["krieg", "catachan", "nocturne"],
+      excludeHomeWorlds: ["krieg"]
+    },
     reqLabel: "7~13세 · 야만/죽음 행성 유년기",
     weight: 36,
     text: "성인식까지는 아직 몇 해가 남았지만, 부족의 아이들은 열 살 안팎이면 횃불 하나만 들고 정착지 바깥 암벽에서 홀로 첫 밤을 버텨야 한다. 어둠 속에서 포식자의 울음이 메아리친다.",
@@ -313,8 +357,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 7,
       maxAge: 13,
+      anyCareers: ["child"],
       or: [{ allTags: ["mechanicus_blood"] }, { anyWorldTags: ["forge", "mechanicus"] }],
-      excludeWorlds: ["krieg"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"]
     },
     reqLabel: "7~13세 · 기계교 도제/포지 월드 유년기",
     weight: 36,
@@ -362,7 +408,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "유년기 — 크리그 지하 훈련소의 방독면 적합 시험",
     category: "유년기",
     once: true,
-    req: { minAge: 6, maxAge: 13, anyHomeWorlds: ["krieg"] },
+    req: { minAge: 6, maxAge: 13, anyCareers: ["child"], anyHomeWorlds: ["krieg"] },
     reqLabel: "6~13세 · 크리그 출생 유년기",
     weight: 40,
     text: "비타-움 배양실에서 깨어나 지정 번호를 부여받은 뒤 몇 해가 지났다. 오늘 지하 훈련소 교관은 어린 후보생 전원을 모의 독가스 밀실로 몰아넣고, 어른 크기 라스건과 낡은 방독면 필터 하나씩을 던져 주었다.",
@@ -389,7 +435,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { BS: 6, WS: 3 }
         },
         fail: {
-          text: "반동에 어깨를 멍들었으나, 다시 총을 고쳐 쥐고 사격 자세를 교정했다.",
+          text: "반동에 어깨에 멍이 들었으나, 다시 총을 고쳐 쥐고 사격 자세를 교정했다.",
           wounds: -6,
           stats: { BS: 3 }
         }
@@ -410,7 +456,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "유년기 — 성간 함선의 공허 창문과 중력 격벽의 아이들",
     category: "유년기",
     once: true,
-    req: { minAge: 6, maxAge: 13, or: [{ allTags: ["voidborn"] }, { anyWorldTags: ["voidborn"] }] },
+    req: {
+      minAge: 6,
+      maxAge: 13,
+      anyCareers: ["child"],
+      or: [{ allTags: ["voidborn"] }, { anyWorldTags: ["voidborn"] }]
+    },
     reqLabel: "6~13세 · 보이드본 함선 유년기",
     weight: 36,
     text: "거대한 성간 함선의 하층 갑판에서 워프 도약 예비 경보가 울렸다. 중력 발생기가 잠시 흔들리며 아이들이 공중으로 붕 뜨는 사이, 격벽 너머 창문으로 기괴한 빛이 번쩍인다.",
@@ -457,7 +508,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "노년기 — 닳아 버린 관절과 늙은 종복의 회고",
     category: "노년기",
     once: true,
-    req: { minAge: 55, excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "rejuvenat"] },
+    req: {
+      minAge: 55,
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "rejuvenat",
+        "magos", "fabricator_locum", "fabricator_general", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "55세+ · 필멸자 노년기",
     weight: 34,
     text: "거울 속 머리칼은 어느새 서리처럼 하얗게 세었고, 비가 내리는 날이면 수십 년 전 입은 상처와 굳은 관절이 욱신거린다. 인류제국에서 쉰다섯을 넘겨 살아남았다는 사실 자체가 이미 드문 기적이다.",
@@ -470,8 +528,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { WP: 6, Fel: 5, Inf: 5 }
         },
         fail: {
-          text: "변화한 젊은 세대의 방식과 부딪쳐 씁쓸한 기분이 들었으나, 진심만은 일부 후배들에게 전해졌다.",
-          stats: { WP: 3, Fel: 2 }
+          text: "변화한 젊은 세대의 방식과 부딪쳐 씁쓸히 자리를 물러나야 했으나, 진심만은 일부 후배들에게 전해졌다.",
+          stats: { WP: 2, Inf: -2 }
         }
       },
       {
@@ -498,14 +556,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Imperium Maledictum / Warhammer 40k Mortal Life"
+    source: "Imperium Maledictum Core / Warhammer Crime: Bloodlines"
   },
   {
     id: "ev_s2_elder_rejuvenat_solitude",
     title: "장수기 — 리주버냇의 고독, 모든 옛 벗이 흙으로 돌아간 뒤",
     category: "장수기",
     once: true,
-    req: { minAge: 65, allTags: ["rejuvenat"], excludeTags: ["astartes", "custodes", "grey_knight"] },
+    req: {
+      minAge: 65,
+      allTags: ["rejuvenat"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "magos", "fabricator_locum", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "65세+ · 리주버냇 수명 연장자",
     weight: 38,
     text: "값비싼 리주버냇 수명 연장 시술 덕에 그대의 얼굴은 여전히 중년의 윤기를 유지하고 있다. 하지만 오늘 아침 도착한 마지막 옛 동기의 부고장 앞에서, 함께 젊은 날을 보낸 평범한 벗들이 이제 단 한 명도 남지 않았다는 사실을 깨달았다.",
@@ -518,8 +585,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Fel: 6, Inf: 7, WP: 4 }
         },
         fail: {
-          text: "세대 간의 거리감은 쉽게 좁혀지지 않았으나, 가문과 조직의 원로로서 예우는 굳건히 지켰다.",
-          stats: { Inf: 4, Fel: 2 }
+          text: "세대 간의 거리감에 어색한 침묵만 흘렀으나, 조직의 원로로서 예우는 굳건히 지켰다.",
+          stats: { Inf: 2, Fel: -2 }
         }
       },
       {
@@ -550,7 +617,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "기계화의 경계 — 기억 슬롯에서 지워야 할 고향의 냄새",
     category: "장수기",
     once: true,
-    req: { minAge: 45, allTags: ["bionic"], excludeTags: ["custodes"] },
+    req: {
+      minAge: 45,
+      allTags: ["bionic"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "custodes", "dreadnought",
+        "magos", "fabricator_locum", "fabricator_general", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "45세+ · 기계 의체 시술자",
     weight: 34,
     text: "세월과 부상이 쌓이며 육신의 상당 부분이 차가운 강철과 전선으로 대체되었다. 보조 연산 칩을 증설하던 테크프리스트가 묻는다. '비효율적인 어린 시절의 감각 기억과 슬픔의 회로를 삭제하시겠습니까? 연산 효율이 14퍼센트 상승합니다.'",
@@ -600,16 +676,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     category: "장수기",
     once: true,
     req: {
-      minAge: 100,
+      minAge: 120,
+      excludeTags: [
+        "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { allTags: ["astartes"] },
         { allTags: ["custodes"] },
-        { allTags: ["grey_knight"] },
         { allTags: ["rejuvenat"] },
         { allTags: ["magos"] }
       ]
     },
-    reqLabel: "100세+ · 초장수기",
+    reqLabel: "120세+ · 초장수기",
     weight: 42,
     text: "백 년을 훌쩍 넘겨 살아온 그대의 앞에 낯익은 성씨와 가문 문장을 단 젊은 장교가 경례를 올린다. 알고 보니 한 세기 전 피비린내 나는 공성전에서 그대의 등 뒤를 지켜 주었던 필멸자 전우의 증손자였다.",
     choices: [
@@ -622,8 +701,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 8
         },
         fail: {
-          text: "세월을 초월한 존재의 위압감에 젊은이가 얼어붙었으나, 잊혀 가던 선조의 명예만은 확실히 전해졌다.",
-          stats: { Inf: 4, WP: 3 }
+          text: "세월을 초월한 존재의 위압감에 젊은이가 얼어붙어 대화는 짧게 끝났으나, 잊혀 가던 선조의 명예만은 전해졌다.",
+          stats: { Inf: 2, Fel: -2 }
         }
       },
       {
@@ -634,8 +713,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { WP: 8, Int: 4 }
         },
         fail: {
-          text: "지나간 세월의 무게가 잠시 어깨를 눌렀으나, 곧 냉철한 평정심을 되찾았다.",
-          stats: { WP: 4 }
+          text: "지나간 세월의 무게와 고독이 가슴을 무겁게 눌러 잠시 타인과의 거리가 더 멀어졌다.",
+          stats: { WP: 2, Fel: -2 }
         }
       },
       {
@@ -647,20 +726,27 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Warhammer 40k Lore / Space Marine & Rejuvenat Longevity"
+    source: "Codex: Space Marines / Dante / Lexicanum: Rejuvenat"
   },
   {
     id: "ev_s2_centenarian_ancient_scars",
-    title: "초장수기 — 두 세기 전 전장의 파편과 세대의 간극",
+    title: "초장수기 — 한 세기 전 전장의 파편과 세대의 간극",
     category: "장수기",
     once: true,
-    req: { minAge: 140, anyTags: ["astartes", "custodes", "grey_knight", "dreadnought"] },
-    reqLabel: "140세+ · 초인 고참기",
+    req: {
+      minAge: 150,
+      anyTags: ["astartes", "custodes", "grey_knight"],
+      excludeTags: [
+        "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "150세+ · 초인 고참기",
     weight: 42,
     text: "어느덧 한 세기 반을 살아온 고참 전사가 되었다. 요즘 배치되는 신세대 형제들은 그대가 젊은 날 피를 흘렸던 전쟁을 고대 역사서 속 일화처럼 이야기한다. 오래된 갑주의 흉터 하나하나가 이제는 살아 있는 전설이다.",
     choices: [
       {
-        label: "[백병 판정] 신세대 전사들에게 수백 년 전 잊혀진 고대 검술과 포위 돌파 전법을 직접 몸으로 가르친다",
+        label: "[백병 판정] 신세대 전사들에게 한 세기 전 잊힌 고대 검술과 포위 돌파 전법을 직접 몸으로 가르친다",
         check: { stat: "WS", diff: 0 },
         success: {
           text: "백전노장의 빈틈없는 일격에 젊은 전사들이 탄성을 터뜨렸다! 그대의 기량이 새로운 세대의 칼날로 계승되었다.",
@@ -673,15 +759,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성 판정] 챕터와 황궁 서고에 수 세기 동안 직접 목격한 전역의 교훈을 구술해 영구 기록으로 남긴다",
+        label: "[지성 판정] 챕터와 황궁 서고에 한 세기 넘게 직접 목격한 전역의 교훈을 구술해 영구 기록으로 남긴다",
         check: { stat: "Int", diff: 0 },
         success: {
           text: "그대의 구술 전술서가 서고 핵심 교본으로 등재되어 앞으로 천 년간 후배들의 지침이 되었다!",
           stats: { Int: 7, Inf: 7, WP: 4 }
         },
         fail: {
-          text: "너무 오래된 기억의 일부 연도가 엇갈렸으나, 전장의 본질을 담은 기록만은 빛을 발했다.",
-          stats: { Int: 4, Inf: 3 }
+          text: "너무 오래된 기억의 일부 연도가 서고 기록과 엇갈려 학술 서기들의 정정을 거쳐야 했으나, 전장의 본질을 담은 교훈만은 남았다.",
+          stats: { Int: 2, Inf: -2 }
         }
       },
       {
@@ -702,8 +788,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 55,
       anyTags: ["militarum", "navy", "officer", "commissar", "arbites"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "heretic"],
-      excludeWorlds: ["krieg"]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "navy_admiral", "arbites_marshal",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg"]
     },
     reqLabel: "55세+ · 제국 무관·치안 노병",
     weight: 34,
@@ -717,8 +809,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Fel: 6, Int: 5, Inf: 5 }
         },
         fail: {
-          text: "잔소리가 길어져 신병들이 다소 주눅 들었으나, 중요한 수칙 몇 가지는 단단히 새겨 두었다.",
-          stats: { Int: 3, Fel: 2 }
+          text: "잔소리가 길어져 신병들이 주눅 들고 어색하게 자리를 떴으나, 중요한 수칙 몇 가지는 새겨 두었다.",
+          stats: { Int: 2, Fel: -2 }
         }
       },
       {
@@ -730,8 +822,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 6
         },
         fail: {
-          text: "오래전 잃은 전우들의 얼굴이 떠올라 잠시 말을 잇지 못했으나, 신병들은 조용히 경례로 화답했다.",
-          stats: { WP: 4 }
+          text: "오래전 잃은 전우들의 얼굴이 떠올라 가슴이 먹먹해지며 밤새 잠을 설쳤으나, 신병들은 조용히 경례로 화답했다.",
+          wounds: -5,
+          stats: { WP: 2 }
         }
       },
       {
@@ -753,10 +846,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 16,
       maxAge: 45,
-      excludeTags: ["bond_comrade", "custodes", "dreadnought"],
-      excludeWorlds: ["krieg"]
+      excludeTags: [
+        "bond_comrade",
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "high_lord_terra", "warmaster", "planetary_governor", "sector_lord", "inquisitor", "lord_inquisitor", "cardinal", "canoness", "magos", "fabricator_locum", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg"]
     },
-    reqLabel: "16~45세 · 인연 시작 (전우)",
+    reqLabel: "16~45세 · 전우 인연 시작",
     weight: 28,
     text: "위험한 현장 작업과 교전이 길어지며 사방이 먼지와 비명으로 뒤덮인 밤, 옆자리의 이름 없는 동료가 자신의 마지막 정제수 물통을 말없이 그대에게 건넨다. '혼자 버티면 여기서 끝장이야. 등 뒤는 내가 볼 테니 네 앞만 지켜.'",
     choices: [
@@ -769,8 +869,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["bond_comrade"]
         },
         fail: {
-          text: "어색한 침묵이 흘렀지만, 위기를 함께 넘긴 뒤 두 사람 사이에는 말없는 연대가 싹텄다.",
-          stats: { WP: 3, T: 2 },
+          text: "어색한 침묵 속에 밤새 빗물과 먼지를 뒤집어쓰며 고생했지만, 위기를 함께 넘긴 뒤 두 사람 사이에는 말없는 연대가 싹텄다.",
+          wounds: -6,
+          stats: { WP: 2 },
           addTags: ["bond_comrade"]
         }
       },
@@ -782,20 +883,27 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Warhammer 40k Original Narrative / Only War"
+    source: "Only War Core Rulebook / Gaunt's Ghosts"
   },
   {
     id: "ev_s3_bond_comrade_fate",
     title: "오래된 전우의 소식 — 잿빛 인식표와 마지막 편지",
     category: "인연",
     once: true,
-    req: { allTags: ["bond_comrade"] },
-    reqLabel: "이력: 등을 맡긴 전우 (후속 회수)",
+    req: {
+      allTags: ["bond_comrade"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "이력: 등을 맡긴 전우",
     weight: 34,
     text: "세월이 흘러 각자의 전선과 구역으로 흩어진 뒤, 옛날 마지막 물통을 나누었던 전우가 치열한 붕괴 구역에 고립되어 위독하다는 다급한 전갈이 도착했다! 지금 달려가면 위험하지만, 외면하면 평생 그 얼굴이 눈에 밟힐 것이다.",
     choices: [
       {
-        label: "[백병/강인 판정] 위험한 봉쇄 구역으로 몸소 뛰어들어 피투성이가 된 옛 전우를 등에 업고 끌어낸다",
+        label: "[강인 판정] 위험한 봉쇄 구역으로 몸소 뛰어들어 피투성이가 된 옛 전우를 등에 업고 끌어낸다",
         check: { stat: "T", diff: -5 },
         success: {
           text: "'역시 올 줄 알았어, 이 고집쟁이야.' 포연 속에서 다시 맞잡은 손이 그 어떤 훈장보다 뜨거웠다! 두 사람의 우정이 전설이 되었다.",
@@ -804,7 +912,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           wounds: -12
         },
         fail: {
-          text: "겨우 전우의 곁에 닿았을 때 이미 숨은 멎어가고 있었다. 마지막으로 건네받은 낡은 인식표를 가슴에 품고 피투성이로 돌아왔다.",
+          text: "겨우 전우의 곁에 닿았을 때 이미 숨이 멎어 가고 있었다. 마지막으로 건네받은 낡은 인식표를 가슴에 품고 피투성이로 돌아왔다.",
           wounds: -20,
           stats: { WP: 8 },
           faith: 6
@@ -818,20 +926,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Inf: 6, Fel: 6, WP: 5 }
         },
         fail: {
-          text: "관료주의의 서류 절차에 막혀 구조선은 하루 늦게 도착했다. 잿빛 인식표와 짧은 유언장만이 우편으로 돌아왔다.",
-          stats: { WP: 6, Int: 3 }
+          text: "관료주의의 서류 절차와 파벌 견제에 막혀 구조선은 하루 늦게 도착했다. 잿빛 인식표와 짧은 유언장만이 우편으로 돌아왔다.",
+          stats: { WP: 4, Inf: -3 }
         }
       },
       {
-        label: "직접 갈 수 없는 현실을 삼키며 성당에 촛불을 켜고 옛 전우의 생환을 밤새 기도한다",
+        label: "직접 갈 수 없는 현실을 삼키며 성당에 촛불을 켜고 옛 전우를 위해 밤새 기도한다",
         effect: {
-          text: "며칠 뒤 전우가 중상을 딛고 살아남았다는 짧은 소식이 전해졌다. 멀리서나마 안도의 한숨을 내쉬었다.",
-          stats: { WP: 5 },
-          faith: 8
+          text: "며칠 뒤 붕괴 구역이 끝내 봉쇄되었다는 짤막한 공보만 전해졌다. 생사조차 알 수 없는 옛 전우의 이름을 성당 촛불 아래 조용히 새겼다.",
+          stats: { WP: 3 },
+          faith: 4
         }
       }
     ],
-    source: "Warhammer 40k Original Narrative / Gaunt's Ghosts"
+    source: "Gaunt's Ghosts / Only War Core Rulebook"
   },
   {
     id: "ev_s3_bond_mentor_meet",
@@ -841,10 +949,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       maxAge: 35,
-      excludeTags: ["bond_mentor", "custodes"],
-      excludeWorlds: ["krieg"]
+      excludeTags: [
+        "bond_mentor",
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "high_lord_terra", "warmaster", "planetary_governor", "sector_lord", "inquisitor", "lord_inquisitor", "cardinal", "canoness", "magos", "fabricator_locum", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg"]
     },
-    reqLabel: "14~35세 · 인연 시작 (스승)",
+    reqLabel: "14~35세 · 스승 인연 시작",
     weight: 28,
     text: "서툰 실수로 큰 문책을 당할 뻔한 순간, 백발이 성성한 베테랑 선배가 말없이 뒤처리를 막아 주더니 호된 꾸지람과 함께 손때 묻은 낡은 수첩을 던져 주었다. '제국에서 멍청한 놈은 일찍 죽는다. 살아서 제 몫을 하려거든 내 밑에서 제대로 배워.'",
     choices: [
@@ -857,8 +972,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["bond_mentor"]
         },
         fail: {
-          text: "수차례 호통을 들으며 진땀을 뺐으나, 끝까지 포기하지 않는 성실함을 인정받아 제자로 받아들여졌다.",
-          stats: { Int: 3, T: 2 },
+          text: "수차례 호통과 혹독한 잡무에 진이 빠졌으나, 끝까지 포기하지 않는 성실함을 인정받아 제자로 받아들여졌다.",
+          wounds: -5,
+          stats: { Int: 2 },
           addTags: ["bond_mentor"]
         }
       },
@@ -870,15 +986,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Warhammer 40k Original Narrative / Imperium Maledictum"
+    source: "Imperium Maledictum Core / Dark Heresy"
   },
   {
     id: "ev_s3_bond_mentor_legacy",
     title: "스승의 마지막 부탁 — 황금 옥좌로 떠나는 길목에서",
     category: "인연",
     once: true,
-    req: { allTags: ["bond_mentor"] },
-    reqLabel: "이력: 인생의 스승 (후속 회수)",
+    req: {
+      allTags: ["bond_mentor"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "이력: 인생의 스승",
     weight: 34,
     text: "어느덧 기력이 다해 병상에 누운 옛 스승이 그대를 조용히 불렀다. 야윈 손으로 오래된 개인 기록과 아끼던 도구를 건네며 희미하게 웃는다. '내가 평생 지키려다 못 다한 약속이 하나 있네. 이제 자네가 내 대신 끝맺어 주겠나?'",
     choices: [
@@ -891,8 +1014,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 6
         },
         fail: {
-          text: "과업은 험난해 일부만 이루었으나, 마지막까지 애쓴 제자의 진심에 스승은 고맙다는 말을 남기고 영면했다.",
-          stats: { Int: 4, WP: 5 }
+          text: "밤낮없이 매달려 몸이 상할 만큼 애썼으나 과업은 일부만 이루었다. 그래도 끝까지 애쓴 제자의 진심에 스승은 고맙다는 말을 남기고 영면했다.",
+          wounds: -6,
+          stats: { Int: 2, WP: 3 }
         }
       },
       {
@@ -918,7 +1042,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Warhammer 40k Original Narrative"
+    source: "Imperium Maledictum Core / Warhammer Crime: Bloodlines"
   },
   {
     id: "ev_s3_bond_rival_meet",
@@ -928,10 +1052,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 16,
       maxAge: 50,
-      excludeTags: ["bond_rival", "astartes", "custodes", "grey_knight"],
+      excludeTags: [
+        "bond_rival",
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral", "krieg"]
     },
-    reqLabel: "16~50세 · 인연 시작 (정적)",
+    reqLabel: "16~50세 · 정적 인연 시작",
     weight: 26,
     text: "중요한 포상과 승진 추천 명단 앞에서, 늘 사사건건 방식이 부딪치던 동기가 그대의 공적을 교묘히 깎아내리며 차갑게 웃는다. '선한 척 굴어 봐야 이 제국에선 살아남지 못해. 누가 끝까지 올라가는지 두고 보자고.'",
     choices: [
@@ -957,15 +1088,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Warhammer 40k Original Narrative / Imperium Maledictum"
+    source: "Imperium Maledictum Core / Warhammer Crime: Flesh and Steel"
   },
   {
     id: "ev_s3_bond_rival_reckoning",
     title: "정적과의 결판 — 위기의 밤, 적이 내민 뜻밖의 손",
     category: "인연",
     once: true,
-    req: { allTags: ["bond_rival"] },
-    reqLabel: "이력: 숙명의 정적 (후속 회수)",
+    req: {
+      allTags: ["bond_rival"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "이력: 숙명의 정적",
     weight: 34,
     text: "수년간 치열하게 부딪쳐 온 숙명의 정적과 예기치 못한 위기 현장에 함께 고립되었다! 무너지는 천장과 적의 포위망 사이에서, 상처 입은 정적이 치명적인 부패 증거를 손에 쥔 채 이를 악물고 말한다. '여기서 죽기 싫으면 잠시만 손을 잡자. 아니면 지금 나를 버리고 네가 다 차지하든가!'",
     choices: [
@@ -1003,7 +1141,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Warhammer 40k Original Narrative"
+    source: "Imperium Maledictum Core / Dark Heresy 2e"
   },
   {
     id: "ev_s4_youth_factory_shift",
@@ -1015,7 +1153,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       maxAge: 21,
       anyCareers: ["menial_worker", "underhive_ganger"],
       excludeWorlds: ["krieg"],
-      excludeWorldTags: ["feral"]
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
     },
     reqLabel: "14~21세 · 하층 노동자 / 언더하이브 갱단",
     weight: 30,
@@ -1067,11 +1207,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       maxAge: 22,
       anyCareers: ["pdf_trooper", "astra_militarum"],
       excludeWorlds: ["krieg"],
-      excludeTags: ["krieg_grenadier", "astartes", "custodes"]
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg"],
+      excludeTags: [
+        "krieg_grenadier", "astartes", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "14~22세 · PDF / 아스트라 밀리타룸 신병",
+    reqLabel: "14~22세 · 행성 방위군 / 아스트라 밀리타룸 신병",
     weight: 30,
-    text: "군복의 풀기도 채 빠지지 않은 첫 야간 경계 근무다. 빗물이 철모 챙을 타고 흘러내리는 자정 무렵, 철조망 너머 짙은 안개 속에서 금속이 부딪히는 소리와 낮은 속삭임이 들려왔다. 고참들은 모두 벙커 안에서 곯아떨어진 상태다.",
+    text: "군복의 풀기도 채 빠지지 않은 첫 야간 경계 근무다. 빗물이 철모 챙을 타고 흘러내리는 자정 무렵, 철조망 너머 짙은 안개 속에서 금속이 부딪치는 소리와 낮은 속삭임이 들려왔다. 고참들은 모두 벙커 안에서 곯아떨어진 상태다.",
     choices: [
       {
         label: "[의지 판정] 숨을 죽이고 암구호를 외치며 침착하게 조명탄을 쏘아 올려 정체를 확인한다",
@@ -1111,13 +1256,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s4_youth_scribe_error",
-    title: "수습 서기 — 첫 양피지 장부 오기(誤記)와 행성 십일조 소동",
+    title: "수습 서기 — 첫 양피지 장부 오기와 행성 십일조 소동",
     category: "초년기 통과 의례",
     once: true,
     req: {
       minAge: 14,
       maxAge: 22,
-      anyCareers: ["administratum", "ecclesiarchy_priest"]
+      anyCareers: ["administratum", "ecclesiarchy_priest"],
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
     },
     reqLabel: "14~22세 · 아드미니스트라툼 / 에클레시아키 초년기",
     weight: 30,
@@ -1167,11 +1313,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       maxAge: 22,
-      anyCareers: ["skitarii", "tech_priest"]
+      anyCareers: ["skitarii", "tech_priest"],
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
     },
     reqLabel: "14~22세 · 스키타리 / 테크프리스트 초년기",
     weight: 30,
-    text: "마침내 첫 신경 데이터 단자를 목덜미에 연결하고 포지 성소의 노오스피어(Noosphere)에 접속하는 의식이 시작되었다. 수만 줄의 이진법 찬가와 열 센서 수치가 뇌 속으로 폭포처럼 쏟아지며, 어릴 적의 따뜻한 기억과 인간적 감각이 차가운 데이터 뒤로 밀려난다.",
+    text: "마침내 첫 신경 데이터 단자를 목덜미에 연결하고 포지 성소의 누스피어에 접속하는 의식이 시작되었다. 수만 줄의 이진법 찬가와 열 센서 수치가 뇌 속으로 폭포처럼 쏟아지며, 어릴 적의 따뜻한 기억과 인간적 감각이 차가운 데이터 뒤로 밀려난다.",
     choices: [
       {
         label: "[지성 판정] 옴니시아의 논리에 완전히 동조해 데이터 폭포를 완벽한 질서로 정리한다",
@@ -1217,7 +1364,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       maxAge: 22,
-      excludeTags: ["astartes", "custodes", "grey_knight"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyCareers: ["imperial_navy"] },
         { anyWorldTags: ["voidborn"] }
@@ -1264,7 +1414,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Geller Field / Imperial Navy Lore"
+    source: "Lexicanum: Geller Field / Battlefleet Gothic Rulebook"
   },
   {
     id: "ev_s4_youth_arbites_baton",
@@ -1272,15 +1422,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     category: "초년기 통과 의례",
     once: true,
     req: {
-      minAge: 14,
-      maxAge: 22,
-      excludeTags: ["astartes", "custodes", "grey_knight"],
-      or: [
-        { anyCareers: ["arbites", "commissar", "tempestus_scion", "adepta_sororitas"] },
-        { allTags: ["schola"] }
+      minAge: 18,
+      maxAge: 24,
+      anyCareers: ["arbites"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "14~22세 · 아르비테스 / 커미사르 / 사이온 / 소로리타스 / 스콜라 출신",
+    reqLabel: "18~24세 · 아뎁투스 아르비테스 초임",
     weight: 30,
     text: "스콜라 프로제니움이나 훈련소의 교본을 막 덮고 처음 투입된 현장. 배급 지연에 격분한 하층 구역 주민들이 곡물 창고 철문을 두드리고 있다. 상관은 주동자를 즉결 처분해 본보기를 보이라고 명하지만, 군중 맨 앞에는 여윈 아이들과 노인들이 떠밀려 서 있다.",
     choices: [
@@ -1330,8 +1480,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 14,
       maxAge: 22,
       anyTags: ["noble", "terra_elite", "rogue_trader_blood", "navigator"],
-      excludeTags: ["astartes", "custodes", "grey_knight"],
-      excludeWorlds: ["krieg"]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"]
     },
     reqLabel: "14~22세 · 귀족 / 상류층 / 로그 트레이더 / 항해사 혈통",
     weight: 30,
@@ -1350,15 +1504,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성 판정] 일부러 엉뚱한 가짜 운송 일정을 흘려 상대 가문이 헛다리를 짚도록 유도한다",
+        label: "[지성 판정] 일부러 엉뚱한 가짜 운송 일정을 흘려 상대 가문이 오판에 빠지도록 유도한다",
         check: { stat: "Int", diff: -5 },
         success: {
           text: "한 달 뒤 경쟁 가문이 텅 빈 화물 항로에 투자해 큰 손실을 입었다! 가주께서 그대의 냉철한 계략을 극찬했다.",
           stats: { Int: 7, Inf: 6 }
         },
         fail: {
-          text: "거짓 정보가 간파되어 백작의 경계심을 샀으나, 실제 기밀은 지켜 냈다.",
-          stats: { Int: 4 }
+          text: "거짓 정보가 간파되어 백작의 경계심과 가문 원로의 질책을 샀으나, 실제 기밀은 지켜 냈다.",
+          stats: { Int: 2, Inf: -2 }
         }
       },
       {
@@ -1380,20 +1534,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 20,
       maxAge: 45,
       excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["krieg"],
       excludeTags: [
         "bond_family",
-        "astartes",
-        "custodes",
-        "grey_knight",
-        "dreadnought",
-        "sororitas",
-        "canoness",
-        "mechanicus",
-        "krieg_grenadier"
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "sororitas_novitiate", "sororitas", "celestian", "canoness",
+        "mechanicus", "magos", "fabricator_locum", "fabricator_general",
+        "krieg_grenadier",
+        "high_lord_terra", "warmaster", "cardinal",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "20~45세 필멸자 (초인·수도회·기계교·크리그 제외)",
+    reqLabel: "20~45세 필멸자 · 초인·수도회·기계교·크리그 제외",
     weight: 28,
     text: "공습 경보가 멎은 뒤 등화관제가 깔린 밤거리에서, 몇 해 동안 배급표와 고단한 일상을 함께 나누던 인연이 조용히 손을 잡아 왔다. 내일 당장 성간 징집령이나 폭격이 떨어질지 모르는 제국이지만, 그래도 황제 폐하의 성당 앞에서 작은 가정을 꾸리고 싶다는 진심 어린 청혼이다.",
     choices: [
@@ -1434,14 +1587,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 24,
       maxAge: 60,
       allTags: ["bond_family"],
-      excludeTags: ["bond_heir", "astartes", "custodes", "grey_knight", "dreadnought"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg"],
+      excludeTags: [
+        "bond_heir",
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "sororitas_novitiate", "sororitas", "celestian", "canoness",
+        "mechanicus", "magos", "fabricator_locum", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "이력: 가정과 배우자",
     weight: 34,
     text: "어둠뿐인 줄 알았던 그대의 삶에 새 생명의 울음소리가 찾아왔다. 어느덧 걸음마를 떼고 글자를 배우기 시작한 자녀를 바라보며, 배우자와 그대는 이 아이를 어떤 길로 키울지 밤새 고민에 잠긴다.",
     choices: [
       {
-        label: "[권위 판정] 인맥과 저축을 총동원해 스콜라 프로제니움이나 상급 관청 장학생 추천을 받아 낸다",
+        label: "[권위 판정] 인맥과 저축을 총동원해 제국 상급 학원이나 상급 관청 장학생 추천을 받아 낸다",
         check: { stat: "Inf", diff: -5 },
         success: {
           text: "치열한 경쟁을 뚫고 아이가 제국 정예 교육 과정에 입학했다! 부모의 희생이 아이에게 더 높은 하늘을 열어 주었다.",
@@ -1450,8 +1612,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["bond_heir"]
         },
         fail: {
-          text: "문턱 높은 추천 심사는 통과하지 못했으나, 아이에게 제국 법전과 교양을 손수 가르치며 단단히 키워 냈다.",
-          stats: { Int: 4, WP: 4 },
+          text: "문턱 높은 추천 심사는 통과하지 못해 인맥과 비용만 소모했으나, 아이에게 제국 법전과 교양을 손수 가르치며 단단히 키워 냈다.",
+          stats: { Int: 3, Inf: -2 },
           addTags: ["bond_heir"]
         }
       },
@@ -1464,8 +1626,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["bond_heir"]
         },
         fail: {
-          text: "고된 일상 속에 가르칠 시간이 빠듯했으나, 아이는 부모의 성실한 등 뒤를 보며 바르게 자랐다.",
-          stats: { T: 4, WP: 4 },
+          text: "고된 일상 속에 밤잠을 줄여 가며 가르쳐 몸이 축났으나, 아이는 부모의 성실한 등 뒤를 보며 바르게 자랐다.",
+          wounds: -5,
+          stats: { WP: 3 },
           addTags: ["bond_heir"]
         }
       },
@@ -1488,7 +1651,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 34,
       allTags: ["bond_family"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "sororitas_novitiate", "sororitas", "celestian", "canoness",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "34세 이상 · 가정과 배우자",
     weight: 36,
@@ -1539,7 +1710,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 44,
       allTags: ["bond_heir"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "sororitas_novitiate", "sororitas", "celestian", "canoness",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "44세 이상 · 후계자·자녀",
     weight: 36,
@@ -1554,8 +1732,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 5
         },
         fail: {
-          text: "세대 간의 생각 차이에 잠시 언성이 높아졌으나, 떠나기 직전 말없는 포옹으로 서로를 이해했다.",
-          stats: { Fel: 3, WP: 4 }
+          text: "세대 간의 생각 차이에 언성이 높아져 서먹한 기류가 남았으나, 떠나기 직전 짧은 포옹으로 서로를 이해했다.",
+          stats: { WP: 3, Fel: -2 }
         }
       },
       {
@@ -1566,8 +1744,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 6, Inf: 6, WP: 4 }
         },
         fail: {
-          text: "자녀는 자신만의 방식으로 부딪혀 보겠다며 웃었지만, 비망록 몇 장만은 소중히 챙겨 떠났다.",
-          stats: { Int: 3, WP: 4 }
+          text: "자녀는 부모의 인맥에 기대지 않고 자신만의 방식으로 부딪쳐 보겠다며 선을 그었으나, 비망록 몇 장만은 소중히 챙겨 떠났다.",
+          stats: { WP: 3, Inf: -2 }
         }
       },
       {

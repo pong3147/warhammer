@@ -209,7 +209,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "대현자의 기묘한 잔향",
     priority: 3,
     req: { allTags: ["met_cawl"] },
-    text: "기계장치를 다룰 때마다 다성(多聲) 음성으로 천 년 전 농담을 내뱉던 아크마고스 벨리사리우스 카울의 기괴한 천재성이 불현듯 스쳐 지나갔다.",
+    text: "기계장치를 다룰 때마다 다성 음성으로 천 년 전 농담을 내뱉던 아크마고스 벨리사리우스 카울의 기괴한 천재성이 불현듯 스쳐 지나갔다.",
     effect: { stats: { Int: 2 } }
   },
   {
@@ -222,7 +222,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ch_s4_met_calgar",
-    badge: "울트라마르의 철권",
+    badge: "울트라마의 철권",
     priority: 3,
     req: { allTags: ["met_calgar"] },
     text: "포화 속에서도 흔들리지 않던 마르네우스 칼가의 위엄을 떠올리며, 오늘도 무질서한 전선에 《코덱스》 같은 단정한 규율을 세웠다.",
@@ -334,15 +334,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ch_s4_tag_huscarl_oath",
-    badge: "후스카를",
+    badge: "허스칼",
     priority: 3,
     req: { allTags: ["huscarl_oath"] },
-    text: "요새 성벽의 미세한 균열 하나까지 손끝으로 점검하며 후스카를의 서약을 되새겼다. 우리가 서 있는 한 이 성문은 열리지 않는다.",
+    text: "요새 성벽의 미세한 균열 하나까지 손끝으로 점검하며 허스칼의 서약을 되새겼다. 우리가 서 있는 한 이 성문은 열리지 않는다.",
     effect: { stats: { T: 1, Int: 1 } }
   },
   {
     id: "ch_s4_tag_promethean_smith",
-    badge: "프로메테안 장인",
+    badge: "프로메테우스 장인",
     priority: 3,
     req: { allTags: ["promethean_smith"] },
     text: "전투가 없는 밤이면 대장간 모루 앞에서 형제들의 볼터와 갑주를 손수 벼렸다. 불길 속에서 단련된 무구는 결코 주인을 배신하지 않는다.",
@@ -366,7 +366,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ch_s4_tag_ultramar_scholar",
-    badge: "울트라마르 학자",
+    badge: "울트라마 학자",
     priority: 3,
     req: { allTags: ["ultramar_scholar"] },
     text: "군사 교본과 행정 법전을 나란히 펼쳐 두고 성계 보급 효율을 다듬었다. 칼만큼이나 정교한 장부가 제국을 지탱한다.",

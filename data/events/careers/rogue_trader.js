@@ -5,10 +5,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_rogue_trader_uncharted",
     title: "미지의 성계 — 황제의 지도에 없는 고대 문명",
     category: "탐험",
-    req: { anyCareers: ["rogue_trader", "imperial_navy"] },
-    reqLabel: "로그 트레이더 / 임페리얼 네이비",
+    req: {
+      anyCareers: ["rogue_trader", "rt_lord_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
+    reqLabel: "직군: 로그 트레이더",
     weight: 24,
-    text: "제국 성도 바깥 헤일로 스타즈(Halo Stars) 경계에서 정체불명의 수정 도시가 남아 있는 무인 행성을 발견했다. 아키오테크 보물이 가득할 수도, 고대 외계 저주가 잠들어 있을 수도 있다.",
+    text: "제국 성도 바깥 헤일로 스타즈 경계에서 정체불명의 수정 도시가 남아 있는 무인 행성을 발견했다. 아키오테크 보물이 가득할 수도, 고대 외계 저주가 잠들어 있을 수도 있다.",
     choices: [
       {
         label: "[지성 판정] 정밀 오스펙스 탐사 후 무장 정찰대와 함께 직접 보물 창고에 강하한다",
@@ -37,10 +40,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_career_rogue_xenos",
     title: "로그 트레이더 — 변경 정거장의 아엘다리 해적선장과 거래",
     category: "직군 고유",
-    req: { anyCareers: ["rogue_trader", "rt_lord_captain"] },
+    req: {
+      anyCareers: ["rogue_trader", "rt_lord_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 로그 트레이더",
     weight: 26,
-    text: "제국 국경 너머 코로누스 성계 외곽의 무법 우주정거장. 유려한 아엘다리(엘다) 커세어 선장이 고대 성간 항로 지도를 내놓으며 제국산 희귀 광물과 교환하자고 제안했다. 황제의 무역 영장이 있으니 합법이지만, 선내 성직자의 눈초리가 매섭다.",
+    text: "제국 국경 너머 코로누스 익스팬스 외곽의 무법 우주정거장. 유려한 아엘다리 커세어 선장이 고대 성간 항로 지도를 내놓으며 제국산 희귀 광물과 교환하자고 제안했다. 황제의 무역 영장이 있으니 합법이지만, 선내 성직자의 눈초리가 매섭다.",
     choices: [
       {
         label: "[교섭 판정] 무역 영장의 절대 권위를 내세워 아엘다리 선장과 배짱 두둑한 대거래를 성사시킨다",
@@ -81,7 +87,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "로그 트레이더 — 미개척 변경 성계의 식민지 선포",
     category: "직군 심화",
     once: true,
-    req: { anyCareers: ["rogue_trader", "rt_lord_captain"] },
+    req: {
+      anyCareers: ["rogue_trader", "rt_lord_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 로그 트레이더",
     weight: 34,
     text: "황제의 성도 바깥에서 풍부한 프로메튬과 식량 자원을 품은 미등록 행성을 발견했다. 지금 궤도에 가문의 깃발을 꽂고 개척 식민지를 선포하면 막대한 부와 영주권을 거머쥘 수 있지만, 토착 야생 괴수와 경쟁 가문의 견제를 버텨야 한다.",
@@ -90,14 +99,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[권위 판정] 무역 영장을 선포하고 함대 병력과 정착민을 강하시켜 가문 직할 식민지를 세운다",
         check: { stat: "Inf", diff: 0 },
         success: {
-          text: "행성 표면의 요새 항구가 세워지고 제국 무역선에 그대의 가문 이름이 등재되었다! 변경 성계의 새로운 패자가 탄생했다.",
+          text: "행성 표면의 요새 항구가 세워지고 제국 성도와 개척 대장에 그대의 가문 이름이 등재되었다! 변경 성계의 새로운 패자가 탄생했다.",
           stats: { Inf: 12, Fel: 6, Int: 4 },
           addTags: ["rogue_warrant_charter"]
         },
         fail: {
-          text: "초기 정착지 건설 중 토착 포식자 떼의 습격으로 막대한 자본을 잃고 철수했다.",
-          wounds: -16,
-          stats: { Inf: -4, T: 3 }
+          text: "초기 정착지 건설 중 토착 포식자 떼의 습격으로 막대한 자본과 위신을 잃고 철수했다.",
+          wounds: -18,
+          stats: { Inf: -6 }
         }
       },
       {
@@ -109,8 +118,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["rogue_warrant_charter"]
         },
         fail: {
-          text: "협상 조항에서 기계교에 불리한 조건을 내어 주었으나 최소한의 채굴권은 확보했다.",
-          stats: { Inf: 3, Int: 2 }
+          text: "협상 조항의 맹점에 걸려 기계교에 수익 대부분을 넘겨주고 막대한 초기 투자금만 손해 보았다.",
+          stats: { Inf: -4, Fel: -2 }
         }
       },
       {
@@ -127,10 +136,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_rt_cold_trade_auction",
     title: "자유 항구의 지하 경매장 — 금지된 콜드 트레이드",
     category: "직군 심화",
-    req: { anyCareers: ["rogue_trader", "rt_lord_captain"] },
+    req: {
+      anyCareers: ["rogue_trader", "rt_lord_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 로그 트레이더",
     weight: 28,
-    text: "변방 우주 정거장 '풋폴'의 비밀 경매장. 가면 쓴 밀수상들이 네크론의 자가 수복 금속 단검과 아엘다리 영혼석을 비밀리에 경매에 올렸다. 오르도 제노스 밀정이 객석 어딘가에 숨어 있을지 모르지만, 되팔면 함선 한 척 값을 벌 수 있다.",
+    text: "변방 우주 정거장 '풋폴'의 비밀 경매장. 가면 쓴 밀수상들이 금지된 헤일로 장치와 아엘다리 영혼석을 비밀리에 경매에 올렸다. 오르도 제노스 밀정이 객석 어딘가에 숨어 있을지 모르지만, 되팔면 함선 한 척 값을 벌 수 있다.",
     choices: [
       {
         label: "[교섭 판정] 대리인을 통해 정교하게 입찰해 아키오테크 위장 명목으로 유물을 낙찰받는다",
@@ -176,7 +188,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_rt_rival_dynasty",
     title: "경쟁 로그 트레이더 가문의 사략선 습격",
     category: "직군 심화",
-    req: { anyCareers: ["rogue_trader", "rt_lord_captain"] },
+    req: {
+      anyCareers: ["rogue_trader", "rt_lord_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 로그 트레이더",
     weight: 28,
     text: "황금 항로 독점을 두고 대립하던 라이벌 로그 트레이더 가문의 쾌속 호위함 두 척이 소행성대 그늘에서 기습했다! 상대 선장은 통신망으로 화물 절반을 넘기면 살려 주겠다며 비웃고 있다.",
@@ -185,7 +200,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[사격 판정] 기함의 좌현 매크로 캐논 일제 사격과 랜스 포화로 사략선을 박살 낸다",
         check: { stat: "BS", diff: 0 },
         success: {
-          text: "단 두 번의 현측 사격으로 적 호위함 한 척의 엔진을 날리고 나머지를 도주시켰다! 변경 항로에 그대의 무명이 떨쳤다.",
+          text: "단 두 번의 현측 사격으로 적 호위함 한 척의 엔진을 날리고 나머지를 도주시켰다! 변경 항로에 그대의 명성을 떨쳤다.",
           stats: { BS: 7, Inf: 9, WP: 4 }
         },
         fail: {
@@ -221,10 +236,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_rt_void_leviathan",
     title: "워프 항로 외곽의 고대 보이드 괴수 조우",
     category: "직군 심화",
-    req: { anyCareers: ["rogue_trader", "rt_lord_captain"] },
+    req: {
+      anyCareers: ["rogue_trader", "rt_lord_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 로그 트레이더",
     weight: 24,
-    text: "성계 외곽 가스 행성 궤도에서 순양함만 한 거대한 우주 생물(보이드 웨일) 무리가 기함 옆을 유영하고 있다. 사냥에 성공하면 왕족들이 목숨 걸고 탐내는 희귀 생체 정수와 장기를 얻을 수 있지만, 분노한 무리가 선체를 들이받을 수도 있다.",
+    text: "성계 외곽 가스 행성 궤도에서 순양함만 한 거대한 우주 생물 보이드 웨일 무리가 기함 옆을 유영하고 있다. 사냥에 성공하면 왕족들이 목숨 걸고 탐내는 희귀 생체 정수와 장기를 얻을 수 있지만, 분노한 무리가 선체를 들이받을 수도 있다.",
     choices: [
       {
         label: "[사격 판정] 어뢰와 작살포를 동원해 늙은 우두머리 개체를 사냥해 전설의 전리품을 얻는다",
@@ -243,7 +261,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[지성 판정] 사냥 대신 생체 발광 패턴과 이동 경로를 기록해 비밀 워프 안정점을 발견한다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "보이드 괴수들이 따라가는 보이지 않는 워프 잔잔한 해류를 찾아냈다! 가문만의 독점 고속 항로가 열렸다.",
+          text: "보이드 괴수들이 따라가는 보이지 않는 잔잔한 워프 해류를 찾아냈다! 가문만의 독점 고속 항로가 열렸다.",
           stats: { Int: 7, Inf: 8, Ag: 4 }
         },
         fail: {
@@ -267,7 +285,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "테라 파견 감사관의 무역 영장 진위 조사",
     category: "직군 심화",
     once: true,
-    req: { anyCareers: ["rogue_trader", "rt_lord_captain"] },
+    req: {
+      anyCareers: ["rogue_trader", "rt_lord_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 로그 트레이더",
     weight: 28,
     text: "제국 중심 항구에 정박한 순간, 아드미니스트라툼 고등 감사관과 아르비테스 호위대가 기함 갑판에 올라탔다. 수천 년 전 황제 혹은 하이 로드들이 서명한 가문의 무역 영장 원본을 제시하고 지난 20년의 관세 장부를 감사하겠다고 선언한다.",
@@ -285,7 +306,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[교섭 판정] 최고급 아멕 주류와 변경 특산품을 대접하며 매끄럽게 서류 절차를 마무리한다",
+        label: "[교섭 판정] 최고급 아마섹 주류와 변경 특산품을 대접하며 매끄럽게 서류 절차를 마무리한다",
         check: { stat: "Fel", diff: 5 },
         success: {
           text: "감사관이 만족스러운 미소와 함께 '모범적 충성 가문' 도장을 찍고 하선했다. 새로운 관료 인맥까지 생겼다.",
@@ -299,7 +320,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       {
         label: "선내 회계 서기관들을 총동원해 며칠 밤을 새워 장부를 투명하게 소명한다",
         effect: {
-          text: "시간은 걸렸지만 단 한 푼의 결격도 없이 감사를 통과했다. 정공법이 통했다.",
+          text: "시간은 걸렸지만 단 한 점의 결격도 없이 감사를 통과했다. 정공법이 통했다.",
           stats: { Int: 5, WP: 4, Inf: 3 }
         }
       }
@@ -308,43 +329,46 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s12_rt_mutiny_deck",
-    title: "기함 하층 갑판의 봉기 — 3년 만의 귀항 지연",
+    title: "기함 선원 조합의 배당 파업 — 3년 만의 귀항 지연",
     category: "직군 심화",
-    req: { anyCareers: ["rogue_trader", "rt_lord_captain"] },
+    req: {
+      anyCareers: ["rogue_trader", "rt_lord_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 로그 트레이더",
     weight: 25,
-    text: "변경 탐사가 3년째 이어지며 식수와 오락이 바닥나자, 기함 하층 엔진 갑판의 수천 명 선원들이 파이프와 샷건을 들고 파업과 봉기를 일으켰다. 함교 무장 경호대장은 즉각 진압 발포를 건의한다.",
+    text: "변경 성계 개척이 3년째 이어지며 계약 기간을 넘기자, 기함의 화물 장인 조합과 항해 사관 일부가 수익 배당 정산과 즉각 귀항을 요구하며 상층 화물창과 동력 제어실을 점거했다. 선단 무장 경호대장은 본보기로 조합 대표들을 즉결 진압하자고 건의한다.",
     choices: [
       {
-        label: "[교섭 판정] 직접 경호대 소수만 데리고 하층 갑판에 내려가 전리품 배당금과 특별 휴가를 약속한다",
+        label: "[교섭 판정] 직접 경호대 소수만 데리고 화물창으로 내려가 변경 개척 수익 배당금 증액과 귀항 일정을 공증한다",
         check: { stat: "Fel", diff: 0 },
         success: {
-          text: "선장이 직접 내려온 담대함과 공정한 보상에 선원들이 무기를 내리고 환호했다! 함선의 사기가 최고조에 달했다.",
+          text: "선장이 직접 내려온 담대함과 공정한 배당 계약에 조합원들이 환호하며 일터로 복귀했다! 선단의 사기가 최고조에 달했다.",
           stats: { Fel: 8, WP: 5, Inf: 6 }
         },
         fail: {
-          text: "흥분한 선동가가 총을 쏘아 팔을 스쳤으나 경호대가 즉시 선동가를 제압하며 봉기가 가라앉았다.",
+          text: "흥분한 강경파 사보타주범이 총을 쏘아 팔을 스쳤으나, 경호대가 즉시 제압하며 파업이 가라앉았다.",
           wounds: -16,
-          stats: { WP: 4, Fel: 2 }
+          stats: { WP: 4, Fel: -2 }
         }
       },
       {
-        label: "[백병 판정] 파워 소드를 뽑고 선봉에 서서 반란 주동자들을 일격에 제압해 선장의 위엄을 세운다",
+        label: "[백병 판정] 파워 소드를 뽑고 선봉에 서서 제어실을 점거한 강경파 주동자들을 일격에 제압해 선장의 위엄을 세운다",
         check: { stat: "WS", diff: 0 },
         success: {
-          text: "공포와 경외 속에 하층 갑판이 순식간에 복종했다. 다시는 누구도 그대의 명령에 토를 달지 못했다.",
+          text: "공포와 경외 속에 점거 대열이 순식간에 무릎을 꿇었다. 무역 영장의 주인에게 감히 토를 다는 자는 더 이상 없었다.",
           stats: { WS: 7, Inf: 7, WP: 4 }
         },
         fail: {
-          text: "난전 속에 늑골을 강타당했으나 끝내 엔진실 통제권을 되찾았다.",
+          text: "난전 속에 늑골을 강타당했으나 끝내 동력 제어실 통제권을 되찾았다.",
           wounds: -20,
           stats: { WS: 3, T: 3 }
         }
       },
       {
-        label: "엔진 갑판 격벽을 봉쇄하고 생명 유지 장치 출력을 낮춰 피를 흘리지 않고 항복을 받아 낸다",
+        label: "항해사 길드와 기계교 파견 사제를 중재인으로 세워 귀항 시 보너스 지급 각서를 걸고 피를 흘리지 않고 점거를 푼다",
         effect: {
-          text: "냉혹하지만 효율적인 함상 통제였다. 이틀 뒤 주동자들이 스스로 무기를 반납했다.",
+          text: "상업 왕조의 주인답게 계약과 중재로 위기를 넘겼다. 이틀 뒤 주동자들이 스스로 무기를 반납하고 항해가 재개되었다.",
           stats: { Int: 5, Inf: 4 }
         }
       }

@@ -102,7 +102,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "전투 수녀회",
     priority: 3,
     req: { anyCareers: ["sororitas_novitiate", "adepta_sororitas", "sororitas_celestian", "canoness", "abbess_sanctorum"] },
-    text: "새벽 철야 기도 후 파워 아머의 성유를 바르며 볼터와 화염방사기를 정비했다. 작은 회의(懷疑)를 고백한 수련 수녀가 자진해 리펜티아(참회 부대)로 향하는 뒷모습을 축복했다.",
+    text: "새벽 철야 기도 후 파워 아머의 성유를 바르며 볼터와 화염방사기를 정비했다. 작은 회의를 고백한 수련 수녀가 자진해 참회 부대 리펜티아로 향하는 뒷모습을 축복했다.",
     effect: { stats: { WP: 1, BS: 1 }, faith: 4 }
   },
   {
@@ -182,7 +182,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "임페리얼 네이비",
     priority: 3,
     req: { anyCareers: ["imperial_navy", "navy_captain", "navy_admiral", "lord_high_admiral"] },
-    text: "순양함 하층 포갑판에서 수백 명의 노역자들이 거대 마크로 캐논 포탄을 쇠사슬로 끌어올리다 6명이 압사했다. 함교 항해 일지에는 '3번 포대 재장전 1.4초 지연'이라고만 적혔다.",
+    text: "순양함 하층 포갑판에서 수백 명의 노역자들이 거대 매크로 캐논 포탄을 쇠사슬로 끌어올리다 6명이 압사했다. 함교 항해 일지에는 '3번 포대 재장전 1.4초 지연'이라고만 적혔다.",
     effect: { stats: { BS: 1, Int: 1 } }
   },
   {
@@ -222,7 +222,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "로그 트레이더 항해",
     priority: 3,
     req: { anyCareers: ["rt_seneschal", "rogue_trader", "rt_lord_captain", "guild_magnate"] },
-    text: "제국 성도(星圖) 밖 미개척 행성에서 희귀 향신료와 고대 문명의 황금을 가득 싣고 귀환했다. 세관원이 의심스러운 눈초리를 보냈으나, 황제의 친필 무역 영장을 들이밀자 즉시 경례했다.",
+    text: "제국 성도 밖 미개척 행성에서 희귀 향신료와 고대 문명의 황금을 가득 싣고 귀환했다. 세관원이 의심스러운 눈초리를 보냈으나, 황제의 친필 무역 영장을 들이밀자 즉시 경례했다.",
     effect: { stats: { Inf: 2, Fel: 1 } }
   },
   {
@@ -350,7 +350,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "그림자 감방 순찰",
     priority: 3,
     req: { anyCareers: ["adeptus_custodes", "custodes_warden", "custodes_shield_captain", "custodes_captain_general"] },
-    text: "황궁 지하 깊은 곳, 말로 옮길 수 없는 고대 괴물과 아키오테크 재앙들이 봉인된 '어둠의 감방(Dark Cells)'의 봉인 상태를 점검했다. 단 하나의 문만 열려도 테라가 멸망한다.",
+    text: "황궁 지하 깊은 곳, 말로 옮길 수 없는 고대 괴물과 아키오테크 재앙들이 봉인된 '어둠의 감방'의 봉인 상태를 점검했다. 단 하나의 문만 열려도 테라가 멸망한다.",
     effect: { stats: { WP: 2, WS: 1 } }
   },
   {
@@ -438,7 +438,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "아스타르테스 성전",
     priority: 3,
     req: { anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain", "chapter_master"] },
-    text: "전투 함선 강습 갑판에서 출격 대기 중, 채플린이 갑주 가슴팍에 새로운 붉은 순결 인장(Purity Seal)을 왁스로 봉인해 주었다.",
+    text: "전투 함선 강습 갑판에서 출격 대기 중, 채플린이 갑주 가슴팍에 새로운 붉은 순결 인장을 왁스로 봉인해 주었다.",
     effect: { stats: { WP: 2 }, faith: 2 }
   },
   {
@@ -454,7 +454,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "전투 수녀회",
     priority: 3,
     req: { anyCareers: ["sororitas_novitiate", "adepta_sororitas", "sororitas_celestian", "canoness", "abbess_sanctorum"] },
-    text: "화염방사기 프로메슘 탱크를 점검하며 순교 성녀 캐서린의 일대기를 합창했다. 불꽃은 거짓을 태우고 진실만 남긴다.",
+    text: "화염방사기 프로메튬 탱크를 점검하며 순교 성녀 캐서린의 일대기를 합창했다. 불꽃은 거짓을 태우고 진실만 남긴다.",
     effect: { stats: { BS: 1 }, faith: 4 }
   },
   {
@@ -526,7 +526,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "제국 보병",
     priority: 3,
     req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
-    text: "데파트멘토 무니토룸에서 보급된 300년 묵은 시체 녹말 전투식량을 씹으며 라스건 배터리 팩을 모닥불에 살짝 데워 비상 충전했다.",
+    text: "데파르트멘토 무니토룸에서 보급된 300년 묵은 시체 전분 전투식량을 씹으며 라스건 배터리 팩을 모닥불에 살짝 데워 비상 충전했다.",
     effect: { stats: { T: 1 } }
   },
   {

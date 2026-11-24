@@ -303,6 +303,10 @@
       if (req.excludeWorlds.includes(state.worldId)) return false;
     }
 
+    if (req.excludeHomeWorlds) {
+      if (req.excludeHomeWorlds.includes(state.homeWorldId)) return false;
+    }
+
     if (req.anySegmenta) {
       if (!req.anySegmenta.includes(state.segmentum)) return false;
     }
@@ -470,6 +474,9 @@
     }
     if (req.excludeWorlds && req.excludeWorlds.length && parts.length === 0) {
       parts.push(req.excludeWorlds.map((id) => `${getWorld(id).name} 제외`).join(" · "));
+    }
+    if (req.excludeHomeWorlds && req.excludeHomeWorlds.length && parts.length === 0) {
+      parts.push(req.excludeHomeWorlds.map((id) => `${getWorld(id).name} 출신 제외`).join(" · "));
     }
     if (req.excludeWorldTags && req.excludeWorldTags.length && parts.length === 0) {
       parts.push(req.excludeWorldTags.map((wt) => `${WORLD_TAG_LABELS[wt] || wt} 제외`).join(" · "));
@@ -787,7 +794,10 @@
       state.faith = clamp(state.faith + outcome.faith, 0, 100);
     }
     if (outcome.corruption) {
-      state.corruption = clamp(state.corruption + outcome.corruption, 0, 100);
+      const incorruptible = state.tags.includes("custodes") || state.tags.includes("grey_knight");
+      if (!(incorruptible && outcome.corruption > 0)) {
+        state.corruption = clamp(state.corruption + outcome.corruption, 0, 100);
+      }
     }
     if (outcome.corruptionReset) {
       state.corruption = 0;
@@ -879,8 +889,10 @@
       const isTranshuman = Boolean(curCareer.isTranshuman) || state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("grey_knight") || state.tags.includes("daemon_prince");
       const targetIsTranshuman = Boolean(targetCareer.isTranshuman);
       const isIncorruptible = (state.tags.includes("custodes") || state.tags.includes("grey_knight")) && targetCareer.tree === "chaos";
+      const isChaosDemotion = curCareer.tree === "chaos" && targetCareer.tree === "chaos" && curCareer.tier >= targetCareer.tier;
       const preventDowngrade =
         isIncorruptible ||
+        isChaosDemotion ||
         (targetCareer.tree !== "chaos" &&
         (curCareer.tier > targetCareer.tier || (isTranshuman && !targetIsTranshuman)));
 

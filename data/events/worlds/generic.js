@@ -6,10 +6,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "상층 첨탑의 만찬과 독잔",
     category: "정치",
     once: true,
-    req: { minAge: 14, maxAge: 45, excludeTags: ["astartes", "custodes", "grey_knight", "sororitas", "dreadnought"], or: [{ allTags: ["noble"] }, { stats: { Inf: 48 } }] },
-    reqLabel: "귀족 출신 또는 권위 48+ (필멸자)",
+    req: {
+      minAge: 14,
+      maxAge: 45,
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "sororitas", "dreadnought",
+        "planetary_governor", "sector_lord", "high_lord_terra",
+        "magos", "fabricator_locum", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      or: [{ allTags: ["noble"] }, { stats: { Inf: 48 } }]
+    },
+    reqLabel: "귀족 출신 또는 권위 48+ · 필멸자",
     weight: 16,
-    text: "경쟁 가문이 주최한 화려한 만찬장. 고급 아마섹 포도주 잔에서 미세한 금속성 향이 스친다. 제국 귀족 사회에서 독살은 그저 일상적인 인사치레일 뿐이다.",
+    text: "경쟁 가문이 주최한 화려한 만찬장. 고급 아마섹 술잔에서 미세한 금속성 향이 스친다. 제국 귀족 사회에서 독살은 그저 일상적인 인사치레일 뿐이다.",
     choices: [
       {
         label: "[이단심문소/아르비테스 전용] 로제트와 제국법의 이름으로 독살 음모 가문을 현장에서 압송한다",
@@ -20,7 +32,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성 42+ 해금] 독의 성분을 간파하고 경쟁 가문의 잔과 은밀히 바꿔치기한다",
+        label: "[지성 판정 · 지성 42+] 독의 성분을 간파하고 경쟁 가문의 잔과 은밀히 바꿔치기한다",
         req: { stats: { Int: 42 } },
         check: { stat: "Int", diff: 5 },
         success: {
@@ -65,14 +77,27 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_underhive_gang",
     title: "언더하이브 구역 쟁탈전",
     category: "지하세계",
-    req: { minAge: 13, maxAge: 35, excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought"], or: [{ anyWorldTags: ["hive", "underhive"] }, { anyCareers: ["underhive_ganger"] }] },
-    reqLabel: "하이브 월드 거주 또는 갱단원 (필멸자)",
+    req: {
+      minAge: 13,
+      maxAge: 35,
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "canoness", "celestian", "cardinal", "inquisitor", "lord_inquisitor",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral",
+        "arbites_marshal", "departmento_head", "planetary_governor", "sector_lord",
+        "rogue_trader", "rt_lord_captain", "psyker_primaris", "tempestus_prime",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      or: [{ anyWorldTags: ["hive", "underhive"] }, { anyCareers: ["underhive_ganger"] }]
+    },
+    reqLabel: "하이브 월드 거주 또는 갱단원 · 필멸자",
     weight: 14,
     text: "정수 파이프 아래 녹슨 다리 위에서 라이벌 갱단이 오토건과 쇠파이프를 들고 포위해 왔다. 아르비테스는 이 깊은 하층까지 내려오지 않는다.",
     choices: [
       {
-        label: "[이단심문관/커미사르/아르비테스/소로리타스 전용] 제국의 인장과 볼터를 꺼내 갱단 전원을 즉각 무릎 꿇린다",
-        req: { anyTags: ["inquisitor", "commissar", "lord_commissar", "arbites", "sororitas"] },
+        label: "[심문소/커미사르/아르비테스/소로리타스 전용] 제국의 인장과 무기를 꺼내 갱단 전원을 즉각 무릎 꿇린다",
+        req: { anyTags: ["inquisition_agent", "commissar", "arbites", "sororitas"] },
         effect: {
           text: "제국 권위의 상징을 보자 오합지졸 갱단원들이 그 자리에서 무기를 던지고 엎드렸다! 유용한 지하 정보망을 손에 넣었다.",
           stats: { Inf: 6, WP: 4 }
@@ -112,11 +137,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     category: "일상",
     req: {
       anyWorldTags: ["hive", "industrial", "forge"],
-      excludeTags: ["astartes", "custodes", "dreadnought", "inquisitor", "rogue_trader", "magos", "lord_commissar", "canoness"]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "canoness", "celestian", "cardinal", "inquisitor", "lord_inquisitor",
+        "magos", "fabricator_locum", "fabricator_general", "navy_captain", "navy_admiral",
+        "arbites_marshal", "departmento_head", "planetary_governor", "sector_lord",
+        "rogue_trader", "rt_lord_captain", "guild_magnate", "crime_lord",
+        "psyker_primaris", "tempestus_prime",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
     reqLabel: "하이브/포지 월드 일반 거주자",
     weight: 15,
-    text: "공기 정화탑 필터가 3개월째 교체되지 않아 구역 전체에 붉은 기침 역병이 번졌다. 메디케아(의무소)의 약품은 상층 첨탑에만 우선 공급된다.",
+    text: "공기 정화탑 필터가 3개월째 교체되지 않아 구역 전체에 붉은 기침 역병이 번졌다. 메디카에 의무소의 약품은 상층 첨탑에만 우선 공급된다.",
     choices: [
       {
         label: "[강인 판정] 독한 합성 식량과 빗물을 버텨 내며 자력으로 회복한다",
@@ -146,10 +180,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_shrine_pilgrimage",
     title: "황금 성당의 대순례 행렬",
     category: "일상",
-    req: { minAge: 12, excludeTags: ["heretic", "astartes", "custodes", "dreadnought"] },
+    req: {
+      minAge: 12,
+      excludeWorldTags: ["krieg", "feral", "death", "voidborn"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "비이단 필멸 제국인",
     weight: 13,
-    text: "수십만 순례자들이 횃불을 들고 황제 탄신 성절 행렬을 이루고 있다. 성직자가 기적의 성유를 나누어 주며 신앙의 맹세를 촉구한다.",
+    text: "수십만 순례자들이 횃불을 들고 황제 승천 대축일 행렬을 이루고 있다. 성직자가 기적의 성유를 나누어 주며 신앙의 맹세를 촉구한다.",
     choices: [
       {
         label: "[소로리타스/성직자/커미사르 전용] 행렬의 선두에 서서 황제 신앙의 설교를 주도한다",
@@ -190,8 +232,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_agri_harvest",
     title: "아그리 월드의 풍년과 궤도 십일조 수확",
     category: "일상",
-    req: { anyWorldTags: ["agri", "civilised", "paradise"], excludeTags: ["astartes", "custodes", "dreadnought", "inquisitor", "rogue_trader", "magos"] },
-    reqLabel: "아그리/문명/낙원 행성 일반 거주자",
+    req: {
+      anyWorldTags: ["agri"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "canoness", "celestian", "cardinal", "inquisitor", "lord_inquisitor",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral",
+        "arbites_marshal", "departmento_head", "planetary_governor", "sector_lord",
+        "rogue_trader", "rt_lord_captain", "psyker_primaris", "tempestus_prime",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "아그리 월드 일반 거주자",
     weight: 13,
     text: "올해도 거대한 콤바인이 끝없는 황금빛 곡창 지대를 가로지른다. 제국에서는 드물게 평온한 계절이 찾아왔지만, 궤도의 징세선은 한 톨의 오차도 용납하지 않는다.",
     choices: [
@@ -223,7 +276,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "낙원 행성의 은밀한 여흥 — 귀족들의 '인간 사냥'",
     category: "부조리",
     once: true,
-    req: { minAge: 15, anyWorldTags: ["paradise"] },
+    req: {
+      minAge: 15,
+      anyWorldTags: ["paradise"],
+      excludeTags: [
+        "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 낙원 행성",
     weight: 24,
     text: "에메랄드빛 해변 너머 비공개 사유림. 제국 고위 귀족들이 '사냥감이 말을 하면 더 스릴 있다'며 죄수복을 입힌 하층민을 풀어놓고 사냥총을 겨누고 있다. 그대는 우연히 이 추악한 축제를 목격했다.",
@@ -238,7 +298,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[신앙/정의] 이단적 잔혹 행위로 국교와 아르비테스에 고발한다",
+        label: "[의지 판정] 이단적 잔혹 행위로 국교와 아르비테스에 고발한다",
         check: { stat: "WP", diff: -10 },
         success: {
           text: "마침 순찰 중이던 이단심문소 요원에게 첩보가 닿아 타락한 귀족 일당이 슬라네쉬 컬트 혐의로 일망타진되었다!",
@@ -262,22 +322,30 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Dark Heresy / Imperial Nobility Lore"
+    source: "Dark Heresy 2e: Core Rulebook / Lexicanum: Paradise World"
   },
   {
     id: "ev_voidborn_ghost_deck",
     title: "성간 함선 — 400년 전 봉인된 '유령 하층 갑판' 탐사",
     category: "행성 고유",
-    req: { minAge: 14, or: [{ anyWorlds: ["voidborn"] }, { anyTags: ["navy", "rogue_trader"] }] },
+    req: {
+      minAge: 14,
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "navy_admiral", "rt_lord_captain",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      or: [{ anyWorlds: ["voidborn"] }, { anyTags: ["navy", "rogue_trader"] }]
+    },
     reqLabel: "보이드본 / 임페리얼 네이비 / 로그 트레이더",
     weight: 24,
-    text: "길이 6km에 달하는 고대 순양함 최하층, 400년 전 워프 폭풍 사고 이후 용접해 닫아 두었던 78번 유령 갑판에서 미세한 구조 신호와 원자로 전력 누수가 감지되었다.",
+    text: "길이 6킬로미터에 달하는 고대 순양함 최하층, 400년 전 워프 폭풍 사고 이후 용접해 닫아 두었던 78번 유령 갑판에서 미세한 구조 신호와 원자로 전력 누수가 감지되었다.",
     choices: [
       {
         label: "[지성 판정] 공학 장비를 챙겨 진입해 전력 누수를 차단하고 고대 선박 로그를 회수한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "잊혀졌던 보조 플라즈마 코어와 고대 보급 창고를 발견해 함장의 큰 포상을 받았다!",
+          text: "잊혔던 보조 플라즈마 코어와 고대 보급 창고를 발견해 함대 사령부와 선단 전체의 큰 포상을 얻었다!",
           stats: { Int: 6, Inf: 7, Ag: 3 }
         },
         fail: {
@@ -306,7 +374,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "야만 행성 — 불타며 추락한 '하늘 신의 강철 수레'",
     category: "행성 고유",
     once: true,
-    req: { minAge: 12, anyWorldTags: ["feral"], excludeTags: ["astartes", "custodes"] },
+    req: {
+      minAge: 12,
+      anyWorldTags: ["feral"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 봉건·야만 행성",
     weight: 28,
     text: "천둥소리와 함께 제국의 정찰 셔틀 한 척이 부족 숲속에 추락했다! 원시 부족민들은 '하늘 신의 사자가 분노해 떨어졌다'며 공포에 질려 엎드렸다.",
@@ -347,9 +422,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 15,
       anyWorldTags: ["agri"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "canoness", "celestian", "cardinal", "inquisitor", "lord_inquisitor",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral",
+        "arbites_marshal", "departmento_head", "planetary_governor", "sector_lord",
+        "rogue_trader", "rt_lord_captain", "psyker_primaris", "tempestus_prime",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "행성 유형: 농업 행성 (Agri-World)",
+    reqLabel: "행성 유형: 농업 행성",
     weight: 30,
     text: "이상 저온과 곰팡이 병해로 올해 수확량이 절반 이하로 꺾였건만, 궤도에 도착한 아드미니스트라툼 십일조 징발선은 단 1톤의 감면도 허락하지 않았다. 내년에 심을 종자 곡물까지 털어 넣지 않으면 행성 총독이 반역죄로 처형될 위기다.",
     choices: [
@@ -392,97 +475,106 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s4_world_paradise_hunt",
-    title: "낙원 행성 — 대리석 휴양지 너머의 은밀한 사냥터",
+    title: "낙원 행성 — 대리석 휴양지 너머의 금지된 외계 맹수 사냥터",
     category: "행성 일상 분기",
     once: true,
     req: {
       minAge: 15,
       anyWorldTags: ["paradise"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "행성 유형: 낙원 행성 (Paradise World)",
+    reqLabel: "행성 유형: 낙원 행성",
     weight: 30,
-    text: "에메랄드빛 해변과 대리석 궁전으로 유명한 이 낙원 행성에도 추악한 이면이 있다. 휴양 온 타 성계 고위 귀족들이 빚을 못 갚은 하인들을 외딴 섬 숲에 풀어놓고 사냥 놀이를 벌인다는 소문이 사실로 확인되었다. 오늘 밤 숲 가장자리에서 피투성이가 된 도망자가 그대의 발치에 쓰러졌다.",
+    text: "에메랄드빛 해변과 대리석 별장이 늘어선 낙원 행성의 이면에는 금지된 밀수 사냥터가 숨겨져 있다. 휴양 온 타 성계 대귀족들이 콜드 트레이드 밀수선으로 반입한 외계 맹수를 사유림에 풀어놓고 사냥을 즐기려던 밤, 정지장이 파손되며 괴수가 하인 거주 구역으로 뛰쳐나왔다. 비명 소리가 울려 퍼지는 야자수 숲 가장자리에서 사냥 책임자들은 스캔들이 새어 나갈까 봐 구조 요청조차 막고 있다.",
     choices: [
       {
-        label: "[민첩 판정] 사냥개와 귀족 경호대의 눈을 피해 도망자를 화물 부두 밀항선까지 안전하게 빼돌린다",
+        label: "[민첩 판정] 횃불과 연막탄으로 외계 맹수의 시선을 유인해 고립된 하인들을 부두 방벽 너머로 대피시킨다",
         check: { stat: "Ag", diff: -5 },
         success: {
-          text: "사냥꾼들이 빈 숲을 헤매는 사이 도망자를 살려 보냈다. 낙원의 가면 뒤에 숨은 양심만큼은 지켜 냈다.",
+          text: "사냥개와 괴수의 발톱을 아슬아슬하게 따돌리며 수십 명의 하인을 살려 냈다! 낙원의 가면 뒤에 숨은 양심만큼은 지켜 냈다.",
           stats: { Ag: 7, WP: 5, Fel: 4 }
         },
         fail: {
-          text: "경호대와 마주쳐 총격을 피해 달아나느라 부상을 입었으나, 도망자는 바다로 빠져나갔다.",
-          wounds: -15,
+          text: "괴수의 발톱에 어깨를 스쳐 부상을 입었으나, 다행히 주민들은 모두 방벽 너머로 빠져나갔다.",
+          wounds: -16,
           stats: { Ag: 4 }
         }
       },
       {
-        label: "[지성 판정] 사냥 놀이 현장에서 타락한 쾌락의 흔적을 기록해 국교 감찰관과 아르비테스에 익명 고발한다",
+        label: "[지성 판정] 밀반입된 정지장 화물 전표와 외계 맹수의 흔적을 확보해 오르도 제노스와 아르비테스에 익명 고발한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "슬라네쉬 이단 혐의가 걸려들자 감찰반이 즉각 궁전을 덮쳤다! 퇴폐한 귀족 일당이 숙청되고 그대는 은밀한 포상을 받았다.",
+          text: "금지된 외계 생물 밀수 혐의가 포착되자 제국 법집행대가 즉각 사유림을 봉쇄했다! 퇴폐한 귀족 밀렵단과 밀수선이 함께 적발되고 그대는 은밀한 포상을 받았다.",
           stats: { Int: 7, Inf: 6, WP: 4 },
           faith: 6
         },
         fail: {
-          text: "귀족들의 뇌물로 수사가 흐지부지되며 한동안 감시의 눈초리를 피해야 했다.",
+          text: "귀족들의 뇌물로 화물 전표가 은폐되며 한동안 사병들의 감시를 피해야 했다.",
           stats: { Inf: -3, WP: 3 }
         }
       },
       {
-        label: "보지 못한 일로 치고 도망자에게 응급 붕대만 건넨 채 조용히 자리를 떠난다",
+        label: "귀족 사병들의 경계선 안으로 물러나 문을 굳게 걸어 잠그고 맹수가 사살되기를 기다린다",
         effect: {
-          text: "낙원 행성에서 권력자의 취미를 건드리면 소리 소문 없이 사라진다. 씁쓸함을 삼키고 생업으로 돌아갔다.",
+          text: "낙원 행성에서 권력자의 은밀한 치부를 들추면 소리 소문 없이 사라진다. 씁쓸함을 삼키고 아침이 밝기를 기다렸다.",
           stats: { WP: 4, Int: 3 }
         }
       }
     ],
-    source: "Lexicanum: Paradise World / Dark Heresy"
+    source: "Lexicanum: Paradise World / Dark Heresy 2e: Core Rulebook"
   },
   {
     id: "ev_s4_world_feral_skyiron",
-    title: "야만 행성 — 하늘에서 떨어진 쇠붙이와 부족 장로들의 금기",
+    title: "야만 행성 — 성스러운 산에 박힌 하늘 쇠 운석과 부족의 금기",
     category: "행성 일상 분기",
     once: true,
     req: {
       minAge: 14,
       anyWorldTags: ["feral"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "행성 유형: 야만 행성 (Feral World)",
+    reqLabel: "행성 유형: 야만 행성",
     weight: 30,
-    text: "밤하늘을 가르는 불기둥과 함께 성간 함선의 탈출 포드 하나가 부족의 성산(聖山) 중턱에 추락했다. 장로들은 '하늘 신의 분노'라며 접근을 금지하지만, 부서진 금속 껍질 안쪽에서는 아직도 푸른 불빛과 낯선 기계음이 새어 나오고 있다.",
+    text: "밤하늘을 가르는 불기둥과 함께 수천 년 전 궤도 함대전의 잔해로 추정되는 거대한 별빛 금속 덩어리가 부족의 성스러운 산 중턱에 박혔다. 부족 장로들은 하늘 신의 벼락이 떨어진 땅이라며 접근을 금하지만, 녹아내린 바위 틈에서 드러난 푸른빛 하늘 쇠는 청동과 돌도끼를 단번에 베어 넘길 만큼 단단하다. 이웃 적대 부족의 정찰대마저 어둠을 틈타 산등성이로 기어오르는 기척이 감지된다.",
     choices: [
       {
-        label: "[강인 판정] 야수들이 몰려드는 험준한 절벽을 타고 올라 포드 안의 생존 물자와 강철 칼날을 회수한다",
+        label: "[강인 판정] 뜨거운 열기가 가시지 않은 운석 구덩이를 올라 하늘 쇠 광맥을 캐내고 덤벼드는 적대 부족 정찰대를 물리친다",
         check: { stat: "T", diff: 0 },
         success: {
-          text: "절대 녹슬지 않는 하늘의 강철 단검과 의약품을 손에 넣었다! 부족 전사들이 그대를 하늘의 선택을 받은 용사로 우러렀다.",
+          text: "절대 부러지지 않는 하늘 쇠 검신을 벼려 낼 원석을 확보했다! 부족 전사들이 그대를 성스러운 산의 축복을 받은 용사로 우러렀다.",
           stats: { T: 6, WS: 6, Inf: 5 }
         },
         fail: {
-          text: "포드에서 새어 나온 뜨거운 냉각수에 화상을 입었으나, 단단한 금속 파편 몇 개는 챙겨 내려왔다.",
+          text: "뜨거운 광석 파편에 손바닥을 데이고 바위에서 굴러 부상을 입었으나, 단단한 쇳조각 몇 개는 끝내 지켜 냈다.",
           wounds: -14,
           stats: { T: 4, WS: 3 }
         }
       },
       {
-        label: "[지성 판정] 반짝이는 구조 신호 장치의 구조를 찬찬히 관찰해 하늘에서 내려온 제국 회수반과 접촉한다",
+        label: "[지성 판정] 하늘 쇠의 결을 살펴 부족 대장간에서 녹여 낼 풀무 온도와 합금 제련법을 고안해 낸다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "며칠 뒤 강하선에서 내린 제국 요원들이 포드를 온전히 지킨 그대의 기지를 높이 사 귀한 보급품과 바깥 세상의 지식을 건넸다!",
+          text: "보통 화덕으로는 꿈쩍도 않던 별빛 금속을 숯불과 송풍 기술로 가공하는 데 성공했다! 부족의 무기가 한 세대 앞선 강철로 탈바꿈했다.",
           stats: { Int: 7, Fel: 5, Inf: 6 }
         },
         fail: {
-          text: "신호 장치를 잘못 건드려 경보음이 울리는 바람에 부족의 원성을 샀으나, 다행히 큰 화는 면했다.",
+          text: "무리하게 열을 올리다 토기 도가니가 터져 화상을 입고 장로들의 원성을 샀다.",
+          wounds: -10,
           stats: { Int: 3, Inf: -2 }
         }
       },
       {
-        label: "장로들의 금기를 존중해 성산 둘레에 경계 표시를 세우고 부족의 평온을 지킨다",
+        label: "장로들의 금기를 존중해 성스러운 산 둘레에 경계 표식을 세우고 이웃 부족의 침범만 막아 낸다",
         effect: {
-          text: "알 수 없는 하늘의 물건은 재앙을 부르기도 한다. 부족 원로들의 신임이 두터워졌다.",
+          text: "알 수 없는 하늘의 쇠붙이는 종종 피비린내 나는 부족 전쟁을 부른다. 침착한 경계로 부족의 평온을 지켜 원로들의 신임이 두터워졌다.",
           stats: { WP: 5, Fel: 4 },
           faith: 4
         }
@@ -499,9 +591,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 15,
       anyWorldTags: ["hive"],
       excludeWorlds: ["terra", "krieg"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "inquisitor", "magos"]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "canoness", "celestian", "cardinal", "inquisitor", "lord_inquisitor",
+        "magos", "fabricator_locum", "fabricator_general", "navy_captain", "navy_admiral",
+        "arbites_marshal", "departmento_head", "planetary_governor", "sector_lord",
+        "rogue_trader", "rt_lord_captain", "guild_magnate", "crime_lord",
+        "psyker_primaris", "tempestus_prime",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "행성 유형: 하이브 월드 (일반·하층 시민)",
+    reqLabel: "행성 유형: 하이브 월드 · 일반·하층 시민",
     weight: 28,
     text: "거대 하이브 중층부를 관통하는 주 재활용 정수관이 부식되어 터지면서 하층 세 개 구역의 식수 배급이 사흘째 끊겼다. 길드 용병대가 남은 물탱크를 독점하고 값을 열 배로 올려 받자, 목마른 주민들이 쇠막대기를 들고 몰려들기 시작했다.",
     choices: [
@@ -539,7 +640,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Hive World / Necromunda & Dark Heresy Lore"
+    source: "Lexicanum: Hive World / Necromunda Core Rulebook"
   },
   {
     id: "ev_s4_world_civilised_census",
@@ -549,9 +650,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 15,
       anyWorldTags: ["civilised"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      anyCareers: ["menial_worker", "guild_artisan", "underhive_ganger", "pdf_trooper"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "행성 유형: 문명 행성 (Civilised World)",
+    reqLabel: "행성 유형: 문명 행성 · 시민·행성 방위군",
     weight: 28,
     text: "그나마 평온하던 문명 행성의 시청 광장에 백 년 만에 아드미니스트라툼 인구조사단이 도착했다. 성계 밖 전쟁으로 병력이 부족해지자, 올해 아스트라 밀리타룸 징집 할당량을 평소보다 세 배 늘려 무작위 추첨을 실시하겠다는 포고령이 떨어졌다.",
     choices: [
@@ -598,9 +704,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 15,
       anyWorldTags: ["voidborn"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "canoness", "celestian", "cardinal", "inquisitor", "lord_inquisitor",
+        "magos", "fabricator_locum", "fabricator_general", "navy_captain", "navy_admiral",
+        "arbites_marshal", "departmento_head", "planetary_governor", "sector_lord",
+        "rogue_trader", "rt_lord_captain", "guild_magnate", "crime_lord",
+        "psyker_primaris", "tempestus_prime",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
     },
-    reqLabel: "출신/거주: 보이드본 (성간 함선 사회)",
+    reqLabel: "출신/거주: 보이드본 · 성간 함선 사회",
     weight: 30,
     text: "수백 년째 항해 중인 거대 성간 함선의 하부 거주 구역. 7번 갑판과 8번 갑판 씨족이 낡은 산소 정화기 배당량을 놓고 쇠사슬과 리벳 건을 든 채 대치하고 있다. 이대로 격벽 안쪽에서 싸움이 벌어지면 두 구역 모두 공기 순환이 끊겨 질식할 위기다.",
     choices: [

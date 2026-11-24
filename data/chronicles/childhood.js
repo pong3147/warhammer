@@ -30,7 +30,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "크리그 유년기",
     priority: 3,
     req: { minAge: 6, maxAge: 13, anyWorlds: ["krieg"] },
-    text: "지하 벙커에서 자라며 태어나서 한 번도 푸른 하늘이나 풀잎을 본 적이 없다. 오직 황제를 위한 전사(戰死)만이 유일한 꿈으로 교육받았다.",
+    text: "지하 벙커에서 자라며 태어나서 한 번도 푸른 하늘이나 풀잎을 본 적이 없다. 오직 황제를 위한 전사만이 유일한 꿈으로 교육받았다.",
     effect: { stats: { T: 1 }, faith: 2 }
   },
   {
@@ -158,22 +158,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "스콜라 프로제니움",
     priority: 3,
     req: { minAge: 6, maxAge: 15, allTags: ["schola"] },
-    text: "드릴-애벗의 강철 지팡이 아래 새벽 4시 기상, 10km 구보, 이단자 색출 토론이 끝없이 반복되었다. 눈물을 보인 급우는 하루 종일 무릎을 꿇었다.",
+    text: "드릴-애벗의 강철 지팡이 아래 새벽 4시 기상, 10킬로미터 구보, 이단자 색출 토론이 끝없이 반복되었다. 눈물을 보인 급우는 하루 종일 무릎을 꿇었다.",
     effect: { stats: { WP: 1, WS: 1 }, faith: 3, wounds: -2 }
   },
   {
     id: "ch_kid_noble_infant",
     badge: "상류 가문 요람",
     priority: 3,
-    req: { minAge: 1, maxAge: 5, or: [{ allTags: ["noble"] }, { anyWorldTags: ["paradise"] }], excludeWorlds: ["krieg"] },
-    text: "향기로운 정원과 전담 유모, 개인 메디케아 의사의 보살핌 속에 자랐다. 하층 구역의 기근과 매연은 창밖 저 아래 먼 세계의 일이었다.",
+    req: { minAge: 1, maxAge: 5, or: [{ allTags: ["noble"] }, { anyWorldTags: ["paradise"] }], excludeWorlds: ["krieg"], excludeHomeWorlds: ["krieg"] },
+    text: "향기로운 정원과 전담 유모, 개인 메디카에 의사의 보살핌 속에 자랐다. 하층 구역의 기근과 매연은 창밖 저 아래 먼 세계의 일이었다.",
     effect: { stats: { Fel: 1, Inf: 1 } }
   },
   {
     id: "ch_kid_noble",
     badge: "상층 첨탑 유년기",
     priority: 3,
-    req: { minAge: 6, maxAge: 13, or: [{ allTags: ["noble"] }, { anyWorldTags: ["paradise"] }], excludeWorlds: ["krieg"] },
+    req: { minAge: 6, maxAge: 13, or: [{ allTags: ["noble"] }, { anyWorldTags: ["paradise"] }], excludeWorlds: ["krieg"], excludeHomeWorlds: ["krieg"] },
     text: "오염 구름 위 수정 온실에서 재배한 진짜 사과를 맛보았다. 가정교사는 하층민의 숫자는 통계일 뿐 인간의 수로 치지 말라고 가르쳤다.",
     effect: { stats: { Inf: 1, Fel: 1 } }
   },
@@ -264,6 +264,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       maxAge: 5,
       anyWorldTags: ["hive", "industrial", "civilised", "agri", "shrine", "terra", "fortress", "forest"],
       excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeTags: ["noble", "schola"]
     },
     text: "어머니는 하루 14시간 교대 근무를 마치고 돌아와 낡은 담요를 덮어 주며 황제께서 지켜 주신다는 자장가를 불러 주었다.",
@@ -693,7 +694,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       anyWorldTags: ["hive", "industrial", "civilised", "agri", "shrine", "terra", "fortress", "forest"],
       excludeWorlds: ["krieg", "mars"]
     },
-    text: "구역 메디케아 진료소에서 표준 예방 접종과 유전자 순수성 검사를 마쳤다. 낡은 주사기 자국이 팔뚝에 또렷이 남았다.",
+    text: "구역 메디카에 진료소에서 표준 예방 접종과 유전자 순수성 검사를 마쳤다. 낡은 주사기 자국이 팔뚝에 또렷이 남았다.",
     effect: { stats: { T: 1 } }
   },
   {
@@ -706,7 +707,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       anyWorldTags: ["hive", "industrial", "civilised", "agri", "shrine", "terra", "fortress", "forest"],
       excludeWorlds: ["krieg", "mars"]
     },
-    text: "행성 방위군(PDF) 퍼레이드가 대로를 행진하는 날, 깃발을 흔들며 리만 러스 전차의 캐터필러 굉음에 눈을 떼지 못했다.",
+    text: "행성 방위군 퍼레이드가 대로를 행진하는 날, 깃발을 흔들며 리만 러스 전차의 캐터필러 굉음에 눈을 떼지 못했다.",
     effect: { stats: { WP: 1, BS: 1 } }
   },
   {

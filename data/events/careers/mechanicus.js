@@ -3,13 +3,27 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
 (window.IMPERIUM_DATA.EVENTS = window.IMPERIUM_DATA.EVENTS || []).push(
   {
     id: "ev_stc_discovery",
-    title: "잊혀진 암흑기 유적 — 고대 STC 파편 발견!",
+    title: "잊힌 암흑기 유적 — 고대 STC 파편 발견!",
     category: "메카니쿠스",
     once: true,
-    req: { minAge: 18, or: [{ anyTags: ["mechanicus"] }, { stats: { Int: 52 } }] },
+    req: {
+      minAge: 18,
+      or: [{ anyTags: ["mechanicus"] }, { stats: { Int: 52 } }],
+      excludeTags: [
+        "heretic",
+        "chaos_aligned",
+        "renegade_marine",
+        "chaos_lord",
+        "daemon_prince",
+        "custodes",
+        "grey_knight",
+        "fabricator_general",
+        "high_lord_terra"
+      ]
+    },
     reqLabel: "기계교 소속 또는 지성 52+",
     weight: 16,
-    text: "폐허가 된 지하 시설 깊은 곳에서 암흑의 기술 시대(Dark Age of Technology)에 제작된 온전한 STC(표준 주형 설계도) 데이터 코어를 발견했다! 화성의 마고스들이 행성 하나를 통째로 바쳐서라도 탐낼 국보급 유물이다.",
+    text: "폐허가 된 지하 시설 깊은 곳에서 기술의 암흑기에 제작된 보존 상태가 양호한 STC 파편 데이터 코어를 발견했다! 화성의 마고스들이 행성 하나를 통째로 바쳐서라도 탐낼 국보급 유물이다.",
     choices: [
       {
         label: "[지성 판정] 오염 여부를 검증해 아뎁투스 메카니쿠스에 정식 헌납한다",
@@ -26,7 +40,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[금단 · 지성 55+] 제국에 보고하지 않고 숨겨진 AI(실리카 아니무스)의 지식을 훔쳐본다",
+        label: "[지성 판정 · 금단 · 지성 55+] 제국에 보고하지 않고 숨겨진 가증스러운 지성, 실리카 아니무스의 지식을 훔쳐본다",
         req: { stats: { Int: 55 } },
         check: { stat: "Int", diff: -10 },
         success: {
@@ -48,7 +62,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_forge_machine_spirit",
     title: "용광로의 분노 — 타이탄 기계령 폭주",
     category: "메카니쿠스",
-    req: { minAge: 15, or: [{ anyWorldTags: ["forge", "mechanicus"] }, { anyTags: ["mechanicus"] }] },
+    req: {
+      minAge: 15,
+      or: [{ anyWorldTags: ["forge", "mechanicus"] }, { anyTags: ["mechanicus"] }],
+      excludeTags: [
+        "heretic",
+        "chaos_aligned",
+        "renegade_marine",
+        "chaos_lord",
+        "daemon_prince",
+        "magos",
+        "fabricator_locum",
+        "fabricator_general",
+        "high_lord_terra",
+        "custodes",
+        "grey_knight",
+        "chapter_master"
+      ]
+    },
     reqLabel: "포지 월드 거주 또는 기계교 소속",
     weight: 16,
     text: "거대한 조립 도크에서 수리 중이던 워하운드 타이탄의 원자로가 굉음을 내며 과열되었다! 기계령이 진노해 성유 파이프가 터지고 사제들이 흩어진다.",
@@ -84,11 +115,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_job_mechanicus_emotion",
-    title: "기계교 의식 — 감정 영역 절제 (Rite of Clear Thought)",
+    title: "기계교 의식 — 감정 영역 절제",
     category: "직업 고유",
     once: true,
-    req: { anyCareers: ["tech_priest", "archmagos"] },
-    reqLabel: "직업: 테크프리스트 / 마고스",
+    req: { anyCareers: ["tech_priest"] },
+    reqLabel: "직업: 테크프리스트",
     weight: 26,
     text: "상급 마고스가 그대의 뇌 피질에서 공포·슬픔·연민 같은 '비효율적 유기체 감정'을 제거하고 논리 연산 칩으로 대체하는 성스러운 수술을 권유한다.",
     choices: [
@@ -125,7 +156,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[강인 판정] 기계교의 뜻에 완벽히 복종해 포화 속으로 한 치의 망설임 없이 전진한다",
         check: { stat: "T", diff: -5 },
         success: {
-          text: "방사능 카빈을 쏘며 포화를 뚫고 유물 코어를 회수했다! 마고스가 그대의 기계적 충성을 치하하며 상급 개조를 내렸다.",
+          text: "라듐 카빈을 쏘며 포화를 뚫고 유물 코어를 회수했다! 마고스가 그대의 기계적 충성을 치하하며 상급 개조를 내렸다.",
           stats: { T: 6, BS: 5, Inf: 7 }
         },
         fail: {
@@ -135,7 +166,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성 판정] 0.2초의 연산 여유를 찾아 포탄 사각지대로 미세하게 경로를 보정한다",
+        label: "[지성 판정] 포격 간격의 연산 틈새를 포착해 엄폐 잔해를 방패 삼아 접근 각도를 미세하게 보정한다",
         check: { stat: "Int", diff: 0 },
         success: {
           text: "명령을 완수하면서도 분대 생존율을 41% 끌어올렸다! 테크프리스트 승급 적성이 기록되었다.",
@@ -158,7 +189,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { anyCareers: ["archmagos", "fabricator_locum", "fabricator_general"] },
     reqLabel: "계급: 마고스 · 아크마고스",
     weight: 28,
-    text: "기계교 최고 의회에서 보수파 파브리케이터들이 그대의 신형 원자로 개량안을 '기술 이단(Tech-Heresy)에 근접한 위험한 혁신'이라며 공격하고 있다.",
+    text: "기계교 최고 의회에서 보수파 파브리케이터들이 그대의 신형 원자로 개량안을 '기술 이단에 근접한 위험한 혁신'이라며 공격하고 있다. 이번 표결에서 밀리면 공들여 준비한 탐색 함대 편성권마저 빼앗길 위기다.",
     choices: [
       {
         label: "[지성 판정] 1만 년 전 STC 주석 구절을 4만 줄 인용해 보수파의 논리를 완벽히 분쇄한다",
@@ -171,6 +202,25 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "교리 논쟁이 교착되어 일부 연구 예산이 동결되고 말았다.",
           stats: { Inf: -6 }
         }
+      },
+      {
+        label: "[권위 판정] 신형 원자로의 출력 수치를 내세워 타이탄 군단과 제국 해군 조달단의 지지를 결집해 보수파를 압박한다",
+        check: { stat: "Inf", diff: 0 },
+        success: {
+          text: "전선 군수 수뇌부의 강력한 지지가 의회 표결을 단번에 뒤집었다! 개량안과 탐색 함대 편성권이 모두 인준되었다.",
+          stats: { Inf: 12, Fel: 5, Int: 4 }
+        },
+        fail: {
+          text: "제국 군부를 화성 의회에 끌어들였다는 비난이 쏟아지며 예산 배정이 대폭 삭감되었다.",
+          stats: { Inf: -6, Fel: -3 }
+        }
+      },
+      {
+        label: "혁신의 여지를 숨기고 고대 화성 설계도의 단순 보수 공법으로 축소 신고해 정통파의 공세를 비껴간다",
+        effect: {
+          text: "화려한 승리는 아니었으나 연구 프로젝트와 지위를 온전히 지켜 냈다. 기계교에서 인내는 가장 정교한 연산이다.",
+          stats: { Int: 4, WP: 4, Inf: 3 }
+        }
       }
     ],
     source: "Codex: Adeptus Mechanicus"
@@ -182,7 +232,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { anyCareers: ["tech_priest"] },
     reqLabel: "직군: 테크프리스트",
     weight: 26,
-    text: "지하 폐허의 고대 발전기를 정비하던 중, 표준 설계도에 없는 고효율 냉각 회로가 스스로 가동하며 이진법으로 대화를 걸어왔다! 정통 교리대로라면 '규격 외 자율 연산(기술 이단)'으로 즉시 파괴해야 하지만, 이대로 분석하면 행성 전체의 에너지난을 단번에 끝낼 수 있다.",
+    text: "지하 폐허의 고대 발전기를 정비하던 중, 표준 설계도에 없는 고효율 냉각 회로가 스스로 가동하며 이진법으로 대화를 걸어왔다! 정통 교리대로라면 규격 외 자율 연산을 수행하는 기술 이단으로 즉시 파괴해야 하지만, 이대로 분석하면 행성 전체의 에너지난을 단번에 끝낼 수 있다.",
     choices: [
       {
         label: "[지성 판정] 옴니시아의 성스러운 축성 기름을 붓고 안전하게 고대 STC 단편으로 공식 등록한다",
@@ -199,7 +249,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "오염된 혐오 지능(Abominable Intelligence)의 위험을 원천 차단하고자 즉시 용광로에 폐기한다",
+        label: "오염된 가증스러운 지성의 위험을 원천 차단하고자 즉시 용광로에 폐기한다",
         effect: {
           text: "화성 정통파 상급자들이 그대의 흔들림 없는 기계 교리 수호를 높이 칭찬했다.",
           stats: { WP: 5, Inf: 5 },
@@ -211,24 +261,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_rank_archmagos_ark",
-    title: "마고스 · 아크마고스 — 아크 메카니쿠스 탐사선의 미지 성계 강행군",
+    title: "마고스 · 아크마고스 — 아크 메카니쿠스 탐사선의 변경 무덤 행성 강행군",
     category: "계급 고유",
     once: true,
     req: { anyCareers: ["archmagos", "fabricator_locum", "fabricator_general"] },
     reqLabel: "계급: 마고스·아크마고스",
     weight: 28,
-    text: "그대가 지휘하는 대륙급 탐사 모함 '아크 메카니쿠스'의 장거리 점술기가 헤일로 스타 변경에서 완전한 암흑기 기술(DAoT) 발신 신호를 포착했다! 단, 신호 근원지는 네크론 툼 월드와 워프 암초 한가운데다.",
+    text: "그대가 지휘하는 대륙급 탐사 모함 아크 메카니쿠스의 장거리 점술기가 헤일로 스타 변경의 죽은 행성에서 기술의 암흑기 발신 신호를 포착했다! 단, 정찰 결과 신호 근원지는 정체불명의 고대 금속 외계인의 지하 무덤과 워프 암초 한가운데다.",
     choices: [
       {
-        label: "[지성 판정] 고대 누스피어 암호 프로토콜을 동원해 네크론 방어망을 교란하고 유물을 원격 회수한다",
+        label: "[지성 판정] 고대 누스피어 암호 프로토콜을 동원해 지하 무덤의 외계 방어 격자를 교란하고 유물을 원격 회수한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "손상되지 않은 고대 STC 공업 설계 단편을 손에 넣었다! 화성 대의회가 그대의 이름으로 새 포지 신전을 헌정했다!",
+          text: "녹색 분해 광선의 포화를 비껴가며 손상되지 않은 고대 STC 공업 설계 단편을 손에 넣었다! 화성 대의회가 그대의 이름으로 새 포지 신전을 헌정했다!",
           stats: { Int: 9, Inf: 12 },
           addTags: ["stc_finder"]
         },
         fail: {
-          text: "네크론 가우스 포화에 함선 외곽이 크게 파손되어 스키타리 2개 대대를 잃고 철수했다.",
+          text: "지하 무덤에서 솟구친 녹색 분해 광선 포화에 함선 외곽이 크게 파손되어 스키타리 2개 대대를 잃고 철수했다.",
           wounds: -20,
           stats: { Int: 4 }
         }
@@ -248,7 +298,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "STC 발견자의 운명 — 화성 탐색대와 이단심문소의 쟁탈전",
     category: "메카니쿠스",
     once: true,
-    req: { allTags: ["stc_finder"], excludeTags: ["heretic"] },
+    req: {
+      allTags: ["stc_finder"],
+      excludeTags: [
+        "heretic",
+        "chaos_aligned",
+        "renegade_marine",
+        "chaos_lord",
+        "daemon_prince",
+        "fabricator_general",
+        "fabricator_locum",
+        "high_lord_terra",
+        "custodes",
+        "grey_knight",
+        "astartes",
+        "inquisitor"
+      ]
+    },
     reqLabel: "이력: 고대 STC 발견자",
     weight: 42,
     text: "그대가 과거 복원해 낸 고대 STC 파편의 가치가 화성 대의회에 보고되자 성계 전체가 들썩이고 있다! 붉은 로브의 익스플로레이터 마고스 사절단이 성대한 연금과 작위를 제시하는 한편, 이단심문소 감찰관도 기술 오염 여부를 확인하겠다며 면담을 요구했다.",
@@ -263,9 +329,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["wealthy"]
         },
         fail: {
-          text: "까다로운 이진법 계약 조항에 밀려 연금의 상당 부분을 화성에 양보했으나, 여전히 평생 부족함 없는 명예를 얻었다.",
-          stats: { Inf: 6 },
-          wounds: -8
+          text: "까다로운 이진법 계약 조항에 말려들어 연금과 공적 지분의 상당 부분을 화성에 빼앗긴 채 불리한 조건으로 서명하고 말았다.",
+          stats: { Inf: -2, Fel: -2 }
         }
       },
       {
@@ -297,7 +362,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "기술 이단 감찰 — 옴니시아의 심판관과 금지된 회로",
     category: "메카니쿠스",
     once: true,
-    req: { allTags: ["tech_heresy"], excludeTags: ["custodes", "grey_knight"] },
+    req: {
+      allTags: ["tech_heresy"],
+      excludeTags: [
+        "custodes",
+        "grey_knight",
+        "heretic",
+        "chaos_aligned",
+        "renegade_marine",
+        "chaos_lord",
+        "daemon_prince",
+        "fabricator_general",
+        "high_lord_terra",
+        "astartes"
+      ]
+    },
     reqLabel: "이력: 기술 이단",
     weight: 36,
     text: "과거 손댔던 금지된 기술 개조의 흔적이 기계교 내부 감사망에 포착되었다! 다연장 플라즈마 서보암을 펼친 심판 마고스가 데이터 슬레이트를 들이밀며 '정통 STC에 없는 불경한 혁신'의 출처를 추궁한다.",
@@ -344,42 +423,42 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s2_skitarii_noosphere",
-    title: "스키타리 — 누스피어(Noosphere) 전술 동기화와 방사능 돌격",
+    title: "스키타리 — 누스피어 전술 동기화와 스크랩코드 역습",
     category: "메카니쿠스",
     once: true,
     req: { anyCareers: ["skitarii", "skitarii_marshal"] },
     reqLabel: "병종: 스키타리 병사",
     weight: 34,
-    text: "치명적인 방사능 안개가 자욱한 고대 포지 폐허 위로 마고스의 누스피어 전술 데이터망이 쏟아져 들어온다. 일반 인간이라면 몇 분 만에 쓰러질 오염 지대 너머에 적 중장갑과 손상된 고대 코지테이터가 동시에 포착되었다.",
+    text: "다크 메카니쿰 이단 함대의 전자전 공격이 포지 방어망을 강타하자, 마고스의 누스피어 전술 데이터망 위로 치명적인 스크랩코드가 쏟아져 들어온다. 동료 스키타리들의 광학 센서가 붉은 오류 문자로 뒤덮이며 적 보병과 오염된 오토마타 무리가 방벽을 기어오르는 순간, 그대의 연산 중추가 명령 체계의 마지막 보루가 되었다.",
     choices: [
       {
-        label: "[사격 판정] 아크 라이플과 라듐 카빈의 조준선을 누스피어 표적망에 동기화해 적 기갑을 정밀 타격한다",
+        label: "[사격 판정] 오염된 외부 링크를 수동 차단하고 아크 라이플과 라듐 카빈으로 적 스크랩코드 송신탑과 기갑을 정밀 타격한다",
         check: { stat: "BS", diff: -5 },
         success: {
-          text: "0.01초 오차 없는 일제 사격이 적 전차의 동력로를 단숨에 관통했다! 마고스가 그대의 전투 연산 효율을 높이 평가했다.",
+          text: "0.01초 오차 없는 일제 사격이 적 전자전 송신탑과 중장갑을 단숨에 관통했다! 마고스가 그대의 전투 연산 효율을 높이 평가했다.",
           stats: { BS: 7, Int: 5, Inf: 5 }
         },
         fail: {
-          text: "전파 교란으로 조준망이 일시 단절되어 파편을 맞았으나, 수동 사격으로 임무를 완수했다.",
+          text: "스크랩코드 교란으로 조준망이 일시 단절되어 파편을 맞았으나, 수동 사격으로 임무를 완수했다.",
           wounds: -18,
           stats: { BS: 3 }
         }
       },
       {
-        label: "[강인 판정] 방사능 폭풍 속을 기계 다리로 돌파해 파손된 성스러운 코지테이터를 회수한다",
+        label: "[강인 판정] 두개골 임플란트의 과열을 기계화된 육신으로 버텨 내며 아군 분대의 누스피어 중계 노드를 수동으로 재접속한다",
         check: { stat: "T", diff: -5 },
         success: {
-          text: "방사선 수치가 경보 한계를 넘었으나 기계화된 육신으로 끝까지 버텨 유물을 온전히 바쳤다!",
+          text: "신경 과부하가 경보 한계를 넘었으나 강철 육신으로 끝까지 버텨 전술망을 정화하고 포지 방벽을 구했다!",
           stats: { T: 7, Int: 5, Inf: 6 }
         },
         fail: {
-          text: "방사능 폭풍에 생체 장기가 손상되어 긴급 교체 수술을 받아야 했으나 코지테이터 코어만은 지켰다.",
+          text: "스크랩코드 역류로 생체 장기가 손상되어 긴급 교체 수술을 받아야 했으나 중계 노드만은 지켜 냈다.",
           wounds: -20,
           stats: { T: 3 }
         }
       },
       {
-        label: "마고스의 이진법 명령에 한 치도 어긋남 없이 방어 진지를 사수하며 순수한 기계 효율을 증명한다",
+        label: "비상 교리대로 지역 오프라인 전투 프로토콜로 전환해 묵묵히 방어 진지를 사수한다",
         effect: {
           text: "두려움도 망설임도 없는 완벽한 규율이었다. 옴니시아의 의지가 강철 대열 속에 구현되었다.",
           stats: { T: 4, BS: 4 },
@@ -391,7 +470,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s4_career_skitarii_override",
-    title: "스키타리 — 마고스의 원격 통제 명령과 전장의 돌발 변수",
+    title: "스키타리 — 궤도 정찰망의 사각과 지뢰밭 돌파",
     category: "직군 심화",
     once: true,
     req: {
@@ -400,10 +479,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "직군: 스키타리",
     weight: 32,
-    text: "궤도 함선에 탑승한 마고스가 노오스피어 원격 명령으로 분대 전체의 시야와 조준을 직접 통제하며 전진을 명했다. 그러나 그대의 광학 센서는 지면 아래 숨겨진 적의 대전차 지뢰밭을 0.2초 먼저 포착했다. 마고스의 계산에는 지뢰 변수가 빠져 있다.",
+    text: "궤도 함선에 탑승한 마고스가 누스피어 궤도 측량 자료만을 근거로 분대에 계곡 정면 돌파를 하달했다. 그러나 대기 중 전자기 폭풍 때문에 궤도 스캔에는 치명적인 사각이 생겼고, 선봉에 선 그대의 오스펙스 센서는 지면 아래 매설된 대전차 지뢰밭과 적 매복 화력을 한발 먼저 포착했다.",
     choices: [
       {
-        label: "[지성 판정] 0.1초 만에 지뢰 좌표 패킷을 최우선 우선순위로 역송신해 마고스의 진격 알고리즘을 갱신시킨다",
+        label: "[지성 판정] 지뢰 좌표 패킷을 최우선 우선순위로 역송신해 궤도 함선의 진격 알고리즘을 즉시 갱신시킨다",
         check: { stat: "Int", diff: -5 },
         success: {
           text: "마고스의 전술 연산이 즉각 우회 기동으로 전환되어 분대 전멸을 면했다! 그대의 전장 연산 가중치가 상향 조정되었다.",
@@ -416,7 +495,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[사격 판정] 원격 통제 틈새에 갈바닉 라이플로 지뢰 신관을 원거리 저격해 통로를 강제로 연다",
+        label: "[사격 판정] 갈바닉 라이플로 매설 지뢰의 신관을 원거리 저격해 연쇄 폭발로 통로를 강제로 연다",
         check: { stat: "BS", diff: -5 },
         success: {
           text: "연쇄 폭발이 지뢰밭과 적 매복조를 함께 날려 버렸다! 마고스가 이진법 칭찬 코드를 송출했다.",
@@ -441,7 +520,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s4_career_techpriest_relic",
-    title: "테크프리스트 — 500년째 잠든 고대 발전기의 기계령 진정 의례",
+    title: "테크프리스트 — 500년째 잠든 방어막 플라즈마 중계탑의 기계령 진정",
     category: "직군 심화",
     once: true,
     req: {
@@ -450,43 +529,43 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "직군: 테크프리스트",
     weight: 32,
-    text: "행성 방어막에 전력을 공급하던 500년 된 플라스마 발전기가 불길한 붉은 경고등을 뿜으며 출력이 곤두박질치고 있다. 보좌 도제들은 기계령이 분노했다며 대피를 외치지만, 발전기가 멈추면 궤도 폭격에 도시 전체가 노출된다.",
+    text: "행성 궤도 방어막에 전력을 배분하는 500년 된 고대 플라즈마 중계 첨탑의 기계령이 기억 오류를 일으키며 아군 수송선마저 적기로 오인해 방공 포탑을 조준하고 있다. 보좌 도제들은 기계령이 저주받았다며 전원 차단을 외치지만, 첨탑을 끄면 궤도 침투선에 방공망이 통째로 뚫린다.",
     choices: [
       {
-        label: "[지성 판정] 고대 정비 성가의 순서에 숨겨진 냉각 밸브 조절 절차를 해독해 기계령을 진정시킨다",
+        label: "[지성 판정] 고대 정비 성가에 암호화된 피아식별 초기화 절차를 해독해 플라즈마 중계탑의 기계령을 진정시킨다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "향로 연기와 성유가 감싸는 가운데 발전기의 웅장한 박동이 되살아났다! 포지 대사제가 그대의 지식을 높이 치하했다.",
+          text: "향로 연기와 성유가 감싸는 가운데 중계 첨탑의 식별 등화가 푸르게 안정되었다! 포지 대사제가 그대의 지식을 높이 치하했다.",
           stats: { Int: 8, Inf: 6, WP: 4 }
         },
         fail: {
-          text: "플라스마 역류에 망토와 의체가 그을렸으나, 비상 출력만큼은 되살려 냈다.",
+          text: "플라즈마 방전 역류에 망토와 의체가 그을렸으나, 아군 오인 사격만은 간신히 멈춰 세웠다.",
           wounds: -15,
           stats: { Int: 4, T: 3 }
         }
       },
       {
-        label: "[강인 판정] 방사능 경보 구역 안으로 직접 들어가 메카덴드라이트로 과열된 제어봉을 수동 고정한다",
+        label: "[강인 판정] 고압 전자기 아크가 쏟아지는 첨탑 외부로 직접 올라가 메카덴드라이트로 식별 수신 안테나를 수동 교정한다",
         check: { stat: "T", diff: -5 },
         success: {
-          text: "고열과 방사능을 의체 내구력으로 버텨 내며 붕괴 직전의 노심을 안정시켰다! 기계교의 진정한 헌신이었다.",
+          text: "고열과 전자기 폭풍을 의체 내구력으로 버텨 내며 500년 된 방어망의 눈을 되살렸다! 기계교의 진정한 헌신이었다.",
           stats: { T: 7, Int: 5, Inf: 6 }
         },
         fail: {
-          text: "방사능 피폭으로 생체 장기 일부를 교체해야 했으나, 방어막은 꺼지지 않았다.",
+          text: "고압 아크 화상으로 생체 장기 일부를 교체해야 했으나, 방어막과 아군 수송선은 무사히 지켜 냈다.",
           wounds: -18,
           stats: { T: 5 }
         }
       },
       {
-        label: "비상 예비 발전기로 전력을 단계 이관한 뒤 안전 규정에 따라 주 노심을 서서히 식힌다",
+        label: "무기 통제 회로만 수동 격리하고 방어막 출력은 비상 예비 중계소로 단계 이관해 유물 파손을 막는다",
         effect: {
-          text: "방어막 출력은 일시적으로 낮아졌으나, 귀중한 고대 유물 발전기의 영구 파손을 막았다.",
+          text: "방공 화력은 일시적으로 낮아졌으나, 귀중한 고대 유물 첨탑의 영구 파손을 막고 수송선단을 구했다.",
           stats: { Int: 5, WP: 4 }
         }
       }
     ],
-    source: "Lexicanum: Tech-Priest / Machine Spirit Lore"
+    source: "Lexicanum: Tech-Priest / Lexicanum: Machine Spirit"
   },
   // =========================================================================
   // 12단계: 아크마고스(2종) · 테크프리스트(1종) · 스키타리(1종) 심화 사건 4종
@@ -498,10 +577,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { anyCareers: ["archmagos", "fabricator_locum", "fabricator_general"] },
     reqLabel: "직군: 마고스 · 아크마고스",
     weight: 30,
-    text: "그대가 지휘하는 익스플로레이터 함대가 성간 성운 깊숙한 곳에서 기술의 암흑기 시절 완전자동 궤도 조선소를 발견했다! 그러나 시설 내부에서는 사악한 '가증스러운 지성(AI)'의 잔류 방어 프로그램이 침입자를 향해 경고 신호를 송출하고 있다.",
+    text: "그대가 지휘하는 익스플로레이터 함대가 성간 성운 깊숙한 곳에서 기술의 암흑기 시절 완전자동 궤도 조선소를 발견했다! 그러나 시설 내부에서는 사악한 '가증스러운 지성'의 잔류 방어 프로그램이 침입자를 향해 경고 신호를 송출하고 있다.",
     choices: [
       {
-        label: "[지성 판정] 옴니시아의 이진법 방화벽으로 금지된 AI 논리 회로를 즉각 소거하고 조선소 설계도만 정화 추출한다",
+        label: "[지성 판정] 옴니시아의 이진법 방화벽으로 금지된 가증스러운 지성의 논리 회로를 즉각 소거하고 조선소 설계도만 정화 추출한다",
         check: { stat: "Int", diff: -5 },
         success: {
           text: "기술 이단의 위험을 완전히 제거한 채 고대 전함 장갑 주조 공정을 손에 넣었다! 화성 대서고가 그대의 이름을 찬양했다.",
@@ -509,7 +588,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["stc_finder"]
         },
         fail: {
-          text: "AI의 역해킹 스크랩코드가 대뇌 임플란트를 강타해 심한 손상을 입었으나 시설 봉인에 성공했다.",
+          text: "가증스러운 지성이 쏘아 보낸 역해킹 스크랩코드가 대뇌 임플란트를 강타해 심한 손상을 입었으나 시설 봉인에 성공했다.",
           wounds: -20,
           stats: { Int: 5, T: 4 }
         }
@@ -540,13 +619,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s12_archmagos_fabricator",
-    title: "아크마고스 — 포지 월드 파브리케이터 제너럴 패권 논쟁",
+    title: "아크마고스 — 포지 월드 파브리케이터-제너럴 패권 논쟁",
     category: "메카니쿠스",
     once: true,
     req: { anyCareers: ["archmagos"] },
     reqLabel: "직군: 마고스 · 아크마고스",
     weight: 30,
-    text: "포지 월드의 노쇠한 파브리케이터 제너럴이 코지테이터 뇌사 상태에 빠지자, 후계 자리를 두고 정통 화성파와 실용 개량파 대현자들이 누스피어(Noosphere) 가상 법정에서 치열한 데이터 논쟁을 벌이고 있다. 그대의 표와 연설이 행성의 향후 300년을 결정한다.",
+    text: "포지 월드의 노쇠한 파브리케이터-제너럴이 코지테이터 뇌사 상태에 빠지자, 후계 자리를 두고 정통 화성파와 실용 개량파 대현자들이 누스피어 가상 법정에서 치열한 데이터 논쟁을 벌이고 있다. 그대의 표와 연설이 행성의 향후 300년을 결정한다.",
     choices: [
       {
         label: "[지성 판정] 10만 줄의 생산 효율 시뮬레이션을 실시간 전개해 두 파벌의 논리를 모두 압도하고 직접 의장직을 거머쥔다",
@@ -556,8 +635,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 9, Inf: 12, WP: 5 }
         },
         fail: {
-          text: "정통파의 교리 반박에 밀려 의장직은 놓쳤으나 핵심 타이탄 군단 정비권을 확보했다.",
-          stats: { Int: 5, Inf: 5 }
+          text: "정통파의 치밀한 교리 반박에 연산 모순이 들통나 의장직은커녕 기존 포지 배정 지분마저 삭감당했다.",
+          stats: { Inf: -4, Int: -2 }
         }
       },
       {
@@ -568,8 +647,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Inf: 10, Fel: 6, Int: 4 }
         },
         fail: {
-          text: "외부 세력을 끌어들였다는 보수파의 비판을 받았으나 실익만큼은 챙겼다.",
-          stats: { Inf: 4, WP: 3 }
+          text: "외부 제국 군부를 화성 의정에 끌어들였다는 보수파의 격렬한 탄핵을 받아 핵심 연구 예산을 몰수당했다.",
+          stats: { Inf: -4, Fel: -3 }
         }
       },
       {
@@ -589,7 +668,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { anyCareers: ["tech_priest"] },
     reqLabel: "직군: 테크프리스트",
     weight: 26,
-    text: "포지 공장의 탄약 적재 서비터 한 기가 작업을 멈추고 쇠파이프로 벽에 서툰 인간의 이름과 가족의 얼굴을 긁고 있다. 뇌엽 절제 시술이 불완전해 과거 인간 시절의 기억이 깨어난 것이다. 교리상 즉각 소각 및 재포맷 대상이다.",
+    text: "포지 공장의 탄약 적재 서비터 한 기가 작업을 멈추고 쇠파이프로 벽에 서툰 인간의 이름과 생전 제 가족이었던 이들의 얼굴을 긁고 있다. 중죄인이었던 이 서비터의 뇌엽 절제 시술이 불완전해, 처형 전 인간 시절의 기억이 깨어난 것이다. 교리상 즉각 소각 및 재포맷 대상이다.",
     choices: [
       {
         label: "[지성 판정] 옴니시아의 교리대로 불량 기억 회로를 정밀 절제해 완벽하고 효율적인 작업 서비터로 복구한다",

@@ -22,7 +22,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "41번째 천년기 말",
     priority: 1,
     req: { minAge: 12, greatRift: false, excludeTags: ["astartes", "custodes", "heretic"] },
-    text: "아스트로노미칸의 등불이 잠시 흔들렸다는 흉흉한 소문이 돌았다. 점성술사들은 '종말의 시간(Time of Ending)'이 다가오고 있다고 속삭였다.",
+    text: "아스트로노미칸의 등불이 잠시 흔들렸다는 흉흉한 소문이 돌았다. 점성술사들은 '종말의 시간'이 다가오고 있다고 속삭였다.",
     effect: { stats: { WP: 1 } }
   },
   {
@@ -94,7 +94,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "파리아 넥서스",
     priority: 3,
     req: { minAge: 10, minYear: 1016, maxYear: 1040, anySegmenta: ["ultima", "tempestus"] },
-    text: "네필림 섹터 방면에서 들려오는 '정적(The Stilling)'의 소문에 상선 선원들이 항로를 우회하며 연신 아퀼라 성호를 그었다.",
+    text: "네필림 섹터 방면에서 들려오는 '정적'의 소문에 상선 선원들이 항로를 우회하며 연신 아퀼라 성호를 그었다.",
     effect: { stats: { WP: 1 } }
   },
   {

@@ -6,14 +6,25 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "밀림의 유령 — 슬라이 마보의 흔적",
     category: "인물",
     once: true,
-    req: { minAge: 16, or: [{ anyWorlds: ["catachan"] }, { anyTags: ["militarum"] }] },
-    reqLabel: "카타찬 출신 또는 아스트라 밀리타룸",
+    req: {
+      minAge: 16,
+      minYear: 960,
+      maxYear: 1030,
+      excludeTags: [
+        "met_marbo",
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "navy_admiral", "sector_lord", "planetary_governor", "cardinal", "canoness", "lord_inquisitor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
+      or: [{ anyWorlds: ["catachan"] }, { anyTags: ["militarum"] }]
+    },
+    reqLabel: "960.M41~030.M42 · 카타찬 또는 아스트라 밀리타룸",
     characters: ["marbo"],
     weight: 12,
     text: "적 요새에 야간 기습을 가하려던 그대의 소대가 도착했을 때, 이미 적 수비대 120명 전원이 소리 없이 도륙되어 있었다. 타오르는 탄약고 앞에서 붉은 두건을 두른 과묵한 사내가 칼날을 닦고 돌아본다. 카타찬의 전설, 슬라이 마보다!",
     choices: [
       {
-        label: "[백병/민첩] 말없이 경례하고 그가 남긴 적 사령관의 암호 문서를 회수한다",
+        label: "[민첩 판정] 말없이 경례하고 그가 남긴 적 사령관의 암호 문서를 회수한다",
         check: { stat: "Ag", diff: 10 },
         success: {
           text: "마보는 짧은 눈짓만 남기고 1초 만에 어둠 속으로 사라졌다. 문서 덕에 그대의 부대는 대승을 거두었다!",
@@ -21,8 +32,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["met_marbo"]
         },
         fail: {
-          text: "그가 설치해 둔 부비트랩을 하마터면 밟을 뻔했으나 겨우 피했다. 등골이 서늘하다.",
-          stats: { Ag: 3 },
+          text: "그가 설치해 둔 부비트랩 인계철선에 발이 걸려 파편에 스쳤으나 겨우 목숨을 건졌다. 등골이 서늘하다.",
+          wounds: -8,
+          stats: { Ag: 2 },
+          addTags: ["met_marbo"]
+        }
+      },
+      {
+        label: "부비트랩이 깔린 요새 내부에 섣불리 들어가지 않고 외곽 경계를 세워 본대 도착을 기다린다",
+        effect: {
+          text: "잠시 뒤 어둠 속에서 적 지휘관의 암호 철가방 하나가 발치로 굴러떨어졌다. 마보의 그림자는 이미 밀림 너머로 사라진 뒤였다.",
+          stats: { WP: 4, BS: 3, Inf: 3 },
           addTags: ["met_marbo"]
         }
       }
@@ -38,7 +58,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 16,
       minYear: 1001,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "imperial_nihilus", "met_guilliman",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["terra", "macragge"] },
         { anyTags: ["indomitus_crusader", "astartes", "inquisitor", "custodes", "officer"] }
@@ -46,7 +69,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "001.M42+ · 테라/마크라그 또는 성전·정예",
     weight: 28,
-    text: "거대한 성도(星圖) 홀로그램 앞에 3미터가 넘는 푸른 황금 갑주의 반신, 제국 섭정 로부테 길리먼이 깊은 피로를 감춘 채 서 있다. 수백 개의 보급 보고서가 허공에 떠도는 가운데, 프라이마크의 날카로운 시선이 그대의 보고서와 눈동자에 머문다. '솔직히 말하라. 이 성계의 민심과 보급선은 진실로 어떠한가?'",
+    text: "거대한 성간 지도 홀로그램 앞에 3미터가 넘는 푸른 황금 갑주의 반신, 제국 섭정 로부테 길리먼이 깊은 피로를 감춘 채 서 있다. 수백 개의 보급 보고서가 허공에 떠도는 가운데, 프라이마크의 날카로운 시선이 그대의 보고서와 눈동자에 머문다. '솔직히 말하라. 이 성계의 민심과 보급선은 진실로 어떠한가?'",
     choices: [
       {
         label: "[지성 판정] 미사여구를 버리고 냉철한 데이터와 병참 결함을 직언한다",
@@ -57,8 +80,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["met_guilliman", "indomitus_crusader"]
         },
         fail: {
-          text: "반신의 위압감에 말문이 막혀 수치를 더듬고 말았으나, 길리먼은 묵묵히 어깨를 두드리며 격려해 주었다.",
-          stats: { WP: 3, Inf: 4 },
+          text: "반신의 위압감에 말문이 막혀 수치를 더듬어 보고의 신빙성을 잃었으나, 길리먼은 묵묵히 어깨를 두드리며 다시 정리해 오라고 격려해 주었다.",
+          stats: { WP: 2, Inf: -2 },
           addTags: ["met_guilliman"]
         }
       },
@@ -82,15 +105,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     characters: ["yarrick"],
     req: {
       minAge: 16,
-      minYear: 940,
+      minYear: 942,
       maxYear: 1005,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "met_yarrick",
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "high_lord_terra", "warmaster",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["armageddon"] },
         { anyTags: ["militarum", "commissar", "lord_commissar", "officer"] }
       ]
     },
-    reqLabel: "940.M41~005.M42 · 아마겟돈 또는 제국군",
+    reqLabel: "942.M41~005.M42 · 아마겟돈 또는 제국군",
     weight: 28,
     text: "잿빛 폭우가 쏟아지는 참호선을 따라 붉은 레이저 의안이 번뜩이고, 육중한 오크 파워 클로를 의수로 단 노장 커미사르 세바스찬 야릭이 걸어온다. 사기가 꺾여 있던 병사들이 그의 모습만 보고도 라스건을 고쳐 쥐며 자세를 바로잡는다. 야릭이 그대 앞에 멈춰 서서 라스건 총열을 살핀다.",
     choices: [
@@ -104,8 +132,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["met_yarrick"]
         },
         fail: {
-          text: "레이저 의안의 위압감에 등줄기가 서늘해졌으나, 야릭은 실수한 탄약 배치만 짧게 지적하고 다음 참호로 향했다.",
-          stats: { WP: 3, BS: 2 },
+          text: "레이저 의안의 위압감에 등줄기가 서늘해져 보고를 더듬자, 야릭은 실수한 탄약 배치를 냉엄히 꾸짖고 다음 참호로 향했다.",
+          stats: { WP: 2, Inf: -2 },
           addTags: ["met_yarrick"]
         }
       },
@@ -129,19 +157,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 16,
       minYear: 919,
-      maxYear: 1018,
-      excludeTags: ["heretic", "chaos_aligned"],
+      maxYear: 1002,
+      excludeTags: [
+        "imperial_nihilus", "met_cain",
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "navy_admiral", "arbites_marshal", "sector_lord", "planetary_governor", "cardinal", "canoness", "inquisitor", "lord_inquisitor", "magos", "fabricator_locum", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["valhalla"] },
         { anyTags: ["militarum", "commissar", "inquisition_agent", "navy", "arbites"] }
       ]
     },
-    reqLabel: "919.M41~018.M42 · 발할라 또는 제국 군·기관",
+    reqLabel: "919.M41~002.M42 · 발할라 또는 제국 군·기관",
     weight: 26,
     text: "쾌활하고 품위 있는 커미사르 카이아파스 케인과 정체 모를 퀴퀴한 냄새를 풍기는 부관 유르겐이 타나 차를 건네며 다가온다. 케인은 '안전한 후방 배수로 점검'을 같이 가자며 웃었지만, 그가 배수로 문을 열자마자 하필이면 진스틸러 컬트 비밀 아지트가 눈앞에 나타났다!",
     choices: [
       {
-        label: "[백병/사격 판정] 케인의 현란한 체인소드 검술과 유르겐의 멜타건에 합류해 소굴을 일망타진한다",
+        label: "[사격 판정] 케인의 현란한 체인소드 검술과 유르겐의 멜타건에 합류해 소굴을 일망타진한다",
         check: { stat: "BS", diff: 5 },
         success: {
           text: "케인이 허허 웃으며 '모든 것이 계획대로였소!'라 외치는 사이, 유르겐의 멜타건이 괴물을 증발시켰다! 그대 역시 '제국의 영웅과 함께 싸운 용사'로 훈장을 받았다!",
@@ -175,16 +208,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     characters: ["gaunt"],
     req: {
       minAge: 15,
-      minYear: 755,
+      minYear: 766,
       maxYear: 795,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "met_gaunt",
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "high_lord_terra", "warmaster",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
-        { anyWorlds: ["tanith"] },
         { anySegmenta: ["pacificus"] },
         { anyTags: ["sabbat_veteran", "tanith_ghost"] }
       ]
     },
-    reqLabel: "755~795.M41 · 사바트 성전·파시피쿠스",
+    reqLabel: "766~795.M41 · 사바트 성전·파시피쿠스",
     weight: 30,
     text: "짙은 야간 안개 속, 위장 망토를 두른 정찰병들이 백파이프를 낮게 연주하는 야영지에 대령-커미사르 이브람 건트가 앉아 있다. 공포로 병사를 다스리는 여느 커미사르와 달리, 그는 부하 한 명 한 명의 이름을 부르며 직접 탄창을 챙겨 주고 있다.",
     choices: [
@@ -192,13 +229,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[교섭 판정] 건트와 야간 정찰 경로를 상의하며 부대원들의 신뢰를 얻는다",
         check: { stat: "Fel", diff: 5 },
         success: {
-          text: "'유령들이여, 영원히 살고 싶은가!' 건트가 그대의 공정함과 담력을 높이 사며 스승 옥타르 총커미사르에게 물려받은 지휘 철학과 체인소드 검술을 전해 주었다.",
+          text: "'유령들이여, 영원히 살고 싶은가!' 건트가 그대의 공정함과 담력을 높이 사며 스승 옥타르 총커미사르에게 배운 지휘 철학과 실전 검술을 전해 주었다.",
           stats: { Fel: 6, WS: 5, WP: 5, Inf: 5 },
           addTags: ["met_gaunt", "sabbat_veteran"]
         },
         fail: {
-          text: "고된 행군에 말이 짧아졌으나 건트는 묵묵히 군용 담배를 건네며 다음 날 전투의 선봉을 맡겼다.",
-          stats: { WP: 4, Ag: 3 },
+          text: "고된 행군과 밤샘 경계에 지쳐 판단이 흐려졌으나, 건트는 묵묵히 군용 담배를 건네며 다음 날 정찰 임무를 다시 맡겼다.",
+          wounds: -6,
+          stats: { WP: 2 },
           addTags: ["met_gaunt"]
         }
       },
@@ -222,7 +260,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 16,
       minYear: 940,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "met_dante",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["baal"] },
         { anyChapters: ["blood_angels"] },
@@ -243,8 +284,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["met_dante"]
         },
         fail: {
-          text: "지쳐 버린 진심이 새어 나왔으나, 단테는 꾸짖지 않고 '피로는 죄가 아니다. 멈추지 않는 것이 의무일 뿐'이라며 조용히 격려했다.",
-          stats: { WP: 4, Inf: 4 },
+          text: "지쳐 버린 절망이 말끝에 새어 나와 잠시 고개를 숙였으나, 단테는 꾸짖지 않고 '피로는 죄가 아니다. 멈추지 않는 것이 의무일 뿐'이라며 조용히 격려했다.",
+          stats: { WP: 2, Inf: -2 },
           addTags: ["met_dante"]
         }
       },
@@ -268,7 +309,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 16,
       minYear: 995,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "imperial_nihilus", "met_cawl",
+        "fabricator_general", "high_lord_terra", "custodes",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["mars", "cadia", "terra"] },
         { anyTags: ["mechanicus", "tech_priest", "magos", "astartes"] }
@@ -276,7 +321,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "995.M41+ · 화성·카디아·테라 또는 기계교·아스타르테스",
     weight: 26,
-    text: "거대한 곤충형 다리와 수십 개의 기계팔, 그리고 여러 개의 목소리가 교차하는 괴짜 대현자 벨리사리우스 카울이 반중력 실험실 한가운데서 그대를 부른다! '오호, 마침 적당한 조수가 왔군! 정통파 꼰대들이 보면 기절할 새 플라즈마 코일 시험을 도와 보겠나?'",
+    text: "거대한 곤충형 다리와 수십 개의 기계팔, 그리고 여러 개의 목소리가 교차하는 괴짜 대현자 벨리사리우스 카울이 반중력 실험실 한가운데서 그대를 부른다! '오호, 마침 적당한 조수가 왔군! 고루한 정통파 원로들이 보면 기절할 새 플라즈마 코일 시험을 도와 보겠나?'",
     choices: [
       {
         label: "[지성 판정] 카울의 대담한 기술 가설에 맞장구치며 연산 코일 조정을 돕는다",
@@ -313,7 +358,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       minYear: 995,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "met_celestine", "custodes",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["ophelia7", "cadia"] },
         { anyTags: ["sororitas", "canoness", "ecclesiarchy", "pious", "saint_spark"] },
@@ -336,10 +384,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["met_celestine", "living_miracle"]
         },
         fail: {
-          text: "눈부신 성광에 무릎을 꿇고 눈물을 흘렸으나, 그 영적인 여운이 영혼을 굳건히 붙들어 주었다.",
-          stats: { WP: 4 },
-          faith: 15,
-          corruption: -12,
+          text: "눈부신 성광에 압도되어 전열 수습의 타이밍을 놓치고 잠시 멈춰 섰으나, 그 장엄한 여운이 영혼의 흔들림을 붙들어 주었다.",
+          stats: { WP: 2, Inf: -2 },
+          faith: 8,
+          corruption: -6,
           addTags: ["met_celestine"]
         }
       },
@@ -366,14 +414,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 18,
       minYear: 240,
-      maxYear: 510,
-      excludeTags: ["heretic", "astartes", "custodes"],
+      maxYear: 495,
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral", "death"],
+      excludeTags: [
+        "met_eisenhorn",
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "lord_inquisitor", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyTags: ["inquisition_agent", "inquisitor", "arbites"] },
         { stats: { Int: 48, WP: 46 } }
       ]
     },
-    reqLabel: "240~510.M41 · 이단심문소·아르비테스 또는 지성48+ 의지46+",
+    reqLabel: "240~495.M41 · 이단심문소·아르비테스 또는 지성48+ 의지46+",
     weight: 26,
     text: "비 내리는 낡은 고서점 골목에서 긴 검은 코트를 걸치고 고대 룬 검을 찬 이단심문관 그레고르 아이젠혼이 조용히 길을 막아선다. 그의 얼굴에는 오랜 세월의 상처와 꺾이지 않는 의지가 서려 있다. '오르도 제노스의 이름으로 묻겠소. 제국을 구하기 위해서라면, 당신은 어디까지 선을 넘을 수 있소?'",
     choices: [
@@ -415,7 +471,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 16,
       minYear: 900,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "met_grimnar", "custodes", "high_lord_terra", "chapter_master",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["fenris", "armageddon"] },
         { anyChapters: ["space_wolves"] },
@@ -424,7 +483,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "900.M41+ · 펜리스·아마겟돈 또는 스페이스 울프·제국군",
     weight: 26,
-    text: "거대한 늑대 모피를 두른 터미네이터 갑주 차림의 전사왕 로간 그림나르가 모닥불 앞에서 호탕하게 웃으며 커다란 뿔잔을 내민다! '어이, 작은 전사! 펜리스의 독주 묠드를 한 모금 마시고 네 무용담을 들려주지 않겠나? 겁먹으면 늑대 사가에 못 오른다!'",
+    text: "거대한 늑대 모피를 두른 터미네이터 갑주 차림의 전사왕 로간 그림나르가 모닥불 앞에서 호탕하게 웃으며 커다란 뿔잔을 내민다! '어이, 전사여! 펜리스의 독주 묠드를 한 모금 마시고 네 무용담을 들려주지 않겠나? 겁먹으면 늑대 사가에 못 오른다!'",
     choices: [
       {
         label: "[강인 판정] 필멸자의 장기를 녹일 듯한 펜리스 독주 묠드를 단숨에 들이켠다",
@@ -461,7 +520,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       minYear: 941,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "met_tushan", "dreadnought", "custodes",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["nocturne", "armageddon"] },
         { anyChapters: ["salamanders"] },
@@ -473,7 +535,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     text: "잿빛 화염과 붉은 눈빛을 지닌 거대한 아스타르테스, 샐러맨더 챕터 마스터 투샨이 무너진 대피소 대들보를 맨손으로 떠받친 채 피난민들을 대피시키고 있다! 그가 그대를 향해 낮고 따뜻한 목소리로 외친다. '이쪽이다! 아직 아이들이 남아 있다. 함께 길을 열자!'",
     choices: [
       {
-        label: "[강인/민첩 판정] 화염이 덮친 대피소 안으로 들어가 남은 부상자들을 끝까지 끌어낸다",
+        label: "[강인 판정] 화염이 덮친 대피소 안으로 들어가 남은 부상자들을 끝까지 끌어낸다",
         check: { stat: "T", diff: 0 },
         success: {
           text: "투샨이 그대의 용기에 감탄하며 직접 녹턴식 화염 내성 망토를 둘러 주었다. '황제의 가장 귀한 보물은 강철이 아니라 바로 이 생명들이다.'",
@@ -508,7 +570,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 18,
       minYear: 999,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "imperial_nihilus", "met_valoris",
+        "captain_general", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["terra"] },
         { anyTags: ["custodes", "inquisitor", "hero_of_imperium", "lions_gate_vet"] }
@@ -516,10 +582,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "999.M41+ · 신성한 테라 또는 쿠스토데스·고위 영웅",
     weight: 26,
-    text: "황궁 영원의 문 앞, 사자 가죽 망토와 고대 파워 도끼 '와처스 액스'를 든 아뎁투스 쿠스토데스 최고 사령관 트라얀 발로리스가 황금빛 침묵 속에 걸음을 멈춘다. 그의 손목에서는 시간을 조작하는 고대 유물 '모멘트 샤클'이 희미하게 맥동한다. '옥좌의 뜻은 논쟁이 아니라 집행이다. 네가 본 테라의 위협을 고하라.'",
+    text: "황궁 사자의 문 외곽 전략 회의실, 사자 가죽 망토와 고대 파워 도끼 '와처스 액스'를 든 아뎁투스 쿠스토데스 최고 사령관 트라얀 발로리스가 황금빛 침묵 속에 걸음을 멈춘다. 그의 손목에서는 시간을 조작하는 고대 유물 '모멘트 샤클'이 희미하게 맥동한다. '옥좌의 뜻은 논쟁이 아니라 집행이다. 네가 본 테라의 위협을 고하라.'",
     choices: [
       {
-        label: "[지성/의지 판정] 황궁 외곽의 수상한 잠입 흔적과 안보 허점을 침착하게 브리핑한다",
+        label: "[지성 판정] 황궁 외곽의 수상한 잠입 흔적과 안보 허점을 침착하게 브리핑한다",
         check: { stat: "Int", diff: -5 },
         success: {
           text: "발로리스가 고개를 끄덕이며 '황금 근위대의 눈이 닿지 못한 틈을 잘 짚었군'이라 치하했다. 테라 하이 로드 회의에서도 통하는 황궁 출입 인장이 하사되었다!",
@@ -527,8 +593,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["met_valoris"]
         },
         fail: {
-          text: "황금 근위대 총사령관의 냉철한 반문에 말문이 막혔으나, 그는 이미 모든 변수를 파악하고 있었다는 듯 미동 없이 돌아섰다.",
-          stats: { WP: 4, Inf: 3 },
+          text: "황금 근위대 총사령관의 냉철한 반문에 말문이 막혀 보고를 끝맺지 못했고, 그는 이미 모든 변수를 파악하고 있었다는 듯 미동 없이 돌아섰다.",
+          stats: { WP: 2, Inf: -2 },
           addTags: ["met_valoris"]
         }
       },
@@ -552,19 +618,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     characters: ["lion"],
     req: {
       minAge: 15,
-      minYear: 1015,
-      excludeTags: ["heretic", "chaos_aligned"],
+      minYear: 1020,
+      excludeTags: [
+        "met_lion",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { allTags: ["imperial_nihilus"] },
         { anyChapters: ["dark_angels"] }
       ]
     },
-    reqLabel: "015.M42+ · 임페리움 니힐루스 또는 다크 엔젤",
+    reqLabel: "020.M42+ · 임페리움 니힐루스 또는 다크 엔젤",
     weight: 30,
     text: "카오스 약탈자들에게 포위되어 끝장나려던 찰나, 잿빛 전장에 기이한 고대 칼리반의 숲 안개가 피어오르더니 황제의 방패와 대검 '피얼티'를 든 백발의 프라이마크, 라이온 엘 존슨이 안개를 뚫고 걸어 나왔다! 단 몇 번의 검격으로 적 카오스 터미네이터들이 쓰러진 뒤, 사자가 그대를 향해 손을 내민다. '일어나라. 암흑 속에서도 인류는 버려지지 않았다.'",
     choices: [
       {
-        label: "[백병/의지 판정] 사자의 곁에서 검을 들고 포위된 성채의 잔적을 함께 소탕한다",
+        label: "[백병 판정] 사자의 곁에서 검을 들고 포위된 성채의 잔적을 함께 소탕한다",
         check: { stat: "WS", diff: 5 },
         success: {
           text: "프라이마크의 방패에서 뿜어져 나온 황금 충격파가 적군을 날려 버렸다! 라이온 엘 존슨이 그대의 용맹을 인정해 '라이온의 보호령' 수호 기사단 증표를 내렸다!",
@@ -598,20 +667,28 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     characters: ["amberley_vail"],
     req: {
       minAge: 18,
-      minYear: 919,
+      minYear: 931,
       maxYear: 1018,
-      excludeTags: ["heretic", "chaos_aligned", "astartes", "custodes"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral", "death"],
+      excludeTags: [
+        "imperial_nihilus", "met_amberley_vail",
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "lord_inquisitor", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyTags: ["inquisition_agent", "inquisitor", "commissar", "militarum", "noble"] },
         { anyWorlds: ["valhalla"] }
       ]
     },
-    reqLabel: "919.M41~018.M42 · 이단심문소·군·귀족 또는 발할라",
+    reqLabel: "931.M41~018.M42 · 이단심문소·군·귀족 또는 발할라",
     weight: 28,
     text: "총독궁 연회장에서 오페라 가수로 위장해 있던 우아한 여인이 샴페인 잔 너머로 은밀히 로제트를 비춘다. 오르도 제노스 이단심문관 앰벌리 베일이다! '어머, 커미사르 케인의 선전 포스터만 믿고 계신 건 아니시겠죠? 저쪽 무역상 일행 중에 타우·진스틸러 밀수책이 섞여 있답니다. 잠시 눈과 귀가 되어 주시겠어요?'",
     choices: [
       {
-        label: "[교섭/지성 판정] 사교계 대화를 유도해 밀수책의 암호 문양과 접선 장소를 파악한다",
+        label: "[교섭 판정] 사교계 대화를 유도해 밀수책의 암호 문양과 접선 장소를 파악한다",
         check: { stat: "Fel", diff: 0 },
         success: {
           text: "완벽한 연기로 용의자들의 입을 열게 만들었다! 앰벌리 베일이 흡족하게 웃으며 이단심문소 비밀 추천서와 고급 아마섹 한 병을 선물했다.",
@@ -646,7 +723,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 15,
       minYear: 998,
       maxYear: 1040,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "met_grimaldus",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["armageddon"] },
         { anyChapters: ["black_templars"] },
@@ -655,7 +735,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "998.M41+ · 아마겟돈·블랙 템플러·제국군",
     weight: 28,
-    text: "잿더미가 된 성벽 위로 해골 투구를 쓴 블랙 템플러 수석 채플린(레클루시아크) 메렉 그리말두스가 올라섰다! 압도적인 적 대군 앞에 얼어붙은 병사들을 향해 그의 복스 확성기가 우레처럼 울려 퍼진다. '나는 헬스리치의 영웅이 아니다! 영웅은 여기 서 있는 너희 모두다! 오늘 이 자리에서 나와 함께 싸우겠는가!'",
+    text: "잿더미가 된 성벽 위로 해골 투구를 쓴 블랙 템플러 수석 채플린 메렉 그리말두스가 올라섰다! 압도적인 적 대군 앞에 얼어붙은 병사들을 향해 그의 복스 확성기가 우레처럼 울려 퍼진다. '나는 헬스리치의 영웅이 아니다! 영웅은 여기 서 있는 너희 모두다! 오늘 이 자리에서 나와 함께 싸우겠는가!'",
     choices: [
       {
         label: "[의지 판정] 그리말두스의 포효에 화답해 크로지우스의 빛을 따라 최선두로 돌격한다",
@@ -696,7 +776,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 18,
       minYear: 939,
       maxYear: 1045,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "met_azrael",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyChapters: ["dark_angels"] },
         { anyTags: ["astartes", "inquisitor", "officer", "hero_of_imperium"] }
@@ -704,10 +787,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "939.M41+ · 다크 엔젤 또는 아스타르테스·고위 지휘관",
     weight: 28,
-    text: "이동 요새 '더 락'의 침묵 어린 전략실. 작은 로브를 두른 정체불명의 '어둠 속의 감시자(Watcher in the Dark)'가 사자의 투구를 받쳐 든 곁에 다크 엔젤 슈프림 그랜드 마스터 아즈라엘이 서 있다. 그의 날카로운 시선이 그대의 작전 보고서를 꿰뚫는다. '이 성계의 진실 가운데, 네가 입 밖으로 꺼내지 말아야 할 것이 무엇인지 알고 있겠지?'",
+    text: "이동 요새 '더 락'의 침묵 어린 전략실. 작은 로브를 두른 정체불명의 '어둠 속의 감시자'가 사자의 투구를 받쳐 든 곁에 다크 엔젤 슈프림 그랜드 마스터 아즈라엘이 서 있다. 그의 날카로운 시선이 그대의 작전 보고서를 꿰뚫는다. '이 성계의 진실 가운데, 네가 입 밖으로 꺼내지 말아야 할 것이 무엇인지 알고 있겠지?'",
     choices: [
       {
-        label: "[지성/의지 판정] 제1군단의 기밀에 대한 철저한 침묵을 서약하고 완벽한 협동 공성안을 제시한다",
+        label: "[지성 판정] 제1군단의 기밀에 대한 철저한 침묵을 서약하고 완벽한 협동 공성안을 제시한다",
         check: { stat: "Int", diff: 0 },
         success: {
           text: "아즈라엘이 비밀의 검 자루에 손을 얹고 묵직하게 고개를 끄덕였다. '침묵과 정밀함이야말로 승리의 열쇠다.' 다크 엔젤 최고 사령관의 신뢰를 얻었다!",
@@ -733,29 +816,34 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_named_creed",
-    title: "카스르 타이로크의 천재 전술가 — 로드 카스텔란 우르사카르 E. 크리드",
+    title: "카디아의 천재 전술가 — 카디아 제8연대 사령관 우르사카르 크리드",
     category: "네임드 조우",
     once: true,
     characters: ["creed"],
     req: {
       minAge: 14,
-      minYear: 985,
+      minYear: 970,
       maxYear: 999,
-      excludeTags: ["heretic", "chaos_aligned"],
+      excludeTags: [
+        "met_creed",
+        "astartes", "grey_knight", "custodes", "dreadnought",
+        "high_lord_terra", "warmaster",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["cadia"] },
         { anyTags: ["militarum", "officer", "commissar", "scion"] }
       ]
     },
-    reqLabel: "985~999.M41 · 카디아 또는 제국 군무",
+    reqLabel: "970~999.M41 · 카디아 또는 제국 군무",
     weight: 34,
-    text: "포연 자욱한 카디아 방어선 지휘소, 굵은 시가를 문 떡 벌어진 어깨의 사령관 우르사카르 E. 크리드가 홀로그램 전술판을 내려다보고 있다. 카오스 기갑 사단이 측면을 돌파하려는 절체절명의 순간, 크리드가 씩 웃으며 덤불 뒤에 숨겨 두었던 초중전차 베인블레이드 중대의 기습 기동을 명한다!",
+    text: "포연 자욱한 카디아 방어선 지휘소, 굵은 시가를 문 떡 벌어진 어깨의 사령관 우르사카르 크리드가 홀로그램 전술판을 내려다보고 있다. 카오스 기갑 사단이 측면을 돌파하려는 절체절명의 순간, 크리드가 씩 웃으며 덤불 뒤에 숨겨 두었던 초중전차 베인블레이드 중대의 기습 기동을 명한다!",
     choices: [
       {
         label: "[지성 판정] 크리드의 변칙 역포위 전술을 즉각 이해하고 인접 연대에 완벽한 합동 사격 좌표를 전달한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "'기막힌 눈썰미군!' 크리드의 기습 기동이 적 선봉대를 순식간에 분쇄했고, 로드 카스텔란이 직접 그대의 어깨를 두드리며 치하했다.",
+          text: "'기막힌 눈썰미군!' 크리드의 기습 기동이 적 선봉대를 순식간에 분쇄했고, 카디아의 명장이 직접 그대의 어깨를 두드리며 치하했다.",
           stats: { Int: 7, BS: 4, Inf: 9 },
           addTags: ["met_creed"]
         },
@@ -783,7 +871,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "로드 카스텔란의 전술 지시에 따라 보급 탄약과 전령선을 빈틈없이 유지한다",
+        label: "크리드 사령관의 전술 지시에 따라 보급 탄약과 전령선을 빈틈없이 유지한다",
         effect: {
           text: "명장의 전술은 현장의 성실한 손발이 있어야 완성된다. 그대의 헌신 속에 카디아의 방벽은 오늘도 버텨 냈다.",
           stats: { WP: 4, Int: 3, Inf: 4 },
@@ -795,13 +883,17 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_named_ghazghkull",
-    title: "와아아!의 예언자 — 가즈쿨 막 우룩 스라카의 광포한 진격",
+    title: "와아아의 예언자 — 가즈쿨 막 우룩 스라카의 광포한 진격",
     category: "네임드 조우",
     once: true,
     characters: ["ghazghkull"],
     req: {
       minAge: 16,
       minYear: 941,
+      excludeTags: [
+        "met_ghazghkull",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       or: [
         { anyWorlds: ["armageddon"] },
         { anyTags: ["militarum", "astartes", "sororitas", "commissar", "officer", "scion"] }
@@ -809,7 +901,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "941.M41+ · 아마겟돈 또는 제국 전투 직군",
     weight: 30,
-    text: "대지가 찢어질 듯한 굉음과 함께 전차만 한 거구의 오크 워보스가 강철 방벽을 맨손으로 뜯어내며 걸어 나온다! '와아아!의 예언자' 가즈쿨 막 우룩 스라카다! 그의 메가 아머가 탄환을 튕겨 내며 거대한 파워 클로가 그대의 방어선을 향해 내리꽂힌다!",
+    text: "대지가 찢어질 듯한 굉음과 함께 전차만 한 거구의 오크 워보스가 강철 방벽을 맨손으로 뜯어내며 걸어 나온다! '와아아의 예언자' 가즈쿨 막 우룩 스라카다! 그의 메가 아머가 탄환을 튕겨 내며 거대한 파워 클로가 그대의 방어선을 향해 내리꽂힌다!",
     choices: [
       {
         label: "[사격 판정] 중화기와 대전차 포대의 집중 사격을 가즈쿨의 발밑에 퍼부어 진격 속도를 늦춘다",
@@ -836,16 +928,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["met_ghazghkull"]
         },
         fail: {
-          text: "철수 도중 오크 놉 무리의 추격에 큰 상처를 입었으나 끝내 포위망을 빠져나왔다.",
+          text: "철수 도중 오크 노브 무리의 추격에 큰 상처를 입었으나 끝내 포위망을 빠져나왔다.",
           wounds: -22,
           stats: { Ag: 3 },
           addTags: ["met_ghazghkull"]
         }
       },
       {
-        label: "폐허 참호 깊숙이 몸을 숨긴 채 거대한 오크 대군주의 그림자가 지나가길 이를 악물고 버틴다",
+        label: "폐허 방벽 뒤에 몸을 낮추고 거대한 오크 대군주의 정면 돌격을 피한 채 우회로를 확보한다",
         effect: {
-          text: "고막이 터질 듯한 '와아아아!' 함성이 지나간 뒤에도 손끝의 떨림이 한동안 멎지 않았다. 살아남은 것 자체가 기적이다.",
+          text: "고막이 터질 듯한 '와아아아!' 함성과 포화가 지나간 뒤 잿더미 속에서 전열을 추슬렀다. 괴물의 정면 진격을 넘기고 살아남아 반격의 기회를 건졌다.",
           stats: { T: 4, WP: 4 },
           wounds: -12,
           addTags: ["met_ghazghkull"]
@@ -863,6 +955,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 16,
       minYear: 990,
+      excludeTags: ["met_abaddon"],
       or: [
         { anyWorlds: ["cadia"] },
         { anySegmenta: ["obscurus"] },
@@ -871,11 +964,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "990.M41+ · 카디아·옵스쿠루스 또는 고위/카오스 직군",
     weight: 30,
-    text: "검은 번개가 하늘을 가르고, 1만 년 증오를 두른 블랙 리전의 총사령관 '약탈자 아바돈'이 터미네이터 친위대 브링어 오브 디스페어를 거느리고 전장에 강림했다! 한 손에는 프라이마크를 벤 호루스의 발톱, 다른 손에는 악마검 드라크니옌이 절규하고 있다.",
+    text: "검은 번개가 하늘을 가르고, 1만 년 증오를 두른 블랙 리전의 총사령관 '약탈자 아바돈'이 터미네이터 친위대 브링어 오브 디스페어를 거느리고 전장에 강림했다! 한 손에는 프라이마크를 벤 호루스의 발톱이 번뜩이고, 다른 손에는 악마검 드라크니옌이 절규하고 있다.",
     choices: [
       {
         label: "[의지 판정] 워마스터의 압도적 살기 앞에서도 무릎 꿇지 않고 황제의 이름을 외치며 지연 방어전을 지휘한다",
-        req: { excludeTags: ["heretic", "chaos_aligned"] },
+        req: { excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "WP", diff: -15 },
         success: {
           text: "아바돈의 차가운 시선 앞에서 끝내 버텨 내며 아군 증원 함대가 궤도 포격을 내릴 시간을 벌었다! 전설적인 불굴의 영웅으로 기록되었다.",
@@ -885,16 +978,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["met_abaddon", "hero_of_imperium"]
         },
         fail: {
-          text: "드라크니옌이 뿜어 낸 워프 파동에 치명상을 입고 쓰러졌으나, 아군 의무병이 기적적으로 끌어내어 목숨을 건졌다.",
+          text: "드라크니옌이 뿜어 낸 끔찍한 파괴 충격파에 치명상을 입고 쓰러졌으나, 아군 구원대가 기적적으로 끌어내어 목숨을 건졌다.",
           wounds: -32,
           stats: { WP: 5 },
-          corruption: 6,
           addTags: ["met_abaddon"]
         }
       },
       {
         label: "[이단 전용] 카오스의 워마스터 앞에 한쪽 무릎을 꿇고 은하를 불태울 블랙 크루세이드에 서약한다",
-        req: { anyTags: ["heretic", "chaos_aligned"] },
+        req: { anyTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] },
         effect: {
           text: "아바돈이 냉혹한 눈빛으로 그대의 쓸모를 저울질한 뒤 블랙 리전의 선봉 표식을 던져 주었다. 암흑의 권위가 크게 치솟았다.",
           stats: { Inf: 12, WS: 6, WP: 5 },
@@ -903,7 +995,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "정면 대결은 필멸자의 자살 행위다. 엄폐물 사이로 퇴로를 열어 핵심 지휘부와 병력을 구출한다",
+        label: "정면 대결은 무모한 소모전이다. 엄폐물 사이로 퇴로를 열어 핵심 지휘부와 병력을 구출한다",
         effect: {
           text: "검은 군단의 학살 속에서 살아남아 워마스터의 진격 방향을 사령부에 보고했다. 살아남은 증언이 천 명의 병사보다 귀하다.",
           stats: { Ag: 5, Int: 5, WP: 4 },
@@ -921,6 +1013,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 16,
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       anyTags: [
         "met_guilliman",
         "met_lion",
@@ -969,7 +1064,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Indomitus Crusade / Lords of the Imperium"
+    source: "Dark Imperium / Codex: Space Marines / Lexicanum: Indomitus Crusade"
   },
   {
     id: "ev_s4_met_commanders_echo",
@@ -978,6 +1073,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 16,
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       anyTags: [
         "met_yarrick",
         "met_creed",
@@ -989,7 +1087,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "전설적 지휘관 · 커미사르 · 영웅 조우 이력",
     weight: 34,
-    text: "포격이 멎지 않는 전초 기지에서 신병들 사이에 은밀한 속삭임이 돌았다. 야릭이나 크리드, 건트, 케인, 마보, 그리말두스 같은 살아 있는 전설과 같은 전장을 밟았던 고참이 바로 여기 있다는 소문이었다. 적의 야습 경보가 울린 순간, 공포에 질린 병사들의 시선이 일제히 그대에게 쏠렸다.",
+    text: "포격이 멎지 않는 전초 기지에서 신병들 사이에 은밀한 속삭임이 돌았다. 제국 전역에 이름을 떨친 전설적 지휘관과 같은 전장을 밟았던 고참이 바로 여기 있다는 소문이었다. 적의 야습 경보가 울린 순간, 공포에 질린 병사들의 시선이 일제히 그대에게 쏠렸다.",
     choices: [
       {
         label: "[의지 판정] 방벽 위로 올라 전설들에게 배운 불굴의 구호를 외치며 병사들의 사기를 끌어올린다",
@@ -1026,7 +1124,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Astra Militarum Heroes / Helsreach / Gaunt's Ghosts"
+    source: "Codex: Astra Militarum / Helsreach / Gaunt's Ghosts"
   },
   {
     id: "ev_s4_met_shadows_echo",
@@ -1035,6 +1133,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 16,
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       anyTags: [
         "met_eisenhorn",
         "met_amberley_vail",
@@ -1055,8 +1156,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         },
         fail: {
           text: "말실수를 노린 유도 심문에 말려 잠시 감시 대상에 올랐으나, 가까스로 혐의를 벗었다.",
-          stats: { Inf: -3, WP: 3 },
-          corruption: 3
+          stats: { Inf: -3, WP: 2 }
         }
       },
       {
@@ -1082,7 +1182,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Eisenhorn / Ciaphas Cain Archives / Belisarius Cawl"
+    source: "Eisenhorn Trilogy / Ciaphas Cain Novels / Belisarius Cawl: The Great Work / Celestine: The Living Saint"
   },
   {
     id: "ev_s4_met_nemesis_echo",
@@ -1091,11 +1191,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 16,
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ],
       anyTags: ["met_abaddon", "met_ghazghkull"]
     },
     reqLabel: "약탈자 아바돈 또는 가즈쿨 조우 생존자",
     weight: 36,
-    text: "은하를 불태우는 최악의 대적자를 두 눈으로 직접 마주하고도 살아남은 자는 제국 전체를 통틀어도 손에 꼽는다. 그러나 그날의 기억은 쉽게 지워지지 않는다. 칠흑 같은 마검의 비명과 성계를 뒤흔들던 와아아의 포효가 오늘 밤에도 그대의 잠자리를 찢어 놓는다.",
+    text: "은하를 불태우는 최악의 대적자를 두 눈으로 직접 마주하고도 살아남은 자는 제국 전체를 통틀어도 손에 꼽는다. 그러나 그날의 기억은 쉽게 지워지지 않는다. 칠흑 같은 마검의 비명이나 성계를 뒤흔들던 와아아의 포효가 오늘 밤에도 그대의 잠자리를 찢어 놓는다.",
     choices: [
       {
         label: "[의지 판정] 공포를 불타는 증오로 벼려 내고 대적자의 전술 습성을 전술 교범으로 정리한다",

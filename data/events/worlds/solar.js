@@ -6,8 +6,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "신성한 테라 — 순례자의 길과 압사 행렬",
     category: "행성 고유",
     once: true,
-    req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes", "astartes", "dreadnought"] },
-    reqLabel: "행성: 신성한 테라",
+    req: {
+      minAge: 14,
+      anyWorlds: ["terra"],
+      excludeTags: [
+        "custodes", "astartes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 신성한 테라 · 비초인 제국인",
     weight: 24,
     text: "황궁 영원의 문을 향해 3세대째 줄을 서 온 수백만 순례자 행렬이 갑자기 무너졌다! 성스러운 관문을 보려는 군중이 서로를 짓밟는 가운데, 아드미니스트라툼 서기관은 위층 발코니에서 사망자 수만 차분히 세고 있다.",
     choices: [
@@ -39,19 +46,26 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_world_mars_archaeotech",
-    title: "화성 적색 사막 — 녹티스 미궁 외곽의 금지된 진동",
+    title: "화성 적색 사막 — 모래 폭풍이 드러낸 기술의 암흑기 주조소",
     category: "행성 고유",
     once: true,
-    req: { minAge: 15, anyWorlds: ["mars"] },
+    req: {
+      minAge: 15,
+      anyWorlds: ["mars"],
+      excludeTags: [
+        "fabricator_general", "high_lord_terra", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 화성",
     weight: 24,
-    text: "화성 최심부 금지 구역 '녹티스 미궁' 외곽에서 원인을 알 수 없는 고대 기계의 맥동이 감지되었다. 상급 테크프리스트는 '호기심은 반역'이라며 봉쇄를 명했지만, 스캐너에는 인류 암흑기 이전의 기이한 파형이 찍혀 있다.",
+    text: "화성 북부 철분 사막을 휩쓴 거대한 녹슨 모래 폭풍이 수천 년 동안 파묻혀 있던 기술의 암흑기 시대의 지하 주조소 입구를 드러냈다. 현장 책임자인 상급 테크프리스트는 오염된 고대 기계령이 깨어날 수 있다며 즉각 봉쇄를 명했지만, 스캐너에는 인류가 잃어버린 고대 합금 제련 회로가 선명히 포착되어 있다.",
     choices: [
       {
-        label: "[테크프리스트/마고스 전용] 고위 기계교 암호와 누스피어 스캐너로 파형의 근원을 정밀 해독한다",
+        label: "[테크프리스트/마고스 전용] 고위 기계교 암호와 누스피어 스캐너로 봉인된 주조소의 설계 데이터를 정밀 추출한다",
         req: { anyTags: ["tech_priest", "magos"] },
         effect: {
-          text: "성스러운 고위 권한으로 접근해 미궁 외곽의 고대 발전기 설계 일부를 안전하게 추출했다! 화성 의회에서 이름이 거론되었다.",
+          text: "성스러운 고위 권한으로 고대 기계령을 진정시키고 잊힌 합금 제련 설계 일부를 안전하게 추출했다! 화성 의회에서 그대의 이름이 거론되었다.",
           stats: { Int: 8, Inf: 10 }
         }
       },
@@ -77,15 +91,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Mars / Mechanicum"
+    source: "Lexicanum: Mars / Codex: Adeptus Mechanicus"
   },
   {
     id: "ev_world_armageddon_ash",
-    title: "아마겟돈 — 잿빛 황무지(Ash Wastes) 포자 소각전",
+    title: "아마겟돈 — 잿빛 황무지 포자 소각전",
     category: "행성 고유",
     once: true,
-    req: { minAge: 14, anyWorlds: ["armageddon"], excludeTags: ["astartes", "custodes", "dreadnought"] },
-    reqLabel: "행성: 아마겟돈",
+    req: {
+      minAge: 14,
+      minYear: 942,
+      anyWorlds: ["armageddon"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 아마겟돈 · 942.M41 이후",
     weight: 24,
     text: "헬스리치 하이브 외곽의 유독성 잿빛 황무지에서 지난 전쟁 때 흩어진 오크 포자가 야생 페럴 오크 무리로 자라났다! 산성 폭풍이 몰려오기 전에 화염방사기로 둥지를 태워야 한다.",
     choices: [
@@ -93,7 +115,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[강인 판정] 방독면을 고쳐 쓰고 화염방사기를 메어 오크 둥지로 진격한다",
         check: { stat: "T", diff: 0 },
         success: {
-          text: "맹렬한 프로메슘 불길로 오크 둥지를 완전히 재로 만들었다! 하이브 방위청이 공로를 인정했다.",
+          text: "맹렬한 프로메튬 불길로 오크 둥지를 완전히 재로 만들었다! 하이브 방위청이 공로를 인정했다.",
           stats: { T: 5, BS: 4, Inf: 5 }
         },
         fail: {
@@ -122,10 +144,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "네크로문다 — 6대 클랜 하우스의 암거래 의뢰",
     category: "행성 고유",
     once: true,
-    req: { minAge: 15, anyWorlds: ["necromunda"], excludeTags: ["astartes", "custodes", "grey_knight", "sororitas", "dreadnought"] },
-    reqLabel: "행성: 네크로문다 (필멸자 · 비초인)",
+    req: {
+      minAge: 15,
+      anyWorlds: ["necromunda"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "sororitas", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 네크로문다 · 비초인 필멸자",
     weight: 24,
-    text: "하이브 프리무스의 거대 세력인 하우스 반 사르(첨단 기술)와 하우스 에셔(독극물·화공)가 동시에 밀수 화물 호위를 제안해 왔다. 네크로문다에서 중립이란 곧 양쪽 모두의 표적이 된다는 뜻이다.",
+    text: "하이브 프리무스의 거대 세력인 첨단 기술 클랜 하우스 반 사르와 독극물 화공에 능한 하우스 에셔가 동시에 밀수 화물 호위를 제안해 왔다. 네크로문다에서 중립이란 곧 양쪽 모두의 표적이 된다는 뜻이다.",
     choices: [
       {
         label: "[이단심문관/아르비테스/커미사르 전용] 밀수 접선지를 통째로 급습해 양쪽 클랜 수장을 심문·압수한다",
@@ -167,8 +197,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_terra_administratum_war",
     title: "신성한 테라 — 아드미니스트라툼 '양피지 내전'",
     category: "행성 고유",
-    req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes", "astartes", "dreadnought"] },
-    reqLabel: "행성: 신성한 테라",
+    req: {
+      minAge: 14,
+      anyWorlds: ["terra"],
+      excludeTags: [
+        "custodes", "astartes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 신성한 테라 · 비초인 제국인",
     weight: 28,
     text: "테라 중앙 서고 412구역에서 '고대 세금 장부 보관파'와 '소각 후 재활용파' 서기관 길드가 오토건과 인장 도장을 들고 무장 충돌을 벌였다! 수백 년 된 양피지 산더미에 불이 붙어 복도가 아수라장이 되었다.",
     choices: [
@@ -211,8 +249,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_terra_water_cartel",
     title: "신성한 테라 — 마른 행성의 물 카르텔 암시장",
     category: "행성 고유",
-    req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes", "astartes", "dreadnought"] },
-    reqLabel: "행성: 신성한 테라",
+    req: {
+      minAge: 14,
+      anyWorlds: ["terra"],
+      excludeTags: [
+        "custodes", "astartes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 신성한 테라 · 비초인 제국인",
     weight: 26,
     text: "바다가 모두 말라 버린 테라에서 정제수 1리터는 금화보다 귀하다. 구역 수압 펌프가 고장 나자 지하 물 카르텔이 '수분 회수 탱크'를 끼고 폭리를 취하며 시민들을 쥐어짜고 있다.",
     choices: [
@@ -254,13 +300,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "신성한 테라 — 아스트로노미칸 성가대의 행렬",
     category: "행성 고유",
     once: true,
-    req: { minAge: 12, anyWorlds: ["terra"] },
+    req: {
+      minAge: 12,
+      anyWorlds: ["terra"],
+      excludeTags: [
+        "high_lord_terra", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 신성한 테라",
     weight: 28,
-    text: "히말라야 산맥의 거대한 아스트로노미칸 성채를 향해, 흰 로브를 걸친 수천 명의 젊은 사이커들이 경건한 찬송을 부르며 걸어간다. 저들은 등불을 지피기 위해 매일 수백 명씩 영혼을 태워 소멸할 운명이다.",
+    text: "히말라지아 산맥 공허의 산에 우뚝 솟은 거대한 아스트로노미칸 성채를 향해, 흰 로브를 걸친 수천 명의 젊은 사이커들이 경건한 찬송을 부르며 걸어간다. 칠흑 같은 워프의 폭풍을 뚫고 인류의 항로를 비추는 황제의 등불을 지피기 위해, 저들은 매일 수백 명씩 영혼을 불태워 소멸할 운명이다.",
     choices: [
       {
-        label: "[사이커 전용] 그들의 영혼 공명에 정신을 맞추며 황제의 등불을 깊이 느낀다",
+        label: "[사이커 전용 · 의지 판정] 그들의 영혼 공명에 정신을 맞추며 황제의 등불을 깊이 느낀다",
         req: { allTags: ["psyker"] },
         check: { stat: "WP", diff: 5 },
         success: {
@@ -291,7 +344,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_terra_high_lords",
     title: "신성한 테라 — 테라의 하이 로드 행차와 도로 정화",
     category: "행성 고유",
-    req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes"] },
+    req: {
+      minAge: 14,
+      anyWorlds: ["terra"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 신성한 테라",
     weight: 24,
     text: "테라의 하이 로드 중 한 명이 황금 반중력 가마를 타고 대로로 행차한다! 선두의 아르비테스와 군악대가 '길바닥에 3초 안에 엎드리지 않는 자는 즉결 처형'이라며 몽둥이를 휘두르고 있다.",
@@ -316,19 +376,26 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_terra_deep_strata",
-    title: "신성한 테라 — 최하층 고대 지층의 3만 년 전 유물",
+    title: "신성한 테라 — 최하층 고대 지층의 1만 년 전 유물",
     category: "행성 고유",
     once: true,
-    req: { minAge: 16, anyWorlds: ["terra"] },
+    req: {
+      minAge: 16,
+      anyWorlds: ["terra"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 신성한 테라",
     weight: 26,
-    text: "테라 지표면 아래 12km, 고대 통합 전쟁(Unification Wars) 이전의 시멘트 유적이 하수도 공사 중 드러났다. 벽면에는 황제께서 인류를 통합하기 전의 낯선 고대 문양과 썬더 워리어의 부러진 갑주 조각이 박혀 있다!",
+    text: "테라 지표면 아래 12킬로미터, 고대 통합 전쟁 시대의 시멘트 유적이 하수도 공사 중 드러났다. 벽면에는 황제께서 인류를 통합하던 시기의 낯선 고대 문양과 썬더 워리어의 부러진 갑주 조각이 박혀 있다!",
     choices: [
       {
         label: "[지성 판정] 역사적 가치를 알아보고 비밀리에 탁본과 성분을 기록한다",
         check: { stat: "Int", diff: -5 },
         success: {
-          text: "일반 시민은 존재조차 몰라야 할 3만 년 전 인류의 진실을 엿보았다! 깊은 통찰을 얻었다.",
+          text: "일반 시민은 존재조차 몰라야 할 1만 년 전 인류의 진실을 엿보았다! 깊은 통찰을 얻었다.",
           stats: { Int: 8, WP: 4 }
         },
         fail: {
@@ -351,8 +418,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_terra_pilgrim_scam",
     title: "신성한 테라 — 순례자 숙소와 가짜 황궁 통행증",
     category: "부조리",
-    req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes", "astartes", "inquisitor", "noble"] },
-    reqLabel: "행성: 신성한 테라 (일반인)",
+    req: {
+      minAge: 14,
+      anyWorlds: ["terra"],
+      excludeTags: [
+        "custodes", "astartes", "grey_knight", "dreadnought",
+        "inquisitor", "lord_inquisitor", "noble", "high_lord_terra",
+        "warmaster", "sector_lord", "planetary_governor", "cardinal", "canoness",
+        "lord_commissar", "commissar_general", "magos", "fabricator_locum", "fabricator_general",
+        "navy_admiral", "arbites_marshal", "departmento_head", "rt_lord_captain",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 신성한 테라 · 일반 시민",
     weight: 24,
     text: "수십 광년 너머에서 전 재산을 팔아 온 순례자들에게 악덕 브로커가 '황궁 직행 급행 통행증'을 팔아넘기고 있다. 자세히 보니 300년 전 폐기된 하수도 출입증에 금칠만 덧입힌 사기다.",
     choices: [
@@ -381,19 +459,40 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_mars_titan_march",
-    title: "화성 — 신의 기계(God-Engine) 타이탄 군단 출격 사열",
+    title: "화성 — 신의 기계 타이탄 군단 성전 출격 사열",
     category: "행성 고유",
-    req: { minAge: 12, anyWorlds: ["mars"] },
+    req: {
+      minAge: 12,
+      anyWorlds: ["mars"],
+      excludeTags: [
+        "dreadnought", "high_lord_terra", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 화성",
     weight: 26,
-    text: "대지가 지진처럼 울린다! 높이 55미터의 임페라토르급 타이탄이 붉은 먼지를 가르며 대성당 같은 등짝을 드러냈다. 귀청을 찢는 워혼(Warhorn) 경적 소리에 모든 기계교도와 노동자가 무릎을 꿇는다.",
+    text: "철의 고리 우주공항 진입로가 지진처럼 울린다! 화성 수호 군단 레기오 이그나툼 소속 워로드급 타이탄 세 기가 진홍과 황금 장갑을 번뜩이며 성전 수송선으로 행진한다. 귀청을 찢는 워혼 경적 소리가 붉은 대기를 가르자, 연도의 모든 기계교도와 노동자가 일제히 무릎을 꿇는다.",
     choices: [
       {
-        label: "[기계교 전용] 이진법 찬가를 합창하며 타이탄 기동 데이터 스트림에 경건히 접속한다",
+        label: "[기계교 전용] 이진법 찬가를 합창하며 타이탄 중대의 출격 데이터 스트림에 경건히 접속한다",
         req: { anyTags: ["mechanicus"] },
         effect: {
           text: "신의 기계가 뿜어내는 장엄한 기계령의 울림이 회로를 적셨다! 기술적 영감이 폭발한다.",
           stats: { Int: 6, WP: 5, Inf: 4 }
+        }
+      },
+      {
+        label: "[의지 판정] 뼈까지 울리는 워혼의 굉음 속에서 끝까지 고개를 들고 신의 기계 행렬을 눈에 새긴다",
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "압도적인 위압감을 이겨 내고 강철 신들의 장엄한 위용을 똑바로 마주했다! 어떤 적 앞에서도 물러서지 않을 담력이 자리 잡았다.",
+          stats: { WP: 6, T: 3 },
+          faith: 8
+        },
+        fail: {
+          text: "귀청을 찢는 초저주파 진동에 고막이 욱신거리고 코피를 쏟으며 주저앉았다.",
+          wounds: -10,
+          stats: { WP: 2 }
         }
       },
       {
@@ -405,14 +504,25 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Collegia Titanica / Mars"
+    source: "Lexicanum: Collegia Titanica / Legio Ignatum"
   },
   {
     id: "ev_necromunda_spyrer",
-    title: "네크로문다 — 상층 스파이어러(Spyrers) 귀족 사냥단 습격!",
+    title: "네크로문다 — 상층 스파이어러 귀족 사냥단 습격!",
     category: "행성 고유",
-    req: { minAge: 14, anyWorlds: ["necromunda"], excludeTags: ["noble", "astartes", "custodes", "inquisitor"] },
-    reqLabel: "행성: 네크로문다 (하층 거주자)",
+    req: {
+      minAge: 14,
+      anyWorlds: ["necromunda"],
+      excludeTags: [
+        "noble", "astartes", "custodes", "grey_knight", "dreadnought",
+        "inquisitor", "lord_inquisitor", "high_lord_terra", "warmaster", "sector_lord",
+        "planetary_governor", "magos", "fabricator_locum", "fabricator_general",
+        "canoness", "cardinal", "lord_commissar", "commissar_general",
+        "navy_admiral", "arbites_marshal", "departmento_head", "rt_lord_captain",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 네크로문다 · 하층 거주자",
     weight: 26,
     text: "어두운 언더하이브 복도에 번쩍이는 첨단 외계·고대 슈트를 입은 괴한들이 나타났다! 상층 첨탑 귀족 자제들이 성인식 겸 재미 삼아 하층민을 사냥하러 내려오는 '스파이어러 사냥단'이다!",
     choices: [
@@ -429,7 +539,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[백병/사격 판정] 어차피 죽을 바엔 부비트랩을 터뜨려 귀족 놈 하나라도 끌어내린다",
+        label: "[백병 판정] 어차피 죽을 바엔 부비트랩을 터뜨려 귀족 놈 하나라도 끌어내린다",
         check: { stat: "WS", diff: -10 },
         success: {
           text: "고압 화학 탱크를 터뜨려 스파이어러 한 명을 쓰러뜨렸다! 언더하이브 전역에 전설로 회자되었다!",
@@ -448,7 +558,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "네크로문다 — 골리앗과 에셔의 하층 돔 항쟁",
     category: "행성 고유",
     once: true,
-    req: { minAge: 14, anyWorlds: ["necromunda"], excludeTags: ["astartes", "custodes", "grey_knight", "inquisitor"] },
+    req: {
+      minAge: 14,
+      anyWorlds: ["necromunda"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "inquisitor", "lord_inquisitor", "high_lord_terra", "warmaster",
+        "sector_lord", "planetary_governor", "fabricator_general", "cardinal", "canoness", "navy_admiral",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 네크로문다",
     weight: 34,
     text: "하이브 프리무스 하층 공업 돔의 정제수 파이프를 두고, 근육 강화 약물에 취한 하우스 골리앗 투사들과 독날 검을 든 하우스 에셔 암살자들이 전면 총격전을 벌이고 있다! 양쪽 모두 중립 길드의 물자와 통로를 탐내며 압박을 가한다.",
@@ -491,13 +610,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s6_world_mars_noctis",
-    title: "화성 녹티스 미궁 — 봉인된 붉은 모래 지하의 금지 신호",
+    title: "화성 녹티스 미궁 — 봉인된 협곡 지하의 금지된 신호",
     category: "행성 고유 심화",
     once: true,
-    req: { minAge: 16, anyWorlds: ["mars"] },
-    reqLabel: "거주 행성: 화성 (Mars)",
+    req: {
+      minAge: 16,
+      anyWorlds: ["mars"],
+      excludeTags: [
+        "fabricator_general", "high_lord_terra", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "거주 행성: 화성",
     weight: 32,
-    text: "화성 적도 부근의 거대한 협곡 지대 '녹티스 미궁(Noctis Labyrinthus)'은 고대부터 황제와 화성 대현자들만이 출입을 통제하는 금단의 땅이다. 오늘 밤 측량 임무 도중, 봉인된 지하 수 킬로미터 아래에서 설명할 수 없는 황금빛 전자기 맥동과 오래된 기계의 꿈틀거림이 계측기에 포착되었다.",
+    text: "화성 적도 부근의 거대한 협곡 지대 녹티스 미궁은 고대부터 황제와 화성 대현자들만이 출입을 통제하는 금단의 땅이다. 오늘 밤 외곽 감시탑의 지진파 측정 임무 도중, 기술의 암흑기 이전부터 봉인된 지하 수 킬로미터 아래에서 설명할 수 없는 황금빛 전자기 맥동과 오래된 기계의 꿈틀거림이 계측기에 포착되었다.",
     choices: [
       {
         label: "[지성 판정] 신호의 출처를 직접 파헤치지 않고 파형만 정밀 암호화해 화성 최상위 아크마고스 회의에 극비 보고한다",
@@ -540,8 +666,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "화성 신기계 군단 — 임페라토르 타이탄의 첫 걸음과 성유 의례",
     category: "행성 고유 심화",
     once: true,
-    req: { minAge: 16, anyWorlds: ["mars"] },
-    reqLabel: "거주 행성: 화성 (Mars)",
+    req: {
+      minAge: 16,
+      anyWorlds: ["mars"],
+      excludeTags: [
+        "dreadnought", "high_lord_terra", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "거주 행성: 화성",
     weight: 30,
     text: "수백 년의 건조 끝에 마침내 성당 하나를 통째로 어깨에 얹은 초거대 전투 병기 '임페라토르급 타이탄'이 올림푸스 몬스 인근 조립 독에서 첫 걸음을 내딛는다. 대지가 지진처럼 흔들리고 전쟁 나팔이 붉은 하늘을 찢는 순간, 타이탄 왼쪽 다리 관절의 보조 냉각 밸브에서 고압 증기가 새어 나오기 시작했다.",
     choices: [
@@ -560,15 +693,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성 판정] 지상 관제실에서 노오스피어 경고 회로를 우회해 압력을 보조 탱크로 즉시 분산시킨다",
+        label: "[지성 판정] 지상 관제실에서 누스피어 경고 회로를 우회해 압력을 보조 탱크로 즉시 분산시킨다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "단 한 초의 지연도 없이 출격 의례가 완벽히 진행되었다! 타이탄 군단(콜레기아 타이타니카)의 찬사를 받았다.",
+          text: "단 한 초의 지연도 없이 출격 의례가 완벽히 진행되었다! 타이탄 군단 콜레기아 타이타니카의 찬사를 받았다.",
           stats: { Int: 7, Inf: 6 }
         },
         fail: {
-          text: "일부 센서가 오작동해 출격이 지연되었으나, 타이탄 본체의 손상은 막아 냈다.",
-          stats: { Int: 4 }
+          text: "일부 센서가 오작동해 출격이 지연되며 상급 기술 사제의 엄중한 질책을 받았으나, 타이탄 본체의 손상은 막아 냈다.",
+          stats: { Int: 2, Inf: -3 }
         }
       },
       {
@@ -580,6 +713,6 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Lexicanum: Collegia Titanica / Mars Lore"
+    source: "Lexicanum: Collegia Titanica / Codex: Adeptus Mechanicus"
   }
 );

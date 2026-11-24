@@ -6,18 +6,42 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "펜리스 빙원의 피의 사냥",
     category: "행성",
     once: true,
-    req: { minAge: 12, maxAge: 22, anyWorlds: ["fenris"], anyHomeWorlds: ["fenris"], excludeTags: ["astartes", "custodes", "dreadnought"] },
+    req: {
+      minAge: 12,
+      maxAge: 22,
+      anyWorlds: ["fenris"],
+      anyHomeWorlds: ["fenris"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 펜리스 · 나이 12~22세",
     weight: 26,
-    text: "얼음 대륙이 갈라지는 해빙기, 거대한 펜리스 늑대 무리가 부족의 야영지를 덮쳤다. 하늘 멀리서 늑대 사제(Wolf Priest)가 전사들의 용맹을 내려다보고 있다는 소문이 돈다.",
+    text: "얼음 대륙이 갈라지는 해빙기, 거대한 펜리스 늑대 무리가 부족의 야영지를 덮쳤다. 하늘 멀리서 스페이스 울프의 울프 프리스트가 전사들의 용맹을 내려다보고 있다는 소문이 돈다.",
     choices: [
       {
-        label: "[백병 판정] 도끼를 치켜들고 알파 늑대와 일대일로 맞붙는다",
+        label: "[백병 판정 · 남성 후보생 전용] 울프 프리스트의 시선 아래 도끼를 치켜들고 알파 늑대와 일대일로 맞붙는다",
+        req: { gender: "male", maxAge: 17 },
         check: { stat: "WS", diff: 0 },
         success: {
-          text: "거대한 빙원 늑대를 맨손과 도끼로 제압했다! 스페이스 울프 늑대 사제가 고개를 끄덕이며 그대의 이름을 기억했다.",
+          text: "거대한 빙원 늑대를 맨손과 도끼로 제압했다! 스페이스 울프의 울프 프리스트가 고개를 끄덕이며 그대를 아스타르테스 후보생으로 기억했다.",
           stats: { WS: 8, T: 6, WP: 5, Inf: 6 },
           addTags: ["geneseed_compatible", "fenris_blood"]
+        },
+        fail: {
+          text: "어깨를 깊게 물렸지만 늑대를 쫓아내는 데 성공했다. 펜리스인에게 상처는 노래의 재료일 뿐이다.",
+          wounds: -24,
+          stats: { WS: 3, T: 4 }
+        }
+      },
+      {
+        label: "[백병 판정] 부족의 명예를 걸고 도끼를 휘둘러 알파 늑대와 정면으로 맞선다",
+        check: { stat: "WS", diff: 0 },
+        success: {
+          text: "거대한 빙원 늑대를 쓰러뜨리고 야영지를 지켜 냈다! 부족 전사들이 뿔피리를 불며 그대를 펜리스의 맹수로 찬양했다.",
+          stats: { WS: 7, T: 6, WP: 5, Inf: 6 },
+          addTags: ["fenris_blood"]
         },
         fail: {
           text: "어깨를 깊게 물렸지만 늑대를 쫓아내는 데 성공했다. 펜리스인에게 상처는 노래의 재료일 뿐이다.",
@@ -45,7 +69,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "크리그 지하 훈련소의 속죄 서약",
     category: "행성",
     once: true,
-    req: { minAge: 13, maxAge: 19, anyWorlds: ["krieg"], anyHomeWorlds: ["krieg"], excludeTags: ["astartes", "custodes", "dreadnought"] },
+    req: {
+      minAge: 13,
+      maxAge: 19,
+      anyWorlds: ["krieg"],
+      anyHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 크리그 · 나이 13~19세",
     weight: 28,
     text: "방독면 너머로 차가운 교관의 음성이 울린다. '우리 조상은 황제를 배신했다. 오직 전선에서의 헌신만이 죄를 씻는다.' 실탄이 빗발치는 방사능 폐허 생존 훈련이 시작된다.",
@@ -54,7 +87,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "[의지 판정] 한 치의 주저도 없이 포격 지대를 향해 전진한다",
         check: { stat: "WP", diff: 5 },
         success: {
-          text: "우수한 성적으로 훈련을 마치고 데스 코어 정예 척탄병 후보로 지목되었다.",
+          text: "우수한 성적으로 훈련을 마치고 데스 코어 오브 크리그 정예 척탄병 후보로 지목되었다.",
           stats: { WP: 7, T: 5, BS: 5, WS: 4 },
           faith: 12,
           addTags: ["krieg_grenadier"]
@@ -82,16 +115,26 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_world_cadia_kasrkin",
-    title: "카디아 — 카스르킨(Kasrkin) 정예 선발 사열",
+    title: "카디아 — 카스르킨 정예 선발 사열",
     category: "행성 고유",
     once: true,
-    req: { minAge: 14, maxAge: 26, anyWorlds: ["cadia"], anyHomeWorlds: ["cadia"], excludeTags: ["astartes", "custodes", "dreadnought"] },
-    reqLabel: "행성: 카디아 · 14~26세",
+    req: {
+      minAge: 14,
+      maxAge: 26,
+      maxYear: 999,
+      anyWorlds: ["cadia"],
+      anyHomeWorlds: ["cadia"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 카디아 · 14~26세 · 999.M41 이전",
     weight: 26,
-    text: "카디아 유년 군사단(Whiteshields) 가운데 가장 냉철하고 정밀한 사격수를 뽑아 정예 척탄병 '카스르킨'으로 훈련시키는 실탄 사열이 열렸다. 표적 대신 실제로 움직이는 포획 돌연변이들이 투입된다.",
+    text: "카디아 유년 군사단 화이트실드 가운데 가장 냉철하고 정밀한 사격수를 뽑아 정예 척탄병 카스르킨으로 훈련시키는 실탄 사열이 열렸다. 표적 대신 실제로 움직이는 포획 돌연변이들이 투입된다.",
     choices: [
       {
-        label: "[사격 판정] 헬건(핫샷 라스건)을 받아 들고 한 발의 낭비 없이 표적을 제압한다",
+        label: "[사격 판정] 핫샷 라스건을 받아 들고 한 발의 낭비 없이 표적을 제압한다",
         check: { stat: "BS", diff: -5 },
         success: {
           text: "보랏빛 눈동자가 흔들림 없이 표적을 꿰뚫었다! 카디아 사령부가 그대에게 정예 표창을 수여했다.",
@@ -121,25 +164,47 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_world_vostroya_firstborn",
-    title: "보스트로야 — 장자(Firstborn) 가문의 보물 승계",
+    title: "보스트로야 — 보스트로얀 퍼스트본 가문의 가보 승계",
     category: "행성 고유",
     once: true,
-    req: { minAge: 15, anyWorlds: ["vostroya"], anyHomeWorlds: ["vostroya"], excludeTags: ["astartes", "custodes", "dreadnought"] },
-    reqLabel: "행성: 보스트로야",
+    req: {
+      minAge: 15,
+      maxAge: 35,
+      anyWorlds: ["vostroya"],
+      anyHomeWorlds: ["vostroya"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 보스트로야 · 15~35세",
     weight: 24,
-    text: "호루스 헤러시 시절의 빚을 갚기 위해 모든 가문의 장자를 군에 바치는 보스트로야의 오랜 서약. 가문의 어른이 대대로 물려 내려온 황금 장식 수공예 라스건과 플라즈마 코일을 그대 앞에 내놓는다.",
+    text: "호루스 헤러시 시절의 빚을 갚기 위해 모든 가문의 장자를 보스트로얀 퍼스트본 연대에 바치는 보스트로야의 오랜 서약. 가문의 어른이 대대로 물려 내려온 황금 장식 수공예 라스건과 플라즈마 코일을 그대 앞에 내놓는다.",
     choices: [
       {
         label: "[사격 판정] 장인 정신이 깃든 가보 총기의 사격 의식을 완벽히 치른다",
         check: { stat: "BS", diff: 5 },
         success: {
-          text: "과열 없이 정교한 명중률을 보여 가문의 명예와 보스트로얀 연대의 자긍심을 높였다!",
+          text: "과열 없이 정교한 명중률을 보여 가문의 명예와 보스트로얀 퍼스트본 연대의 자긍심을 높였다!",
           stats: { BS: 6, WP: 5, Inf: 5 }
         },
         fail: {
           text: "오래된 플라즈마 코일이 과열되어 손등에 화상을 입었지만 끝내 총을 놓지 않았다.",
           wounds: -18,
           stats: { WP: 4 }
+        }
+      },
+      {
+        label: "[지성 판정] 사격 전에 낡은 황동 총열과 플라즈마 코일을 분해해 정밀 정비한 뒤 맹세를 올린다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "수백 년 묵은 미세 균열을 미리 바로잡아 가보 무기를 새것처럼 되살렸다! 가문의 대장장이와 원로들이 그대의 솜씨에 깊이 감탄했다.",
+          stats: { Int: 6, BS: 4, Inf: 5 }
+        },
+        fail: {
+          text: "정밀 부품을 조립하다 냉각 핀이 부러져 가문의 장로에게 엄한 질책을 받았다.",
+          stats: { Int: 2, Inf: -3 }
         }
       }
     ],
@@ -150,7 +215,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "오펠리아 VII — 추기경 대성당의 이단 고발 함",
     category: "행성 고유",
     once: true,
-    req: { minAge: 14, anyWorlds: ["ophelia7"], excludeTags: ["astartes", "custodes", "grey_knight", "inquisitor", "canoness", "lord_commissar"] },
+    req: {
+      minAge: 14,
+      anyWorlds: ["ophelia7"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "inquisitor", "lord_inquisitor", "canoness", "cardinal",
+        "lord_commissar", "commissar_general", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 오펠리아 VII",
     weight: 24,
     text: "오펠리아 VII의 모든 광장에는 이웃의 불경한 언행을 익명으로 적어 넣는 '신앙의 고발 함'이 놓여 있다. 오늘 아침 그대의 이름이 적힌 쪽지가 익명으로 접수되었다는 소환장이 날아왔다!",
@@ -199,13 +273,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_cadia_pylon_hum",
     title: "카디아 — 고대 블랙스톤 파일런의 기이한 정적",
     category: "행성 고유",
-    req: { minAge: 14, anyWorlds: ["cadia"] },
-    reqLabel: "행성: 카디아",
+    req: {
+      minAge: 14,
+      maxYear: 999,
+      anyWorlds: ["cadia"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 카디아 · 999.M41 이전",
     weight: 26,
-    text: "카디아 평원 한복판에 솟은 정체불명의 고대 검은 석주(파일런) 근처를 순찰하던 중, 갑자기 세상의 모든 소리가 기묘하게 먹먹해지고 가슴속에서 알 수 없는 공허감이 차오른다. 공포의 눈을 막아 주는 수수께끼의 유물이다.",
+    text: "카디아 평원 한복판에 솟은 정체불명의 고대 블랙스톤 파일런 근처를 순찰하던 중, 갑자기 세상의 모든 소리가 기묘하게 먹먹해지고 가슴속에서 알 수 없는 공허감이 차오른다. 공포의 눈을 막아 주는 수수께끼의 유물이다.",
     choices: [
       {
-        label: "[사이커 전용] 워프 차단 장막의 극심한 두통을 의지로 견뎌 낸다",
+        label: "[사이커 전용 · 의지 판정] 워프 차단 장막의 극심한 두통을 의지로 견뎌 낸다",
         req: { allTags: ["psyker"] },
         check: { stat: "WP", diff: -10 },
         success: {
@@ -233,7 +315,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       {
         label: "기분 나쁜 고대 물건이다. 발걸음을 재촉해 순찰을 마친다",
         effect: {
-          text: "카디아 병사에게 중요한 것은 석주의 정체가 아니라 적을 향해 쏠 라스건뿐이다.",
+          text: "공포의 눈 코앞에서 중요한 것은 고대 석주의 정체가 아니라 눈앞의 임무와 경계 태세뿐이다.",
           stats: { WP: 3 }
         }
       }
@@ -244,10 +326,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_krieg_surface_march",
     title: "크리그 — 지상 방사능 황무지의 실전 행군",
     category: "행성 고유",
-    req: { minAge: 14, anyWorlds: ["krieg"] },
+    req: {
+      minAge: 14,
+      anyWorlds: ["krieg"],
+      anyHomeWorlds: ["krieg"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "inquisitor", "lord_inquisitor", "cardinal", "canoness",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral",
+        "arbites_marshal", "departmento_head", "planetary_governor", "sector_lord", "rt_lord_captain",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 크리그",
     weight: 26,
-    text: "지하 벙커의 육중한 방폭문이 열리고, 잿빛 핵겨울과 방사능 진흙탕이 끝없이 펼쳐진 크리그 지상으로 120km 강행군이 선포되었다. 방독면 필터 수명은 딱 48시간뿐이다.",
+    text: "지하 벙커의 육중한 방폭문이 열리고, 잿빛 핵겨울과 방사능 진흙탕이 끝없이 펼쳐진 크리그 지상으로 120킬로미터 강행군이 선포되었다. 방독면 필터 수명은 딱 48시간뿐이다.",
     choices: [
       {
         label: "[강인 판정] 거친 숨을 고르며 단 한 번도 대열에서 이탈하지 않고 완주한다",
@@ -282,10 +376,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_fenris_kraken",
     title: "펜리스 — 빙하 해빙기와 거대 바다 괴수 크라켄",
     category: "행성 고유",
-    req: { minAge: 14, anyWorlds: ["fenris"] },
+    req: {
+      minAge: 14,
+      anyWorlds: ["fenris"],
+      anyHomeWorlds: ["fenris"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
+        "inquisitor", "lord_inquisitor", "cardinal", "canoness",
+        "magos", "fabricator_locum", "fabricator_general", "navy_admiral",
+        "arbites_marshal", "departmento_head", "planetary_governor", "sector_lord", "rt_lord_captain",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 펜리스",
     weight: 26,
-    text: "얼음 바다가 갈라지며 섬만 한 거대 바다 괴수 '펜리스 크라켄'의 촉수가 부족의 용선(Longship)을 휘감았다! 차가운 파도 속에서 전사들의 용기가 시험대에 오른다.",
+    text: "얼음 바다가 갈라지며 섬만 한 거대 바다 괴수 '펜리스 크라켄'의 촉수가 부족의 전투 용선을 휘감았다! 차가운 파도 속에서 전사들의 용기가 시험대에 오른다.",
     choices: [
       {
         label: "[백병 판정] 뱃머리로 뛰어올라 도끼와 칼로 크라켄의 촉수를 베어 낸다",
@@ -320,7 +426,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "보스트로야 — 혹한 군수 공장의 장자 징집령과 공예 라스건",
     category: "행성 고유",
     once: true,
-    req: { minAge: 14, anyWorlds: ["vostroya"], excludeTags: ["astartes", "custodes", "grey_knight"] },
+    req: {
+      minAge: 14,
+      anyWorlds: ["vostroya"],
+      anyHomeWorlds: ["vostroya"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 보스트로야",
     weight: 34,
     text: "눈보라가 휘몰아치는 보스트로야의 거대 고딕 군수 공장에 '보스트로얀 퍼스트본' 신규 보충 징집령이 내려졌다. 1만 년 전 호루스 헤러시 당시 병력을 보내지 못한 죄를 갚기 위해, 보스트로야의 가문들은 지금도 장자와 황동 세공 라스건을 바친다.",
@@ -347,14 +462,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 6
         },
         fail: {
-          text: "이별의 슬픔은 쉽게 가시지 않았으나, 묵묵히 배웅하며 보스트로야의 의무를 되새겼다.",
-          stats: { WP: 3 }
+          text: "이별의 슬픔에 잠긴 가족들의 원성을 사며 연설이 어수선하게 끝났으나, 묵묵히 배웅하며 보스트로야의 의무를 되새겼다.",
+          stats: { Fel: -2, WP: 2 }
         }
       },
       {
         label: "눈보라 속 교대 근무를 성실히 마치고 보스트로얀 퍼스트본 연대의 무운을 기원한다",
         effect: {
-          text: "혹한과 쇳가루 속에서도 보스트로야의 맹세는 천 년째 꺾이지 않는다.",
+          text: "혹한과 쇳가루 속에서도 보스트로야의 맹세는 1만 년째 꺾이지 않는다.",
           stats: { T: 4, WP: 4 }
         }
       }
@@ -363,11 +478,20 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s3_world_tanith_nalwood",
-    title: "타니스 — 움직이는 날우드(Nalwood) 숲의 길잡이",
+    title: "타니스 — 움직이는 날우드 숲의 길잡이",
     category: "행성 고유",
     once: true,
-    req: { minAge: 12, maxYear: 764, anyWorlds: ["tanith"], excludeTags: ["astartes", "custodes"] },
-    reqLabel: "행성: 타니스 (765.M41 멸망 이전)",
+    req: {
+      minAge: 12,
+      maxYear: 764,
+      anyWorlds: ["tanith"],
+      anyHomeWorlds: ["tanith"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 타니스 · 765.M41 멸망 이전",
     weight: 38,
     text: "타니스의 거대한 날우드 숲은 계절과 바람에 따라 뿌리를 옮기며 길을 바꾼다. 숲 깊은 곳에서 길을 잃은 외지 행정관의 수송 마차가 안개 속에 갇혔고, 백파이프의 은은한 음색이 멀리서 울려 퍼진다.",
     choices: [
@@ -413,7 +537,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "오펠리아 VII — 콘벤트 상크토룸의 성유물 행렬과 시노드 미니스트라",
     category: "행성 고유",
     once: true,
-    req: { minAge: 14, anyWorlds: ["ophelia7"], excludeTags: ["heretic", "chaos_aligned"] },
+    req: {
+      minAge: 14,
+      anyWorlds: ["ophelia7"],
+      excludeTags: [
+        "cardinal", "high_lord_terra", "custodes", "grey_knight", "dreadnought",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
     reqLabel: "행성: 오펠리아 VII",
     weight: 34,
     text: "세그멘툼 템페스투스의 성지 행성 오펠리아 VII, 아뎁타 소로리타스 2대 본산 중 하나인 '콘벤트 상크토룸'과 국교 의회 '시노드 미니스트라'를 잇는 황금 대로를 따라 장엄한 성유물 행렬이 펼쳐진다. 구름 같은 순례 인파 틈에서 수상한 폭파 음모의 기척이 포착되었다.",

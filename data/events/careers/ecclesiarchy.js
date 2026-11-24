@@ -3,10 +3,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
 (window.IMPERIUM_DATA.EVENTS = window.IMPERIUM_DATA.EVENTS || []).push(
   {
     id: "ev_sororitas_miracle",
-    title: "살아 있는 신앙의 기적 (Act of Faith)",
+    title: "살아 있는 신앙의 기적",
     category: "신앙",
-    req: { minAge: 16, minFaith: 72, maxCorruption: 10, excludeTags: ["astartes", "custodes", "dreadnought", "heretic"] },
-    reqLabel: "신앙 72+ · 오염 10 이하 (필멸 신도)",
+    req: {
+      minAge: 16,
+      minFaith: 72,
+      maxCorruption: 10,
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought", "blank", "mechanicus",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "신앙 72 이상 · 오염 10 이하 필멸 신도",
     weight: 16,
     text: "절체절명의 위기 속, 황금빛 광채가 그대의 손끝과 성상을 감싸 안는다! 포탄이 기적처럼 빗나가고, 쓰러졌던 아군들이 눈물을 흘리며 다시 일어선다.",
     choices: [
@@ -22,9 +30,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["living_miracle"]
         },
         fail: {
-          text: "과도한 신앙의 열기를 필멸의 육신이 감당하지 못해 실신했으나, 부상은 말끔히 치유되었다.",
-          wounds: 15,
-          stats: { WP: 4 }
+          text: "과도한 신앙의 열기를 필멸의 육신이 감당하지 못해 피를 토하며 실신하고 말았다.",
+          wounds: -8,
+          stats: { WP: 2 }
+        }
+      },
+      {
+        label: "눈부신 광채를 홀로 감당하지 않고 쓰러진 전우들의 손을 맞잡아 함께 황제의 성가를 합창한다",
+        effect: {
+          text: "전선 전체에 잔잔한 황금빛 온기가 퍼져 나가며 병사들의 공포를 씻어 냈다. 겸허한 신앙이 기적의 불씨를 지켰다.",
+          stats: { WP: 4, Fel: 4 },
+          wounds: 8,
+          faith: 8,
+          corruption: -6
         }
       }
     ],
@@ -35,10 +53,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "에클레시아키 — 의심스러운 성유물과 광신도 군중",
     category: "직업 고유",
     once: true,
-    req: { anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"] },
+    req: {
+      anyCareers: ["ecclesiarchy_priest", "ministorum_confessor"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직업: 에클레시아키 사제",
     weight: 24,
-    text: "지역 대성당에 모셔진 '성자 마카리우스의 황금 뼈'가 사실은 100년 전 사기꾼 상인이 팔아넘긴 그록스(외계 가축) 뼈라는 비밀 기록을 발견했다! 지금 밖에서는 순례자 10만 명이 성유물 행렬을 기다리며 눈물을 흘리고 있다.",
+    text: "지역 대성당에 모셔진 '성자 드루수스의 황금 뼈'가 사실은 100년 전 사기꾼 상인이 팔아넘긴 외계 가축 그록스의 뼈라는 비밀 기록을 발견했다! 지금 밖에서는 순례자 10만 명이 성유물 행렬을 기다리며 눈물을 흘리고 있다.",
     choices: [
       {
         label: "진실보다 중요한 것은 인류의 신앙이다! 비밀을 덮고 더욱 장엄하게 설교한다",
@@ -71,13 +92,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "캐노네스의 결단 — 추기경의 정치적 출병 요구",
     category: "계급 고유",
     once: true,
-    req: { anyCareers: ["canoness", "abbess_sanctorum"] },
-    reqLabel: "계급: 캐노네스 (수녀원장)",
+    req: {
+      anyCareers: ["canoness"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
+    reqLabel: "계급: 캐노네스",
     weight: 28,
-    text: "교구의 부패한 추기경이 정적 귀족 가문을 숙청하기 위해 수녀원 군단(Order)의 출동을 명령해 왔다. 그러나 그대의 정찰대는 인접 성계에 진짜 카오스 컬트가 창궐하고 있음을 보고했다.",
+    text: "교구의 부패한 추기경이 자신과 반목하는 성계 귀족 가문의 영지를 본보기로 숙청하기 위해 전투 수녀단의 즉각 출동을 명령해 왔다. 그러나 그대의 정찰대는 인접 변경 성계에 진짜 카오스 컬트가 창궐해 행성 방위군을 학살하고 있음을 보고했다.",
     choices: [
       {
-        label: "[의지 판정] 추기경의 사사로운 요구를 단호히 일축하고 진짜 이단이 들끓는 전선으로 출병한다",
+        label: "[의지 판정] 추기경의 사사로운 요구를 단호히 일축하고 진짜 이단이 들끓는 변경 전선으로 출병한다",
         check: { stat: "WP", diff: 0 },
         success: {
           text: "성스러운 볼터와 화염으로 카오스 의식을 분쇄하고 국교 총본산으로부터 살아 있는 귀감으로 칭송받았다!",
@@ -90,6 +114,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Inf: -5 },
           faith: 10
         }
+      },
+      {
+        label: "부관 셀레스티안에게 변경 구원군을 맡기고, 그대는 직접 추기경 성당을 찾아가 이단 첩보 보고서를 들이밀며 출병 명령 철회를 관철한다",
+        effect: {
+          text: "명확한 이단 증거 앞에서 추기경이 꼬리를 내리고 물러났다. 수녀단의 칼날은 본연의 사명인 이단 정화로 향했다.",
+          stats: { Inf: 6, Fel: 4, WP: 4 },
+          faith: 8
+        }
       }
     ],
     source: "Codex: Adepta Sororitas"
@@ -98,13 +130,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_sororitas_relic_escort",
     title: "성녀의 유골함 호송 작전",
     category: "신앙",
-    req: { anyCareers: ["adepta_sororitas", "canoness", "ecclesiarchy_priest"] },
-    reqLabel: "아뎁타 소로리타스 / 국교 성직자",
+    req: {
+      anyCareers: ["adepta_sororitas", "sororitas_celestian", "canoness", "ecclesiarchy_priest"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
+    reqLabel: "아뎁타 소로리타스 · 국교 성직자",
     weight: 22,
     text: "순교 성녀의 심장이 담긴 황금 성유물함을 최전선 성당으로 호송하던 중, 카오스 워밴드 매복 부대가 성스러운 수송대를 포위했다!",
     choices: [
       {
-        label: "[사격/신앙 판정] 성가를 합창하며 볼터와 멀티멜타의 화염으로 적진을 뚫고 성유물을 지킨다",
+        label: "[사격 판정] 성가를 합창하며 호위대의 볼터와 멜타 화력으로 적진을 뚫고 성유물을 지킨다",
         check: { stat: "BS", diff: 0 },
         success: {
           text: "단 한 점의 흠집도 없이 성유물함을 봉안했다! 순례자 수만 명이 기적을 외치며 환호했다.",
@@ -116,6 +151,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           wounds: -24,
           faith: 10
         }
+      },
+      {
+        label: "수송 차량으로 방어 원진을 세우고 성유물함을 품에 안은 채 성당 구원군이 도착할 때까지 사수한다",
+        effect: {
+          text: "포연과 탄막을 견뎌 낸 끝에 마침내 구원 나팔 소리가 울려 퍼졌다. 성유물함은 끝까지 온전했다.",
+          stats: { T: 4, WP: 4 },
+          faith: 8
+        }
       }
     ],
     source: "Codex: Adepta Sororitas"
@@ -124,7 +167,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_career_sororitas_trial",
     title: "아뎁타 소로리타스 — 화형대 앞 회개자와 전투 수녀의 신념",
     category: "직군 고유",
-    req: { anyCareers: ["adepta_sororitas", "sororitas_celestian"] },
+    req: {
+      anyCareers: ["adepta_sororitas", "sororitas_celestian"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 아뎁타 소로리타스",
     weight: 26,
     text: "반역 하이브를 탈환한 뒤, 이단 설교에 잠시 휘말렸던 하층 시민 수백 명이 광장에 끌려 나왔다. 국교 추기경은 전원 화형을 명하지만, 그중 수많은 아이들과 진심으로 눈물 흘리며 황제 찬송가를 부르는 회개자들이 보인다.",
@@ -157,13 +203,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_rank_sororitas_repentia",
-    title: "아뎁타 소로리타스 — 시스터 레펜티아(참회 수녀)의 돌격",
+    title: "아뎁타 소로리타스 — 참회 수녀 시스터 레펜티아의 돌격",
     category: "계급 고유",
     once: true,
-    req: { anyCareers: ["adepta_sororitas", "sororitas_celestian"] },
+    req: {
+      anyCareers: ["adepta_sororitas", "sororitas_celestian"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "계급: 아뎁타 소로리타스",
     weight: 28,
-    text: "신앙의 과오를 씻기 위해 갑주조차 벗고 거대한 양손 체인소드 '에비스서레이터'만 든 시스터 레펜티아(참회 수녀) 부대가 적 카오스 중전차 방어선을 향해 찬송가를 부르며 돌격하고 있다! 이대로면 전멸하지만, 그녀들의 길을 열어 주면 성전 전체가 돌파구를 얻는다.",
+    text: "신앙의 과오를 씻기 위해 갑주조차 벗고 거대한 양손 체인소드 에비스서레이터만 든 참회 수녀 시스터 레펜티아 부대가 적 카오스 중전차 방어선을 향해 찬송가를 부르며 돌격하고 있다! 이대로면 전멸하지만, 그녀들의 길을 열어 주면 성전 전체가 돌파구를 얻는다.",
     choices: [
       {
         label: "[사격 판정] 볼터와 멜타 화력으로 적 기관총 둥지를 먼저 분쇄해 참회 수녀들의 돌격로를 연다",
@@ -180,7 +229,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "신앙의 기적을 기원하며 황제의 성가를 소리 높여 부르며 레펜티아 대열 바로 뒤를 따른다",
+        label: "신앙의 기적을 기원하고 황제의 성가를 소리 높여 부르며 레펜티아 대열 바로 뒤를 따른다",
         effect: {
           text: "광신적인 성가가 전장을 울리며 공포에 떨던 아군 전체의 사기를 되살렸다.",
           stats: { WP: 5, WS: 4 },
@@ -193,30 +242,33 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_rank_canoness_synod",
-    title: "캐노네스 — 콘벤트 상크토룸 회의와 신앙의 성전(War of Faith)",
+    title: "캐노네스 — 콘벤트 상크토룸 총회와 신앙의 성전",
     category: "계급 고유",
     once: true,
-    req: { anyCareers: ["canoness", "abbess_sanctorum"] },
-    reqLabel: "계급: 캐노네스(수녀원장)",
+    req: {
+      anyCareers: ["canoness"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
+    reqLabel: "계급: 캐노네스",
     weight: 28,
-    text: "오펠리아 VII의 콘벤트 상크토룸 대성당 회의. 부패한 추기경 파벌이 개인 영지를 넓히기 위해 아뎁타 소로리타스의 출병을 강요하고 있다. 수녀원장인 그대에게는 추기경의 정치 놀음에 맞서 진정한 황제의 뜻을 가려낼 영적 권위가 있다.",
+    text: "오펠리아 VII의 콘벤트 상크토룸 대성당에서 시노드 미니스트라 총회가 열렸다. 국교 강경파 원로들은 변경 성지 세 곳을 동시에 탈환할 대규모 신앙의 성전을 즉시 선포하자고 목소리를 높이지만, 보급망이 뒷받침되지 않으면 전투 수녀단 절반이 고립되어 전멸할 위기다. 수녀원장인 그대의 발언이 총회의 향방을 가른다.",
     choices: [
       {
-        label: "[의지/교섭 판정] 시노드 미니스트라 앞에서 추기경의 탐욕을 공개 탄핵하고 진정한 구원 성전을 선포한다",
+        label: "[의지 판정] 시노드 미니스트라 앞에서 성전의 대의와 치밀한 집중 타격 노선을 단호히 설파해 분산 출병안을 철회시킨다",
         check: { stat: "WP", diff: -5 },
         success: {
-          text: "수백 명의 전투 수녀가 일제히 볼터를 들어 올리며 그대의 편에 섰다! 타락한 추기경이 실각하고 진정한 '신앙의 성전'이 열렸다!",
+          text: "수백 명의 전투 수녀가 일제히 볼터를 들어 올리며 그대의 결단에 화답했다! 무모한 분산 출병이 철회되고 치밀한 신앙의 성전이 막을 올렸다!",
           stats: { WP: 7, Fel: 7, Inf: 12 },
           faith: 16
         },
         fail: {
-          text: "국교 원로들의 정치적 견제로 징계 심문을 받았으나, 수녀회 내부의 절대적 신망만은 지켜 냈다.",
-          stats: { Inf: -4, WP: 5 },
-          faith: 8
+          text: "국교 원로들의 정치적 견제로 징계 심문을 받고 보급 권한 일부를 깎였으나, 수녀단 주력의 궤멸만은 막아 냈다.",
+          stats: { Inf: -4, Fel: -2 },
+          faith: 6
         }
       },
       {
-        label: "정치 논쟁 대신 가장 절박한 변경 성지 행성으로 독자적인 구원 원정대를 출정시킨다",
+        label: "총회의 탁상공론 대신 가장 절박한 변경 성지 행성으로 교단 직할 정예 구원대를 친히 출정시킨다",
         effect: {
           text: "행동으로 신앙을 증명했다. 수많은 성당과 순례자들이 그대의 이름을 성인전에 비견하며 칭송했다.",
           stats: { WS: 4, WP: 6, Inf: 7 },
@@ -231,7 +283,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "기적의 증인 — 국교 성지화 열풍과 심문소의 성흔 검증",
     category: "신앙",
     once: true,
-    req: { allTags: ["living_miracle"], excludeTags: ["heretic", "custodes"] },
+    req: {
+      allTags: ["living_miracle"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "inquisitor", "lord_inquisitor", "cardinal", "warmaster", "sector_lord"
+      ]
+    },
     reqLabel: "이력: 살아 있는 기적",
     weight: 38,
     text: "그대가 체험한 성스러운 기적의 소문이 성역 전역에 퍼지자, 수천 명의 순례자들이 거처 앞에 몰려들어 옷자락이라도 만지려 울부짖고 있다. 그 군중을 뚫고 오르도 헤레티쿠스 검증관이 차가운 표정으로 다가와 '황제의 은총인지 교묘한 워프 기만인지 지금 입증하라'고 명한다.",
@@ -278,11 +337,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_s2_priest_crusade_sermon",
-    title: "에클레시아키 사제 — 포화 속의 설교와 체인에비스서레이터",
+    title: "에클레시아키 사제 — 포화 속의 설교와 에비스서레이터",
     category: "신앙",
     once: true,
-    req: { anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"] },
-    reqLabel: "병종: 에클레시아키 사제",
+    req: {
+      anyCareers: ["ecclesiarchy_priest", "ministorum_confessor"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
+    reqLabel: "직군: 에클레시아키 사제",
     weight: 34,
     text: "이단 반군의 맹공에 아군 방어선이 무너지기 직전이다. 겁에 질린 병사들이 참호 뒤로 물러서려 하자, 확성기를 쥔 사제의 입에서 어떤 말씀이 터져 나오느냐에 전선 전체의 운명이 걸려 있다.",
     choices: [
@@ -333,9 +395,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 18,
       gender: "female",
-      anyCareers: ["adepta_sororitas", "canoness"]
+      anyCareers: ["sororitas_novitiate", "adepta_sororitas"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
     },
-    reqLabel: "여성 · 아뎁타 소로리타스 / 캐노네스",
+    reqLabel: "여성 · 수련 수녀 · 아뎁타 소로리타스",
     weight: 36,
     text: "성전 출정을 앞두고 대성당의 제단 앞에 아뎁타 소로리타스 핵심 전투 교단들의 성기가 나란히 세워졌다. 검은 갑주에 진홍 망토의 '아워 마터드 레이디', 고행과 인내의 '발로러스 하트', 그리고 격렬한 성전의 칼날 '블러디 로즈' 가운데 그대가 본받을 신앙의 결을 택할 순간이다.",
     choices: [
@@ -388,21 +451,24 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_sororitas_penitent",
     title: "아뎁타 소로리타스 — 참회 엔진의 절규와 전투 수녀의 신념",
     category: "신앙",
-    req: { anyCareers: ["adepta_sororitas", "sororitas_celestian"] },
+    req: {
+      anyCareers: ["adepta_sororitas", "sororitas_celestian"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 아뎁타 소로리타스",
     weight: 28,
-    text: "이단 요새 돌파전, 죄수들을 묶어 거대 회전 톱날을 달아 둔 참회 엔진(Penitent Engine) 부대가 울부짖으며 적진으로 돌진하고 있다. 그중 한 기가 적 대전차 지뢰에 다리가 날아가며 고통 속에 쓰러졌고, 묶여 있던 죄수가 그대를 향해 울며 자비를 애원한다.",
+    text: "이단 요새 돌파전, 죄수들을 묶어 거대 회전 톱날을 달아 둔 참회 엔진 부대가 울부짖으며 적진으로 돌진하고 있다. 그중 한 기가 적 대전차 지뢰에 다리가 날아가며 고통 속에 쓰러졌고, 묶여 있던 죄수가 그대를 향해 울며 자비를 애원한다.",
     choices: [
       {
-        label: "[의지 판정] 황제의 자비로운 축복 기도를 읊어 준 뒤 볼터 단발로 고통을 끝내고 속죄를 완수시켜 준다",
+        label: "[의지 판정] 죄인의 속죄가 이미 충분함을 선포한 뒤 볼터 단발로 황제의 안식을 내려 고통을 끝내 준다",
         check: { stat: "WP", diff: 5 },
         success: {
-          text: "고통에 뒤틀렸던 죄수의 얼굴에 평온이 찾아왔다. 신앙의 엄정함과 자비를 함께 품은 진정한 전투 수녀의 길이었다.",
+          text: "고통에 뒤틀렸던 죄수의 얼굴에 마침내 평온이 찾아왔다. 신앙의 엄정함과 자비를 함께 품은 진정한 전투 수녀의 결단이었다.",
           stats: { WP: 7, Fel: 4, BS: 3 },
           faith: 8
         },
         fail: {
-          text: "사격 순간 적 저격탄이 파워 아머 어깨를 스쳤으나 끝내 안식을 내려 주었다.",
+          text: "사격 순간 적 저격탄이 파워 아머 어깨를 스쳤으나, 그대는 흔들리지 않고 죄수에게 황제의 안식을 내려 주었다.",
           wounds: -12,
           stats: { WP: 4 },
           faith: 5
@@ -437,10 +503,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_canoness_relic_war",
     title: "캐노네스 — 두 성지 주교구의 성유물 분쟁과 중재",
     category: "신앙",
-    req: { anyCareers: ["canoness", "abbess_sanctorum"] },
+    req: {
+      anyCareers: ["canoness"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 캐노네스",
     weight: 28,
-    text: "고대 성녀의 순교 유골함을 두고 인접한 두 대주교구가 서로 정통 소유권을 주장하며 사병대까지 동원해 일촉즉발의 유혈 충돌을 앞두고 있다. 성유물을 호위하는 소로리타스 지휘관으로서 그대의 결단이 국교 내전을 막을 유일한 열쇠다.",
+    text: "고대 성녀의 순교 유골함을 두고 인접한 두 대주교구가 서로 정통 소유권을 주장하며 후원 귀족 가문의 호위대와 프라테리스 밀리티아 민병대까지 동원해 일촉즉발의 유혈 충돌을 앞두고 있다. 성유물을 호위하는 소로리타스 지휘관으로서 그대의 결단이 국교 내전을 막을 유일한 열쇠다.",
     choices: [
       {
         label: "[교섭 판정] 두 대주교를 대성당 제단 앞에 세우고 '성유물은 성직자의 소유가 아니라 전선 병사들의 등불'이라며 공동 봉안을 관철한다",
@@ -451,8 +520,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 10
         },
         fail: {
-          text: "한쪽 대주교가 반발했으나 결국 캐노네스의 권위 아래 타협안에 서명했다.",
-          stats: { Fel: 4, Inf: 4 }
+          text: "양쪽 대주교가 중재안을 거부하고 험악한 신경전을 벌이는 바람에 수녀회의 중재 권위가 크게 훼손되었다.",
+          stats: { Inf: -4, Fel: -2 }
         }
       },
       {
@@ -464,9 +533,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           faith: 10
         },
         fail: {
-          text: "양쪽 주교구에서 거센 항의 서한이 쏟아졌으나 성유물은 무사히 전선에 봉안되었다.",
-          stats: { Inf: 4, WP: 5 },
-          faith: 6
+          text: "양쪽 주교구의 거센 항의 서한이 시노드 원로회에 빗발치며 그대는 월권 심문에 회부되었다.",
+          stats: { Inf: -5, Fel: -2 }
         }
       },
       {
@@ -483,10 +551,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_priest_heretic_debate",
     title: "에클레시아키 사제 — 지하 공장의 이단 선동가와 공개 교리 대결",
     category: "신앙",
-    req: { anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"] },
+    req: {
+      anyCareers: ["ecclesiarchy_priest", "ministorum_confessor"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
+    },
     reqLabel: "직군: 에클레시아키 사제",
     weight: 28,
-    text: "기근과 과로에 지친 하층 매뉴팩토룸 노동자 수천 명 앞에 정체불명의 '자비로운 네 팔의 황제'를 설파하는 이단 선동가가 나타났다. 지금 무력 진압만 부르면 공장 전체가 폭동으로 불탈 것이다. 그대는 성전과 체인소드를 들고 군중 한복판으로 걸어 들어갔다.",
+    text: "기근과 과로에 지친 하층 매뉴팩토룸 노동자 수천 명 앞에 정체불명의 '자비로운 네 팔의 황제'를 설파하는 이단 선동가가 나타났다. 지금 무력 진압만 부르면 공장 전체가 폭동으로 불탈 것이다. 그대는 성전과 에비스서레이터를 들고 군중 한복판으로 걸어 들어갔다.",
     choices: [
       {
         label: "[교섭 판정] 군중의 고통을 어루만지면서도 '네 팔의 거짓 신은 외계 괴물의 덫'임을 웅변으로 폭로한다",
@@ -504,7 +575,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[백병 판정] 이단자와의 대화는 죄악이다 — 체인소드의 굉음과 함께 단상으로 뛰어올라 거짓 선지자를 즉결 처단한다",
+        label: "[백병 판정] 이단자와의 대화는 죄악이다 — 에비스서레이터의 굉음과 함께 단상으로 뛰어올라 거짓 선지자를 즉결 처단한다",
         check: { stat: "WS", diff: 0 },
         success: {
           text: "쓰러진 선동가의 로브 아래에서 진짜 진스틸러 혼혈의 기형 팔이 드러나자 군중이 공포와 경외 속에 무릎을 꿇었다!",

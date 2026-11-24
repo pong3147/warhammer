@@ -280,6 +280,7 @@ function validateReq(req, owner) {
   (req.anyWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown world "${w}" in ${owner}`); });
   (req.anyHomeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown homeWorld "${w}" in ${owner}`); });
   (req.excludeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown excludeWorld "${w}" in ${owner}`); });
+  (req.excludeHomeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown excludeHomeWorld "${w}" in ${owner}`); });
   (req.anyCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown career "${c}" in ${owner}`); });
   (req.anyPastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown pastCareer "${c}" in ${owner}`); });
   (req.excludePastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown excludePastCareer "${c}" in ${owner}`); });
@@ -784,7 +785,7 @@ if (DEEP_MODE) {
     delete out.anyWorldTags;
     delete out.anyPastCareers;
 
-    const unionKeys = ["allTags", "excludeTags", "excludeWorlds", "excludeWorldTags", "excludeChapters", "excludePastCareers"];
+    const unionKeys = ["allTags", "excludeTags", "excludeWorlds", "excludeHomeWorlds", "excludeWorldTags", "excludeChapters", "excludePastCareers"];
     for (const k of unionKeys) {
       if (b[k]) out[k] = [...new Set([...(out[k] || []), ...b[k]])];
     }
@@ -848,6 +849,7 @@ if (DEEP_MODE) {
     const wounds = minWounds;
 
     const exclWorlds = new Set(cl.excludeWorlds || []);
+    const exclHomeWorlds = new Set(cl.excludeHomeWorlds || []);
     const exclWorldTags = new Set(cl.excludeWorldTags || []);
     const worldCandidates = DATA.WORLDS.filter((w) => {
       if (cl.anyWorlds && !cl.anyWorlds.includes(w.id)) return false;
@@ -860,9 +862,19 @@ if (DEEP_MODE) {
       return true;
     });
     if (worldCandidates.length === 0) return null;
-    const chosenWorld = worldCandidates[0];
+    const chosenWorld = worldCandidates.find((w) => !exclHomeWorlds.has(w.id)) || worldCandidates[0];
 
-    const homeWorldId = (cl.anyHomeWorlds && cl.anyHomeWorlds.length > 0) ? cl.anyHomeWorlds[0] : chosenWorld.id;
+    let homeWorldId;
+    if (cl.anyHomeWorlds && cl.anyHomeWorlds.length > 0) {
+      homeWorldId = cl.anyHomeWorlds.find((id) => worldIds.has(id) && !exclHomeWorlds.has(id));
+      if (!homeWorldId) return null;
+    } else if (!exclHomeWorlds.has(chosenWorld.id)) {
+      homeWorldId = chosenWorld.id;
+    } else {
+      const altHome = DATA.WORLDS.find((w) => !exclHomeWorlds.has(w.id));
+      if (!altHome) return null;
+      homeWorldId = altHome.id;
+    }
     if (!worldIds.has(homeWorldId)) return null;
 
     const exclChapters = new Set(cl.excludeChapters || []);

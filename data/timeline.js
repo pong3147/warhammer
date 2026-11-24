@@ -14,6 +14,7 @@ window.IMPERIUM_DATA.TIMELINE = [
     dispatchText: "스카루스 섹터에서 외계 종족 사루티와 결탁한 금지 서적 '네크로텍' 밀수 사건이 적발되었다. 젊은 오르도 제노스 이단심문관 그레고르 아이젠혼이 대규모 추격전에 착수했다는 기밀 속보가 전해졌다.",
     filter: {
       minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
       or: [
         { anySegmenta: ["obscurus"] },
         { anyTags: ["inquisition_agent", "inquisitor", "arbites", "administratum"] }
@@ -60,6 +61,7 @@ window.IMPERIUM_DATA.TIMELINE = [
     dispatchText: "광기 어린 오크 위어드보이 자그다카가 이끄는 '위어드와아아!'가 포지 월드 콜룸누스를 강타했다. 아이언 핸즈와 레이븐 가드 증원군 사이에 심각한 전술 균열이 벌어지며 제국 전역의 병참선에 비상이 걸렸다.",
     filter: {
       minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
       or: [
         { anySegmenta: ["obscurus"] },
         { anyWorldTags: ["forge", "mechanicus"] },
@@ -105,6 +107,7 @@ window.IMPERIUM_DATA.TIMELINE = [
     dispatchText: "헬리칸 서브섹터 수도 트라시안 프리마리스의 대승전식 도중 33명의 알파급 포로 사이커가 탈출하는 대참사가 터졌다! 이단심문소 내부에서 청교도파와 급진파의 숙청 전쟁이 벌어지고 있다는 비보가 전해졌다.",
     filter: {
       minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
       or: [
         { anySegmenta: ["obscurus"] },
         { anyTags: ["inquisition_agent", "inquisitor", "psyker", "arbites", "administratum", "met_eisenhorn"] }
@@ -151,6 +154,7 @@ window.IMPERIUM_DATA.TIMELINE = [
     dispatchText: "로드 솔라 마카리우스가 세그멘툼 파시피쿠스 서부 변경을 향해 대성전 이후 최대 규모의 원정을 선포했다. 불과 7년 만에 천 개에 가까운 행성이 제국의 품으로 수복되고 있다는 승전보가 은하를 뒤흔든다.",
     filter: {
       minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
       or: [
         { anySegmenta: ["pacificus"] },
         { anyTags: ["militarum", "navy", "commissar", "officer", "astartes", "sororitas"] }
@@ -196,9 +200,10 @@ window.IMPERIUM_DATA.TIMELINE = [
     en: "The Damocles Gulf Crusade",
     scope: "울티마 세그멘툼 · 동부 변경",
     dispatchScope: "galaxy",
-    dispatchText: "울티마 세그멘툼 동부 변경에서 '대의(Greater Good)'를 내세우며 제국 변경 행성을 잠식하던 신흥 외계 세력 '타우 제국'을 응징하기 위해 다모클레스 만 성전이 출정했다.",
+    dispatchText: "울티마 세그멘툼 동부 변경에서 '대의'를 내세우며 제국 변경 행성을 잠식하던 신흥 외계 세력 '타우 제국'을 응징하기 위해 다모클레스 만 성전이 출정했다.",
     filter: {
       minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
       or: [
         { anySegmenta: ["ultima"] },
         { anyTags: ["militarum", "navy", "astartes", "inquisitor", "inquisition_agent", "rogue_trader"] }
@@ -206,7 +211,7 @@ window.IMPERIUM_DATA.TIMELINE = [
     },
     characters: [],
     summary: "742~745.M41 인류제국 성전군이 다모클레스 만을 건너 신흥 외계 세력 타우 제국과 최초로 전면 격돌했으나, 하이브 함대 베헤모스 내습 소식에 따라 급거 철수했다.",
-    text: "동부 변경 다모클레스 만 너머 달리스(Dal'yth) 행성 상공에 제국 성전 함대가 진입했다. 백병전을 피한 채 초장거리 플라즈마 펄스 라이플과 기동형 크라이시스 배틀슈트로 교란전을 펼치는 신흥 외계 종족 타우의 전술에 제국 지휘부가 당혹감을 감추지 못하고 있다.",
+    text: "동부 변경 다모클레스 만 너머 달리스 행성 상공에 제국 성전 함대가 진입했다. 백병전을 피한 채 초장거리 플라즈마 펄스 라이플과 기동형 크라이시스 배틀슈트로 교란전을 펼치는 신흥 외계 종족 타우의 전술에 제국 지휘부가 당혹감을 감추지 못하고 있다.",
     choices: [
       {
         label: "[사격 판정] 달리스 시가전의 치열한 플라즈마 화망을 뚫고 타우 배틀슈트 부대와 정면 격돌한다",
@@ -243,6 +248,8 @@ window.IMPERIUM_DATA.TIMELINE = [
     dispatchScope: "galaxy",
     dispatchText: "은하계 바깥에서 도래한 미지의 외계 생체 군집 '타이라니드' 하이브 함대 베헤모스가 울트라마 수도 마크라그를 덮쳤다! 마르네우스 칼가와 울트라마린 제1중대의 결사 항전이 벌어지고 있다.",
     filter: {
+      minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
       or: [
         { anyWorlds: ["macragge"] },
         { anyChapters: ["ultramarines"] },
@@ -251,7 +258,7 @@ window.IMPERIUM_DATA.TIMELINE = [
       ]
     },
     characters: ["calgar"],
-    summary: "745.M41 하이브 함대 베헤모스가 마크라그를 침공해 울트라마린 제1중대 전원이 극지 요새에서 옥쇄했으나, 도미누스 아스트라함의 자폭으로 제국이 극적 승리를 거두었다.",
+    summary: "745.M41 하이브 함대 베헤모스가 마크라그를 침공해 울트라마린 제1중대 전원이 극지 요새에서 옥쇄했으나, 도미누스 아스트라 함의 자폭으로 제국이 극적 승리를 거두었다.",
     text: "인류가 단 한 번도 마주한 적 없는 끔찍한 생체 괴수 무리가 마크라그의 하늘을 뒤덮었다! 아스트로패스들이 '워프의 그림자'에 짓눌려 비명을 지르는 가운데, 마르네우스 칼가가 북극과 남극 요새의 결사 방어를 명령한다.",
     choices: [
       {
@@ -289,14 +296,18 @@ window.IMPERIUM_DATA.TIMELINE = [
     en: "Launch of the Sabbat Worlds Crusade",
     scope: "세그멘툼 파시피쿠스",
     dispatchScope: "galaxy",
-    dispatchText: "워마스터 슬라이도가 서부 파시피쿠스 성역에서 '사바트 월드 대성전'을 선포했다. 은하 전역에 대규모 십일조 징집과 군수 보급 명령이 하달되었다.",
-    filter: { or: [{ anySegmenta: ["pacificus"] }, { anyTags: ["militarum", "navy", "commissar"] }] },
-    characters: ["gaunt"],
-    summary: "워마스터 슬라이도가 카오스에 점령된 사바트 성계를 해방하기 위해 백만 대군의 성전을 선포했다.",
+    dispatchText: "워마스터 슬레이도가 서부 파시피쿠스 성역에서 '사바트 월드 대성전'을 선포했다. 은하 전역에 대규모 십일조 징집과 군수 보급 명령이 하달되었다.",
+    filter: {
+      minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [{ anySegmenta: ["pacificus"] }, { anyTags: ["militarum", "navy", "commissar"] }]
+    },
+    characters: [],
+    summary: "워마스터 슬레이도가 카오스에 점령된 사바트 성계를 해방하기 위해 백만 대군의 성전을 선포했다.",
     text: "은하 서부 파시피쿠스 성역 전역에 성전 징집령이 울려 퍼진다. 수백 개의 아스트라 밀리타룸 연대와 해군 함대가 카오스 군벌들의 손아귀에서 사바트 월드를 되찾기 위해 집결하고 있다.",
     choices: [
       {
-        label: "성전군 원정대에 자원하여 출정한다",
+        label: "[사격 판정] 성전군 원정대에 자원하여 출정한다",
         req: { minAge: 15 },
         check: { stat: "BS", diff: 0 },
         success: {
@@ -312,7 +323,7 @@ window.IMPERIUM_DATA.TIMELINE = [
         }
       },
       {
-        label: "후방 군수 보급과 기도로 성전을 지원한다",
+        label: "[지성 판정] 후방 군수 보급과 기도로 성전을 지원한다",
         check: { stat: "Int", diff: 5 },
         success: {
           text: "군수 물자 수송을 빈틈없이 처리해 행정부와 군부 양쪽의 신임을 얻었다.",
@@ -331,6 +342,7 @@ window.IMPERIUM_DATA.TIMELINE = [
   {
     id: "tl_tanith_fall",
     year: 765,
+    exactYear: true,
     title: "타니스의 멸망과 '건트의 유령들'",
     en: "Destruction of Tanith",
     scope: "타니스 (행성 한정)",
@@ -344,6 +356,7 @@ window.IMPERIUM_DATA.TIMELINE = [
     choices: [
       {
         label: "[민첩 판정] 이브람 건트의 수송선에 몸을 싣고 '타니스 퍼스트 앤드 온리'에 합류한다",
+        req: { minAge: 14, excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "Ag", diff: 5 },
         success: {
           text: "불타는 숲을 뚫고 마지막 수송선에 올라탔다! 고향은 잿더미가 되었으나 그대는 '건트의 유령들'의 일원이 되어 사바트 성전으로 떠난다.",
@@ -360,7 +373,8 @@ window.IMPERIUM_DATA.TIMELINE = [
         }
       },
       {
-        label: "고향의 나무와 가족을 지키며 끝까지 맞선다",
+        label: "[백병 판정 · 즉사 위험] 고향의 나무와 이웃을 지키며 끝까지 맞선다",
+        req: { minAge: 14 },
         check: { stat: "WS", diff: -20 },
         success: {
           text: "기적적으로 카오스 강습정을 격퇴하고 민간인 탈출 포드에 올라 궤도를 벗어났다. 타니스의 마지막 증인이 되었다.",
@@ -372,6 +386,16 @@ window.IMPERIUM_DATA.TIMELINE = [
         fail: {
           text: "타니스의 하늘이 불타오르며 행성 지표 전체가 유리처럼 녹아내렸다. 그대는 고향의 숲과 운명을 함께했다.",
           instantDeath: "765.M41 카오스 함대의 타니스 궤도 폭격으로 고향과 함께 산화"
+        }
+      },
+      {
+        label: "긴급 피난 수송선에 몸을 싣고 불타는 타니스 궤도를 탈출한다",
+        effect: {
+          text: "화염에 잠긴 날우드 숲을 뒤로한 채 간신히 궤도를 벗어났다. 사라진 고향의 기억이 평생 가슴에 잿빛으로 남는다.",
+          wounds: -14,
+          stats: { WP: 4, Ag: 2 },
+          moveWorld: "generic_civilised",
+          addTags: ["tanith_survivor"]
         }
       }
     ],
@@ -385,7 +409,11 @@ window.IMPERIUM_DATA.TIMELINE = [
     scope: "크리그 · 아스트라 밀리타룸 · 이단심문소",
     dispatchScope: "galaxy",
     dispatchText: "배교자 추기경 자판이 무기고 행성 브락스에서 반란을 일으켰다. 데스 코어 오브 크리그 수백만 명이 투입되어 끝없는 참호 공성전이 시작되었다는 전황이 들려왔다.",
-    filter: { minAge: 16, or: [{ anyWorlds: ["krieg"] }, { anyTags: ["militarum", "inquisition_agent", "inquisitor", "sororitas"] }] },
+    filter: {
+      minAge: 16,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [{ anyWorlds: ["krieg"] }, { anyTags: ["militarum", "inquisition_agent", "inquisitor", "sororitas"] }]
+    },
     characters: [],
     summary: "배교자 추기경 자판이 점거한 요새 행성 브락스를 되찾기 위해 데스 코어 오브 크리그가 17년에 걸친 지옥의 참호전을 개시했다.",
     text: "거대한 제국 무기고 행성 브락스가 반역에 물들었다. 1,400만 명의 데스 코어 오브 크리그와 수많은 심문소 요원들이 독가스와 참호, 카오스 악마가 들끓는 17년의 공성전으로 투입된다.",
@@ -433,13 +461,17 @@ window.IMPERIUM_DATA.TIMELINE = [
     scope: "울티마 세그멘툼 · 아스타르테스 · 해군",
     dispatchScope: "galaxy",
     dispatchText: "울티마 성역 마엘스트롬의 아스트랄 클로 챕터가 제국 십일조를 거부하고 반란을 일으켰다. 호루스 헤러시 이후 최대의 스페이스 마린 내전 '바답 전쟁'이 발발했다.",
-    filter: { minAge: 16, or: [{ anySegmenta: ["ultima"] }, { anyTags: ["astartes", "navy", "inquisitor", "inquisition_agent"] }] },
+    filter: {
+      minAge: 16,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [{ anySegmenta: ["ultima"] }, { anyTags: ["astartes", "navy", "inquisitor", "inquisition_agent"] }]
+    },
     characters: [],
     summary: "아스트랄 클로의 챕터 마스터 루프트 휴론이 제국 십일조를 거부하며 호루스 헤러시 이후 최대의 스페이스 마린 내전이 터졌다.",
     text: "바답의 폭군 루프트 휴론이 반기를 들었다! 제국 충성파 스페이스 마린 챕터들과 해군 함대가 마엘스트롬 성역으로 집결하며 동족 상잔의 참극이 막을 올린다.",
     choices: [
       {
-        label: "[백병/사격 판정] 충성파 원정군에 합류해 반역파 함대를 격파한다",
+        label: "[백병 판정] 충성파 원정군에 합류해 반역파 함대를 격파한다",
         check: { stat: "WS", diff: -5 },
         success: {
           text: "잔혹한 함선 백병전 끝에 바답 방어선을 뚫고 큰 전공을 세웠다.",
@@ -476,10 +508,14 @@ window.IMPERIUM_DATA.TIMELINE = [
     scope: "발할라 · 아스트라 밀리타룸 · 커미사르",
     dispatchScope: "galaxy",
     dispatchText: "제국 선전 홀로비드가 '제국의 영웅' 카이아파스 케인 커미사르와 새로 통합 창설된 발할라 제597연대가 또다시 압도적 외계인 침공을 분쇄했다는 영웅담을 대대적으로 방송했다.",
-    filter: { minAge: 16, or: [{ anyWorlds: ["valhalla"] }, { anyTags: ["militarum", "commissar", "inquisition_agent"] }] },
+    filter: {
+      minAge: 16,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [{ anyWorlds: ["valhalla"] }, { anyTags: ["militarum", "commissar", "inquisition_agent"] }]
+    },
     characters: ["cain", "amberley_vail"],
     summary: "931.M41 창설된 발할라 제597연대와 커미사르 카이아파스 케인이 지휘하는 그라발락스 전선에 합류했다. 어째서인지 가장 안전한 후방 정찰로를 택했는데 진스틸러 소굴이 튀어나왔다.",
-    text: "훈장 가득한 커미사르 카이아파스 케인이 특유의 여유로운 미소로 '후방 안전 점검'을 명했다. 하지만 그의 불운한(?) 직감대로, 조용해야 할 지하 수로에서 진스틸러 컬트 매복 부대가 쏟아져 나왔다!",
+    text: "훈장 가득한 커미사르 카이아파스 케인이 특유의 여유로운 미소로 '후방 안전 점검'을 명했다. 하지만 그의 묘하게 불운한 직감대로, 조용해야 할 지하 수로에서 진스틸러 컬트 매복 부대가 쏟아져 나왔다!",
     choices: [
       {
         label: "[민첩 판정] 케인 커미사르의 옆에서 체인소드와 라스건으로 돌파구를 연다",
@@ -490,7 +526,7 @@ window.IMPERIUM_DATA.TIMELINE = [
           addTags: ["met_cain"]
         },
         fail: {
-          text: "진스틸러의 발톱에 스쳐 중상을 입었지만, 부관 유르겐의 블랭크 기운과 멜타 화력 덕에 살아 돌아왔다.",
+          text: "진스틸러의 발톱에 스쳐 중상을 입었지만, 부관 유르겐의 기묘한 위압감과 멜타 화력 덕에 살아 돌아왔다.",
           wounds: -20,
           stats: { T: 3 }
         }
@@ -520,10 +556,14 @@ window.IMPERIUM_DATA.TIMELINE = [
     scope: "아마겟돈 · 제국군",
     dispatchScope: "galaxy",
     dispatchText: "세그멘툼 솔라의 핵심 공업 행성 아마겟돈에 오크 대군주 가즈쿨 스라카의 와아아!가 상륙했다. 세바스찬 야릭 커미사르와 블러드 엔젤 단테가 하데스 하이브에서 결사항전 중이라는 소식이 전해졌다.",
-    filter: { or: [{ anyWorlds: ["armageddon"] }, { anyTags: ["militarum", "commissar", "astartes"] }] },
+    filter: {
+      minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [{ anyWorlds: ["armageddon"] }, { anyTags: ["militarum", "commissar", "astartes"] }]
+    },
     characters: ["yarrick", "dante", "ghazghkull"],
     summary: "오크 대군주 가즈쿨 스라카가 아마겟돈을 침공했다. 커미사르 세바스찬 야릭과 블러드 엔젤 사령관 단테가 하데스 하이브에서 결사항전을 벌인다.",
-    text: "잿빛 하늘이 녹색 유성우로 뒤덮였다! 가즈쿨 막 우룩 스라카의 와아아! 대군이 아마겟돈에 강림했다. 하데스 하이브 성벽 위에서 레이저 의안을 번뜩이며 커미사르 세바스찬 야릭이 외친다. '한 발짝도 물러서지 마라!'",
+    text: "잿빛 하늘이 녹색 유성우로 뒤덮였다! 가즈쿨 막 우룩 스라카의 와아아! 대군이 아마겟돈에 강림했다. 하데스 하이브 성벽 위에서 기계 의안을 번뜩이며 커미사르 세바스찬 야릭이 외친다. '한 발짝도 물러서지 마라!'",
     choices: [
       {
         label: "[사격 판정] 야릭 커미사르 휘하에서 하데스 하이브 성벽을 사수한다",
@@ -536,14 +576,14 @@ window.IMPERIUM_DATA.TIMELINE = [
           addTags: ["armageddon_hero", "met_yarrick"]
         },
         fail: {
-          text: "오크 노브의 쵸파에 베여 쓰러졌으나, 하늘에서 강하한 단테와 블러드 엔젤의 구원으로 겨우 목숨을 건졌다.",
+          text: "오크 노브의 초파에 베여 쓰러졌으나, 하늘에서 강하한 단테와 블러드 엔젤의 구원으로 겨우 목숨을 건졌다.",
           wounds: -30,
           stats: { T: 3, WP: 4 },
           addTags: ["met_dante"]
         }
       },
       {
-        label: "[지성 판정] 붕괴하는 하이브 하층에서 피난민과 군수 공장을 지켜낸다",
+        label: "[지성 판정] 붕괴하는 하이브 하층에서 피난민과 군수 공장을 지켜 낸다",
         check: { stat: "Int", diff: 0 },
         success: {
           text: "무너진 지하 통로를 개척해 수만 명의 시민과 탄약고를 구해 냈다. 훗날 스틸 리전의 전설로 남을 활약이었다.",
@@ -569,6 +609,7 @@ window.IMPERIUM_DATA.TIMELINE = [
     dispatchText: "하이브 함대 베헤모스보다 훨씬 거대하고 교활한 신형 타이라니드 '하이브 함대 크라켄'이 은하 동부 변경을 수많은 촉수로 갈라 덮쳤다! 이카르 IV와 크래프트월드 이얀덴까지 피바다가 되었다는 긴급 속보가 울렸다.",
     filter: {
       minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
       or: [
         { anySegmenta: ["ultima"] },
         { anyTags: ["militarum", "astartes", "navy", "inquisitor", "inquisition_agent", "sororitas"] }
@@ -612,7 +653,11 @@ window.IMPERIUM_DATA.TIMELINE = [
     scope: "아마겟돈 · 제국군 · 아스타르테스",
     dispatchScope: "galaxy",
     dispatchText: "가즈쿨 스라카가 전보다 몇 배나 거대한 오크 대함대로 아마겟돈을 재침공했다! 제국 전역의 군단과 20여 개 스페이스 마린 챕터, 블랙 템플러와 샐러맨더가 아마겟돈 전선으로 총동원되고 있다.",
-    filter: { or: [{ anyWorlds: ["armageddon"] }, { anyTags: ["militarum", "astartes", "sororitas", "commissar"] }] },
+    filter: {
+      minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [{ anyWorlds: ["armageddon"] }, { anyTags: ["militarum", "astartes", "sororitas", "commissar"] }]
+    },
     characters: ["yarrick", "tushan", "grimaldus", "ghazghkull"],
     summary: "가즈쿨 스라카가 이전보다 몇 배나 거대한 오크 대함대로 아마겟돈을 재침공했다. 노장 야릭, 샐러맨더 챕터 마스터 투샨, 블랙 템플러 수석 채플린 그리말두스가 맞선다.",
     text: "아마겟돈 전역이 다시 불길에 휩싸였다! 20여 개 스페이스 마린 챕터와 수백만 가드맨이 행성 전역의 하이브에서 사투를 벌인다. 녹턴에서 달려온 샐러맨더 챕터 마스터 투샨이 민간인 대피선 앞에서 방패를 세운다.",
@@ -679,7 +724,8 @@ window.IMPERIUM_DATA.TIMELINE = [
     text: "공포의 눈에서 쏟아진 카오스 대군이 카디아를 덮쳤다! 하늘에 황금 날개를 펼친 성녀 셀레스틴이 강림하고, 아크마고스 카울이 고대 파일런을 가동하려 분투하는 사이… 약탈자 아바돈이 거대한 블랙스톤 요새의 잔해를 행성으로 떨어뜨렸다! 대지가 갈라지고 대기가 불탄다! 우르사카르 크리드가 최후의 철수령을 내린다.",
     choices: [
       {
-        label: "[의지 판정] 크리드 장군과 함께 마지막까지 방어선을 지키며 피난선을 엄호한다",
+        label: "[의지 판정 · 즉사 위험] 크리드 장군과 함께 마지막까지 방어선을 지키며 피난선을 엄호한다",
+        req: { minAge: 14, excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "WP", diff: -15 },
         success: {
           text: "카디아의 지각이 쪼개지는 순간까지 방아쇠를 놓지 않았고, 기적적으로 성녀 셀레스틴의 광휘 속에서 최후의 수송선에 올랐다! '카디아는 서 있다!'",
@@ -691,11 +737,12 @@ window.IMPERIUM_DATA.TIMELINE = [
         },
         fail: {
           text: "블랙스톤 요새의 충돌 충격파가 카스르 전체를 삼켰다. 그대는 행성이 부서지는 그 순간까지 총을 내려놓지 않았다. 카디아는 부서졌으나 가드는 굴복하지 않았다.",
-          instantDeath: "999.M41 제13차 블랙 크루세이드, 카디아 붕괴 당시 최후 방어전에서 장렬히 전사 (Cadia Stands!)"
+          instantDeath: "999.M41 제13차 블랙 크루세이드, 카디아 붕괴 당시 최후 방어전에서 장렬히 전사 — 카디아는 서 있다"
         }
       },
       {
         label: "[민첩 판정] 벨리사리우스 카울과 셀레스틴의 웹웨이·함대 탈출 경로에 합류한다",
+        req: { excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "Ag", diff: -5 },
         success: {
           text: "붕괴하는 대륙을 가로질러 탈출 함대에 승선했다! 갈라진 고향 행성을 뒤로한 채, 복수를 맹세하며 테라 방면으로 항해한다.",
@@ -710,6 +757,33 @@ window.IMPERIUM_DATA.TIMELINE = [
           moveWorld: "voidborn",
           addTags: ["cadia_stands"]
         }
+      },
+      {
+        label: "[민첩 판정 · 카오스] 무너지는 카디아 궤도에서 블랙 리전 강습정에 올라 암흑의 승리를 지켜본다",
+        req: { anyTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "Ag", diff: 0 },
+        success: {
+          text: "산산조각 나는 요새 행성을 발밑에 두고 블랙 리전 함대에 합류했다! 암흑 신들의 승리가 은하를 찢어발기기 시작한다.",
+          stats: { Ag: 4, WP: 6, Inf: 8 },
+          corruption: 8,
+          moveWorld: "voidborn",
+          addTags: ["met_abaddon"]
+        },
+        fail: {
+          text: "지각 붕괴의 여파로 강습정이 흔들리며 중상을 입었으나, 가까스로 공포의 눈 경계 함대에 회수되었다.",
+          wounds: -24,
+          moveWorld: "voidborn"
+        }
+      },
+      {
+        label: "갈라지는 카디아 지표에서 긴급 탈출 포드에 몸을 싣고 궤도를 벗어난다",
+        effect: {
+          text: "행성이 불타며 쪼개지는 충격파 속에서 간신히 우주로 튕겨 나가 표류 끝에 구조되었다.",
+          wounds: -20,
+          stats: { WP: 4 },
+          moveWorld: "voidborn",
+          addTags: ["cadia_stands"]
+        }
       }
     ],
     source: "Lexicanum: Fall of Cadia / Gathering Storm I"
@@ -717,17 +791,18 @@ window.IMPERIUM_DATA.TIMELINE = [
   {
     id: "tl_great_rift",
     year: 999,
-    title: "대균열(Cicatrix Maledictum) 개방 — 암흑의 시대",
+    title: "대균열 시카트릭스 말레딕툼 개방 — 암흑의 시대",
     en: "Opening of the Great Rift",
     scope: "은하계 전역 (모든 캐릭터)",
     filter: {},
     characters: ["abaddon"],
     setGlobalFlag: "greatRiftOpened",
     summary: "카디아 파일런의 파괴로 은하계 전체가 거대한 워프의 상처로 양단되었다. 인류제국은 상크투스와 암흑의 니힐루스로 갈라졌다.",
-    text: "밤하늘이 핏빛과 보랏빛으로 찢어졌다! 은하계를 가로지르는 거대한 워프 균열 '시카트릭스 말레딕툼'이 열렸다. 아스트로노미칸의 등불이 33일간 꺼지고(녹티스 아에테르나), 곳곳에서 악마가 출현하며 사이커들이 폭주한다!",
+    text: "밤하늘이 핏빛과 보랏빛으로 찢어졌다! 은하계를 가로지르는 거대한 워프 균열 '시카트릭스 말레딕툼'이 열렸다. 상크투스 성역에서는 아스트로노미칸의 등불이 33일간 꺼졌고, 대균열 너머 임페리움 니힐루스는 아예 영구적인 암흑 '녹티스 아에테르나'에 잠겼다. 은하 곳곳에서 악마가 출현하며 사이커들이 폭주한다!",
     choices: [
       {
         label: "[의지 판정] 황제의 이름을 부르짖으며 악몽 같은 녹티스 아에테르나를 견딘다",
+        req: { excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "WP", diff: 0 },
         success: {
           text: "온 세상이 광기에 휩싸인 암흑 속에서도 정신을 붙들었다! 시련을 넘긴 신념이 한층 단단해졌다.",
@@ -743,23 +818,23 @@ window.IMPERIUM_DATA.TIMELINE = [
         }
       },
       {
-        label: "[지성 판정] 혼란 속에서 생존 물자와 성간 통신 복구 작업에 매달린다",
+        label: "[지성 판정] 혼란 속에서 생존 물자와 거점 방어선 확보에 매달린다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "폭동과 기근 속에서도 질서를 유지하고 생존 거점을 확보해 주민들과 상부의 신뢰를 얻었다.",
+          text: "폭동과 기근 속에서도 질서를 유지하고 생존 거점을 확보해 주변의 신뢰와 주도권을 얻었다.",
           stats: { Int: 5, Inf: 6 },
           addTags: ["rift_survivor"]
         },
         fail: {
-          text: "약탈자와 광신도들의 폭동에 휘말려 부상을 입고 재산을 잃었다.",
+          text: "약탈자와 광신도들의 폭동에 휘말려 부상을 입고 기반을 잃었다.",
           wounds: -20,
           stats: { Inf: -4 },
           addTags: ["rift_survivor"]
         }
       },
       {
-        label: "[금단] 찢어진 하늘 너머에서 들려오는 암흑 신들의 속삭임에 귀를 기울인다",
-        req: { minAge: 14 },
+        label: "[의지 판정 · 금단] 찢어진 하늘 너머에서 들려오는 암흑 신들의 속삭임에 귀를 기울인다",
+        req: { minAge: 14, excludeTags: ["custodes", "grey_knight", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "WP", diff: 10 },
         success: {
           text: "금지된 진실의 단편과 뒤틀린 힘을 깨달았다… 이제 제국의 빛보다 어둠이 더 친숙하게 느껴진다.",
@@ -775,6 +850,23 @@ window.IMPERIUM_DATA.TIMELINE = [
           corruption: 35,
           addTags: ["rift_survivor"]
         }
+      },
+      {
+        label: "[의지 판정 · 카오스] 찢어진 은하의 워프 폭풍을 들이마시며 암흑 신들의 시대를 찬양한다",
+        req: { minAge: 14, anyTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "황제의 빛이 꺾인 밤하늘 아래 워프의 격류가 온몸을 감싸며 카오스의 가호가 강렬히 깃들었다!",
+          stats: { WP: 7, Inf: 6 },
+          corruption: 12,
+          addTags: ["rift_touched", "rift_survivor"]
+        },
+        fail: {
+          text: "폭주하는 워프 균열의 반동에 육신이 찢어지는 고통을 겪었으나 끝내 어둠 속에서 버텨 냈다.",
+          wounds: -18,
+          corruption: 10,
+          addTags: ["rift_survivor"]
+        }
       }
     ],
     source: "Lexicanum: Great Rift / Warhammer 40k 8th Edition Core"
@@ -786,7 +878,7 @@ window.IMPERIUM_DATA.TIMELINE = [
     en: "The Devastation of Baal",
     scope: "바알 (행성 한정)",
     dispatchScope: "galaxy",
-    dispatchText: "타이라니드 하이브 함대 레비아탄의 거대한 촉수가 블러드 엔젤의 모성 바알을 덮쳤으나, 사령관 단테와 후계 챕터들의 사투 끝에 인도미투스 구원 함대가 당도했다는 소식이 전해졌다.",
+    dispatchText: "타이라니드 하이브 함대 레비아탄의 거대한 촉수가 블러드 엔젤의 모성 바알을 덮쳤다. 사령관 단테와 후계 챕터들의 처절한 항전 끝에 대균열의 시간 왜곡을 뚫고 당도한 구원 함대가 바알을 구해 냈다는 소식이 전해졌다.",
     filter: { anyWorlds: ["baal"] },
     characters: ["dante", "guilliman"],
     summary: "타이라니드 하이브 함대 레비아탄의 거대한 촉수가 블러드 엔젤의 모성 바알을 집어삼키려 했다.",
@@ -794,16 +886,16 @@ window.IMPERIUM_DATA.TIMELINE = [
     choices: [
       {
         label: "[백병 판정] 블러드 엔젤의 깃발 아래 타이라니드 무리에 맞서 싸운다",
-        req: { minAge: 12 },
+        req: { minAge: 12, excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "WS", diff: -10 },
         success: {
-          text: "절망적인 포위망을 버텨 낸 순간, 대균열 너머로 인도미투스 성전 함대와 길리먼의 구원군이 당도했다! 단테가 그대의 생존을 축복했다.",
+          text: "절망적인 포위망 속에서 대균열이 하늘을 찢고 시간의 흐름마저 뒤틀린 끝자락, 마침내 길리먼의 구원 함대가 바알 궤도에 당도했다! 단테가 그대의 생존을 축복했다.",
           stats: { WS: 8, T: 6, WP: 8, Inf: 10 },
           wounds: -22,
           addTags: ["baal_survivor", "met_dante", "met_guilliman"]
         },
         fail: {
-          text: "타이라니드 호마건트 떼에 짓밟혀 중상을 입었으나, 길리먼의 구원 함대가 도착한 뒤 폐허에서 기적적으로 구조되었다.",
+          text: "타이라니드 호마건트 떼에 짓밟혀 중상을 입었으나, 대균열의 폭풍이 걷히며 당도한 길리먼의 구원 함대에 폐허에서 기적적으로 구조되었다.",
           wounds: -42,
           stats: { T: 4 },
           addTags: ["baal_survivor"]
@@ -840,7 +932,7 @@ window.IMPERIUM_DATA.TIMELINE = [
     choices: [
       {
         label: "[의지 판정] 황금 갑주의 진군을 따라 황궁 외곽 방어선에 합류한다",
-        req: { minAge: 14 },
+        req: { minAge: 14, excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "WP", diff: -10 },
         success: {
           text: "악마의 광기를 이겨 내고 사자의 문 사수에 기여했다! 쿠스토데스와 프라이마크의 위용을 두 눈으로 목격한 영광을 얻었다.",
@@ -856,10 +948,10 @@ window.IMPERIUM_DATA.TIMELINE = [
         }
       },
       {
-        label: "[민첩 판정] 성소 지하로 순례자들을 대피시킨다",
+        label: "[민첩 판정] 피의 폭풍을 피해 지하 구역으로 몸을 피하며 주변 생존자들을 이끈다",
         check: { stat: "Ag", diff: 0 },
         success: {
-          text: "피의 폭풍 속에서 수많은 테라 시민과 성물을 지켜 냈다.",
+          text: "피의 폭풍 속에서도 살아남아 수많은 테라 시민과 성물을 지켜 냈다.",
           stats: { Ag: 4, Fel: 6, Inf: 6 },
           faith: 10
         },
@@ -883,8 +975,8 @@ window.IMPERIUM_DATA.TIMELINE = [
     text: "전 은하계 아스트로패스 통신망에 경천동지할 칙령이 울려 퍼진다! 황제와 독대하고 제국 섭정에 오른 로부테 길리먼이 하이 로드들을 재편하고 '인도미투스 성전'을 선포했다. 아크마고스 카울이 1만 년간 숨겨 둔 프라이머리스 스페이스 마린이 은하 곳곳에 모습을 드러낸다.",
     choices: [
       {
-        label: "[아스타르테스 전용] 루비콘 프라이머리스(Rubicon Primaris) 시술에 지원한다",
-        req: { allTags: ["astartes"], excludeTags: ["primaris"] },
+        label: "[강인 판정 · 아스타르테스 전용] 루비콘 프라이머리스 시술에 지원한다",
+        req: { allTags: ["astartes"], excludeTags: ["primaris", "grey_knight", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "imperial_nihilus"] },
         check: { stat: "T", diff: -15 },
         success: {
           text: "생사를 넘나드는 외과 시술 끝에 3개의 신형 장기가 각성했다! 그대는 이제 더 거대하고 강인한 프라이머리스 아스타르테스로 거듭났다!",
@@ -893,14 +985,14 @@ window.IMPERIUM_DATA.TIMELINE = [
           addTags: ["primaris", "met_cawl"]
         },
         fail: {
-          text: "시술 중 심장이 두 번이나 멈췄으나 아포세카리의 필사적인 처치로 되살아났다. 체력은 회복되었으나 극심한 고통의 흉터가 남았다.",
+          text: "시술 중 심장이 두 번이나 멈췄으나 아포세카리의 필사적인 처치로 목숨만은 건졌다. 심각한 내상과 극심한 고통의 흉터가 깊게 남았다.",
           wounds: -35,
           stats: { T: 4, WP: 4 }
         }
       },
       {
-        label: "인도미투스 성전 함대의 일원이나 보급관으로 자원한다",
-        req: { minAge: 15 },
+        label: "[교섭 판정] 인도미투스 성전 함대의 일원이나 보급관으로 자원한다",
+        req: { minAge: 15, excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "imperial_nihilus"] },
         check: { stat: "Fel", diff: 0 },
         success: {
           text: "성전군 원정 편대에 이름을 올리며 제국 반격의 물결에 합류했다! 승진과 공훈의 길이 열렸다.",
@@ -915,10 +1007,10 @@ window.IMPERIUM_DATA.TIMELINE = [
         }
       },
       {
-        label: "격변하는 제국의 판도를 지켜보며 자신의 입지를 조용히 다진다",
+        label: "[지성 판정] 격변하는 은하의 판도를 지켜보며 자신의 입지를 조용히 다진다",
         check: { stat: "Int", diff: 5 },
         success: {
-          text: "길리먼의 행정 개혁 흐름을 읽어 내고 혼란한 틈에 안정적인 기반을 구축했다.",
+          text: "길리먼의 행정 개혁과 전쟁의 흐름을 읽어 내고 혼란한 틈에 안정적인 기반을 구축했다.",
           stats: { Int: 5, Inf: 5 }
         },
         fail: {
@@ -936,17 +1028,21 @@ window.IMPERIUM_DATA.TIMELINE = [
     en: "War of Beasts on Vigilus",
     scope: "옵스쿠루스 · 군인 · 아스타르테스",
     dispatchScope: "galaxy",
-    dispatchText: "임페리움 니힐루스로 통하는 유일한 안정 항로 비질루스에서 마르네우스 칼가와 약탈자 아바돈이 정면 격돌해 80일간의 야수 전쟁이 벌어지고 있다는 전보가 날아들었다.",
-    filter: { minAge: 16, or: [{ anySegmenta: ["obscurus"] }, { anyTags: ["militarum", "astartes", "inquisitor", "indomitus_crusader"] }] },
+    dispatchText: "임페리움 니힐루스로 통하는 거의 유일한 안정 항로 비질루스에서 마르네우스 칼가와 약탈자 아바돈이 정면 격돌해 야수 전쟁과 이어진 80일간의 악몽 공성전이 벌어지고 있다는 전보가 날아들었다.",
+    filter: {
+      minAge: 16,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [{ anySegmenta: ["obscurus"] }, { anyTags: ["militarum", "astartes", "inquisitor", "indomitus_crusader"] }]
+    },
     characters: ["calgar", "abaddon"],
-    summary: "임페리움 니힐루스로 통하는 유일한 안정 항로 나흐문드 회랑을 두고 마르네우스 칼가와 약탈자 아바돈이 비질루스에서 격돌했다.",
+    summary: "임페리움 니힐루스로 통하는 거의 유일한 안정 항로 나흐문드 회랑을 두고 마르네우스 칼가와 약탈자 아바돈이 비질루스에서 격돌했다.",
     text: "오크 스피드 프릭, 진스틸러 컬트, 그리고 아바돈의 블랙 리전까지 한 행성에 몰려들었다! 울트라마린 챕터 마스터 마르네우스 칼가가 총사령관으로서 비질루스 하이브 방어전을 지휘한다.",
     choices: [
       {
         label: "[사격 판정] 칼가의 지휘 아래 하이브 스파이어 방어선을 사수한다",
         check: { stat: "BS", diff: -5 },
         success: {
-          text: "80일간의 혈전 끝에 나흐문드 회랑의 생명선을 지켜 냈다! 제국 전역에 용명이 전해졌다.",
+          text: "80일간의 악몽 공성전 끝에 나흐문드 회랑의 생명선을 지켜 냈다! 제국 전역에 용명이 전해졌다.",
           stats: { BS: 6, WS: 5, Inf: 8, WP: 5 },
           addTags: ["vigilus_veteran", "met_calgar"]
         },
@@ -984,10 +1080,10 @@ window.IMPERIUM_DATA.TIMELINE = [
     text: "은하계 곳곳에서 평범하던 시민들이 갑자기 염동력을 쓰거나 예언을 외치기 시작했다. 이단심문소와 검은 함선은 폭주하는 업무에 비명을 지르고, 국교 성당에서는 기적의 성광이 관측된다.",
     choices: [
       {
-        label: "[의지 판정] 내면에서 일렁이는 워프의 파장을 억누르거나 신앙으로 승화한다",
+        label: "[의지 판정] 내면에서 일렁이는 워프의 파장을 억누르거나 신념으로 승화한다",
         check: { stat: "WP", diff: 0 },
         success: {
-          text: "폭주하는 워프 에너지 앞에서도 흔들리지 않고 오히려 정신적 깨달음과 신앙의 가호를 얻었다.",
+          text: "폭주하는 워프 에너지 앞에서도 흔들리지 않고 오히려 정신적 깨달음과 흔들리지 않는 의지를 얻었다.",
           stats: { WP: 7 },
           faith: 12,
           corruption: -5
@@ -999,8 +1095,8 @@ window.IMPERIUM_DATA.TIMELINE = [
         }
       },
       {
-        label: "[잠재력 개방] 밀려드는 초자연적 감각을 받아들여 잠재 사이킥을 일깨운다",
-        req: { excludeTags: ["psyker", "blank", "custodes"] },
+        label: "[의지 판정 · 잠재력 개방] 밀려드는 초자연적 감각을 받아들여 잠재 사이킥을 일깨운다",
+        req: { excludeChapters: ["black_templars"], excludeTags: ["psyker", "blank", "custodes", "astartes", "grey_knight", "sororitas", "daemon_prince", "dreadnought"] },
         check: { stat: "WP", diff: -10 },
         success: {
           text: "눈동자에 푸른 워프 불꽃이 어른거린다! 그대는 후천적으로 사이커 자질에 눈떴다. 막대한 힘과 함께 검은 함선의 위협이 뒤따를 것이다.",
@@ -1021,13 +1117,14 @@ window.IMPERIUM_DATA.TIMELINE = [
     id: "tl_pariah_nexus",
     year: 1016,
     endYear: 1020,
-    title: "파리아 넥서스 전역 — 네크론의 '정적(The Stilling)'",
+    title: "파리아 넥서스 전역 — 네크론의 '정적'",
     en: "The Pariah Nexus Campaign",
     scope: "네필림 섹터 · 은하계 전역",
     dispatchScope: "galaxy",
-    dispatchText: "네필림 섹터 일대에 네크론이 거대한 블랙스톤 파일런 망 '파리아 넥서스'를 가동했다! 구역 내 인류 수십억이 영혼의 활력을 잃고 산 송장처럼 얼어붙는 '정적(The Stilling)' 현상이 번지자 인도미투스 성전 함대가 긴급 투입되었다.",
+    dispatchText: "네필림 섹터 일대에 네크론이 거대한 블랙스톤 파일런 망 '파리아 넥서스'를 가동했다! 구역 내 인류 수십억이 영혼의 활력을 잃고 산 송장처럼 얼어붙는 '정적' 현상이 번지자 인도미투스 성전 함대가 긴급 투입되었다.",
     filter: {
       minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
       or: [
         { anySegmenta: ["ultima", "tempestus"] },
         { anyTags: ["militarum", "astartes", "sororitas", "mechanicus", "inquisitor", "indomitus_crusader"] }
@@ -1093,10 +1190,10 @@ window.IMPERIUM_DATA.TIMELINE = [
     choices: [
       {
         label: "[백병 판정] 징조의 방주 강습대에 맞서 최후의 방어선을 지키며 라이온의 구원군이 닿을 시간을 번다",
-        req: { minAge: 15 },
+        req: { minAge: 15, excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "WS", diff: -10 },
         success: {
-          text: "절망적인 수적 열세를 버텨 낸 그 순간, 녹색 안개 너머로 숲의 사자와 리즌(Risen) 전사들이 강림해 적을 분쇄했다!",
+          text: "절망적인 수적 열세를 버텨 낸 그 순간, 녹색 안개 너머로 숲의 사자와 리즌 전사들이 강림해 적을 분쇄했다!",
           stats: { WS: 8, WP: 7, Inf: 9 },
           faith: 12,
           addTags: ["met_lion", "hero_of_imperium"]
@@ -1109,6 +1206,7 @@ window.IMPERIUM_DATA.TIMELINE = [
       },
       {
         label: "[의지 판정] 라이온 귀환의 복음을 고립된 행성계에 전파하며 무너져 가던 시민들의 희망을 되살린다",
+        req: { excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "WP", diff: -5 },
         success: {
           text: "황제의 아들이 다시 돌아왔다는 소식에 절망하던 행성 전체가 들끓어 반격의 불꽃을 지폈다!",
@@ -1124,7 +1222,7 @@ window.IMPERIUM_DATA.TIMELINE = [
       {
         label: "거대 스페이스 헐크 함대의 이동 경로를 피하며 소속 거점의 방어와 생존 물자 확보에 집중한다",
         effect: {
-          text: "신화 같은 영웅들의 전쟁 속에서도 평범한 생명을 지키는 자리를 끝까지 지켰다.",
+          text: "신화 같은 영웅들의 전쟁 속에서도 자신이 지킬 자리를 끝까지 사수했다.",
           stats: { T: 5, Int: 4, WP: 4 }
         }
       }
@@ -1139,12 +1237,12 @@ window.IMPERIUM_DATA.TIMELINE = [
     scope: "은하계 전역 · 파시피쿠스",
     filter: {},
     characters: ["guilliman", "valoris"],
-    summary: "하이브 함대 레비아탄의 거대한 신형 촉수가 인류제국 서부(세그멘툼 파시피쿠스)를 향해 테라 직행 코스로 밀려들어 왔다.",
+    summary: "하이브 함대 레비아탄의 거대한 신형 촉수가 인류제국 서부 세그멘툼 파시피쿠스를 향해 테라 직행 코스로 밀려들어 왔다.",
     text: "모두가 동부 전선에 시선을 빼앗긴 사이, 타이라니드 하이브 함대 레비아탄의 최대 주력이 은하 서부에서 모습을 드러냈다! 테라를 향한 절체절명의 방어전 '제4차 타이라니드 전쟁'이 선포된다.",
     choices: [
       {
         label: "[사격 판정] 서부 방어선 솔블레이드 기동대에 합류해 타이라니드 생체 괴수들과 싸운다",
-        req: { minAge: 16 },
+        req: { minAge: 16, excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
         check: { stat: "BS", diff: -10 },
         success: {
           text: "하늘을 가리는 스포어와 카니펙스 무리를 막아 내며 제국 서부 방어선의 영웅으로 기록되었다!",
@@ -1166,7 +1264,7 @@ window.IMPERIUM_DATA.TIMELINE = [
           addTags: ["tyranic_war_vet"]
         },
         fail: {
-          text: "워프의 그림자(Shadow in the Warp)로 성간 통신이 두절되며 아군과 고립되어 고초를 겪었다.",
+          text: "워프의 그림자로 성간 통신이 두절되며 아군과 고립되어 고초를 겪었다.",
           wounds: -18,
           stats: { WP: 2 }
         }

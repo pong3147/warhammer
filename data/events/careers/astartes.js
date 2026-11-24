@@ -10,10 +10,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 11,
       maxAge: 16,
       gender: "male",
-      excludeTags: ["astartes", "custodes", "abhuman", "heretic"],
+      excludeTags: ["astartes", "custodes", "abhuman", "heretic", "chaos_aligned"],
       or: [{ anyTags: ["geneseed_compatible"] }, { anyWorldTags: ["astartes_recruit"] }]
     },
-    reqLabel: "소년기(11~16세) · 진시드 적합 또는 챕터 징병 행성",
+    reqLabel: "소년기 11~16세 · 진시드 적합 또는 챕터 징병 행성",
     weight: 28,
     text: "강철 썬더호크 강습정이 굉음과 함께 내려앉고, 2.5미터 거구의 아뎁투스 아스타르테스 채플린과 아포세카리가 소년들을 사열한다. '인류의 가장 어두운 시대에 맞설 천사의 후보를 찾노라. 죽음을 각오한 자만 앞으로 나서라!'",
     choices: [
@@ -22,7 +22,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         req: { stats: { T: 34, WS: 32 } },
         check: { stat: "T", diff: -5 },
         success: {
-          text: "수백 명의 지원자 중 극소수만 살아남은 혈전과 19개 초인 장기 이식을 견뎌 냈다! 그대는 아스타르테스 네오파이트가 되었다!",
+          text: "수백 명의 지원자 중 극소수만 살아남은 혈전과 18개 초인 장기 이식을 견뎌 냈다! 그대는 아스타르테스 네오파이트가 되었다!",
           forceCareer: "astartes_scout",
           stats: { T: 14, WS: 12, BS: 10, WP: 10, Inf: 10 },
           woundsBonus: 40,
@@ -36,7 +36,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[의지 55+ & 사이커 해금] 은빛 갑주의 비밀 사절 — 타이탄(그레이 나이트)의 부름에 응한다",
+        label: "[의지 판정 · 사이커·의지 55+] 은빛 갑주의 비밀 사절 — 타이탄의 그레이 나이트 부름에 응한다",
         req: { allTags: ["psyker"], stats: { WP: 55, T: 42 }, maxCorruption: 5 },
         check: { stat: "WP", diff: -10 },
         success: {
@@ -65,19 +65,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_deathwatch_vigil",
-    title: "데스워치(Deathwatch) 파견 소집령",
+    title: "데스워치 파견 소집령",
     category: "아스타르테스",
     once: true,
-    req: { allTags: ["astartes"], minAge: 25, excludeTags: ["grey_knight", "deathwatch_vet"] },
-    reqLabel: "아스타르테스 · 나이 25세+",
+    req: {
+      allTags: ["astartes", "battle_brother"],
+      minAge: 25,
+      excludeTags: ["grey_knight", "deathwatch_vet", "chapter_master", "dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    reqLabel: "배틀 브라더 아스타르테스 · 나이 25세+",
     weight: 22,
     text: "오르도 제노스의 전투 조직 '데스워치'로부터 그대의 챕터로 파견 요청이 도착했다. 왼쪽 견갑을 은빛으로 물들이고 다른 챕터의 형제들과 함께 최악의 외계인 위협을 사냥하는 영광스러운 철야 근무다.",
     choices: [
       {
-        label: "[백병/사격 판정] 파견을 수락하고 킬 팀(Kill-Team) 작전을 수행한다",
+        label: "[백병 판정] 파견을 수락하고 킬 팀 작전을 수행한다",
         check: { stat: "WS", diff: -5 },
         success: {
-          text: "네크론 무덤 행성과 엘다 해적선을 제압하고 은빛 견갑을 찬 채 명예롭게 챕터로 복귀했다!",
+          text: "고대 외계 유적 행성과 드루카리 해적선을 제압하고 은빛 견갑을 찬 채 명예롭게 챕터로 복귀했다!",
           stats: { WS: 7, BS: 7, Int: 6, Inf: 10 },
           addTags: ["deathwatch_vet"]
         },
@@ -102,13 +106,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_space_hulk",
     title: "저주받은 스페이스 헐크 강습 작전",
     category: "아스타르테스",
-    req: { or: [{ allTags: ["astartes"] }, { allTags: ["custodes"] }, { anyCareers: ["tempestus_scion", "inquisitor"] }] },
+    req: {
+      or: [{ allTags: ["astartes"] }, { allTags: ["custodes"], greatRift: true }, { anyCareers: ["tempestus_scion", "inquisitor"] }],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "아스타르테스 / 쿠스토데스 / 사이온 / 이단심문관",
     weight: 16,
     text: "수천 년간 워프를 표류하던 거대 난파선 집합체 '스페이스 헐크'가 행성계에 출현했다. 내부에는 고대 유물과 진스틸러 둥지가 동시에 도사리고 있다.",
     choices: [
       {
-        label: "[백병 판정] 좁은 격벽 통로를 돌파해 고대 챕터 성물과 데이터를 회수한다",
+        label: "[백병 판정] 좁은 격벽 통로를 돌파해 고대 제국 성물과 데이터를 회수한다",
         check: { stat: "WS", diff: -10 },
         success: {
           text: "진스틸러 브루드로드의 목을 베고 고대 아키오테크 성물을 되찾았다! 전설로 남을 무공이다.",
@@ -116,7 +123,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           addTags: ["space_hulk_vet"]
         },
         fail: {
-          text: "아다만티움 갑주마저 찢는 진스틸러의 발톱에 치명상을 입고 긴급 텔레포트로 탈출했다.",
+          text: "강화 갑주마저 찢는 진스틸러의 발톱에 치명상을 입고 가까스로 철수했다.",
           wounds: -40,
           stats: { T: 3 }
         }
@@ -138,11 +145,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_dreadnought_choice",
-    title: "죽음마저 끝나지 않는 의무 — 드레드노트 안치",
+    title: "죽음 속에서도 끝나지 않는 의무 — 드레드노트 안치",
     category: "아스타르테스",
     once: true,
-    req: { allTags: ["astartes"], maxWounds: 38, excludeTags: ["dreadnought"] },
-    reqLabel: "아스타르테스 · 생명력 38 이하 위독 상태",
+    req: {
+      allTags: ["astartes", "power_armor"],
+      maxWounds: 38,
+      excludeTags: ["dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    reqLabel: "파워 아머 아스타르테스 · 생명력 38 이하 위독 상태",
     weight: 45,
     text: "그대의 육신은 수많은 전투로 만신창이가 되어 더 이상 파워 아머조차 지탱하기 어렵다. 아포세카리와 테크마린이 고대의 석관, '드레드노트'를 열고 묻는다. '형제여, 영면에 들겠는가, 아니면 강철 거신 속에서 영원히 싸우겠는가?'",
     choices: [
@@ -172,21 +183,25 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "징병 행성 사열 — 하늘에서 내려다보는 옛 필멸자의 땅",
     category: "아스타르테스",
     once: true,
-    req: { anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain", "chapter_master"], anyWorldTags: ["astartes_recruit"] },
-    reqLabel: "배틀 브라더/중대장 · 챕터 징병 행성 방문",
+    req: {
+      anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain"],
+      anyWorldTags: ["astartes_recruit"],
+      excludeTags: ["dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    reqLabel: "배틀 브라더~중대장 · 챕터 징병 행성 방문",
     weight: 30,
-    text: "썬더호크에서 내린 2.5미터 파워 아머의 위용 앞에, 한때 그대 역시 속해 있었을 언더하이브 갱단원들과 부족 소년들이 숨을 죽이고 무릎을 꿇는다. 채플린과 함께 새로운 챕터 후보생(Aspirant)들을 선발할 차례다.",
+    text: "썬더호크에서 내린 2.5미터 파워 아머의 위용 앞에, 한때 그대 역시 속해 있었을 언더하이브 갱단원들과 부족 소년들이 숨을 죽이고 무릎을 꿇는다. 채플린과 함께 새로운 챕터 후보생들을 선발할 차례다.",
     choices: [
       {
-        label: "[의지/지성 판정] 가장 거칠고 끝까지 눈을 피하지 않은 하층민 소년을 직접 지목한다",
+        label: "[지성 판정] 가장 거칠고 끝까지 눈을 피하지 않은 하층민 소년을 직접 지목한다",
         check: { stat: "Int", diff: 5 },
         success: {
           text: "날카로운 안목으로 탁월한 유전 적성의 신병 3명을 발굴했다! 챕터 마스터가 그대의 안목을 높이 평가했다.",
           stats: { Int: 4, Inf: 8, WP: 4 }
         },
         fail: {
-          text: "선발된 후보생 대다수가 시련을 넘기지 못했지만, 그것이 아스타르테스의 냉혹한 법칙이다.",
-          stats: { WP: 3 }
+          text: "선발된 후보생 대다수가 시련을 넘기지 못해 채플린의 차가운 질책을 받았지만, 그것이 아스타르테스의 냉혹한 법칙이다.",
+          stats: { Inf: -3, WP: 2 }
         }
       },
       {
@@ -201,27 +216,39 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_astartes_librarius",
-    title: "챕터 라이브러리우스 — 전투 사이킥과 정신 두건의 시련",
+    title: "챕터 라이브러리우스 — 전투 사이킥과 사이킥 후드의 시련",
     category: "아스타르테스",
     once: true,
-    req: { allTags: ["astartes", "psyker"], excludeTags: ["grey_knight", "librarius_trained"] },
+    req: {
+      allTags: ["astartes", "psyker"],
+      excludeChapters: ["black_templars"],
+      excludeTags: ["grey_knight", "librarius_trained", "dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "아스타르테스 + 사이커 자질",
     weight: 36,
     text: "아스타르테스 내의 사이커는 검은 함선이 아니라 챕터 치프 라이브러리안의 직속 시련을 거친다. 푸른 갑주의 선배들이 그대의 정신에 워프 폭풍을 직접 투사하며 묻는다. '너는 이 힘을 지배할 것인가, 아니면 지배당해 형제들의 볼터에 죽을 것인가!'",
     choices: [
       {
-        label: "[의지 판정] 챕터 전투 함성을 내질러 워프 폭풍을 찢고 사이킥 두건(Psychic Hood)을 수여받는다",
+        label: "[의지 판정] 챕터 전투 함성을 내질러 워프 폭풍을 찢고 사이킥 후드를 수여받는다",
         check: { stat: "WP", diff: 0 },
         success: {
           text: "악마의 환상을 산산조각 내고 정식 챕터 라이브러리안 수련을 통과했다! 이제 워프 오염 저항과 전투 사이킥이 비약적으로 강화된다.",
           stats: { WP: 10, Int: 8, Inf: 8 },
           corruption: -15,
-          addTags: ["librarius_trained", "sanctioned_psyker"]
+          addTags: ["librarius_trained", "role_librarian"]
         },
         fail: {
           text: "혹독한 정신 충격으로 며칠간 의식을 잃었으나, 치프 라이브러리안은 포기하지 않고 다음 시련을 기약했다.",
           wounds: -20,
           stats: { WP: 4 }
+        }
+      },
+      {
+        label: "사이킥 개방 대신 엄격한 정신 차폐 규율을 택해 일반 전열 형제로서의 절제를 단련한다",
+        effect: {
+          text: "치프 라이브러리안이 그대의 신중한 절제를 인정하고 정화 인장을 수여했다. 워프의 속삭임을 잠재우고 검과 볼터에 집중한다.",
+          stats: { WP: 5, WS: 3 },
+          corruption: -8
         }
       }
     ],
@@ -232,16 +259,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "네오파이트의 증명 — 파워 아머 없는 적진 잠입",
     category: "계급 고유",
     once: true,
-    req: { anyCareers: ["astartes_scout"] },
-    reqLabel: "계급: 아스타르테스 네오파이트(스카웃)",
+    req: {
+      anyCareers: ["astartes_scout"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    reqLabel: "계급: 아스타르테스 네오파이트 · 스카웃",
     weight: 26,
-    text: "아직 검은 갑각과 파워 아머를 받지 못한 신참 네오파이트. 200년 경력의 베테랑 스카웃 병장이 차갑게 명령한다. '적 반역파 포병대 레이더를 소리 없이 폭파하라. 들키면 구원 따윈 없다.'",
+    text: "아직 검은 갑각과 파워 아머를 받지 못한 신참 네오파이트. 200년 경력의 베테랑 스카웃 병장이 차갑게 명령한다. '폐허 매뉴팩토룸 안쪽의 반역파 포병대 레이더를 소리 없이 폭파하라. 들키면 구원 따윈 없다.'",
     choices: [
       {
-        label: "[민첩 판정] 카멜레온 망토에 몸을 숨기고 단검만으로 보초를 제거해 폭탄을 설치한다",
+        label: "[민첩 판정] 카멜레올린 망토에 몸을 숨기고 단검만으로 보초를 제거해 폭탄을 설치한다",
         check: { stat: "Ag", diff: 0 },
         success: {
-          text: "완벽한 무음 침투로 포병 진지를 날려 버렸다! 스카웃 병장이 처음으로 고개를 끄덕이며 배틀 브라더 추천서를 써 주었다.",
+          text: "완벽한 무음 침투로 포병 레이더를 날려 버렸다! 스카웃 병장이 처음으로 고개를 끄덕이며 배틀 브라더 추천서를 써 주었다.",
           stats: { Ag: 6, BS: 5, WS: 4, Inf: 6 }
         },
         fail: {
@@ -251,14 +281,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[사격 판정] 장거리 스나이퍼 볼터로 적 지휘관과 탄약고를 원거리 저격한다",
+        label: "[사격 판정] 소음기 장착 스토커 볼터로 600미터 밖에서 발전기 제어반과 탄약고를 정밀 타격한다",
         check: { stat: "BS", diff: 0 },
         success: {
-          text: "1.2km 거리에서 탄약고 뇌관을 정밀 타격해 대폭발을 일으켰다!",
+          text: "어둠 속에서 쏜 연속 정밀 사격이 탄약고 뇌관을 관통해 연쇄 대폭발을 일으켰다!",
           stats: { BS: 6, Int: 4, Inf: 5 }
         },
         fail: {
-          text: "역포격에 진지가 무너져 부상을 입고 철수했다.",
+          text: "역포격에 은폐 지점이 무너져 부상을 입고 철수했다.",
           wounds: -20
         }
       }
@@ -270,8 +300,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "중대장의 결단 — 타격 순양함 함교의 전략 회의",
     category: "계급 고유",
     once: true,
-    req: { anyCareers: ["astartes_captain"] },
-    reqLabel: "계급: 아스타르테스 중대장(캡틴)",
+    req: {
+      anyCareers: ["astartes_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    reqLabel: "계급: 아스타르테스 중대장",
     weight: 28,
     text: "타격 순양함 함교의 홀로그램 성도 앞. 행성 총독이 눈물로 민간인 하이브 방어를 애원하는 한편, 궤도에는 적 카오스 기함을 급습해 성계 전쟁을 단번에 끝낼 10분의 틈이 열렸다. 100명 형제의 목숨과 행성의 운명이 중대장의 명령에 달렸다.",
     choices: [
@@ -301,12 +334,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ev_astartes_honor_duel",
-    title: "아스타르테스 형제 간의 명예 결투 (Honor Duel)",
+    title: "아스타르테스 형제 간의 명예 결투",
     category: "아스타르테스",
-    req: { allTags: ["astartes"], minAge: 20 },
+    req: {
+      allTags: ["astartes"],
+      minAge: 20,
+      excludeTags: ["grey_knight", "dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "아스타르테스 · 20세+",
     weight: 22,
-    text: "합동 작전 중 타 중대(또는 형제 챕터)의 베테랑 전사가 작전 주도권을 두고 명예 결투를 신청했다! 목숨을 빼앗지 않는 첫 피(First Blood) 규칙 아래 수십 명의 형제들이 원형 투기장을 에워싼다.",
+    text: "합동 작전 중 타 중대나 형제 챕터의 베테랑 전사가 작전 주도권을 두고 명예 결투를 신청했다! 목숨을 빼앗지 않고 첫 피가 날 때까지 겨루는 규칙 아래 수십 명의 형제들이 원형 투기장을 에워싼다.",
     choices: [
       {
         label: "[백병 판정] 체인소드 날을 무디게 봉인하고 정면으로 검을 맞댄다",
@@ -322,10 +359,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성/교섭 판정] 결투 대신 모의 워게임 전술 대결로 지휘 우위를 증명하자고 제안한다",
+        label: "[지성 판정] 결투 대신 모의 워게임 전술 대결로 지휘 우위를 증명하자고 제안한다",
         check: { stat: "Int", diff: 0 },
         success: {
-          text: "《코덱스 아스타르테스》의 전술 원리로 상대를 완벽히 설득해 명예와 지휘권을 모두 지켜 냈다.",
+          text: "치밀한 전략 전술 논리로 상대를 완벽히 설득해 명예와 지휘권을 모두 지켜 냈다.",
           stats: { Int: 6, Fel: 4, Inf: 6 }
         },
         fail: {
@@ -335,40 +372,43 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Codex: Space Marines / Space Wolves & Dark Angels Lore"
+    source: "Codex: Space Marines / Lexicanum: Honour Duel"
   },
   {
     id: "ev_rank_scout_black_carapace",
-    title: "네오파이트 최종 관문 — 검은 갑각(Black Carapace) 이식 전 실전",
+    title: "네오파이트 최종 관문 — 검은 갑각 이식 전 실전",
     category: "계급 고유",
     once: true,
-    req: { anyCareers: ["astartes_scout"] },
+    req: {
+      anyCareers: ["astartes_scout"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "계급: 아스타르테스 네오파이트",
     weight: 30,
-    text: "스카웃 중대장이 그대를 호출했다. '18개 초인 장기가 자리 잡았으나, 파워 아머와 신경을 잇는 마지막 19번째 장기 — 검은 갑각은 살아 돌아온 자에게만 허락된다. 적 오크 워보스의 전초기지 좌표를 직접 확보해 오라.'",
+    text: "스카웃 중대장이 그대를 호출했다. '18개 초인 장기가 자리 잡았으나, 파워 아머와 신경을 잇는 마지막 19번째 장기인 검은 갑각은 살아 돌아온 자에게만 허락된다. 랜드 스피더 스톰에 탑승해 오크 워보스의 연료 기지에 고속 강습을 감행하고 생환하라.'",
     choices: [
       {
-        label: "[민첩 판정] 카멜레올린 망토에 의지해 적진 한복판까지 잠입하여 정밀 타격 비콘을 설치한다",
+        label: "[민첩 판정] 저공 급강하 중인 강습정에서 뛰어내려 적 요새 한복판에 궤도 타격 유도기를 꽂고 이탈한다",
         check: { stat: "Ag", diff: 0 },
         success: {
-          text: "궤도 포격이 정확히 적 전초기지를 증발시켰다! 아포세카리가 그대에게 검은 갑각 이식 대기자 명단 최상단을 부여했다.",
+          text: "궤도 포격이 정확히 오크 연료 기지를 증발시켰다! 아포세카리가 그대에게 검은 갑각 이식 대기자 명단 최상단을 부여했다.",
           stats: { Ag: 6, BS: 5, WP: 5, Inf: 5 }
         },
         fail: {
-          text: "오크 스퀴그 사냥개에게 발각되어 피투성이 백병전 끝에 겨우 좌표만 송신하고 복귀했다.",
+          text: "오크 스퀴그 사냥개 떼에 포위되어 피투성이 백병전 끝에 겨우 유도기만 작동시키고 복귀했다.",
           wounds: -20,
           stats: { WS: 5, T: 4 }
         }
       },
       {
-        label: "[사격 판정] 고지대 폐허에서 스나이퍼 볼터로 적 통신병과 장교들을 차례로 저격한다",
+        label: "[사격 판정] 강습정 헤비 볼터와 컴뱃 샷건의 맹화력으로 오크 대공포대와 지휘 막사를 정면 분쇄한다",
         check: { stat: "BS", diff: 0 },
         success: {
-          text: "단 한 발의 빗나감도 없는 저격으로 적 지휘망을 마비시켰다! 정식 배틀 브라더 승급이 눈앞에 다가왔다.",
+          text: "단 한 발의 낭비도 없는 기동 사격으로 적 요새를 화염에 잠식시켰다! 정식 배틀 브라더 승급이 눈앞에 다가왔다.",
           stats: { BS: 7, Int: 4, WP: 4 }
         },
         fail: {
-          text: "적 박격포 반격에 엄폐물이 무너져 부상을 입었으나 끝까지 임무 데이터를 지켜 냈다.",
+          text: "적 대공 포화에 강습정이 피탄되어 부상을 입었으나 끝까지 임무 데이터를 지켜 냈다.",
           wounds: -18,
           stats: { T: 3 }
         }
@@ -381,16 +421,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "배틀 브라더 — 쓰러진 베테랑 하사와 분대의 명예",
     category: "계급 고유",
     once: true,
-    req: { anyCareers: ["astartes_brother"] },
+    req: {
+      anyCareers: ["astartes_brother"],
+      excludeTags: ["dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "계급: 아스타르테스 배틀 브라더",
     weight: 28,
     text: "적 카오스 하복 분대의 집중 사격에 100년간 분대를 이끌어 온 베테랑 하사가 치명상을 입고 쓰러졌다. 중대 통신은 두절되었고, 남은 형제 여덟 명의 시선이 일제히 그대를 향한다. 누군가 하사의 체인소드를 이어받아 분대를 지휘해야 한다!",
     choices: [
       {
-        label: "[의지/교섭 판정] 하사의 지휘 표식을 이어받고 완벽한 측면 교차 돌격을 호령한다",
+        label: "[의지 판정] 하사의 지휘 표식을 이어받고 완벽한 측면 교차 돌격을 호령한다",
         check: { stat: "WP", diff: 0 },
         success: {
-          text: "단 한 명의 추가 전사자 없이 적 중화기 진지를 붕괴시켰다! 전투 후 중대장이 그대를 정식 분대장(서전트)으로 승격시켰다.",
+          text: "단 한 명의 추가 전사자 없이 적 중화기 진지를 붕괴시켰다! 전투 후 중대장이 그대의 지휘력을 극찬하며 차기 분대장 승격 추천 명단에 이름을 올렸다.",
           stats: { WP: 6, Fel: 6, WS: 5, Inf: 8 }
         },
         fail: {
@@ -420,13 +463,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "아스타르테스 중대장 — 성전 함대 총사령관 대행의 무게",
     category: "계급 고유",
     once: true,
-    req: { anyCareers: ["astartes_captain"] },
-    reqLabel: "계급: 아스타르테스 중대장(캡틴)",
+    req: {
+      anyCareers: ["astartes_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    reqLabel: "계급: 아스타르테스 중대장",
     weight: 28,
     text: "성계 탈환전 도중 챕터 마스터가 대악마의 일격에 중상을 입고 아포세카리움으로 후송되었다! 3개 중대 300명의 아스타르테스와 제국 해군 호위 함대, 아스트라 밀리타룸 10개 연대의 지휘권이 임시로 중대장인 그대의 어깨에 떨어졌다.",
     choices: [
       {
-        label: "[지성/권위 판정] 궤도 강습과 지면 기갑 공세를 초 단위로 맞물린 대반격 작전을 총지휘한다",
+        label: "[지성 판정] 궤도 강습과 지면 기갑 공세를 초 단위로 맞물린 대반격 작전을 총지휘한다",
         check: { stat: "Int", diff: -5 },
         success: {
           text: "압도적인 전술 지휘로 반역 성계 전체를 14일 만에 해방했다! 차기 챕터 마스터 유력 후보로 제국 전역에 이름이 드높아졌다.",
@@ -460,7 +506,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "고대 석관의 각성 — 기억이 풍화되는 수백 년의 전장",
     category: "아스타르테스",
     once: true,
-    req: { allTags: ["astartes", "dreadnought"] },
+    req: {
+      allTags: ["astartes", "dreadnought"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "아스타르테스 · 드레드노트 안치",
     weight: 42,
     text: "차가운 양수 석관에 전류가 흐르며 기나긴 동면에서 깨어났다. 테크마린이 경건히 향을 피우며 전황을 보고하지만, 한때 함께 웃던 옛 형제들은 이미 수 세기 전 별이 되었고 바깥의 챕터 신병들은 그대를 살아 있는 전설이자 낯선 고대 유물처럼 올려다본다.",
@@ -508,10 +557,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "루비콘의 너머 — 퍼스트본과 프라이머리스 사이의 균열",
     category: "아스타르테스",
     once: true,
-    req: { allTags: ["astartes", "primaris"] },
+    req: {
+      allTags: ["astartes", "primaris"],
+      greatRift: true,
+      excludeTags: ["grey_knight", "dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "아스타르테스 · 프라이머리스",
     weight: 38,
-    text: "루비콘 프라이머리스 시술 이후 더 거대해진 체구와 벨리사리우스 카울의 신형 마크 X 아머를 두르고 있지만, 챕터 일부 고참 퍼스트본 베테랑들은 '화성 기계사제가 만든 신형 전사가 우리 챕터의 1만 년 영혼을 진정 이해하는가'라며 차가운 시선을 보낸다.",
+    text: "루비콘 프라이머리스 시술 이후 더 거대해진 체구와 벨리사리우스 카울의 신형 마크 10 아머를 두르고 있지만, 챕터 일부 고참 퍼스트본 베테랑들은 '화성 기계사제가 만든 신형 전사가 우리 챕터의 1만 년 영혼을 진정 이해하는가'라며 차가운 시선을 보낸다.",
     choices: [
       {
         label: "[백병 판정] 챕터의 전통 명예 결투장에 자진해 서서 신형 장기가 아닌 형제애와 기량으로 인정을 받는다",
@@ -556,9 +609,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     once: true,
     req: {
       minAge: 18,
-      anyCareers: ["astartes_scout", "astartes_brother"]
+      anyCareers: ["astartes_brother", "astartes_sergeant"],
+      excludeTags: ["dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
     },
-    reqLabel: "직군: 아스타르테스 (스카우트 / 배틀 브라더)",
+    reqLabel: "직군: 아스타르테스 배틀 브라더 · 분대장",
     weight: 32,
     text: "대기권을 찢고 강하하던 드롭 포드가 적 대공 포화에 스쳐 예정 지점에서 3킬로미터 벗어난 폐허에 꽂혔다. 본대 집결지까지는 서둘러 합류해야 하지만, 복스 통신망으로 고립된 아스트라 밀리타룸 야전 병원 부대의 절박한 구원 요청이 들어온다.",
     choices: [
@@ -608,15 +662,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     category: "아스타르테스 직책",
     once: true,
     req: {
-      anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain", "chapter_master"],
-      excludeTags: ["role_chaplain", "role_apothecary", "role_techmarine", "role_librarian"]
+      anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran"],
+      excludeTags: ["role_chaplain", "role_apothecary", "role_techmarine", "role_librarian", "dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
     },
-    reqLabel: "아스타르테스 배틀 브라더 · 중대장 (전문 직책 미보유)",
+    reqLabel: "아스타르테스 배틀 브라더~1중대 베테랑 · 전문 직책 미보유",
     weight: 38,
-    text: "수십 년의 전장을 거친 그대의 자질을 지켜본 챕터 고위 의회가 네 개의 특수 본부(레클루시움·아포세카리온·무기고·라이브러리우스) 가운데 한 곳의 수련 자격을 제안했다. 어떤 성스러운 임무를 짊어지고 형제단을 섬길 것인가?",
+    text: "수십 년의 전장을 거친 그대의 자질을 지켜본 챕터 고위 의회가 네 개의 특수 본부인 레클루시움과 아포세카리움, 무기고, 라이브러리우스 가운데 한 곳의 수련 자격을 제안했다. 어떤 성스러운 임무를 짊어지고 형제단을 섬길 것인가?",
     choices: [
       {
-        label: "[의지 58+ 해금] 해골 투구와 크로지우스를 받들어 챕터 채플린(Chaplain)으로 서품받는다",
+        label: "[의지 58+ 해금] 해골 투구와 크로지우스를 받들어 챕터 채플린으로 서품받는다",
         req: { stats: { WP: 58 } },
         effect: {
           text: "검은 파워 아머와 해골 투구를 하사받았다! 이제 형제들의 신앙과 증오의 기도문을 수호하는 영적 지도자가 되었다.",
@@ -626,7 +680,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성 54+ 해금] 백색 갑주와 나르테키움을 장비하고 챕터 아포세카리(Apothecary)의 길을 걷는다",
+        label: "[지성 54+ 해금] 백색 갑주와 나르테키움을 장비하고 챕터 아포세카리의 길을 걷는다",
         req: { stats: { Int: 54 } },
         effect: {
           text: "챕터의 미래인 진시드를 지키는 성스러운 의무가 주어졌다! 전사한 형제의 마지막 숨결을 지키는 백색의 천사가 되었다.",
@@ -636,7 +690,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[지성 56+ 해금] 화성으로 파견되어 30년간 기계 교리를 익히고 붉은 갑주의 테크마린(Techmarine)이 된다",
+        label: "[지성 56+ 해금] 화성으로 파견되어 30년간 기계 교리를 익히고 붉은 갑주의 테크마린이 된다",
         req: { stats: { Int: 56 } },
         effect: {
           text: "화성에서 옴니시아의 비술과 서보-암을 익히고 귀환했다! 챕터의 전차와 드레드노트 기계령이 그대의 손길에 응답한다.",
@@ -645,7 +699,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[사이커 · 블랙 템플러 제외] 푸른 갑주와 사이킥 후드를 받아 챕터 라이브러리안(Librarian)에 입문한다",
+        label: "[사이커 · 블랙 템플러 제외] 푸른 갑주와 사이킥 후드를 받아 챕터 라이브러리안에 입문한다",
         req: { allTags: ["psyker"], excludeChapters: ["black_templars"] },
         effect: {
           text: "라이브러리우스의 비전 서고와 포스 웨폰을 계승했다! 워프의 폭풍을 검으로 벼려 형제단을 수호하는 현자가 되었다.",
@@ -668,7 +722,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "챕터 채플린 — 무너지는 전열과 증오의 기도문",
     category: "아스타르테스 직책",
     once: true,
-    req: { allTags: ["astartes", "role_chaplain"] },
+    req: {
+      allTags: ["astartes", "role_chaplain"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "아스타르테스 채플린",
     weight: 36,
     text: "배신자 군단의 악마적 사이킥 비명이 전장을 뒤덮으며 신참 배틀 브라더 분대의 정신이 흔들리고 있다. 검은 갑주의 해골 투구 너머로 그대가 크로지우스 아르카눔을 치켜들자 복스 확성기가 웅장하게 공명한다.",
@@ -720,10 +777,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "챕터 아포세카리 — 포화 속 쓰러진 형제의 진시드 회수",
     category: "아스타르테스 직책",
     once: true,
-    req: { allTags: ["astartes", "role_apothecary"] },
+    req: {
+      allTags: ["astartes", "role_apothecary"],
+      excludeTags: ["dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "아스타르테스 아포세카리",
     weight: 36,
-    text: "치열한 시가전 한복판, 1중대 베테랑 형제 셋이 적 중화기 화망 한가운데서 쓰러졌다. 적 궤도 폭격이 90초 뒤 쏟아질 예정이지만, 저 형제들의 프로제노이드 샘(진시드)을 회수하지 못하면 챕터의 귀중한 유산이 영영 소실된다.",
+    text: "치열한 시가전 한복판, 1중대 베테랑 형제 셋이 적 중화기 화망 한가운데서 쓰러졌다. 적 궤도 폭격이 90초 뒤 쏟아질 예정이지만, 저 형제들의 프로제노이드 샘, 곧 진시드를 회수하지 못하면 챕터의 귀중한 유산이 영영 소실된다.",
     choices: [
       {
         label: "[강인 판정] 연막탄 너머 집중 포화를 백색 파워 아머로 받아 내며 나르테키움으로 세 형제의 진시드를 끝까지 적출한다",
@@ -766,7 +826,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "화성 수련 테크마린 — 챕터의 형제애와 옴니시아의 비밀",
     category: "아스타르테스 직책",
     once: true,
-    req: { allTags: ["astartes", "role_techmarine"] },
+    req: {
+      allTags: ["astartes", "role_techmarine"],
+      excludeTags: ["astartes_captain", "chapter_master", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "아스타르테스 테크마린",
     weight: 36,
     text: "전장에서 노획한 고대 랜드 레이더 전차의 기계령을 수복하던 중, 화성의 아크마고스 특사가 찾아와 '화성에서 맹세한 기계교의 비밀 서약에 따라 전차 내부의 고대 데이터 코어를 챕터 몰래 화성으로 넘기라'고 요구했다.",
@@ -779,8 +842,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 8, Inf: 7, BS: 4 }
         },
         fail: {
-          text: "복제 흔적이 발각되어 기계교 특사의 항의를 받았으나 챕터 마스터가 그대의 편을 들어 주었다.",
-          stats: { Int: 4, WP: 4 }
+          text: "복제 흔적이 발각되어 기계교 특사의 항의를 받았고, 화성과의 마찰로 챕터 내부에서도 신중한 문책을 받았다.",
+          stats: { Inf: -3, Int: 2 }
         }
       },
       {
@@ -791,8 +854,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { WP: 7, Fel: 6, Inf: 7 }
         },
         fail: {
-          text: "화성 측의 부품 보급이 일시 지연되었으나, 스스로 부품을 주조해 챕터의 신뢰를 얻었다.",
-          stats: { WP: 5, Int: 4 }
+          text: "화성 측의 부품 보급이 끊겨 장시간 직접 부품을 주조하다가 고열로 화상을 입었고, 외교적 입지도 좁아졌다.",
+          wounds: -8,
+          stats: { Inf: -3, WP: 2 }
         }
       },
       {
@@ -810,7 +874,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "챕터 라이브러리안 — 워프의 장막 너머 적 사이커와의 정신 결투",
     category: "아스타르테스 직책",
     once: true,
-    req: { allTags: ["astartes", "role_librarian"] },
+    req: {
+      allTags: ["astartes", "role_librarian"],
+      excludeChapters: ["black_templars"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "아스타르테스 라이브러리안",
     weight: 36,
     text: "궤도 강하 직전, 카오스 소서러가 행성 대기권 전체에 광기의 정신 폭풍을 펼쳐 아군 중대의 통신과 시야를 마비시켰다. 푸른 갑주의 사이킥 후드가 강렬한 스파크를 뿜으며 워프의 광풍을 빨아들이고 있다.",
@@ -857,7 +925,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_scout_snipe_trial",
     title: "아스타르테스 네오파이트 — 72시간 미동 없는 정찰 잠복",
     category: "직군 심화",
-    req: { anyCareers: ["astartes_scout"] },
+    req: {
+      anyCareers: ["astartes_scout"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "직군: 아스타르테스 네오파이트",
     weight: 28,
     text: "파워 아머도 없이 카멜레올린 망토 한 장만 걸친 채 적 사령부 앞 늪지대에 매복한 지 사흘째. 독충이 살갗을 파고들고 진흙물이 턱밑까지 차오르는 순간, 마침내 적 이단 지휘관이 장갑차에서 모습을 드러냈다.",
@@ -902,7 +973,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ev_s12_scout_battle_barge",
     title: "아스타르테스 네오파이트 — 배틀 바지 훈련장의 베테랑 검술 시련",
     category: "직군 심화",
-    req: { anyCareers: ["astartes_scout"] },
+    req: {
+      anyCareers: ["astartes_scout"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "직군: 아스타르테스 네오파이트",
     weight: 26,
     text: "전선 이동 중인 배틀 바지 훈련장. 1중대 터미네이터 베테랑이 무딘 훈련용 체인소드를 던져 주며 '파워 아머를 입을 자격이 있다면 내 검을 3분만 버텨 보라'고 도발했다. 수십 명의 형제들이 지켜보고 있다.",
@@ -941,16 +1015,19 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       }
     ],
-    source: "Codex: Space Marines / Space Marine Lore"
+    source: "Codex: Space Marines / Lexicanum: Battle Barge"
   },
   {
     id: "ev_s12_captain_planetary_plea",
     title: "아스타르테스 중대장 — 두 행성의 동시 구원 요청",
     category: "직군 심화",
-    req: { anyCareers: ["astartes_captain", "chapter_master"] },
+    req: {
+      anyCareers: ["astartes_captain"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "직군: 아스타르테스 중대장",
     weight: 30,
-    text: "타격 순양함 함교에 두 통의 절박한 아스트로패스 구조 신호가 동시에 도착했다. 한쪽은 제국군 5개 사단의 보급을 책임지는 포지 월드이고, 다른 한쪽은 10억 민간인이 갇힌 성지 행성이다. 중대 병력 100명으로는 한 곳만 먼저 구할 수 있다.",
+    text: "성전 집결지의 요새 수도원 의회실에 두 동맹 지휘관의 아스트로패스 구원 청원이 동시에 당도했다. 한쪽은 제국군 5개 사단의 보급을 책임지는 포지 월드의 아크마고스이고, 다른 한쪽은 10억 순례자가 갇힌 성지 행성의 캐노네스다. 중대 병력 100명으로는 한 곳만 먼저 구할 수 있다.",
     choices: [
       {
         label: "[지성 판정] 중대를 2개 반중대로 분할하고 정밀 궤도 타격을 결합해 두 행성을 동시에 구원하는 초고난도 작전을 건다",
@@ -988,7 +1065,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     title: "아스타르테스 중대장 — 챕터 성물고의 고대 유물 계승",
     category: "직군 심화",
     once: true,
-    req: { anyCareers: ["astartes_captain", "chapter_master"] },
+    req: {
+      anyCareers: ["astartes_captain"],
+      excludeTags: ["dreadnought", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
     reqLabel: "직군: 아스타르테스 중대장",
     weight: 30,
     text: "대성전 시대부터 이어져 온 챕터 성물고의 문이 열렸다. 챕터 마스터가 그대의 혁혁한 무훈을 기리며, 성물고에 봉인된 세 가지 고대 유물 무구 중 하나를 전장에 들고 나갈 자격을 허락했다.",
@@ -1007,7 +1087,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[강인 판정] 전설적인 크럭스 테르미나투스(Crux Terminatus) 아티피서 갑주를 착용하고 수호의 맹세를 올린다",
+        label: "[강인 판정] 전설적인 크룩스 테르미나투스가 새겨진 유물 터미네이터 갑주를 착용하고 수호의 맹세를 올린다",
         check: { stat: "T", diff: 0 },
         success: {
           text: "황제의 갑주 파편이 박힌 전설의 무구가 그대를 감쌌다! 포화 속에서도 쓰러지지 않는 불멸의 중대장이 되었다.",

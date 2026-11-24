@@ -6,7 +6,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "신성한 테라",
     priority: 3,
     req: { minAge: 12, anyWorlds: ["terra"], excludeTags: ["custodes"] },
-    text: "황궁 외곽 순례 행렬이 40km나 밀렸다. 줄을 서다 굶주림과 압사로 쓰러진 순례자들을 청소 서비터가 묵묵히 수거해 갔다.",
+    text: "황궁 외곽 순례 행렬이 40킬로미터나 밀렸다. 줄을 서다 굶주림과 압사로 쓰러진 순례자들을 청소 서비터가 묵묵히 수거해 갔다.",
     effect: { faith: 3, wounds: -2 }
   },
   {
@@ -45,8 +45,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ch_world_armageddon_1",
     badge: "아마겟돈 황무지",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["armageddon"] },
-    text: "잿빛 화산재가 하이브 환기구를 막아 산성 연무 경보가 내려졌다. 외곽 정글에서는 아직도 전전(前戰)의 오크 포자가 버섯처럼 돋아나 화염방사 부대가 출동했다.",
+    req: { minAge: 14, minYear: 942, anyWorlds: ["armageddon"] },
+    text: "잿빛 화산재가 하이브 환기구를 막아 산성 연무 경보가 내려졌다. 외곽 정글에서는 아직도 이전 전쟁의 오크 포자가 버섯처럼 돋아나 화염방사 부대가 출동했다.",
     effect: { stats: { T: 1 }, wounds: -3 }
   },
   {
@@ -126,7 +126,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "녹턴의 모루",
     priority: 3,
     req: { minAge: 14, anyWorlds: ["nocturne"] },
-    text: "지각 변동 시기(Time of Trial)의 용암 진동이 성소를 흔들었다. 주민들은 대장간에 모여 서로의 무구와 식량을 나누며 샐러맨더의 정신을 되새겼다.",
+    text: "시련의 시기가 불러온 용암 진동이 성소를 흔들었다. 주민들은 대장간에 모여 서로의 무구와 식량을 나누며 샐러맨더의 정신을 되새겼다.",
     effect: { stats: { T: 1, Fel: 1 } }
   },
   {
@@ -150,7 +150,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "아그리 월드",
     priority: 3,
     req: { minAge: 14, anyWorldTags: ["agri"], excludeTags: ["noble", "astartes", "custodes"] },
-    text: "화학 촉진 비료가 안개처럼 뿌려지는 평원에서 16시간 수확 노역을 치렀다. 끝없는 밀밭이지만 정작 농부들의 식탁엔 시체 녹말이 올라왔다.",
+    text: "화학 촉진 비료가 안개처럼 뿌려지는 평원에서 16시간 수확 노역을 치렀다. 끝없는 밀밭이지만 정작 농부들의 식탁엔 시체 전분이 올라왔다.",
     effect: { stats: { T: 1 }, wounds: -2 }
   },
   {
@@ -174,7 +174,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "크리그 속죄",
     priority: 3,
     req: { minAge: 12, anyWorlds: ["krieg"] },
-    text: "지하 병영의 배양실(Vitae-Womb) 구역에서 끝없는 신병 행렬이 배출되었다. 의무관은 부상병에게 치료제 대신 '다음 출격 때 앞줄에 서라'는 처방전을 건넸다.",
+    text: "지하 병영의 비타-움 배양실 구역에서 끝없는 신병 행렬이 배출되었다. 의무관은 부상병에게 치료제 대신 '다음 출격 때 앞줄에 서라'는 처방전을 건넸다.",
     effect: { stats: { WP: 1 }, faith: 2 }
   },
   {
@@ -270,7 +270,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "테라의 서고",
     priority: 3,
     req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes", "astartes"] },
-    text: "높이 30km에 달하는 아드미니스트라툼 서류 탑에서 낡은 양피지 수만 장이 눈처럼 쏟아져 내렸다. 청소 서비터들이 '기밀 폐기물'을 밟지 말라며 사이렌을 울렸다.",
+    text: "높이 30킬로미터에 달하는 아드미니스트라툼 서류 탑에서 낡은 양피지 수만 장이 눈처럼 쏟아져 내렸다. 청소 서비터들이 '기밀 폐기물'을 밟지 말라며 사이렌을 울렸다.",
     effect: { stats: { Ag: 1 } }
   },
   {
@@ -397,7 +397,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ch_armageddon_ex_2",
     badge: "아마겟돈 정글",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["armageddon"] },
+    req: { minAge: 14, minYear: 942, anyWorlds: ["armageddon"] },
     text: "적도 정글 지대에서 야생 오크 무리가 출몰했다는 경보가 울려 스틸 리전 기계화 순찰대가 굉음을 내며 출동했다.",
     effect: { stats: { BS: 1 } }
   },
@@ -405,7 +405,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ch_armageddon_ex_3",
     badge: "야릭의 전설",
     priority: 3,
-    req: { minAge: 12, anyWorlds: ["armageddon"] },
+    req: { minAge: 12, minYear: 942, anyWorlds: ["armageddon"] },
     text: "하데스 하이브 폐허 기념비 앞에서 시민들이 '올 베일 아이' 세바스찬 야릭 커미사르의 무용담을 되새기며 오크에 대한 증오를 불태웠다.",
     effect: { stats: { WP: 1 }, faith: 2 }
   },
@@ -534,7 +534,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     badge: "보스트로야",
     priority: 3,
     req: { minAge: 12, anyWorlds: ["vostroya"] },
-    text: "눈보라가 몰아치는 보스트로야 공업 첨탑 아래, 황동 문양이 세공된 장자 연대의 붉은 군복 행렬이 장엄한 군악에 맞추어 행진했다.",
+    text: "눈보라가 몰아치는 보스트로야 공업 첨탑 아래, 황동 문양이 세공된 보스트로얀 퍼스트본의 붉은 군복 행렬이 장엄한 군악에 맞추어 행진했다.",
     effect: { stats: { T: 1, WP: 1 } }
   },
   {
@@ -644,7 +644,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
   },
   {
     id: "ch_s6_world_macragge_1",
-    badge: "울트라마르의 수도",
+    badge: "울트라마의 수도",
     priority: 3,
     req: { minAge: 14, anyWorlds: ["macragge"] },
     text: "마크라그의 정갈한 대리석 대로와 시계처럼 정확히 굴러가는 대중 보급선을 바라보며, 이 질서가 제국 전체로 퍼지길 바랐던 프라이마크의 꿈을 떠올렸다.",
