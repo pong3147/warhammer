@@ -11,8 +11,8 @@
 * **장르:** 무작위 출생·생애 연대기 텍스트 시뮬레이션 웹 게임 (Unofficial Fan Project)
 * **핵심 영감 및 설계 철학:**
   1. **《80억 분의 1》의 감상 경험 + 워해머 40k TRPG 메커니즘:** 무작위로 인류제국 100만 행성 중 한 곳에 태어나 흘러가는 생애 기록을 감상하되, 일자 진행에 그치지 않고 *Dark Heresy* / *Imperium Maledictum* 기반 **8대 특성치(d100 판정)**와 연간 **삶의 초점(Focus)** 관리로 숨겨진 분기·직군·역사 사건을 해금한다.
-  2. **선택지 원툴 탈피 — 연대기 중심 몰입:** 선택지 분기 사건(432종, 역사 대사건 24종 포함)뿐 아니라, 인류제국 특유의 인간 경시·관료제 부조리·행성 풍토·계급별 일상을 담은 **패시브 연대기 로그(525종)**가 본인 상황에 정확히 맞춰 흘러가며 읽는 재미를 제공한다.
-  3. **워해머 입문자 배려 + 설정 고증 조화:** 모든 선택지를 한꺼번에 늘어놓지 않고 우측 `자율 선택` 패널에 **지금 당장 가능한 선택지만** 정리해 노출한다. 성간 이동도 플레이어가 아무 행성이나 클릭해 순간이동하는 대신, 계급에 따라 상부의 강제 파견·전출 승인율·자율 함대 출항이 차등 적용된다.
+  2. **선택지 원툴 탈피 — 연대기 중심 몰입:** 선택지 분기 사건(432종, 역사 대사건 24종 포함)뿐 아니라, 인류제국 특유의 인간 경시·관료제 부조리·행성 풍토·계급별 일상을 담은 **패시브 연대기 로그(529종)**가 본인 상황에 정확히 맞춰 흘러가며 읽는 재미를 제공한다.
+  3. **워해머 입문자 배려 + 설정 고증 조화:** 17개 세력 **78종 풀 계급도**를 모두 늘어놓는 대신, 우측 `자율 선택` 패널에는 **지금 즉시 진입 가능한 일반 직군(`entryMode: "open"`)**만 노출하고, 상위 계급·공훈 횡단(행성 총독/로그 트레이더/심문관)·최고위 추대(하이 로드/워마스터/챕터 마스터/데몬 프린스)는 조건 달성 시 **동적 발탁·임명 이벤트**로 자연스럽게 제안한다. 성간 이동도 계급의 `transitTier`에 따라 강제 파견·전출 승인율·자율 함대 출항이 차등 적용된다.
   4. **IP 안전 원칙 (비공식 팬 창작물):** Games Workshop의 공식 아트워크·로고·룰북 원문 복사 없이 자체 작성한 한국어 산문과 순수 CSS/SVG 기하학 그래픽으로만 구성하며, 모든 데이터에 Lexicanum·공식 코덱스·소설 출처 표기를 병기한다.
 
 ---
@@ -22,7 +22,7 @@
 ```text
 워해머/
 ├── index.html                        # 메인 SPA 문서 (4대 뷰 + 부고 모달 + 병렬 웹폰트 + 39개 스크립트)
-├── styles.css                        # 고딕 데이터슬레이트 UI · 도감/조서 스타일 · 접근성 포커스 링
+├── styles.css                        # 고딕 데이터슬레이트 UI · 17개 세력 계급도/도감/조서 · 접근성 포커스 링
 ├── README.md                         # 사용자용 실행·배포·개요 안내서
 ├── AGENTS.md                         # AI 에이전트 작업 방향 · 불변 규칙 · 고증/표기 표준 · QA 게이트
 ├── PROJECT_GUIDE.md                  # (본 문서) 아키텍처 · 파일별 수록 현황 · 스키마 · 진행 보고서
@@ -30,24 +30,24 @@
 │   ├── qa.js                         # Node.js 전용 상설 자동 QA 검증 스위트 (6대 게이트 + 고아/용량 감시)
 │   └── sync-scripts.js               # data/events/** · data/chronicles/** 자동 스캔 -> index.html 동기화
 ├── js/
-│   ├── engine.js                     # 핵심 시뮬레이션 엔진 (window.ImperiumEngine, Map·파티션 최적화)
-│   └── ui.js                         # DOM 렌더링·자동저장·접근성·텍스트 내보내기·코덱스·영혼의 전당 도감
+│   ├── engine.js                     # 핵심 시뮬레이션 엔진 (window.ImperiumEngine, 동적 진로 오퍼·데이터 주도화)
+│   └── ui.js                         # DOM 렌더링·자동저장·접근성·17개 세력 그룹화·텍스트 내보내기·영혼의 전당 도감
 └── data/
     ├── worlds.js                     # 5대 세그멘툼 + 22개 행성 (네임드 15 + 일반/보이드본 7)
     ├── origins.js                    # 출생 신분 10종 + 선천 자질 8종 + 이름 생성 풀
-    ├── careers.js                    # 28개 직군 (child + 선택 병종 27종)
+    ├── careers.js                    # 79개 직군 (child + 17개 세력 선택 직군 78종, 하이 로드 10석 포함)
     ├── chapters.js                   # 스페이스 마린 9대 유명 챕터 데이터
     ├── characters.js                 # 20인 네임드 인물 프로필 (스포트라이트 + 코덱스용)
     ├── timeline.js                   # M41~M42 실제 역사 대사건 24종 + 은하/성역 원격 속보
-    ├── tags.js                       # TAG_LABELS(128종) + WORLD_TAG_LABELS(46종) 한글 라벨 사전
+    ├── tags.js                       # TAG_LABELS(167종) + WORLD_TAG_LABELS(46종) 한글 라벨 사전
     ├── events/                       # 분기 사건 408종 — 도메인(세력·챕터·권역·주제)별 21개 파일
     │   ├── careers/                  # 직군 계열·1:1 승격 9파일 (astartes, civil_void, ecclesiarchy, guardsman, inquisition, mechanicus, militarum, rogue_trader, talons_knights)
-    │   ├── chapters/                 # 챕터별 1파일 (chapters_core; 14단계에서 9대 챕터 1:1 승격 예정)
-    │   ├── worlds/                   # 행성 권역별 4파일 (solar, ultima, frontier, generic; 13단계에서 핵심 행성 1:1 승격 예정)
+    │   ├── chapters/                 # 챕터별 1파일 (chapters_core; 16단계에서 9대 챕터 1:1 승격 예정)
+    │   ├── worlds/                   # 행성 권역별 4파일 (solar, ultima, frontier, generic; 15단계에서 핵심 행성 1:1 승격 예정)
     │   └── themes/                   # 횡단 주제별 7파일 (arcs_focus, chaos_warp, crises, eras, lifecycle, named, xenos)
-    └── chronicles/                   # 일상 연대기 525종 — 주제별 9개 파일 (향후 하위 폴더 승격 지원)
+    └── chronicles/                   # 일상 연대기 529종 — 주제별 9개 파일 (향후 하위 폴더 승격 지원)
         ├── arcs_named.js             # 네임드 20인 · 명예/이력 태그 회수 (56종)
-        ├── careers.js                # 27개 직군 · 계급 기본 일상 (101종)
+        ├── careers.js                # 17개 세력 · 78종 직군 · 계급/최고위 기본 일상 (105종)
         ├── careers_specialists.js    # 6대 연대 · 아스타르테스 4대 직책 · 승격 태그 · 얇은 직군 심화 (40종)
         ├── chapters.js               # 9대 챕터 · 숙원/공조 (33종)
         ├── childhood.js              # 유아(1~5세)·아동(6~13세) 22행성 성장 일상 (105종)
@@ -70,63 +70,65 @@
 ### 3.1 프론트엔드 코어 · 자동화 스크립트
 * **`index.html` (~396줄):**
   * Google Fonts(`Cinzel`, `Noto Serif KR`, `JetBrains Mono`) `<link rel="preconnect">` 병렬 로드 (`display=swap`).
-  * 4개 메인 탭 뷰: `view-game`(생애 시뮬레이션 + `#resume-banner` 이어하기 배너 + 편의 토글 3종), `view-chronicle`(전체 인생 기록서 + 텍스트 복사/`.txt` 저장), `view-codex`(제국 코덱스 5개 탭), `view-hall`(영혼의 전당 + 도감 수집 현황 및 미수집 힌트).
+  * 4개 메인 탭 뷰: `view-game`(생애 시뮬레이션 + `#resume-banner` 이어하기 배너 + 편의 토글 3종), `view-chronicle`(전체 인생 기록서 + 텍스트 복사/`.txt` 저장), `view-codex`(제국 코덱스 5개 탭, 17개 세력 계급도 아코디언), `view-hall`(영혼의 전당 + `careerHistory` 누적 도감 수집 현황 및 미수집 힌트).
   * 3단 플레이 대시보드, 사망 부고 모달(`#obit-backdrop`, `role="dialog"`, 배경 `inert` + `Tab` 트랩 + 부고 복사), 단일 라이브 영역(`#sr-live`), 자동 동기화 마커(`DATA-EVENTS` · `DATA-CHRONICLES`, 총 39개 `<script>`).
-* **`styles.css` (~1,667줄):**
-  * 황동·검정·진홍·코지테이터 녹색의 제국 데이터슬레이트 테마, `.sr-only`, 고대비 금색 `:focus-visible` 포커스 링, 네임드 스포트라이트 펼침 애니메이션(`prefers-reduced-motion` 존중), 이어하기 배너·영혼의 전당 도감/조서 스타일, 1200px/820px 반응형 그리드.
-* **`js/engine.js` (~2,685줄):**
-  * **메타 상수 & O(1) 인덱스:** `STAT_META`(8대 특성치), `FOCUSES`(6대 연간 초점), `ERA_PRESETS`(7개 시대), `data/tags.js` 연동 `TAG_LABELS`(128종) · `WORLD_TAG_LABELS`(46종), 8종 `Map` 인덱스 및 `EVENTS`/`CHRONICLES` 무손실 파티션 버킷(`byChapter`/`byWorld`/`byCareer`/`general`).
-  * **조건·판정·동기화 엔진:** `checkReq(state, req, ctx)`(`excludeChapters` 포함) / `describeReq(req)`(전 조건 키·복합 `or` 한글화) / `syncImperialNihilus(state)` / `rollD100(state, check)` / `evaluateLifeGrade(state)`(아스타르테스 4대 전문 직책 포함 맞춤 부고 19종 + 범용 4종 + 동적 추모 에필로그).
+* **`styles.css` (~1,740줄):**
+  * 황동·검정·진홍·코지테이터 녹색의 제국 데이터슬레이트 테마, `.sr-only`, 고대비 금색 `:focus-visible` 포커스 링, 네임드 스포트라이트 펼침 애니메이션(`prefers-reduced-motion` 존중), `.ready-offer-box` 발탁 대기 배너 · `.career-tree-group`/`.codex-tree-group` 17개 세력 아코디언 · 이어하기 배너 · 영혼의 전당 도감/조서 스타일, 1200px/820px 반응형 그리드.
+* **`js/engine.js` (~3,118줄):**
+  * **메타 상수 & O(1) 인덱스:** `STAT_META`(8대 특성치), `FOCUSES`(6대 연간 초점), `ERA_PRESETS`(7개 시대), `data/tags.js` 연동 `TAG_LABELS`(167종) · `WORLD_TAG_LABELS`(46종), 8종 `Map` 인덱스 및 `EVENTS`/`CHRONICLES` 무손실 파티션 버킷(`byChapter`/`byWorld`/`byCareer`/`general`).
+  * **조건·판정·동기화 엔진:** `checkReq(state, req, ctx)`(`excludeChapters`, `anyPastCareers`, `excludePastCareers` 포함) / `describeReq(req)`(전 조건 키·복합 `or` 한글화) / `syncImperialNihilus(state)` / `rollD100(state, check)` / `evaluateLifeGrade(state)`(하이 로드·워마스터·챕터 마스터·슈프림 그랜드 마스터·캡틴-제너럴·행성 총독/섹터 로드·아스타르테스 4대 직책·카오스 로드·데몬 프린스 등 최상위 맞춤 부고 27종+ 및 동적 추모 에필로그).
   * **분기 진행 파이프라인 (`advanceQuarter`):**
     1. 분기 증가(1 -> 2 -> 3 -> 새해 1; 선택형 `fastChildhood` 시 0~12세 연 1분기). 새해 정산 시 14세 자동 직무 편입, 18세 `schola` 졸업 자동 배치 폴백, 초점+직군 스탯 성장, 하이브리드 체력 회복·비선형 노화, 환경 위험 판정.
-    2. 아스타르테스 중상(생명력 38 이하) 시 드레드노트 안치(`EVENT_BY_ID` O(1)) 긴급 발동 및 사망/오염 100 체크.
+    2. 아스타르테스 중상(생명력 38 이하) 시 드레드노트 안치(`EVENT_BY_ID` O(1)) 긴급 발동 및 사망/오염 100 체크(데몬 프린스는 오염 100 스폰화 사망 면역).
     3. **1순위:** `TIMELINE` 역사 대사건 직접 체험 및 원격 아스트로패스 속보(`heardNews`) 전파.
-    4. **2순위:** `EVENTS` 확률 선판정(28~34%) 후 파티션 버킷 기반 동적 분기 사건 발동(생애 최대 2회 상한 + 최근 14개 방지 + 챕터/네임드 3.0배 · 행성/직군/시기 2.6배 우대).
-    5. **2.5순위:** `createDynamicTransitEvent` 계급별 강제 파견/배치 선택/순례선 이벤트(워프 항해 이상 변주 포함).
-    6. **3순위:** `applyChronicle` 파티션 버킷 기반 일상·부조리 연대기 로그 출력(최근 28개 방지, `MAX_LOGS = 2,400`건 스마트 보존).
-  * **자율 행동 & 이동:** `getCareerAction(state)`(27개 선택 직군별 고유 행동, 4년 재사용), `canUsePenance`/`canUseAugmetics`/`canUseRejuvenat`, `getTravelProfile`/`evaluateTravelAttempt`/`getTravelCandidateWorlds`, `getContextualOptions`(단일 패스 `unlockedCareers`/`lockedCareers` 반환).
-* **`js/ui.js` (~1,681줄):**
-  * 100ms 틱 진행 바, `announce()` 타이머 안전 비가시 공백 교차 알림, `#focus-grid`/`#sel-travel-world` 포커스 보존 부분 갱신, 이벤트 위임(`#active-event-wrap`·`#auto-*`) 및 `#all-careers-preview` 지연 렌더링, 부고 모달 `inert`·포커스 트랩·복원.
-  * `localStorage` 3중 저장: `imperium_vita_active_v1`(진행 중 생애 자동 저장·이어하기), `imperium_vita_prefs_v1`(알림·유년기 빠른 진행·새 진로 해금 알림/일시정지), `imperium_vita_hall_v1`(영혼의 전당 최대 60생애 + 도감 수집률·미수집 힌트·상세 조서).
-  * 순수 텍스트 생애 기록서 복사(클립보드 + `file://` 폴백) 및 `.txt` 파일 저장.
+    4. **1.5순위:** `createDynamicCareerOfferEvent` 동적 승급·공훈 횡단·최고위 추대·초인 소환·카오스 유혹 제안 이벤트(`declinedCareers` 거절 8년 / Tier 6 시련 실패 12년 쿨다운).
+    5. **2순위:** `EVENTS` 확률 선판정(28~34%) 후 파티션 버킷 기반 동적 분기 사건 발동(생애 최대 2회 상한 + 최근 14개 방지 + 챕터/네임드 3.0배 · 행성/직군/시기 2.6배 우대).
+    6. **2.5순위:** `createDynamicTransitEvent` `transitTier` 기반 강제 파견/배치 선택/순례선 이벤트(워프 항해 이상 변주 포함).
+    7. **3순위:** `applyChronicle` 파티션 버킷 기반 일상·부조리 연대기 로그 출력(최근 28개 방지, `MAX_LOGS = 2,400`건 스마트 보존).
+  * **자율 행동 & 이동:** `getCareerAction(state)`(25종 `actionGroup` 프로필 기반 78개 직군 고유 행동, 4년 재사용), `canUsePenance`/`canUseAugmetics`/`canUseRejuvenat`, `getTravelProfile`/`evaluateTravelAttempt`/`getTravelCandidateWorlds`, `getContextualOptions`(`unlockedCareers` · `readyEventCareers` · `lockedCareers` · `nearCareers` 반환).
+* **`js/ui.js` (~1,763줄):**
+  * 100ms 틱 진행 바, `announce()` 타이머 안전 비가시 공백 교차 알림, `#focus-grid`/`#sel-travel-world` 포커스 보존 부분 갱신, 이벤트 위임(`#active-event-wrap`·`#auto-*`), 17개 세력 `<details>` 계급도 그룹화(`groupCareersByTree`) 및 `#all-careers-preview` 지연 렌더링, 부고 모달 `inert`·포커스 트랩·복원.
+  * `localStorage` 3중 저장: `imperium_vita_active_v1`(진행 중 생애 자동 저장·이어하기), `imperium_vita_prefs_v1`(알림·유년기 빠른 진행·새 진로 해금 알림/일시정지), `imperium_vita_hall_v1`(영혼의 전당 최대 60생애 + `careerHistory` 누적 집계·도감 수집률·미수집 힌트·거쳐 온 진로 궤적 조서).
+  * 순수 텍스트 생애 기록서 복사(클립보드 + `file://` 폴백) 및 `.txt` 파일 저장(거쳐 온 진로 궤적 포함).
 * **`scripts/sync-scripts.js` (~101줄, Node.js 전용):**
   * `data/events/**` 및 `data/chronicles/**`의 `.js` 파일을 재귀 스캔·정렬해 `index.html`의 마커 구간을 자동 동기화(`--check` 검사 모드 지원). 향후 신규 직군/행성/챕터 1:1 승격 파일 및 외계 종족 스타팅 폴더 추가 시 자동 반영.
-* **`scripts/qa.js` (~553줄, Node.js 전용):**
-  * `node scripts/qa.js` 단일 명령으로 `AGENTS.md` 6대 게이트(스크립트·로드 순서·고아 파일 탐지·구문·파일 용량 상한 경고·CSS·DOM `#id`·표기/기호/크리그·출처별 ID 충돌/참조/태그/`describeReq`/연표/`forceCareer`·소프트락/유년기 풀/중복률/로그 보존·300생애 멀티-초점 시뮬레이션·1,000분기 벤치마크)를 일괄 검증.
+* **`scripts/qa.js` (~659줄, Node.js 전용):**
+  * `node scripts/qa.js` 단일 명령으로 `AGENTS.md` 6대 게이트(스크립트·로드 순서·고아 파일 탐지·구문·파일 용량 상한 경고·CSS·DOM `#id`·표기/기호/크리그·출처별 ID 충돌/참조/78직군 메타데이터/태그/`describeReq`/연표/`forceCareer`/동적 진로 오퍼/데몬 프린스·최상위 부고·소프트락/유년기 풀/중복률/로그 보존·300생애 멀티-초점 시뮬레이션·1,000분기 벤치마크)를 일괄 검증.
 
 ### 3.2 데이터 파일별 수록 내용
 | 파일 | 건수 | 수록 내용 요약 |
 | --- | --- | --- |
 | `data/worlds.js` | 5성역 · 22행성 | **네임드 15:** `terra`, `mars`, `cadia`(999 파괴), `krieg`, `armageddon`, `necromunda`, `macragge`, `baal`(니힐루스), `fenris`, `catachan`, `vostroya`, `valhalla`, `tanith`(765 파괴), `nocturne`, `ophelia7`. **일반 7:** `generic_hive`, `generic_agri`, `generic_civilised`, `generic_forge`, `generic_feral`, `generic_paradise`, `voidborn`. |
 | `data/origins.js` | 신분 10 · 자질 8 | 하층민, 일반 시민, 군인 가문, 스콜라 프로제니움, 기계교 도제, 국교 수련생, 행성 귀족, 로그 트레이더 방계, 나비스 노빌리테, 테라 고위 귀족 영아(테라 한정). 행성 정합성 필터(`excludeWorlds`/`excludeWorldTags`) 적용. 자질 8종. |
-| `data/careers.js` | 28직군 | `child` + 선택 27종: 노동자, 갱단, PDF, 가드맨, 장교, 사이온, 커미사르, 로드 커미사르, 소로리타스, 캐노네스, 아스타르테스(네오파이트/배틀 브라더/중대장), 그레이 나이트, 쿠스토데스, 어콜라이트, 이단심문관, 스키타리, 테크프리스트, 아크마고스, 네이비, 아르비테스, 아드미니스트라툼, 에클레시아키, 로그 트레이더, 생션드 사이커, 카오스 컬티스트. |
+| `data/careers.js` | 79직군 (선택 78 · 17트리) | `child` + **17개 세력 풀 계급도 78종:** 시민/길드/언더하이브(6), 밀리타룸·방위군·템페스투스(9 · 워마스터/로드 커맨더 밀리탄트), 커미사르(4), 소로리타스(5 · 아베스 상크토룸), 국교회(4 · 에클레시아크), 아스타르테스(6 · 1중대 터미네이터/챕터 마스터), 그레이 나이트(4 · 슈프림 그랜드 마스터), 쿠스토데스(4 · 캡틴-제너럴), 이단심문소(5 · 테라 대표), 메카니쿠스(6 · 화성 파브리케이터-제너럴), 네이비(4 · 로드 하이 애드미럴), 아르비테스(4 · 그랜드 프로보스트 마셜), 아드미니스트라툼(4 · 제국 행정장관), 행성 총독·섹터 로드(2 · 공훈 횡단), 로그 트레이더(3 · 공훈 횡단), 공인 사이커(3 · 아스트라 텔레파티카 총관), 암흑의 신들(5 · 필멸 컬트 vs CSM/카오스 로드 분리 · 데몬 프린스 승천). |
 | `data/chapters.js` | 9챕터 | `ultramarines`, `blood_angels`, `space_wolves`, `dark_angels`, `imperial_fists`, `salamanders`, `black_templars`(`allowPsyker: false`), `raven_guard`, `white_scars`. |
 | `data/characters.js` | 20인물 | `guilliman`, `yarrick`, `creed`, `gaunt`, `cain`, `dante`, `cawl`, `grimnar`, `calgar`, `celestine`, `eisenhorn`, `marbo`, `valoris`, `tushan`, `ghazghkull`, `abaddon`, `lion`, `amberley_vail`, `grimaldus`, `azrael`. |
 | `data/timeline.js` | 24대사건 | 아이젠혼 스카루스(240), 콜룸누스 위어드와아아!(260), 트라시안 프리마리스·말레우스(345), 마카리우스 대성전(392), 다모클레스 만 성전(742), 1차 타이라니드·마크라그 전투(745), 사바트 성전(755), 타니스 멸망(765), 브락스 공성전(813), 바답 전쟁(901), 케인·발할라 597연대(931), 2차 아마겟돈(941), 2차 타이라니드·크라켄(992), 3차 아마겟돈(998), 카디아 붕괴(999), 대균열(999), 바알의 파괴(999), 사자의 문(000.M42), 인도미투스 성전(001.M42), 비질루스(008.M42), 사이킥 각성(012.M42), 파리아 넥서스(016.M42), 징조의 방주·라이온 귀환(020.M42), 4차 타이라니드 전쟁(028.M42). |
-| `data/tags.js` | 태그 128 · 행성태그 46 | 이력·신분·자질·직군·명예·직책·인연 한글 라벨 사전(`TAG_LABELS`) 및 `describeReq`용 행성 유형 라벨 사전(`WORLD_TAG_LABELS`). |
+| `data/tags.js` | 태그 167 · 행성태그 46 | 이력·신분·자질·직군·계급·직책·명예·인연 한글 라벨 사전(`TAG_LABELS`) 및 `describeReq`용 행성 유형 라벨 사전(`WORLD_TAG_LABELS`). |
 | `data/events/careers/*.js` | 9파일 · 155사건 | `guardsman`(15: 6대 연대 특화 + 일반 보병), `militarum`(23), `astartes`(24: 4대 전문 직책 포함), `talons_knights`(15), `inquisition`(16), `mechanicus`(16), `ecclesiarchy`(13), `rogue_trader`(8), `civil_void`(25). |
 | `data/events/chapters/*.js` | 1파일 · 31사건 | `chapters_core`(31) — 9대 챕터 고유(20)·챕터 숙원/공조(4)·챕터 명예 태그 아크(7). |
 | `data/events/worlds/*.js` | 4파일 · 50사건 | `solar`(15: 테라·화성·아마겟돈·네크로문다), `ultima`(10: 마크라그·바알·카타찬·발할라·녹턴), `frontier`(11: 카디아·펜리스·보스트로야·크리그·오펠리아·타니스), `generic`(14: 무명 6행성·보이드본·행성 유형 공용). |
 | `data/events/themes/*.js` | 7파일 · 172사건 | `lifecycle`(33: 유년·초년·노년·초장수·인연/가족), `named`(23: 네임드 20인 조우 & 후일담), `eras`(20: 시기×장소·대균열·니힐루스), `xenos`(16: 외계 종족), `chaos_warp`(22: 4대 신·컬티스트·배신자·워프/사이커), `arcs_focus`(34: 삶의 초점 1·2막·명예 태그·출신/자질), `crises`(24: 전선·환경·비전투 치명 위기). |
-| `data/chronicles/*.js` | 9파일 · 525연대기 | `childhood`(105), `careers`(101), `careers_specialists`(40), `worlds`(79), `general`(70), `arcs_named`(56), `chapters`(33), `eras`(23), `lifecycle`(18) — 전체 525종 상황 맞춤형 일상·부조리 연대기. |
+| `data/chronicles/*.js` | 9파일 · 529연대기 | `childhood`(105), `careers`(105), `careers_specialists`(40), `worlds`(79), `general`(70), `arcs_named`(56), `chapters`(33), `eras`(23), `lifecycle`(18) — 전체 529종 상황 맞춤형 일상·부조리 연대기. |
 
 
 ---
 
 ## 4. 핵심 게임 시스템 규격 및 엔진 스키마 레퍼런스
 
-### 4.1 계급별 이동 · 특수 시술 · 원격 속보 규격
-* **강제 파견/이동 3단계 위계:** 하급 의무 직군(`astra_militarum`, `skitarii`, `astartes_scout`, `tempestus_scion`, `inquisition_acolyte`, `sanctioned_psyker`)은 거부권 없는 강제 파견, 중간 계급은 2개 작전 구역 택1+잔류, 최고위 지휘권자(`inquisitor`, `rogue_trader`, `astartes_captain`, `archmagos`, `lord_commissar`, `canoness`, `adeptus_custodes`)는 자율 원정 결정 및 100% 즉시 출항(`custodes`는 캡틴-제너럴 칙령 85%).
-* **기계교 의체 개조:** 기계교 소속은 16세+(무료, 8년 간격), 비기계교는 18세+·고위 계급(Tier 3+, 권위 42+) 또는 귀족(권위 55+) 또는 부상 재활 여건 필요. 크리그 일반 병사 및 야만 행성 하급민(Tier 3 미만) 금지.
-* **리주버냇 수명 연장:** 50세+·고위 계급(Tier 3+)/귀족·권위 50+, 아스타르테스/쿠스토데스 불필요.
+### 4.1 계급별 진입 · 이동 · 특수 시술 · 원격 속보 규격
+* **직군 진입 2단계 (`entryMode`):** `open`(입문·기초 직군)은 우측 패널에서 수동 지원 가능하며, `event`(상위 계급·공훈 횡단·하이 로드 10석·워마스터·챕터 마스터·데몬 프린스)는 조건 달성 시 `createDynamicCareerOfferEvent`로 임명·발탁 사건이 발생한다(거절 시 8년, Tier 6 시련 실패 시 12년 쿨다운).
+* **강제 파견/이동 선언적 위계 (`transitTier`):** `forced`/`astartes_scout`는 거부권 없는 강제 파견, `mid`/`astartes_brother`/`grey_knight`는 2개 작전 구역 택1+잔류, `autonomous`는 자율 원정 결정 및 100% 즉시 출항(`custodes`는 캡틴-제너럴 칙령 85%, `heretic`은 워프 밀항/배신자 함대).
+* **기계교 의체 개조:** 기계교 소속은 16세+(무료, 8년 간격), 비기계교는 18세+·고위 계급(Tier 3+, 권위 42+) 또는 귀족(권위 55+) 또는 부상 재활 여건 필요. 크리그 일반 병사 및 야만 행성 하급민(Tier 3 미만), 데몬 프린스 제외.
+* **리주버냇 수명 연장:** 50세+·고위 계급(Tier 3+)/귀족·권위 50+, 아스타르테스/쿠스토데스/데몬 프린스 불필요.
 * **성당 정화 고행:** 14세+·비야만 행성·비이단자·오염 1+·재사용 3년.
 * **은하·성역 원격 속보:** 타 행성 체류 중에도 제국 전역(`galaxy`) 또는 같은 성역(`sector`)의 대형 역사 사건이 발생하면 아스트로패스 속보(`heardNews`)가 연대기에 수신됨(야만 행성 제외).
 
 ### 4.2 `checkReq(state, req)` 지원 조건 키
-`minAge`, `maxAge`, `minYear`, `maxYear`, `gender` (`"male"`/`"female"`), `stats` (`{ WS, BS, T, Ag, Int, WP, Fel, Inf }`), `minFaith`, `maxFaith`, `minCorruption`, `maxCorruption`, `minWounds`, `maxWounds`, `allTags`, `anyTags`, `excludeTags`, `anyCareers`, `anyChapters`, `anyWorlds`, `anyHomeWorlds`, `excludeWorlds`, `anyWorldTags`, `excludeWorldTags`, `anySegmenta`, `anyFocus`, `greatRift` (`true`/`false`), `or` (재귀 배열).
+`minAge`, `maxAge`, `minYear`, `maxYear`, `gender` (`"male"`/`"female"`), `stats` (`{ WS, BS, T, Ag, Int, WP, Fel, Inf }`), `minFaith`, `maxFaith`, `minCorruption`, `maxCorruption`, `minWounds`, `maxWounds`, `allTags`, `anyTags`, `excludeTags`, `anyCareers`, `anyPastCareers`, `excludePastCareers`, `anyChapters`, `excludeChapters`, `anyWorlds`, `anyHomeWorlds`, `excludeWorlds`, `anyWorldTags`, `excludeWorldTags`, `anySegmenta`, `anyFocus`, `greatRift` (`true`/`false`), `or` (재귀 배열).
 
 ### 4.3 `applyOutcome(state, outcome)` 지원 효과 키
-`text`, `stats`, `wounds`, `woundsBonus`, `faith`, `corruption`, `corruptionReset`, `lifeBonusExtra` (또는 `extraLifeBonus`), `addTags` (`met_<charId>` 자동 `metCharacters` 등록), `moveWorld`, `warpYearShift` (생물학적 연령 유지한 워프 시간 도약), `forceCareer`, `chooseChapter`, `instantDeath` (사망 사유 문자열).
+`text`, `stats`, `wounds`, `woundsBonus`, `faith`, `corruption`, `corruptionReset`, `lifeBonusExtra` (또는 `extraLifeBonus`), `incrementRejuvenat`, `addTags` (`met_<charId>` 자동 `metCharacters` 등록), `moveWorld`, `warpYearShift` (생물학적 연령 유지한 워프 시간 도약), `forceCareer`, `acceptCareerOffer`, `declineCareerOffer`, `trialFailFor`, `chooseChapter`, `instantDeath` (사망 사유 문자열).
 
 ---
 
@@ -380,26 +382,29 @@
 
 ---
 
-## 9. 5차 인류제국 대확장 로드맵 (12~16단계) 및 단계별 진행 보고서
+## 9. 5차 인류제국 대확장 로드맵 (12~18단계) 및 단계별 진행 보고서
 
-> **목표:** 11단계 계층형 데이터 구조와 1:1 단독 파일 승격 체계를 활용해, 인류제국의 기존 27개 직군 · 네임드 15행성 · 9대 챕터 · 초인 장수기 · 신규 4대 상징 세력 · M41~M42 역사 연표 및 네임드 인물 밀도를 전면 확충한다.
-> **확정 설계 결정 (사용자 승인 — 추천안 A 일괄 채택):**
-> 1. **아스타르테스 4대 전문 직책(12단계):** `astartes_brother` 유지 상태에서 전용 임명 분기 및 태그(`role_chaplain`, `role_apothecary`, `role_techmarine`, `role_librarian` — 블랙 템플러 라이브러리안 차단)로 확장.
-> 2. **임페리얼 나이트 출생 행성(15단계):** 신규 기사 행성 `generic_knight` 추가(총 22 -> 23행성) + 유년기 연대기 6종+ 동시 확보.
-> 3. **리빙 세인트(15단계):** 5티어 전설 선택 직군 `living_saint` 추가(신규 4직군: `navis_navigator`, `officio_assassinorum`, `imperial_knight`, `living_saint` -> 총 31개 선택 직군).
-> 4. **1:1 파일 승격 & GitHub 단계별 보고:** 15~20건 이상 커지는 직군·행성·챕터는 즉시 단독 파일로 승격하며, 매 단계 완료 시 본 문서 갱신 + QA 6대 게이트 0오류 통과 후 GitHub(`origin/main`)에 즉시 커밋·푸시한다.
+> **목표:** 11단계 계층형 데이터 구조와 1:1 단독 파일 승격 체계를 활용해, 인류제국 전 세력 풀 계급도(78종 선택 직군 · 하이 로드 10석 · 행성 총독/섹터 로드 공훈 횡단 · CSM/컬트 분리 · 데몬 프린스) 및 이벤트 기반 진로 제안 엔진을 구축하고, 계급·전 계급 대비(`anyPastCareers`) 서사 · 네임드 15행성 · 9대 챕터 · 신규 4대 상징 세력 · M41~M42 역사 연표 및 네임드 크로스오버 밀도를 전면 확충한다.
+> **확정 설계 결정 (사용자 승인):**
+> 1. **아스타르테스 4대 전문 직책(12단계 완료):** `astartes_brother` 계열에서 전용 임명 분기 및 태그(`role_chaplain`, `role_apothecary`, `role_techmarine`, `role_librarian` — 블랙 템플러 라이브러리안 차단)로 확장.
+> 2. **전 세력 풀 계급도 · 이벤트 기반 진로 제안 · 평행 횡단(13단계 완료):** 기존 27개 직군 ID를 100% 보존하면서 17개 트리 **78종 선택 직군(유년기 포함 79종)**으로 확장. 하이 로드 10석, 워마스터, 챕터 마스터, 슈프림 그랜드 마스터, 행성 총독→섹터 로드 공훈 횡단, 로그 트레이더·이단심문소 평행 횡단, 필멸자 카오스 컬트 vs 배신자 아스타르테스(CSM)/카오스 로드 분리 및 데몬 프린스 승천 루트를 구축하고, 상위·횡단 직책은 `createDynamicCareerOfferEvent`로 자연스럽게 제시한다.
+> 3. **계급별 · 전 계급 대비 서사(14단계 예정):** `anyPastCareers`/`excludePastCareers`를 활용해 옛 계급과 새 계급의 시야·권한·책임 차이를 대비하는 계급 승급·횡단 전용 사건과 연대기를 대폭 확충한다.
+> 4. **임페리얼 나이트 출생 행성 & 리빙 세인트(17단계 예정):** 신규 기사 행성 `generic_knight` 추가(총 22 -> 23행성) + 유년기 연대기 6종+ 확보, 신규 4대 세력(`navis_navigator`, `officio_assassinorum`, `imperial_knight`, `living_saint`) 풀 트리 추가.
+> 5. **1:1 파일 승격 & GitHub 단계별 보고:** 15~20건 이상 커지는 직군·행성·챕터는 즉시 단독 파일로 승격하며, 매 단계 완료 시 본 문서 갱신 + QA 6대 게이트 0오류 통과 후 GitHub(`origin/main`)에 즉시 커밋·푸시한다.
 
 ### 전체 진행 현황 요약
 
 | 단계 | 구분 | 상태 | 완성도 | 핵심 목표 및 실적/예정 규모 |
 | --- | --- | --- | --- | --- |
 | **12단계 (5차 1단계)** | 기존 27개 직군 전면 심화 · 아스타르테스 4대 직책 · 가드맨 연대 특화 | `[완료]` | 100% (목표 +54 초과 달성: **+64사건 · +40연대기 · +12태그 · QA 0오류**) | 얇은 직군 14종 집중 보강, 가드맨 6대 연대 특화(`guardsman.js` 1:1 승격), `rogue_trader.js` 단독 승격, 아스타르테스 4대 직책 분화 + 맞춤 부고 4종 |
-| **13단계 (5차 2단계)** | 네임드 15행성 & 파견 전용 연작 대확장 | `[예정]` | 0% | 테라 외 14개 네임드 행성 최소 5~7건+ 보강, 핵심 행성(`terra`/`cadia`/`krieg`/`armageddon`) 1:1 승격, 파견(`anyWorlds`) 체감 극대화 (`+48사건 · +45연대기`) |
-| **14단계 (5차 3단계)** | 9대 챕터 1:1 승격 · 초인 장수기 · 카오스 4대 신 엔드게임 | `[예정]` | 0% | 9대 챕터별 단독 파일 승격 + 다단계 아크(각 7~8건+), 150~500세 초장수기 연작, 카오스 4대 신 투사 엔드게임 (`+45사건 · +36연대기`) |
-| **15단계 (5차 4단계)** | 인류제국 신규 4대 세력/직군 & 기사 행성 추가 | `[예정]` | 0% | `navis_navigator`, `officio_assassinorum`(4대 클레이드), `imperial_knight`(+`generic_knight` 행성), `living_saint` 추가 + 엔진 행동/이동/부고 & 도감 동적화 (`+4직군 · +1행성 · +36사건 · +32연대기`) |
-| **16단계 (5차 5단계)** | M41~M42 핵심 역사 5종 · 신규 네임드 8인 · 시대 프리셋 2종 | `[예정]` | 0% | 고딕 전쟁·1차 아마겟돈(수치의 달들)·3차 타이라니드·옥타리우스·역병 전쟁 추가, 네임드 8인(28인 체제) 단독 조우·후일담 완비, 시대 프리셋 2종 (`+5역사 · +8인물 · +24사건 · +28연대기`) |
+| **13단계 (5차 2단계)** | 전 세력 풀 계급도(78종) · 이벤트 기반 진로 제안 · 평행 횡단 · 엔진/UI 개편 | `[완료]` | 100% (**78종 선택 직군 · 17개 트리 · +39태그 · +4연대기 · 6대 QA 0오류/0경고**) | 17개 트리 78종 선택 직군(하이 로드 10석·워마스터·행성 총독/섹터 로드·CSM/컬트 분리·데몬 프린스), `createDynamicCareerOfferEvent`, `anyPastCareers`/`excludePastCareers`, 엔진 데이터 주도화, UI `<details>` 그룹화·`careerHistory` 도감 집계·기존 `anyCareers` 호환 보정 · 밸런스 튜닝 |
+| **14단계 (5차 3단계)** | 계급별 · 전 계급 대비(`anyPastCareers`) 전용 서사 & 연대기 대확장 | `[예정]` | 0% | 분대장/장군/워마스터, 1중대 터미네이터/챕터 마스터, 하이 로드·행성 총독·로그 트레이더 영장·CSM/데몬 프린스 전용 사건과 옛 계급 대비(`anyPastCareers`) 연작 서사 대확충 (`+60사건 · +55연대기`) |
+| **15단계 (5차 4단계)** | 네임드 15행성 & 파견 전용 연작 대확장 | `[예정]` | 0% | 테라 외 14개 네임드 행성 최소 5~7건+ 보강, 핵심 행성(`terra`/`cadia`/`krieg`/`armageddon`) 1:1 승격, 파견(`anyWorlds`) 체감 극대화 (`+48사건 · +45연대기`) |
+| **16단계 (5차 5단계)** | 9대 챕터 1:1 승격 · 초인 초장수기 · 카오스 4대 신/CSM 엔드게임 | `[예정]` | 0% | 9대 챕터별 단독 파일 승격 + 다단계 아크(각 7~8건+), 150~500세 초장수기 연작, 카오스 4대 신·배신자 군단·데몬 프린스 엔드게임 심화 (`+45사건 · +36연대기`) |
+| **17단계 (5차 6단계)** | 인류제국 신규 4대 세력 풀 트리 & 기사 행성 추가 | `[예정]` | 0% | `navis_navigator`(파테르노발 특사 하이 로드 포함), `officio_assassinorum`(4대 클레이드·그랜드 마스터 하이 로드 포함), `imperial_knight`(+`generic_knight` 행성), `living_saint` 풀 트리 + 엔진/도감 연동 (`+4세력 · +1행성 · +36사건 · +32연대기`) |
+| **18단계 (5차 7단계)** | M41~M42 핵심 역사 5종 · 신규 네임드 8인 · 정사 크로스오버 · 거시 파장 | `[예정]` | 0% | 고딕 전쟁·1차 아마겟돈(수치의 달들)·3차 타이라니드·옥타리우스·역병 전쟁 추가, 네임드 8인(28인 체제) 단독 조우·정사 크로스오버·거시 결단 파장 연계, 시대 프리셋 2종 (`+5역사 · +8인물 · +28사건 · +28연대기`) |
 
-* **5차 인류제국 대확장 전체 누적 완성도:** `1 / 5 단계 완료 (20% · 12단계 완료, 잔여: 13~16단계)`
+* **5차 인류제국 대확장 전체 누적 완성도:** `2 / 7 단계 완료 (28.6% · 12~13단계 완료, 잔여: 14~18단계)`
 
 ### 12단계 (5차 1단계): 기존 27개 직군 전면 심화 · 아스타르테스 4대 직책 · 가드맨 연대 특화 `[완료]`
 * **완성도:** **100% 완료** (예정 목표 `+54사건`을 초과해 **+64사건 · +40연대기 · +12태그 · 1:1 파일 승격 2종 · 아스타르테스 4대 직책 부고 4종** 구현, `sync-scripts --check` 및 `qa.js` 6대 게이트 0오류·0경고, 신규 전 항목 도달 가능성 100% 검증 완료)
@@ -426,12 +431,77 @@
      * `node scripts/qa.js` **6대 게이트 0오류·0경고** (`maxEv = 80.1KB`, `maxCh = 40.2KB`, `orphans = 0`, 91종 `#id` 일치, 금지 표기·장식 기호·크리그 정합성·소프트락 0건, 300생애 시뮬레이션 `maxRepeat = 2`, `nihilusMismatch = 0`, `scholaStuck = 0`, `1,000분기 = 210.9ms`).
      * 단위 테스트: 신규 사건 64종·연대기 40종 **도달 가능성 100%**, 블랙 템플러 라이브러리안 차단 검증 통과, 아스타르테스 4대 직책 맞춤 부고 4종 전원 동작 검증 통과.
 
-### 다음 작업 대기열 (Next Up — 13단계 착수 예정)
-* **다음 목표 (13단계: 네임드 15행성 & 파견 전용 연작 대확장 · `+48사건 · +45연대기`):**
-  1. **핵심 상징 행성 1:1 단독 파일 승격:** `data/events/worlds/` 아래 `terra.js`(12건), `cadia.js`(6건+, `maxYear: 999` 엄수), `krieg.js`(7건+, 비타-움 정합성 엄수), `armageddon.js`(7건+) 단독 승격.
-  2. **소외 네임드 행성 집중 보강 (`solar.js`, `ultima.js`, `frontier.js`):** `valhalla`(+5), `tanith`(+4, `maxYear: 764` 엄수), `vostroya`(+4), `ophelia7`(+4), `necromunda`(+4), `mars`/`macragge`/`baal`/`catachan`/`nocturne`/`fenris`(각 +3)로 전 15개 네임드 행성 파견(`anyWorlds`) 체감 극대화.
-  3. **행성 파견·생활 연대기 +45종 보강:** `data/chronicles/worlds.js` 또는 `data/chronicles/worlds/` 권역 분할 승격으로 전 행성 일상 밀도 확충.
-  4. `sync-scripts.js` · `qa.js` 6대 게이트 0오류 + 신규 전 항목 도달 가능성 검증 → 본 문서 13단계 `[완료]` 갱신 및 GitHub 푸시.
+### 13단계 (5차 2단계): 전 세력 풀 계급도(78종) · 이벤트 기반 진로 제안 · 평행 횡단 · 엔진/UI 개편 `[완료]`
+* **완성도:** **100% 완료** (기존 27개 직군 ID 100% 보존 + 신규 51개 계급·최고위 추가 = **17개 세력 트리 78종 선택 직군(유년기 포함 79종)**, `TAG_LABELS` +39종(128 -> **167종**), 최상위 기본 연대기 +4종(525 -> **529종**), 이벤트 기반 승급·평행 횡단·시련 판정 엔진 및 UI 그룹화·도감 누적 집계·밸런스 튜닝 완료, `sync-scripts --check` 및 `qa.js` 6대 게이트 **0오류·0경고** 통과)
+* **완료 내역 (수정 파일 및 추가 시스템):**
+  1. **전 세력 17개 트리 78종 풀 계급도 (`data/careers.js`, `data/tags.js`):**
+     * **기존 28개 ID 100% 유지 + 51종 신규 계급 추가 (`CAREERS = 79`, 선택 가능 `78종`):**
+       * `civil`(6): 노동자 → 길드 장인 → 상업 길드 거두 / 언더하이브 갱단원 → 갱단 두목 → 하이브 암흑가 거두
+       * `militarum`(9): PDF → 가드맨 → 분대장(서전트) → 장교 → 장군 → **성전 워마스터** · **로드 커맨더 밀리탄트(하이 로드)** / 템페스투스 사이온 → 템페스투스 프라임
+       * `commissariat`(4): 커미사르 생도 → 커미사르 → 로드 커미사르 → 총커미사르
+       * `sororitas`(5): 노비티에이트 → 전투 수녀 → 셀레스티안·팔라틴 → 캐노네스 → **아베스 상크토룸(하이 로드)**
+       * `ecclesiarchy`(4): 사제 → 고해사·선교사 → 성역 추기경 → **에클레시아크(하이 로드)**
+       * `astartes`(6): 네오파이트 → 배틀 브라더 → 스쿼드 서전트 → 1중대 베테랑·터미네이터 → 중대장(캡틴) → **챕터 마스터**
+       * `grey_knights`(4): 그레이 나이트 → 팔라딘 → 그랜드 마스터 → **슈프림 그랜드 마스터**
+       * `custodes`(4): 쿠스토데스 → 워든·알라루스 → 실드-캡틴 → **캡틴-제너럴(하이 로드)**
+       * `inquisition`(5): 어콜라이트 → 심문자(인터로게이터) → 이단심문관 → 로드 이단심문관 → **이단심문소 테라 대표(하이 로드)**
+       * `mechanicus`(6): 스키타리 → 스키타리 마셜 / 테크프리스트 → 아크마고스 → 파브리케이터-로쿰 → **화성 파브리케이터-제너럴(하이 로드)**
+       * `navy`(4): 사관 → 순양함 함장 → 전투함대 제독 → **로드 하이 애드미럴(하이 로드)**
+       * `arbites`(4): 치안대 → 판관(저지) → 마셜 → **그랜드 프로보스트 마셜(하이 로드)**
+       * `administratum`(4): 서기관 → 프리펙트 → 데파르트멘토 국장 → **마스터 오브 디 아드미니스트라툼(하이 로드)**
+       * `governor`(2 · 공훈 횡단): **행성 총독(임페리얼 커맨더)** → **섹터 로드**
+       * `rogue_trader`(3 · 공훈 횡단): 세네샬 → **로그 트레이더** → 왕조 총수(로드 캡틴)
+       * `psyker`(3): 생션드 사이커 → 프리마리스 사이커 → **마스터 오브 디 아스트라 텔레파티카(하이 로드)**
+       * `chaos`(5 · 필멸자/초인 분리): [필멸자] 카오스 컬티스트 → 카오스 챔피언 / [아스타르테스] 카오스 스페이스 마린(`renegade_marine`) → 카오스 로드 → **데몬 프린스 승천**
+     * 전 직군 선언적 메타데이터(`tree`, `treeName`, `entryMode`, `transitTier`, `actionGroup`, `isTranshuman`, `titleSuffix`, `offerTitle`, `offerPitch`) 완비 및 `data/tags.js` 신규 계급·직책 태그 39종 등록(`TAG_LABELS = 167종`).
+  2. **이벤트 기반 진로 제안 · 전 계급 대비 조건 · 데이터 주도 엔진 (`js/engine.js`):**
+     * `checkReq`/`describeReq`에 `anyPastCareers`·`excludePastCareers` 추가(14단계 전 계급 대비 서사 기반 확보).
+     * `advanceQuarter` 1.5순위에 `createDynamicCareerOfferEvent(state, reqCtx, options)` 신설: 동일 트리 승급, 공훈 평행 횡단(행성 총독·로그 트레이더·이단심문소 심문자), 초인 소환, 카오스 유혹 및 테라 하이 로드 인준 시련(`trialCheck`)을 동적 사건으로 제시하고, 거절 시 8년(`declinedCareers`), Tier 6 시련 실패 시 12년 쿨다운 적용. `attemptCareerChange`에서 `entryMode === "event"` 수동 우회 차단.
+     * `getCareerDisplayTitle`, `getCareerAction`(25종 `actionGroup` 프로필), `getTravelProfile`, `createDynamicTransitEvent`, `canUseRejuvenat`, `canUseAugmetics`를 100% 선언적 메타데이터 주도 구조로 리팩토링.
+     * `forceCareer` 아스타르테스→`renegade_marine` 자동 리다이렉트, 쿠스토데스·그레이 나이트 카오스 타락 면역, 데몬 프린스 오염 100 스폰화 사망 면역 구현.
+     * `evaluateLifeGrade`에 데몬 프린스, 카오스 로드/CSM, 테라의 하이 로드, 성전 워마스터, 챕터 마스터, 슈프림 그랜드 마스터, 캡틴-제너럴, 행성 총독/섹터 로드 등 최상위 맞춤 부고 대폭 확충.
+  3. **기존 사건·연대기 호환 보정 & 최상위 기본 연대기 (`data/events/**`, `data/chronicles/**`):**
+     * 기존 9개 직군 사건 파일·`chaos_warp.js`·3개 연대기 파일의 `anyCareers`를 상위 계급까지 호환 확장(하수구 은신 컬티스트 연대기는 필멸자 `chaos_cultist`/`chaos_champion`으로 엄격 제한해 상황 정합성 유지).
+     * 최상위 계급 기본 연대기 4종(`ch_s13_high_lord_council`, `ch_s13_governor_tithe`, `ch_s13_csm_warband`, `ch_s13_daemon_prince_warp`) 추가(`CHRONICLES` 525 -> **529종**).
+  4. **UI 경량화 · 17개 세력 `<details>` 그룹화 · 영혼의 전당 누적 집계 (`js/ui.js`, `styles.css`, `index.html`):**
+     * 우측 자율 선택 패널에는 즉시 전환 가능한 `entryMode !== "event"` 직군만 노출하고, 조건을 달성한 발탁·승급 대기 직책은 `.ready-offer-box` 배너로 안내(스크린 리더 및 `새 진로 해금 알림` 연동).
+     * `#all-careers-preview`와 제국 코덱스 `careers` 탭을 17개 세력 트리별 `<details>` 아코디언으로 그룹화해 78종 계급도의 탐색성과 스크린 리더 접근성 확보.
+     * `saveToHall`/`renderHall`이 `careerHistory` 전체를 보존·집계(기존 저장분 100% 하위 호환)하며, 부고 모달·전체 인생 기록서(`.txt` 내보내기)·영혼의 전당 상세 조서에 `거쳐 온 진로 궤적`을 출력.
+  5. **밸런스 튜닝 · 78종 전수 감사 · QA 6대 게이트 결과 (`scripts/qa.js`):**
+     * 필멸자 Tier 2~6 `lifeBonus`를 워해머 40k 고증에 맞게 보정(리주버냇 시술의 의미 복원), `inquisition_favor`/`rogue_trader`/`planetary_governor`/`master_of_administratum` 무분별한 횡단 에스컬레이터 차단, Tier 6 하이 로드 `trialCheck` 난이도(`diff: -32 ~ -35`) 및 오퍼 페이싱 조정.
+     * 78종 선택 직군 전수 감사: `describeReq`·`getCareerAction`·`getTravelProfile`·직접 매칭 사건/연대기 누락 **0건**.
+     * `node scripts/sync-scripts.js --check` 통과 (`index.html` 39개 스크립트), `node scripts/qa.js` **6대 게이트 0오류·0경고** (`maxEv = 80.1KB`, `maxCh = 44.5KB`, 91종 `#id` 일치, Gate 4 신규 단위 테스트 전원 통과, 유년기 중복률 `20.3%`, 300생애 멀티-초점 시뮬레이션 `maxRepeat = 2`, `nihilusMismatch = 0`, `scholaStuck = 0`, `careerOffers = 1,272`, `reachedCareers = 53/78`, 필멸자 중위 수명 `31~57세`, 치명 사망률 `50~73%`, `1,000분기 = 279.5ms`).
+
+---
+
+### 다음 작업 대기열 (Next Up — 14~18단계 상세 계획)
+
+* **14단계 (5차 3단계 — 다음 세션 최우선 착수): 계급별 · 전 계급 대비(`anyPastCareers`) 전용 서사 & 연대기 대확장 (`+60사건 · +55연대기`)**
+  1. **전 계급 대비(`anyPastCareers`) 시야 변화 연작 (최소 16사건 · 15연대기):**
+     * 가드맨 출신 분대장·장교·장군·워마스터(어제까지 참호에서 명령받던 보병이 이제 분대와 사단의 사상률을 서명하는 대비).
+     * 언더하이브 갱단·하층 노동자 출신 상업 거두·로그 트레이더·행성 총독·스페이스 마린(하층 배급줄 기억과 상층 첨탑·배틀 바지 함교의 괴리).
+     * 네오파이트·배틀 브라더 출신 1중대 터미네이터·캡틴·챕터 마스터(단독 검무에서 1,000명 챕터의 정치·유전자 보존을 짊어지는 무게).
+     * 어콜라이트/사이온/아르비테스 판관/커미사르 출신 이단심문관·로드 이단심문관, 그리고 충성파 아스타르테스 출신 배신자 CSM(`anyPastCareers: ["astartes_brother", "astartes_captain"]`)의 타락 회한.
+  2. **신규 중·고위 & 최상위(Tier 4~6) 전용 분기 사건 (최소 44사건 · 40연대기):**
+     * **테라의 하이 로드 10석 전용 사건:** 세나토룸 임페리알리스 의결 암투, 길리먼 섭정과의 갈등·협조, 100만 행성 십일조·성전 선포(각 하이 로드 의석별 고유 선택지 포함).
+     * **행성 총독 · 섹터 로드 전용 사건:** 십일조 체납 감사, 하이브 폭동 진압 대 타협, 외계 약탈선 협상, 아르비테스·이단심문소와의 통치권 충돌.
+     * **로그 트레이더 왕조(세네샬 → 로그 트레이더 → 로드 캡틴) & 길드 거두/암흑가 거두 전용 사건:** 개척지 권리 쟁탈, 콜드 트레이드 밀수망, 차티스트 항로 독점.
+     * **군사·종교·기계교 신규 중간·상위 계급 전용 사건:** `militarum_sergeant`/`tempestus_prime_cmd`/`militarum_general`/`warmaster`, `commissar_cadet`/`commissar_general`, `sororitas_novitiate`/`sororitas_celestian`, `ministorum_confessor`/`ecclesiarchy_cardinal`, `astartes_sergeant`/`astartes_veteran`/`chapter_master`, `gk_paladin`/`gk_grand_master`/`gk_supreme_grand_master`, `custodes_warden`/`custodes_shield_captain`, `skitarii_marshal`/`fabricator_locum`, `navy_captain`/`navy_admiral`, `arbites_judge_rank`/`arbites_marshal`, `admin_prefect_rank`/`admin_departmento_head`, `primaris_psyker`.
+     * **카오스 2트랙 분리 심화:** 필멸자 `chaos_champion` 지하 반란·워밴드 쟁탈 vs 초인 `renegade_marine`/`chaos_lord` 배신자 전함 습격·검은 성전 참전 vs `daemon_prince` 워프 영토 지배·필멸 신도 소환.
+  3. **파일 승격 & 분할:** `data/events/careers/` 내 110KB/15~20건 초과 직군(`inquisition`, `astartes`, `militarum`, `civil_void` 등)과 신규 `governor.js`, `high_lords.js`, `chaos_ranks.js` 단독 파일 승격 + `data/chronicles/careers_ranks.js` 신설 후 `sync-scripts.js` & `qa.js` 6대 게이트 통과.
+
+* **15단계 (5차 4단계): 네임드 15행성 & 파견 전용 연작 대확장 (`+48사건 · +45연대기`)**
+  * 핵심 상징 행성 1:1 단독 파일 승격(`terra.js`, `cadia.js` `maxYear: 999`, `krieg.js` 비타-움 정합성, `armageddon.js`) 및 나머지 11개 네임드 행성(`valhalla`, `tanith` `maxYear: 764`, `vostroya`, `ophelia7`, `necromunda`, `mars`, `macragge`, `baal`, `catachan`, `nocturne`, `fenris`) 파견(`anyWorlds`) 연작·연대기 대확충.
+
+* **16단계 (5차 5단계): 9대 챕터 1:1 승격 · 초인 초장수기 · 카오스 4대 신/CSM 엔드게임 (`+45사건 · +36연대기`)**
+  * `data/events/chapters/` 9대 챕터별 단독 파일 승격(각 7~8건+ 다단계 아크), 150~500세 초장수기 연작(세대 단절·고대 유물·드레드노트/챕터 마스터 노년), 카오스 4대 신 & 배신자 군단 엔드게임 심화.
+
+* **17단계 (5차 6단계): 인류제국 신규 4대 세력 풀 트리 & 기사 행성 추가 (`+4세력 · +1행성 · +36사건 · +32연대기`)**
+  * `navis_navigator`(견습 항법사 → 선임 항법사 → 노빌리테 가주 → 파테르노발 특사 하이 로드), `officio_assassinorum`(4대 클레이드 견습·정예 → 그랜드 마스터 오브 어쌔신 하이 로드), `imperial_knight`(기사 행성 `generic_knight` 신설 + 23행성 체제 · 자유기사/하이 킹), `living_saint`(기적 각성 특수 승천 트리) 추가.
+
+* **18단계 (5차 7단계): M41~M42 핵심 역사 5종 · 신규 네임드 8인 · 정사 크로스오버 · 거시 파장 (`+5역사 · +8인물 · +28사건 · +28연대기`)**
+  * 고딕 전쟁(139~151.M41), 1차 아마겟돈·수치의 달들(444.M41), 3차 타이라니드·옥타리우스, 역병 전쟁(울트라마) `TIMELINE` 5종 및 시대 프리셋 2종 추가, 네임드 8인 추가(28인 체제) + 정사 크로스오버 및 거시 결단 파장 연계.
+
 
 
 

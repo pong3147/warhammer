@@ -95,6 +95,7 @@
     if (!charState || !charState.alive) return;
     const ctx = Engine.getContextualOptions(charState);
     ctx.unlockedCareers.forEach((c) => knownUnlockedCareerIds.add(c.id));
+    (ctx.readyEventCareers || []).forEach((c) => knownUnlockedCareerIds.add(c.id));
   }
 
   function detectNewCareerUnlocks(charState) {
@@ -102,7 +103,8 @@
     const curCareer = Engine.getCareer(charState.careerId);
     const ctx = Engine.getContextualOptions(charState);
     const newly = [];
-    ctx.unlockedCareers.forEach((c) => {
+    const allReady = [...ctx.unlockedCareers, ...(ctx.readyEventCareers || [])];
+    allReady.forEach((c) => {
       if (!knownUnlockedCareerIds.has(c.id)) {
         knownUnlockedCareerIds.add(c.id);
         if (charState.careerId === "child" || c.tier >= (curCareer ? curCareer.tier : 0)) {
@@ -228,6 +230,7 @@
       finalWorldId: charState.worldId,
       visitedWorlds: charState.visitedWorlds || [charState.homeWorldId],
       careerId: charState.careerId,
+      careerHistory: Array.from(new Set([...(charState.careerHistory || []), charState.careerId].filter(Boolean))),
       careerTitle: Engine.getCareerDisplayTitle(charState),
       chapterId: charState.chapterId || null,
       tags: (charState.tags || []).filter((t) => !t.startsWith("met_")).slice(0, 12),
@@ -490,7 +493,11 @@
       `;
     }).join("");
 
-    const dangerTags = new Set(["heretic", "chaos_aligned", "mark_khorne", "mark_tzeentch", "mark_nurgle", "mark_slaanesh", "wanted_by_inquisition", "rogue_psyker", "imperial_nihilus", "tech_heresy"]);
+    const dangerTags = new Set([
+      "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+      "mark_khorne", "mark_tzeentch", "mark_nurgle", "mark_slaanesh",
+      "wanted_by_inquisition", "rogue_psyker", "imperial_nihilus", "tech_heresy"
+    ]);
     const visibleTags = state.tags.filter((t) => !t.startsWith("met_"));
     $("#tag-cloud").innerHTML = visibleTags.length
       ? visibleTags.map((t) => `<li class="tag-chip ${dangerTags.has(t) ? "danger" : ""}">${escapeHtml(Engine.TAG_LABELS[t] || t)}</li>`).join("")
@@ -655,19 +662,43 @@
     }
   }
 
+  function groupCareersByTree(careers) {
+    const groups = new Map();
+    for (const c of careers) {
+      const key = c.treeName || c.faction || "기타";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(c);
+    }
+    return Array.from(groups.entries()).map(([treeName, list]) => ({
+      treeName,
+      list: [...list].sort((a, b) => a.tier - b.tier)
+    }));
+  }
+
   function renderLockedCareersPreview() {
     const wrap = $("#all-careers-preview");
     if (!wrap) return;
-    wrap.innerHTML = lastLockedCareers.map((c) => `
-      <div class="career-card">
-        <div class="career-top">
-          <div>
-            <div class="career-name">${escapeHtml(c.name)}</div>
-            <div class="career-faction">${escapeHtml(c.faction)} · Tier ${c.tier}</div>
-          </div>
+    const grouped = groupCareersByTree(lastLockedCareers);
+    wrap.innerHTML = grouped.map((g) => `
+      <details class="career-tree-group">
+        <summary>${escapeHtml(g.treeName)} (${g.list.length}종)</summary>
+        <div class="career-tree-body">
+          ${g.list.map((c) => {
+            const modeTag = c.entryMode === "event" ? " · 발탁 이벤트 전용" : "";
+            return `
+              <div class="career-card">
+                <div class="career-top">
+                  <div>
+                    <div class="career-name">${escapeHtml(c.name)}</div>
+                    <div class="career-faction">${escapeHtml(c.faction)} · Tier ${c.tier}${modeTag}</div>
+                  </div>
+                </div>
+                <div class="career-req">조건: ${escapeHtml(Engine.describeReq(c.req) || "조건 없음")}</div>
+              </div>
+            `;
+          }).join("")}
         </div>
-        <div class="career-req">조건: ${escapeHtml(Engine.describeReq(c.req) || "조건 없음")}</div>
-      </div>
+      </details>
     `).join("");
   }
 
@@ -676,10 +707,20 @@
     const ctx = Engine.getContextualOptions(state);
     const busy = !state.alive || Boolean(state.pendingEvent);
 
-    // 1. 지금 지원 가능한 진로/승급
+    // 1. 지금 지원 가능한 진로/승급 + 발탁 이벤트 대기 안내
     const cWrap = $("#auto-careers-wrap");
+    const readyOffers = ctx.readyEventCareers || [];
+    const readyBannerHtml = readyOffers.length > 0
+      ? `
+        <div class="ready-offer-box">
+          <strong>상위 · 특임 발탁 조건 달성 (${readyOffers.length}종)</strong>
+          <p>${escapeHtml(readyOffers.slice(0, 3).map((c) => Engine.getCareerDisplayTitle(state, c)).join(", "))}${readyOffers.length > 3 ? ` 외 ${readyOffers.length - 3}종` : ""} — 시간이 흐르면 임명·발탁 사건이 도착한다.</p>
+        </div>
+      `
+      : "";
+
     if (ctx.unlockedCareers.length > 0) {
-      cWrap.innerHTML = ctx.unlockedCareers.map((c) => {
+      cWrap.innerHTML = readyBannerHtml + ctx.unlockedCareers.map((c) => {
         const displayName = Engine.getCareerDisplayTitle(state, c);
         const trialNote = c.trialCheck ? ` · [시련: ${Engine.STAT_META[c.trialCheck.stat].name}]` : "";
         return `
@@ -687,7 +728,7 @@
             <div class="career-top">
               <div>
                 <div class="career-name">${escapeHtml(displayName)}</div>
-                <div class="career-faction">${escapeHtml(c.faction)}${trialNote}</div>
+                <div class="career-faction">${escapeHtml(c.faction)} · Tier ${c.tier}${trialNote}</div>
               </div>
               <span class="ev-badge">수명 ${c.lifeBonus >= 0 ? "+" + c.lifeBonus : c.lifeBonus}</span>
             </div>
@@ -701,17 +742,20 @@
     } else {
       const hintHtml = ctx.nearCareers.length
         ? `<div class="near-goal-list">
-            ${ctx.nearCareers.map((c) => `
-              <div class="near-goal-item">
-                <strong>다음 목표 힌트 · ${escapeHtml(c.name)}</strong>
-                <span style="color:var(--text-muted);">필요: ${escapeHtml(Engine.describeReq(c.req))}</span>
-              </div>
-            `).join("")}
+            ${ctx.nearCareers.map((c) => {
+              const modeHint = c.entryMode === "event" ? " [발탁 이벤트]" : "";
+              return `
+                <div class="near-goal-item">
+                  <strong>다음 목표 힌트 · ${escapeHtml(c.name)}${modeHint}</strong>
+                  <span style="color:var(--text-muted);">필요: ${escapeHtml(Engine.describeReq(c.req))}</span>
+                </div>
+              `;
+            }).join("")}
           </div>`
         : "";
-      cWrap.innerHTML = `
+      cWrap.innerHTML = readyBannerHtml + `
         <div class="empty-hint-box">
-          지금 당장 전직할 수 있는 진로가 없다. <strong>삶의 초점</strong>으로 스탯을 키우거나 나이가 들면 자연스럽게 새로운 길이 열린다.
+          지금 직접 지원할 수 있는 진로가 없다. <strong>삶의 초점</strong>으로 스탯을 키우거나 공훈을 쌓으면 승급·횡단 발탁 사건이 자연스럽게 찾아온다.
           ${hintHtml}
         </div>
       `;
@@ -785,7 +829,7 @@
             <button id="btn-travel-go" class="${evalRes.autoApprove ? "btn-gold" : "btn-ghost"}" ${busy ? "disabled" : ""} style="width:100%;">
               ${escapeHtml(tp.actionLabel || "이동 청원")}
             </button>
-            <div class="travel-note">※ 높은 계급일수록 승인율이 오르며, 이단심문관·중대장·로그 트레이더는 즉시 출항할 수 있다.</div>
+            <div class="travel-note">※ 높은 계급일수록 승인율이 오르며, 최고위 지휘관·하이 로드·행성 총독·로그 트레이더는 즉시 출항할 수 있다.</div>
           </div>
         `;
       }
@@ -877,6 +921,12 @@
       `출생/현재 행성: ${homeW.name} -> ${curW.name}`,
       `출신/선천 자질: ${origin.name} / ${trait.name}`
     ];
+    const careerPath = (charState.careerHistory || [])
+      .filter((id) => id && id !== "child")
+      .map((id) => Engine.getCareerDisplayTitle(charState, Engine.getCareer(id)));
+    if (careerPath.length > 1) {
+      lines.push(`거쳐 간 계급 경력: ${careerPath.join(" -> ")}`);
+    }
     if (chap) {
       lines.push(`소속 챕터: ${chap.name} ("${chap.battleCry}")`);
     }
@@ -1033,6 +1083,9 @@
       .map((c) => c.name);
 
     const worldsVisited = state.visitedWorlds.map((id) => Engine.getWorld(id).name);
+    const careerPath = (state.careerHistory || [])
+      .filter((id) => id && id !== "child")
+      .map((id) => Engine.getCareerDisplayTitle(state, Engine.getCareer(id)));
 
     $("#obit-body").innerHTML = `
       <div class="meta-box" style="margin-bottom:12px;">
@@ -1043,6 +1096,12 @@
         <span class="meta-label">최종 병종 / 직책</span>
         <span class="meta-val">${escapeHtml(Engine.getCareerDisplayTitle(state))}</span>
       </div>
+      ${careerPath.length > 1 ? `
+      <div class="meta-box" style="margin-bottom:12px;">
+        <span class="meta-label">거쳐 간 계급 경력 (${careerPath.length}단계)</span>
+        <span class="meta-val">${escapeHtml(careerPath.join(" -> "))}</span>
+      </div>
+      ` : ""}
       <div class="obit-stats-row">
         ${Object.values(Engine.STAT_META).map((m) => `
           <div class="meta-box">
@@ -1125,25 +1184,40 @@
 
     if (activeCodexTab === "careers") {
       const items = DATA.CAREERS.filter((c) => c.selectable).filter((c) =>
-        `${c.name} ${c.en} ${c.faction} ${c.desc} ${c.source}`.toLowerCase().includes(q)
+        `${c.name} ${c.en} ${c.faction} ${c.treeName || ""} ${c.desc} ${c.source}`.toLowerCase().includes(q)
       );
-      grid.innerHTML = items.map((c) => `
-        <div class="codex-card">
-          <div>
-            <h3>${escapeHtml(c.name)}</h3>
-            <div class="codex-en">${escapeHtml(c.en)} · ${escapeHtml(c.faction)} · Tier ${c.tier}</div>
-            <div class="codex-body">
-              <p style="margin-bottom:6px;">${escapeHtml(c.desc)}</p>
-              <div style="font-size:11.5px;color:var(--gold);">
-                해금 조건: ${escapeHtml(Engine.describeReq(c.req) || "조건 없음")} · 수명 보정 ${c.lifeBonus >= 0 ? "+" + c.lifeBonus : c.lifeBonus}년
-              </div>
-            </div>
+      const grouped = groupCareersByTree(items);
+      if (!grouped.length) {
+        grid.innerHTML = `<p style="color:var(--text-muted);grid-column:1/-1;">검색 조건에 맞는 병종·계급이 없다.</p>`;
+        return;
+      }
+      grid.innerHTML = grouped.map((g, idx) => `
+        <details class="codex-tree-group" ${q.length > 0 || idx === 0 ? "open" : ""}>
+          <summary>${escapeHtml(g.treeName)} (${g.list.length}종 · Tier ${g.list[0].tier}~${g.list[g.list.length - 1].tier})</summary>
+          <div class="codex-grid codex-tree-grid">
+            ${g.list.map((c) => {
+              const modeLabel = c.entryMode === "event" ? "발탁 이벤트 전용" : "직접 지원 가능";
+              return `
+                <div class="codex-card">
+                  <div>
+                    <h3>${escapeHtml(c.name)}</h3>
+                    <div class="codex-en">${escapeHtml(c.en)} · ${escapeHtml(c.faction)} · Tier ${c.tier} · ${modeLabel}</div>
+                    <div class="codex-body">
+                      <p style="margin-bottom:6px;">${escapeHtml(c.desc)}</p>
+                      <div style="font-size:11.5px;color:var(--gold);">
+                        해금 조건: ${escapeHtml(Engine.describeReq(c.req) || "조건 없음")} · 수명 보정 ${c.lifeBonus >= 0 ? "+" + c.lifeBonus : c.lifeBonus}년
+                      </div>
+                    </div>
+                  </div>
+                  <div class="codex-foot">
+                    <span>${escapeHtml(c.source)}</span>
+                    <a class="codex-link" href="${lexicanumUrl(c.en)}" target="_blank" rel="noopener">Lexicanum 대조 (새 창)</a>
+                  </div>
+                </div>
+              `;
+            }).join("")}
           </div>
-          <div class="codex-foot">
-            <span>${escapeHtml(c.source)}</span>
-            <a class="codex-link" href="${lexicanumUrl(c.en)}" target="_blank" rel="noopener">Lexicanum 대조 (새 창)</a>
-          </div>
-        </div>
+        </details>
       `).join("");
       return;
     }
@@ -1231,7 +1305,11 @@
     const totalChapters = (DATA.CHAPTERS || []).length;
 
     const uniqueWorlds = new Set(list.flatMap((x) => (Array.isArray(x.visitedWorlds) && x.visitedWorlds.length ? x.visitedWorlds : [x.homeWorldId])).filter(Boolean));
-    const uniqueCareers = new Set(list.map((x) => x.careerId).filter((id) => id && id !== "child"));
+    const uniqueCareers = new Set(
+      list
+        .flatMap((x) => (Array.isArray(x.careerHistory) && x.careerHistory.length ? x.careerHistory : [x.careerId]))
+        .filter((id) => id && id !== "child")
+    );
     const uniqueChapters = new Set(list.map((x) => x.chapterId).filter(Boolean));
     const uniqueTimeline = new Set(list.flatMap((x) => x.seenTimeline || []));
     const uniqueChars = new Set(list.flatMap((x) => x.metCharacters || []));
@@ -1243,7 +1321,7 @@
     $("#hall-summary").innerHTML = `
       <div class="meta-box"><span class="meta-label">기록된 생애 수</span><span class="meta-val">${list.length}명</span></div>
       <div class="meta-box"><span class="meta-label">탐방한 행성</span><span class="meta-val">${uniqueWorlds.size} / ${DATA.WORLDS.length}</span></div>
-      <div class="meta-box"><span class="meta-label">달성한 병종</span><span class="meta-val">${uniqueCareers.size} / ${selectableCareers.length}</span></div>
+      <div class="meta-box"><span class="meta-label">달성한 병종·계급</span><span class="meta-val">${uniqueCareers.size} / ${selectableCareers.length}</span></div>
       <div class="meta-box"><span class="meta-label">서약한 챕터</span><span class="meta-val">${uniqueChapters.size} / ${totalChapters}</span></div>
       <div class="meta-box"><span class="meta-label">목격한 역사 / 인물</span><span class="meta-val">역사 ${uniqueTimeline.size}/${DATA.TIMELINE.length} · 인물 ${uniqueChars.size}/${DATA.CHARACTERS.length}</span></div>
     `;
@@ -1268,29 +1346,29 @@
           <summary>제국 도감 달성 현황 및 미수집 해금 힌트 — 전체 수집률 ${totalPct}% (${totalCollected} / ${totalTargets})</summary>
           <div class="hall-codex-body">
             ${renderHintGroup(
-              `미달성 병종 (${missingCareers.length}종 남음)`,
-              missingCareers.map((c) => `<li><strong>${escapeHtml(c.name)}</strong> — ${escapeHtml(Engine.describeReq(c.req) || "조건 없음")}</li>`),
-              "모든 선택 가능 병종을 달성했다."
+              `미달성 병종·계급 (${missingCareers.length}종 남음)`,
+              missingCareers.map((c) => `<li><strong>${escapeHtml(c.name)}</strong> (${escapeHtml(c.treeName || c.faction)} · Tier ${c.tier}${c.entryMode === "event" ? " · 발탁 이벤트" : ""}) — ${escapeHtml(Engine.describeReq(c.req) || "조건 없음")}</li>`),
+              `모든 선택 가능 병종·계급(${selectableCareers.length}종)을 달성했다.`
             )}
             ${renderHintGroup(
               `미서약 챕터 (${missingChapters.length}개 남음)`,
               missingChapters.map((ch) => `<li><strong>${escapeHtml(ch.name)}</strong> — 프라이마크 ${escapeHtml(ch.primarch)} · 모성 ${escapeHtml(ch.homeworld)}</li>`),
-              "9대 아스타르테스 챕터를 모두 서약했다."
+              `${totalChapters}대 아스타르테스 챕터를 모두 서약했다.`
             )}
             ${renderHintGroup(
               `미조우 네임드 인물 (${missingChars.length}명 남음)`,
               missingChars.map((c) => `<li><strong>${escapeHtml(c.name)}</strong> — ${escapeHtml(c.faction)} (${escapeHtml(c.era)})</li>`),
-              "20인의 전설적 인물을 모두 조우했다."
+              `${DATA.CHARACTERS.length}인의 전설적 인물을 모두 조우했다.`
             )}
             ${renderHintGroup(
               `미목격 역사 대사건 (${missingTimeline.length}건 남음)`,
               missingTimeline.map((t) => `<li><strong>${Engine.formatImperialYear(t.year)} ${escapeHtml(t.title)}</strong> — ${escapeHtml(t.scope)}</li>`),
-              "M41~M42 24대 역사 사건을 모두 목격했다."
+              `M41~M42 ${DATA.TIMELINE.length}대 역사 사건을 모두 목격했다.`
             )}
             ${renderHintGroup(
               `미방문 행성 (${missingWorlds.length}곳 남음)`,
               missingWorlds.map((w) => `<li><strong>${escapeHtml(w.name)}</strong> — ${escapeHtml(w.worldClass)} (${escapeHtml(Engine.getWorldShortTag(w))})</li>`),
-              "22개 제국 행성을 모두 탐방했다."
+              `${DATA.WORLDS.length}개 제국 행성을 모두 탐방했다.`
             )}
           </div>
         </details>
@@ -1306,6 +1384,9 @@
       const visitedNames = (Array.isArray(item.visitedWorlds) && item.visitedWorlds.length ? item.visitedWorlds : [item.homeWorldId])
         .filter(Boolean)
         .map((id) => Engine.getWorld(id).name);
+      const careerPathNames = (Array.isArray(item.careerHistory) && item.careerHistory.length ? item.careerHistory : [item.careerId])
+        .filter((id) => id && id !== "child")
+        .map((id) => Engine.getCareer(id).name);
       const tlNames = (item.seenTimeline || [])
         .map((id) => DATA.TIMELINE.find((t) => t.id === id))
         .filter(Boolean)
@@ -1336,6 +1417,7 @@
                 <div class="hall-detail-body">
                   ${verdictHtml}
                   ${statsHtml}
+                  ${careerPathNames.length > 1 ? `<div><strong>거쳐 간 계급 (${careerPathNames.length}):</strong> ${escapeHtml(careerPathNames.join(" -> "))}</div>` : ""}
                   ${chap ? `<div><strong>소속 챕터:</strong> ${escapeHtml(chap.name)}</div>` : ""}
                   <div><strong>방문 행성 (${visitedNames.length}):</strong> ${escapeHtml(visitedNames.join(", "))}</div>
                   <div><strong>목격한 역사 (${tlNames.length}):</strong> ${tlNames.length ? escapeHtml(tlNames.join(" / ")) : "없음"}</div>

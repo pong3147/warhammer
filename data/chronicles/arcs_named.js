@@ -5,7 +5,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ch_arc_ordo_hereticus",
     badge: "오르도 헤레티쿠스",
     priority: 3,
-    req: { anyCareers: ["inquisitor"], allTags: ["ordo_hereticus"] },
+    req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"], allTags: ["ordo_hereticus"] },
     text: "오르도 헤레티쿠스 서고에서 관할 주교구 설교문 검열 보고서를 검토하고, 아뎁타 소로리타스 수녀원과 합동 단속 일정을 조율했다.",
     effect: { stats: { WP: 1, Inf: 1 }, faith: 2 }
   },
@@ -13,7 +13,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ch_arc_ordo_xenos",
     badge: "오르도 제노스",
     priority: 3,
-    req: { anyCareers: ["inquisitor"], allTags: ["ordo_xenos"] },
+    req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"], allTags: ["ordo_xenos"] },
     text: "격리 실험실에서 포획한 외계 생체 표본과 무기를 정밀 분석한 뒤, 인근 데스워치 워치 포트리스로 암호 첩보를 송신했다.",
     effect: { stats: { Int: 1, BS: 1 } }
   },
@@ -21,7 +21,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     id: "ch_arc_ordo_malleus",
     badge: "오르도 말레우스",
     priority: 3,
-    req: { anyCareers: ["inquisitor"], allTags: ["ordo_malleus"] },
+    req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"], allTags: ["ordo_malleus"] },
     text: "성수로 축성한 은제 탄환과 육망성 봉인함을 점검하며, 워프 너머에서 엿보는 악마들의 기척에 대비해 정신을 벼렸다.",
     effect: { stats: { WP: 2 }, faith: 2 }
   },

@@ -273,6 +273,8 @@ function validateReq(req, owner) {
   (req.anyHomeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown homeWorld "${w}" in ${owner}`); });
   (req.excludeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown excludeWorld "${w}" in ${owner}`); });
   (req.anyCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown career "${c}" in ${owner}`); });
+  (req.anyPastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown pastCareer "${c}" in ${owner}`); });
+  (req.excludePastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown excludePastCareer "${c}" in ${owner}`); });
   (req.anyChapters || []).forEach((c) => { if (!chapterIds.has(c)) fail(4, `Unknown chapter "${c}" in ${owner}`); });
   (req.excludeChapters || []).forEach((c) => { if (!chapterIds.has(c)) fail(4, `Unknown excludeChapter "${c}" in ${owner}`); });
   (req.anySegmenta || []).forEach((s) => { if (!segIds.has(s)) fail(4, `Unknown segmentum "${s}" in ${owner}`); });
@@ -296,6 +298,16 @@ for (const c of DATA.CAREERS) {
   validateReq(c.req, `career:${c.id}`);
   if (c.req && !Engine.describeReq(c.req)) {
     fail(4, `Empty describeReq for career:${c.id}`);
+  }
+  if (!c.tree || !c.treeName) fail(4, `Missing tree/treeName on career:${c.id}`);
+  if (!["open", "event"].includes(c.entryMode)) fail(4, `Invalid entryMode "${c.entryMode}" on career:${c.id}`);
+  if (!c.transitTier || !c.actionGroup) fail(4, `Missing transitTier/actionGroup on career:${c.id}`);
+  if (c.onJoin && c.onJoin.addTags) {
+    c.onJoin.addTags.forEach((t) => {
+      if (!t.startsWith("met_") && !t.startsWith("chapter_") && !tagLabels[t]) {
+        fail(4, `Missing TAG_LABELS for career.onJoin tag "${t}" on career:${c.id}`);
+      }
+    });
   }
 }
 
@@ -344,7 +356,7 @@ for (const ch of DATA.CHRONICLES) {
   }
 }
 
-// Unit test: forceCareer downgrade protection & onJoin.addTags sync
+// Unit test: forceCareer downgrade protection, Astartes chaos redirect, dynamic offers, anyPastCareers, apex obituaries
 {
   const cust = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "terra_highborn", traitId: "iron_will", eraId: "m41_late", gender: "male" });
   cust.careerId = "adeptus_custodes";
@@ -358,6 +370,37 @@ for (const ch of DATA.CHRONICLES) {
   if (cust.careerId !== "adeptus_custodes") {
     fail(4, `forceCareer downgraded custodes to ${cust.careerId}`);
   }
+  cust.pendingEvent = {
+    id: "qa_custodes_corrupt_test",
+    title: "QA Custodes Incorruptible Test",
+    choices: [{ label: "test", effect: { text: "ok", forceCareer: "chaos_cultist" } }]
+  };
+  Engine.resolvePendingChoice(cust, 0);
+  if (cust.careerId !== "adeptus_custodes") {
+    fail(4, `forceCareer corrupted custodes to ${cust.careerId}`);
+  }
+
+  const marine = Engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "hive_worker", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+  marine.age = 40;
+  marine.careerId = "astartes_brother";
+  marine.careerHistory = ["child", "astartes_scout", "astartes_brother"];
+  marine.tags.push("astartes", "transhuman");
+  marine.corruption = 60;
+  if (Engine.checkReq(marine, Engine.getCareer("chaos_cultist").req)) {
+    fail(4, `Astartes should not qualify for mortal chaos_cultist`);
+  }
+  if (!Engine.checkReq(marine, Engine.getCareer("renegade_marine").req)) {
+    fail(4, `Corrupted Astartes failed to qualify for renegade_marine`);
+  }
+  marine.pendingEvent = {
+    id: "qa_csm_redirect_test",
+    title: "QA CSM Redirect Test",
+    choices: [{ label: "test", effect: { text: "ok", forceCareer: "chaos_cultist" } }]
+  };
+  Engine.resolvePendingChoice(marine, 0);
+  if (marine.careerId !== "renegade_marine") {
+    fail(4, `forceCareer chaos_cultist on Astartes did not redirect to renegade_marine (got ${marine.careerId})`);
+  }
 
   const recruit = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "hive_worker", traitId: "iron_will", eraId: "m41_late", gender: "male" });
   recruit.careerId = "menial_worker";
@@ -370,9 +413,66 @@ for (const ch of DATA.CHRONICLES) {
   if (recruit.careerId !== "astra_militarum" || !recruit.tags.includes("militarum")) {
     fail(4, `forceCareer failed to merge onJoin.addTags for astra_militarum`);
   }
+
+  // anyPastCareers + excludePastCareers + dynamic career offer accept/decline cooldown
+  const gen = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "military_family", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+  gen.age = 56;
+  gen.careerId = "militarum_general";
+  gen.careerHistory = ["child", "astra_militarum", "militarum_sergeant", "militarum_officer", "militarum_general"];
+  gen.stats = { WS: 65, BS: 70, T: 60, Ag: 55, Int: 86, WP: 86, Fel: 84, Inf: 92 };
+  if (!Engine.checkReq(gen, { anyPastCareers: ["astra_militarum"], excludePastCareers: ["underhive_ganger"] })) {
+    fail(4, `anyPastCareers/excludePastCareers check failed`);
+  }
+  if (!Engine.describeReq({ anyPastCareers: ["astra_militarum"] })) {
+    fail(4, `describeReq failed for anyPastCareers`);
+  }
+  if (Engine.attemptCareerChange(gen, "planetary_governor").ok) {
+    fail(4, `Manual attemptCareerChange allowed event-only planetary_governor`);
+  }
+  const wmOffer = Engine.createDynamicCareerOfferEvent(gen, null, { forceOffer: true, targetCareerId: "warmaster" });
+  if (!wmOffer || wmOffer.offeredCareerId !== "warmaster" || wmOffer.choices.length < 2 || !wmOffer.choices[0].check) {
+    fail(4, `createDynamicCareerOfferEvent failed to generate warmaster trial offer`);
+  }
+  gen.pendingEvent = wmOffer;
+  Engine.resolvePendingChoice(gen, 1); // Decline warmaster
+  if (gen.declinedCareers.warmaster !== gen.year) {
+    fail(4, `Declining dynamic career offer did not record cooldown`);
+  }
+  const reOffer = Engine.createDynamicCareerOfferEvent(gen, null, { forceOffer: true, targetCareerId: "warmaster" });
+  if (reOffer && reOffer.offeredCareerId === "warmaster") {
+    fail(4, `Declined career was immediately re-offered within 8-year cooldown`);
+  }
+  const govOffer = Engine.createDynamicCareerOfferEvent(gen, null, { forceOffer: true, targetCareerId: "planetary_governor" });
+  if (!govOffer || govOffer.offeredCareerId !== "planetary_governor" || govOffer.choices[0].check) {
+    fail(4, `createDynamicCareerOfferEvent failed to generate deterministic planetary_governor offer`);
+  }
+  gen.pendingEvent = govOffer;
+  Engine.resolvePendingChoice(gen, 0); // Deterministic accept (no trialCheck)
+  if (gen.careerId !== "planetary_governor" || !gen.tags.includes("planetary_governor") || !gen.careerHistory.includes("planetary_governor")) {
+    fail(4, `Accepting dynamic career offer failed to transition to planetary_governor`);
+  }
+
+  // Apex obituaries & Daemon Prince corruption-100 immunity
+  const dp = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "hive_worker", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+  dp.age = 80;
+  dp.careerId = "daemon_prince";
+  dp.tags.push("daemon_prince", "heretic", "chaos_aligned", "mark_khorne");
+  dp.corruption = 100;
+  Engine.advanceQuarter(dp);
+  if (!dp.alive || dp.corruption !== 99) {
+    fail(4, `Daemon Prince failed corruption-100 immunity (alive=${dp.alive}, corr=${dp.corruption})`);
+  }
+  const dpGrade = Engine.evaluateLifeGrade(dp);
+  if (!dpGrade.rank.includes("DAEMON PRINCE")) fail(4, `Daemon Prince obituary rank mismatch: ${dpGrade.rank}`);
+  const govGrade = Engine.evaluateLifeGrade(gen);
+  if (!govGrade.rank.includes("IMPERIAL COMMANDER")) fail(4, `Planetary Governor obituary rank mismatch: ${govGrade.rank}`);
+  gen.careerId = "warmaster";
+  gen.tags.push("warmaster");
+  const wmGrade = Engine.evaluateLifeGrade(gen);
+  if (!wmGrade.rank.includes("WARMASTER")) fail(4, `Warmaster obituary rank mismatch: ${wmGrade.rank}`);
 }
 
-console.log(`[Gate 4] Integrity, tag production, describeReq, timeline order, and forceCareer guards verified.`);
+console.log(`[Gate 4] Integrity, 78-career metadata, tag production, describeReq, dynamic offers, and apex guards verified.`);
 
 // ============================================================================
 // Gate 5: 소프트락 · 유년기 풀(22행성 각 4+) · fastChildhood · 2400로그 보존 · 중복률
@@ -473,6 +573,8 @@ let maxRepeat = 0;
 let nihilusMismatch = 0;
 let scholaStuck = 0;
 let s8Triggers = 0;
+let careerOfferTriggers = 0;
+const reachedCareers = new Set();
 
 for (const foc of focuses) {
   const allAges = [];
@@ -494,9 +596,11 @@ for (const foc of focuses) {
       if (st.age >= 19 && st.careerId === "child" && st.tags.includes("schola")) scholaStuck++;
       while (st.alive && st.pendingEvent) {
         if ((st.pendingEvent.id || "").startsWith("ev_s8_crisis_")) s8Triggers++;
+        if (st.pendingEvent.isCareerOffer) careerOfferTriggers++;
         Engine.resolvePendingChoice(st, pickSmartChoice(st));
       }
     }
+    (st.careerHistory || [st.careerId]).forEach((cid) => { if (cid && cid !== "child") reachedCareers.add(cid); });
     allAges.push(st.age);
     if (!st.tags.includes("astartes") && !st.tags.includes("custodes") && !st.tags.includes("rejuvenat")) {
       mortalAges.push(st.age);
@@ -518,6 +622,7 @@ for (const foc of focuses) {
 if (maxRepeat > 2) fail(6, `Event repeat count exceeded 2: ${maxRepeat}`);
 if (nihilusMismatch > 0) fail(6, `imperial_nihilus mismatch detected in ${nihilusMismatch} quarters`);
 if (scholaStuck > 0) fail(6, `schola career remained child past age 18 in ${scholaStuck} quarters`);
+if (careerOfferTriggers === 0) fail(6, `No dynamic career offers triggered across 300 simulated lives`);
 
 // 1,000-quarter engine CPU benchmark
 const benchSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "planetary_noble", traitId: "iron_will", eraId: "m41_late", gender: "male" });
@@ -536,7 +641,8 @@ const benchMs = performance.now() - t0;
 
 console.log(
   `[Gate 6] 300 lives complete: maxRepeat=${maxRepeat}, nihilusMismatch=${nihilusMismatch}, ` +
-  `scholaStuck=${scholaStuck}, s8Crises=${s8Triggers} (avg ${(s8Triggers / (LIVES_PER_FOCUS * focuses.length)).toFixed(1)}/life), ` +
+  `scholaStuck=${scholaStuck}, careerOffers=${careerOfferTriggers}, reachedCareers=${reachedCareers.size}/${DATA.CAREERS.length - 1}, ` +
+  `s8Crises=${s8Triggers} (avg ${(s8Triggers / (LIVES_PER_FOCUS * focuses.length)).toFixed(1)}/life), ` +
   `1000q=${benchMs.toFixed(1)}ms`
 );
 

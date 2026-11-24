@@ -224,22 +224,26 @@
     return {
       world,
       worldTagSet: WORLD_TAG_SET_BY_ID.get(world.id) || new Set(world.tags || []),
-      tagSet: new Set(state.tags || [])
+      tagSet: new Set(state.tags || []),
+      pastCareerSet: new Set(state.careerHistory || [state.careerId])
     };
+  }
+
+  function getCareerShortName(id) {
+    const c = getCareer(id);
+    if (!c) return id;
+    return c.name.replace(/\s*\([^)]*\)/g, "").split(" · ")[0];
   }
 
   function getCareerDisplayTitle(state, careerObj) {
     const c = careerObj || getCareer(state.careerId);
     const w = getWorld(state.homeWorldId);
     if (c.useRegimentName && w.guardRegiment) {
-      if (c.id === "militarum_officer") return `${w.guardRegiment} 장교`;
-      return `${w.guardRegiment}`;
+      return c.titleSuffix ? `${w.guardRegiment} ${c.titleSuffix}` : `${w.guardRegiment}`;
     }
     if (c.useChapterName) {
       const chap = state.chapterName || w.astartesChapter || "제국 아스타르테스 챕터";
-      if (c.id === "astartes_scout") return `${chap} 네오파이트`;
-      if (c.id === "astartes_brother") return `${chap} 배틀 브라더`;
-      if (c.id === "astartes_captain") return `${chap} 중대장 (캡틴)`;
+      return c.titleSuffix ? `${chap} ${c.titleSuffix}` : `${chap} ${c.name}`;
     }
     return c.name;
   }
@@ -261,6 +265,22 @@
 
     if (req.anyCareers) {
       if (!req.anyCareers.includes(state.careerId)) return false;
+    }
+
+    if (req.anyPastCareers) {
+      const pastSet = ctx ? ctx.pastCareerSet : new Set(state.careerHistory || [state.careerId]);
+      let ok = false;
+      for (let i = 0; i < req.anyPastCareers.length; i++) {
+        if (pastSet.has(req.anyPastCareers[i])) { ok = true; break; }
+      }
+      if (!ok) return false;
+    }
+
+    if (req.excludePastCareers) {
+      const pastSet = ctx ? ctx.pastCareerSet : new Set(state.careerHistory || [state.careerId]);
+      for (let i = 0; i < req.excludePastCareers.length; i++) {
+        if (pastSet.has(req.excludePastCareers[i])) return false;
+      }
     }
 
     if (req.anyChapters) {
@@ -410,7 +430,10 @@
       parts.push(req.anyTags.map((t) => TAG_LABELS[t] || t).join("/"));
     }
     if (req.anyCareers && req.anyCareers.length) {
-      parts.push("직군: " + req.anyCareers.map((id) => getCareer(id).name.split(" ")[0]).join("/"));
+      parts.push("직군: " + req.anyCareers.map((id) => getCareerShortName(id)).join("/"));
+    }
+    if (req.anyPastCareers && req.anyPastCareers.length) {
+      parts.push("경력: " + req.anyPastCareers.map((id) => getCareerShortName(id)).join("/"));
     }
     if (req.anyChapters && req.anyChapters.length) {
       parts.push("챕터: " + req.anyChapters.map((id) => {
@@ -438,6 +461,9 @@
     if (req.or && Array.isArray(req.or)) {
       const orText = req.or.map((sub) => describeReq(sub)).filter(Boolean).join(" 또는 ");
       if (orText) parts.push(`(${orText})`);
+    }
+    if (req.excludePastCareers && req.excludePastCareers.length && parts.length === 0) {
+      parts.push(req.excludePastCareers.map((id) => `${getCareerShortName(id)} 경력 제외`).join(" · "));
     }
     if (req.excludeChapters && req.excludeChapters.length && parts.length === 0) {
       parts.push(req.excludeChapters.map((id) => `${(getChapter(id) && getChapter(id).name) || id} 제외`).join(" · "));
@@ -612,6 +638,8 @@
       lastPenanceYear: -999,
       lastTravelYear: -999,
       lastCareerActionYear: -999,
+      lastCareerOfferYear: -999,
+      declinedCareers: {},
       tags,
       seenEvents: [],
       recentEvents: [],
@@ -791,14 +819,70 @@
       state.year += outcome.warpYearShift;
       syncImperialNihilus(state);
     }
+    if (outcome.declineCareerOffer) {
+      state.declinedCareers = state.declinedCareers || {};
+      state.declinedCareers[outcome.declineCareerOffer] = state.year;
+    }
+
+    if (outcome.trialFailFor) {
+      const failedCareer = getCareer(outcome.trialFailFor);
+      const tc = failedCareer && failedCareer.trialCheck;
+      state.declinedCareers = state.declinedCareers || {};
+      state.declinedCareers[outcome.trialFailFor] = failedCareer && failedCareer.tier >= 6 ? state.year + 4 : state.year;
+      if (tc && Math.random() < (tc.failDeathChance || 0.25)) {
+        const cause = tc.failDeathCause || `${tc.title} 도중 치명적 거부 반응으로 순직`;
+        addLog(state, `[${tc.title}] 시련 실패! ${cause}`, "death", rollInfo, { badge: "시련 실패" });
+        finalizeDeath(state, cause);
+        return;
+      }
+    }
+
+    let acceptedJoinEff = null;
+    if (outcome.acceptCareerOffer) {
+      const targetCareer = getCareer(outcome.acceptCareerOffer);
+      if (targetCareer && targetCareer.selectable) {
+        state.careerId = targetCareer.id;
+        if (!state.careerHistory.includes(targetCareer.id)) state.careerHistory.push(targetCareer.id);
+        if (targetCareer.useChapterName && !state.chapterName) {
+          const hw = getWorld(state.homeWorldId);
+          state.chapterName = hw.astartesChapter || "울트라마린 후계 챕터";
+        }
+        if (targetCareer.onJoin) {
+          const oj = targetCareer.onJoin;
+          acceptedJoinEff = oj;
+          if (oj.stats) {
+            for (const [k, delta] of Object.entries(oj.stats)) {
+              if (state.stats[k] !== undefined) state.stats[k] = clamp(Math.round(state.stats[k] + delta), 5, 100);
+            }
+          }
+          if (oj.woundsBonus) {
+            state.maxWounds += oj.woundsBonus;
+            state.wounds = clamp(state.wounds + oj.woundsBonus, 1, state.maxWounds);
+          }
+          if (oj.corruptionReset) state.corruption = 0;
+          if (oj.addTags) {
+            for (const t of oj.addTags) {
+              if (!state.tags.includes(t)) state.tags.push(t);
+            }
+          }
+        }
+      }
+    }
+
     if (outcome.forceCareer) {
-      const targetCareer = getCareer(outcome.forceCareer);
+      let resolvedId = outcome.forceCareer;
+      if (resolvedId === "chaos_cultist" && state.tags.includes("astartes") && !state.tags.includes("grey_knight") && !state.tags.includes("custodes")) {
+        resolvedId = "renegade_marine";
+      }
+      const targetCareer = getCareer(resolvedId);
       const curCareer = getCareer(state.careerId);
-      const isTranshuman = state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("grey_knight");
-      const targetIsTranshuman = ["astartes_scout", "astartes_brother", "astartes_captain", "grey_knight", "adeptus_custodes"].includes(targetCareer.id);
+      const isTranshuman = Boolean(curCareer.isTranshuman) || state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("grey_knight") || state.tags.includes("daemon_prince");
+      const targetIsTranshuman = Boolean(targetCareer.isTranshuman);
+      const isIncorruptible = (state.tags.includes("custodes") || state.tags.includes("grey_knight")) && targetCareer.tree === "chaos";
       const preventDowngrade =
-        targetCareer.id !== "chaos_cultist" &&
-        (curCareer.tier > targetCareer.tier || (isTranshuman && !targetIsTranshuman));
+        isIncorruptible ||
+        (targetCareer.tree !== "chaos" &&
+        (curCareer.tier > targetCareer.tier || (isTranshuman && !targetIsTranshuman)));
 
       if (!preventDowngrade) {
         state.careerId = targetCareer.id;
@@ -815,10 +899,16 @@
       }
     }
 
-    const logKind = outcome.instantDeath ? "death" : (outcome.chooseChapter ? "career" : (rollInfo ? (rollInfo.success ? "success" : "danger") : "event"));
-    const deltaText = formatDeltaText(outcome);
+    if (state.tags.includes("daemon_prince") && state.corruption >= 100) {
+      state.corruption = 99;
+    }
+
+    const logKind = outcome.instantDeath
+      ? "death"
+      : (outcome.chooseChapter || outcome.acceptCareerOffer ? "career" : (rollInfo ? (rollInfo.success ? "success" : "danger") : "event"));
+    const deltaText = formatDeltaText(acceptedJoinEff || outcome);
     addLog(state, outcome.text, logKind, rollInfo, {
-      badge: outcome.instantDeath ? "최후의 기록" : (outcome.chooseChapter ? "챕터 서약" : (rollInfo ? "판정 결과" : "분기 기록")),
+      badge: outcome.instantDeath ? "최후의 기록" : (outcome.chooseChapter ? "챕터 서약" : (outcome.acceptCareerOffer ? "진로 발탁 · 승급" : (rollInfo ? "판정 결과" : "분기 기록"))),
       deltaText
     });
 
@@ -826,9 +916,9 @@
       finalizeDeath(state, outcome.instantDeath);
     } else if (state.wounds <= 0) {
       finalizeDeath(state, "치명적인 부상과 가혹한 시련을 견디지 못하고 순직");
-    } else if (state.corruption >= 100) {
+    } else if (state.corruption >= 100 && !state.tags.includes("daemon_prince")) {
       finalizeDeath(state, "워프 오염이 임계치를 돌파하여 카오스 스폰으로 변이 후 정화됨");
-    } else if (outcome.forceCareer === "astartes_scout" && state.careerId === "astartes_scout" && !state.chapterId && !state.pendingEvent) {
+    } else if ((outcome.forceCareer === "astartes_scout" || outcome.acceptCareerOffer === "astartes_scout") && state.careerId === "astartes_scout" && !state.chapterId && !state.pendingEvent) {
       const chapEv = createChapterSelectionEvent(state);
       if (chapEv) state.pendingEvent = chapEv;
     }
@@ -1103,7 +1193,10 @@
       finalizeDeath(state, cause);
       return { status: "dead" };
     }
-    if (state.corruption >= 100) {
+    if (state.tags.includes("daemon_prince") && state.corruption >= 100) {
+      state.corruption = 99;
+    }
+    if (state.corruption >= 100 && !state.tags.includes("daemon_prince")) {
       finalizeDeath(state, "워프 오염이 한계를 넘어 육신이 카오스 스폰으로 붕괴됨");
       return { status: "dead" };
     }
@@ -1144,6 +1237,15 @@
             badge: tl.dispatchScope === "galaxy" ? "은하 속보" : "성역 속보"
           });
         }
+      }
+    }
+
+    // 1.5순위: 동적 승급 · 평행 횡단 · 최고위 추대 진로 제안 이벤트
+    if (state.age >= 10) {
+      const offerEv = createDynamicCareerOfferEvent(state, reqCtx);
+      if (offerEv) {
+        state.pendingEvent = offerEv;
+        return { status: "event", event: state.pendingEvent };
       }
     }
 
@@ -1201,8 +1303,8 @@
     }
 
     // 2.5순위: 업무 특성 및 계급에 따른 강제 파견 / 작전 배치 / 성간 이주 기회
-    const forcedCareers = ["astra_militarum", "skitarii", "astartes_scout", "tempestus_scion", "inquisition_acolyte", "sanctioned_psyker"];
-    const isForcedDuty = forcedCareers.includes(state.careerId);
+    const curCareerObj = getCareer(state.careerId);
+    const isForcedDuty = curCareerObj.transitTier === "forced" || curCareerObj.transitTier === "astartes_scout";
     const transitCooldown = isForcedDuty ? 6 : 8;
     const transitChance = isForcedDuty ? 0.08 : 0.04;
     if (state.age >= 16 && state.year - state.lastTravelYear >= transitCooldown && Math.random() < transitChance) {
@@ -1219,6 +1321,162 @@
     return { status: "ok", isNewYear };
   }
 
+  function isDirectSuccessorReq(curId, req) {
+    if (!req) return false;
+    if (req.anyCareers && req.anyCareers.includes(curId)) return true;
+    if (Array.isArray(req.or)) {
+      for (let i = 0; i < req.or.length; i++) {
+        if (isDirectSuccessorReq(curId, req.or[i])) return true;
+      }
+    }
+    return false;
+  }
+
+  function createDynamicCareerOfferEvent(state, reqCtx = null, options = {}) {
+    if (!state || !state.alive || state.pendingEvent) return null;
+
+    const ctx = reqCtx || makeReqContext(state);
+    const cur = getCareer(state.careerId);
+    const minOfferGap = cur.id === "child" ? 1 : 3;
+    if (!options.forceOffer && state.year - (state.lastCareerOfferYear ?? -999) < minOfferGap) return null;
+
+    const history = state.careerHistory || [state.careerId];
+    const declined = state.declinedCareers || {};
+    const curIsTranshuman = Boolean(cur.isTranshuman) || state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("grey_knight") || state.tags.includes("daemon_prince");
+
+    const candidates = [];
+    for (let i = 0; i < DATA.CAREERS.length; i++) {
+      const c = DATA.CAREERS[i];
+      if (!c.selectable || c.id === state.careerId || c.tier < 2) continue;
+      if (history.includes(c.id)) continue;
+      if (!options.ignoreCooldown && declined[c.id] !== undefined && state.year - declined[c.id] < 8) continue;
+      if (!checkReq(state, c.req, ctx)) continue;
+
+      if (cur.id === "child") {
+        if (!c.isTranshuman && c.tier < 3) continue;
+      } else {
+        if (curIsTranshuman && !c.isTranshuman) continue;
+        const sameTree = c.tree === cur.tree;
+        if (sameTree) {
+          const directNext = c.tier > cur.tier || (c.tier === cur.tier && isDirectSuccessorReq(cur.id, c.req));
+          if (!directNext) continue;
+        } else {
+          if (c.tier < cur.tier && c.tree !== "chaos") continue;
+          const lateralAllowed =
+            c.entryMode === "event" ||
+            c.tree === "chaos" ||
+            Boolean(c.isTranshuman);
+          if (!lateralAllowed) continue;
+        }
+      }
+
+      let w = 16;
+      let prob = 0.06;
+      if (c.tier >= 6) {
+        w = 70;
+        prob = 0.09;
+      } else if (Boolean(c.isTranshuman)) {
+        w = 50;
+        prob = 0.22;
+      } else if (c.tree === "chaos") {
+        w = 40;
+        prob = 0.16;
+      } else if (c.tree === cur.tree && c.entryMode === "event") {
+        w = 50;
+        prob = 0.16;
+      } else if (c.tree === cur.tree) {
+        w = 14;
+        prob = 0.06;
+      } else if (c.entryMode === "event") {
+        w = 16;
+        prob = 0.06;
+      }
+      candidates.push({ item: c, w, prob });
+    }
+
+    if (!candidates.length) return null;
+
+    if (!options.forceOffer) {
+      const maxProb = candidates.reduce((m, x) => Math.max(m, x.prob), 0);
+      if (Math.random() >= maxProb) return null;
+    }
+
+    const picked = options.targetCareerId
+      ? (candidates.find((x) => x.item.id === options.targetCareerId) || pickWeighted(candidates, "w")).item
+      : pickWeighted(candidates, "w").item;
+
+    state.lastCareerOfferYear = state.year;
+
+    const curTitle = getCareerDisplayTitle(state, cur);
+    const nextTitle = getCareerDisplayTitle(state, picked);
+    const isLateral = cur.id !== "child" && picked.tree !== cur.tree;
+    const category = picked.tree === "chaos"
+      ? (picked.id === "daemon_prince" ? "승천의 의식" : "암흑의 부름")
+      : (picked.tier >= 6 ? "제국 최고위 추대" : (isLateral ? "평행 횡단 · 특임 발탁" : "승급 · 진로 발탁"));
+
+    const lifeStr = picked.lifeBonus >= 0 ? `+${picked.lifeBonus}년` : `${picked.lifeBonus}년`;
+    const joinPreview = picked.onJoin && picked.onJoin.stats
+      ? Object.entries(picked.onJoin.stats)
+          .filter(([, d]) => d !== 0)
+          .slice(0, 4)
+          .map(([k, d]) => `${(STAT_META[k] && STAT_META[k].name) || k} ${d > 0 ? "+" + d : d}`)
+          .join(", ")
+      : "";
+    const bonusSummary = joinPreview ? `수명 보정 ${lifeStr} · ${joinPreview}` : `수명 보정 ${lifeStr}`;
+
+    const pitch = picked.offerPitch || `그대의 능력과 이력이 상부에 닿아 [${nextTitle}] 직책이 공식 제안되었다.`;
+    const eventText = `${pitch}\n\n[제안 직책: ${nextTitle} · ${picked.faction} · Tier ${picked.tier}] ${picked.desc} (${bonusSummary})`;
+
+    const choices = [];
+    if (picked.trialCheck) {
+      const tc = picked.trialCheck;
+      const statMeta = STAT_META[tc.stat] || { name: tc.stat };
+      choices.push({
+        label: `[시련 도전 · ${statMeta.name} 판정] ${tc.title}에 응해 ${nextTitle}(으)로 거듭난다`,
+        check: { stat: tc.stat, diff: tc.diff || 0 },
+        success: {
+          acceptCareerOffer: picked.id,
+          text: `[${tc.title}] 시련을 돌파하고 마침내 [${nextTitle}](으)로 취임했다!`
+        },
+        fail: {
+          trialFailFor: picked.id,
+          wounds: -28,
+          text: `[${tc.title}] 시련에서 탈락해 깊은 상처를 입었으나, 간신히 목숨을 건져 [${curTitle}] 직위로 복귀했다.`
+        }
+      });
+    } else {
+      choices.push({
+        label: `[승급 · 수임] 제안을 수락하고 ${nextTitle}(으)로 취임한다`,
+        effect: {
+          acceptCareerOffer: picked.id,
+          text: `[${curTitle}]의 이력을 뒤로하고 새로운 직책 [${nextTitle}](으)로 당당히 취임했다!`
+        }
+      });
+    }
+
+    choices.push({
+      label: `제안을 정중히 사양하고 현재 직책 [${curTitle}]을(를) 유지한다 (8년간 재제안 보류)`,
+      effect: {
+        declineCareerOffer: picked.id,
+        text: `[${nextTitle}] 발탁 제안을 고사하고 지금의 자리 [${curTitle}]을(를) 지키기로 결단했다.`,
+        stats: { WP: 1 }
+      }
+    });
+
+    return {
+      id: `dyn_career_offer_${picked.id}_${state.year}`,
+      isTimeline: false,
+      isCareerOffer: true,
+      offeredCareerId: picked.id,
+      category,
+      reqLabel: `${picked.treeName || picked.faction} · Tier ${picked.tier}${picked.trialCheck ? " · 시련 판정" : ""}`,
+      title: picked.offerTitle || `진로 발탁 제안 — ${nextTitle}`,
+      text: eventText,
+      choices,
+      source: picked.source || "Imperium Hierarchy"
+    };
+  }
+
   function advanceYear(state) {
     // 1년 단위 호출 호환 래퍼 (다음 해 진입 또는 이벤트/사망까지 최대 3분기 진행)
     let res = { status: "ok" };
@@ -1233,6 +1491,9 @@
     if (!state.alive || state.pendingEvent) return { ok: false, msg: "현재 진행 중인 사건을 먼저 해결해야 한다." };
     const career = getCareer(careerId);
     if (!career || !career.selectable) return { ok: false, msg: "선택할 수 없는 병종이다." };
+    if (career.entryMode === "event") {
+      return { ok: false, msg: "해당 상위·특임 직책은 조건 달성 시 임명·발탁 이벤트를 통해 수임할 수 있다." };
+    }
     if (state.careerId === career.id) return { ok: false, msg: "이미 해당 직군에 복무 중이다." };
     if (!checkReq(state, career.req)) return { ok: false, msg: `요구 조건 미달: ${describeReq(career.req)}` };
 
@@ -1243,8 +1504,9 @@
       if (!roll.success) {
         const died = Math.random() < (career.trialCheck.failDeathChance || 0.25);
         if (died) {
+          const cause = career.trialCheck.failDeathCause || `${career.trialCheck.title} 도중 치명적 거부 반응으로 순직`;
           addLog(state, `[${career.trialCheck.title}] 시련 실패! 가혹한 의식을 견디지 못하고 쓰러졌다.`, "death", roll);
-          finalizeDeath(state, `${career.trialCheck.title} 도중 치명적 거부 반응으로 순직`);
+          finalizeDeath(state, cause);
           return { ok: false, dead: true, roll, msg: `${career.trialCheck.title}에서 실패하여 사망했다.` };
         }
         state.wounds = clamp(state.wounds - 28, 5, state.maxWounds);
@@ -1276,8 +1538,8 @@
   }
 
   function canUseRejuvenat(state) {
-    if (state.tags.includes("astartes") || state.tags.includes("custodes")) {
-      return { ok: false, reason: "초인 개조 신체는 일반 리주버냇 시술이 불필요하다." };
+    if (state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("daemon_prince")) {
+      return { ok: false, reason: "초인·불멸 개조 신체는 일반 리주버냇 시술이 불필요하다." };
     }
     if (state.rejuvenatCount >= 3) return { ok: false, reason: "세포 한계에 도달해 더 이상 리주버냇 시술을 받을 수 없다." };
     if (state.age < 50) return { ok: false, reason: "50세 이후부터 수명 연장 시술이 가능하다." };
@@ -1293,10 +1555,11 @@
   }
 
   function canUseAugmetics(state) {
+    if (state.tags.includes("daemon_prince")) return { ok: false, reason: "불멸의 악마 육신에는 기계 의체 개조가 무의미하다." };
     if (state.augmeticsCount >= 3) return { ok: false, reason: "이미 3단계 생체 의체 개조를 완료했다." };
     const career = getCareer(state.careerId);
     const world = getWorld(state.worldId);
-    const isMech = ["skitarii", "tech_priest", "archmagos"].includes(state.careerId) || state.tags.includes("mechanicus");
+    const isMech = career.tree === "mechanicus" || state.tags.includes("mechanicus");
 
     if (isMech) {
       if (state.age < 16) return { ok: false, reason: "기계교 정식 의체 개조는 16세 이상부터 가능하다." };
@@ -1335,10 +1598,24 @@
     if (!state || !state.alive || state.age < 14 || state.careerId === "child") return null;
     if (state.year - (state.lastCareerActionYear || -999) < 4) return null;
 
-    const c = state.careerId;
+    const career = getCareer(state.careerId);
+    const ag = career.actionGroup || "civil";
     const chap = state.chapterId ? getChapter(state.chapterId) : null;
 
-    if (["astartes_scout", "astartes_brother", "astartes_captain"].includes(c)) {
+    if (ag === "astartes_master") {
+      const chapPrefix = chap ? `[${chap.name}] ` : "";
+      const cry = chap ? ` "${chap.battleCry}"` : "";
+      return {
+        id: "career_action",
+        name: `${chapPrefix}요새 수도원 전쟁 평의회 · 성전 선포`,
+        desc: "권위 +4, 지성 +3, 백병 +2, 의지 +2 (재사용 4년)",
+        btnLabel: "챕터 평의회 주재",
+        toastMsg: `${chapPrefix}챕터 전쟁 평의회를 주재했다.`,
+        logText: `${chapPrefix}10개 중대장과 수석 채플린을 소집해 성역 방어 전략과 배틀 바지 출격령을 하달했다.${cry}`,
+        effects: { stats: { Inf: 4, Int: 3, WS: 2, WP: 2 } }
+      };
+    }
+    if (ag === "astartes") {
       const chapPrefix = chap ? `[${chap.name}] ` : "";
       const cry = chap ? ` "${chap.battleCry}"` : "";
       return {
@@ -1351,7 +1628,7 @@
         effects: { stats: { WS: 3, BS: 3, WP: 2 } }
       };
     }
-    if (c === "grey_knight") {
+    if (ag === "grey_knight") {
       return {
         id: "career_action",
         name: "타이탄 666 금서고 정화 명상",
@@ -1362,7 +1639,7 @@
         effects: { stats: { WP: 3, WS: 2 }, faith: 6, corruption: -12 }
       };
     }
-    if (c === "adeptus_custodes") {
+    if (ag === "custodes") {
       return {
         id: "career_action",
         name: "황궁 모의전 · 철학 강론",
@@ -1373,7 +1650,29 @@
         effects: { stats: { WS: 3, Int: 3, Ag: 2 } }
       };
     }
-    if (["astra_militarum", "pdf_trooper"].includes(c)) {
+    if (ag === "high_lord") {
+      return {
+        id: "career_action",
+        name: "세나토룸 임페리알리스 칙령 반포",
+        desc: "권위 +4, 지성 +3, 교섭 +3 (재사용 4년)",
+        btnLabel: "하이 로드 칙령 발동",
+        toastMsg: "테라 원로원 칙령을 반포했다.",
+        logText: "황궁 의회 세나토룸 임페리알리스에서 수십 개 성역의 십일조와 성전 군수 배분을 결정하는 제국 칙령에 서명했다.",
+        effects: { stats: { Inf: 4, Int: 3, Fel: 3 } }
+      };
+    }
+    if (ag === "governor") {
+      return {
+        id: "career_action",
+        name: "행성 십일조 사열 · 귀족 의회 통치",
+        desc: "권위 +4, 교섭 +3, 지성 +2 (재사용 4년)",
+        btnLabel: "통치 사열 집행",
+        toastMsg: "행성 십일조 사열과 의회 조율을 마쳤다.",
+        logText: "첨탑 궁정에서 귀족 가문과 방위군 사령관들을 소집해 십일조 납부와 행성 방어 예산을 조율했다.",
+        effects: { stats: { Inf: 4, Fel: 3, Int: 2 } }
+      };
+    }
+    if (ag === "guard_troop") {
       return {
         id: "career_action",
         name: "야전 실탄 사격 · 참호 보강 훈련",
@@ -1384,7 +1683,7 @@
         effects: { stats: { BS: 3, T: 2 }, wounds: -3 }
       };
     }
-    if (["militarum_officer", "tempestus_scion"].includes(c)) {
+    if (ag === "guard_cmd") {
       return {
         id: "career_action",
         name: "전술 도상 훈련 · 정예 강하 사열",
@@ -1395,7 +1694,18 @@
         effects: { stats: { Int: 3, Fel: 2, Inf: 2 } }
       };
     }
-    if (["commissar", "lord_commissar"].includes(c)) {
+    if (ag === "guard_high_cmd") {
+      return {
+        id: "career_action",
+        name: "성계군 대작전 참모 회의 주재",
+        desc: "지성 +3, 권위 +4, 교섭 +2 (재사용 4년)",
+        btnLabel: "참모 회의 주재",
+        toastMsg: "성계군 작전 참모 회의를 마쳤다.",
+        logText: "홀로리스 전구 지도를 펼쳐 놓고 수십 개 기갑·보병 연대의 공세 축선과 보급선을 재편했다.",
+        effects: { stats: { Int: 3, Inf: 4, Fel: 2 } }
+      };
+    }
+    if (ag === "commissar") {
       return {
         id: "career_action",
         name: "연대 군기 감찰 · 사기 훈시",
@@ -1406,7 +1716,7 @@
         effects: { stats: { WP: 3, Fel: 3, Inf: 2 }, faith: 4 }
       };
     }
-    if (["adepta_sororitas", "canoness"].includes(c)) {
+    if (ag === "sororitas") {
       return {
         id: "career_action",
         name: "성녀 철야 기도 · 볼터 축성식",
@@ -1417,7 +1727,7 @@
         effects: { stats: { WP: 3, BS: 2 }, faith: 9, corruption: -8 }
       };
     }
-    if (["inquisition_acolyte", "inquisitor"].includes(c)) {
+    if (ag === "inquisition") {
       return {
         id: "career_action",
         name: "비밀 심문 · 지하 첩보망 해독",
@@ -1428,7 +1738,7 @@
         effects: { stats: { Int: 3, Inf: 3, WP: 2 }, corruption: 2 }
       };
     }
-    if (["skitarii", "tech_priest", "archmagos"].includes(c)) {
+    if (ag === "mechanicus") {
       return {
         id: "career_action",
         name: "누스피어 고대 데이터 해독 의례",
@@ -1439,7 +1749,7 @@
         effects: { stats: { Int: 4, T: 2, Inf: 1 } }
       };
     }
-    if (c === "imperial_navy") {
+    if (ag === "navy") {
       return {
         id: "career_action",
         name: "함대 기동 연산 · 보이드 조종 훈련",
@@ -1450,7 +1760,7 @@
         effects: { stats: { Ag: 3, Int: 2, BS: 2 } }
       };
     }
-    if (c === "arbites") {
+    if (ag === "arbites") {
       return {
         id: "career_action",
         name: "하층 구역 제국법 일제 검문",
@@ -1461,7 +1771,7 @@
         effects: { stats: { WS: 2, BS: 2, Inf: 3 }, wounds: -4 }
       };
     }
-    if (c === "administratum") {
+    if (ag === "administratum") {
       return {
         id: "career_action",
         name: "십일조 장부 감사 · 인맥 로비",
@@ -1472,7 +1782,7 @@
         effects: { stats: { Int: 3, Inf: 3, Fel: 1 } }
       };
     }
-    if (c === "ecclesiarchy_priest") {
+    if (ag === "ecclesiarchy") {
       return {
         id: "career_action",
         name: "대성당 광장 야외 부흥 설교",
@@ -1483,7 +1793,7 @@
         effects: { stats: { Fel: 3, WP: 2 }, faith: 9, corruption: -6 }
       };
     }
-    if (c === "rogue_trader") {
+    if (ag === "rogue_trader") {
       return {
         id: "career_action",
         name: "변경 성계 비밀 교역 · 영장 행사",
@@ -1494,7 +1804,18 @@
         effects: { stats: { Inf: 4, Fel: 3, Ag: 1 } }
       };
     }
-    if (c === "sanctioned_psyker") {
+    if (ag === "guild_magnate") {
+      return {
+        id: "career_action",
+        name: "차티스트 상선 계약 · 길드 독점 조율",
+        desc: "권위 +3, 교섭 +3, 지성 +2 (재사용 4년)",
+        btnLabel: "상단 계약 체결",
+        toastMsg: "성간 교역 독점 계약을 성사시켰다.",
+        logText: "궤도 화물선 항로 지분과 매뉴팩토룸 원자재 독점 납품 계약을 체결해 가문 금고를 불렸다.",
+        effects: { stats: { Inf: 3, Fel: 3, Int: 2 } }
+      };
+    }
+    if (ag === "psyker") {
       return {
         id: "career_action",
         name: "황제의 타로 명상 · 정신 방벽 훈련",
@@ -1505,7 +1826,29 @@
         effects: { stats: { WP: 4, Int: 2 }, corruption: -6 }
       };
     }
-    if (c === "chaos_cultist") {
+    if (ag === "daemon_prince") {
+      return {
+        id: "career_action",
+        name: "워프 폭풍 소환 · 악마 군세 사열",
+        desc: "백병 +4, 의지 +4, 권위 +3, 신앙 -10 (재사용 4년)",
+        btnLabel: "워프 권능 행사",
+        toastMsg: "불멸의 워프 권능으로 악마 군세를 사열했다.",
+        logText: "현실의 막을 찢고 암흑 신의 축복을 끌어내려 필멸자 성계에 공포의 징조를 새겼다.",
+        effects: { stats: { WS: 4, WP: 4, Inf: 3 }, faith: -10 }
+      };
+    }
+    if (ag === "chaos_csm") {
+      return {
+        id: "career_action",
+        name: "배신자 워밴드 약탈 · 투기장 결투",
+        desc: "백병 +4, 강인 +2, 권위 +2, 오염 +5 (재사용 4년)",
+        btnLabel: "워밴드 약탈 출격",
+        toastMsg: "배신자 워밴드 투기장 결투와 약탈을 마쳤다.",
+        logText: "전함 투기장에서 도전자들을 제압하고 제국 보급 수송선을 습격해 탄약과 노예를 확보했다.",
+        effects: { stats: { WS: 4, T: 2, Inf: 2 }, corruption: 5, faith: -5 }
+      };
+    }
+    if (ag === "chaos_cult") {
       return {
         id: "career_action",
         name: "지하 암흑 제단 비밀 의식",
@@ -1516,7 +1859,7 @@
         effects: { stats: { WP: 3, WS: 2 }, corruption: 7, faith: -6 }
       };
     }
-    if (c === "underhive_ganger") {
+    if (ag === "ganger") {
       return {
         id: "career_action",
         name: "언더하이브 밀수 · 구역 순찰",
@@ -1749,6 +2092,21 @@
       return extra ? { ...res, verdict: `${res.verdict} ${extra}` } : res;
     };
 
+    const chaosGodNames = [];
+    if (tags.includes("mark_khorne")) chaosGodNames.push("코른");
+    if (tags.includes("mark_tzeentch")) chaosGodNames.push("젠취");
+    if (tags.includes("mark_nurgle")) chaosGodNames.push("너글");
+    if (tags.includes("mark_slaanesh")) chaosGodNames.push("슬라네쉬");
+
+    if (tags.includes("daemon_prince") || state.careerId === "daemon_prince") {
+      const patron = chaosGodNames.length ? `${chaosGodNames.join("·")}의 ` : "암흑 사대신의 ";
+      return withEpilogue({
+        rank: "APOTHEOSIS — DAEMON PRINCE BANISHED",
+        title: `${patron}불멸 데몬 프린스 워프 추방 기록`,
+        verdict: "필멸의 육신은 끝내 파괴되었으나 영혼은 죽지 않았다. 그대의 이름은 오르도 말레우스 금서고의 가장 깊은 철제 금고에 새겨졌으며, 수백 년 뒤 워프의 균열 너머로 다시 돌아올 것이다."
+      }, "heretic");
+    }
+
     if (state.corruption >= 100) {
       return withEpilogue({
         rank: "CHAOS SPAWN TERMINATED",
@@ -1757,11 +2115,14 @@
       }, "spawn");
     }
 
-    const chaosGodNames = [];
-    if (tags.includes("mark_khorne")) chaosGodNames.push("코른");
-    if (tags.includes("mark_tzeentch")) chaosGodNames.push("젠취");
-    if (tags.includes("mark_nurgle")) chaosGodNames.push("너글");
-    if (tags.includes("mark_slaanesh")) chaosGodNames.push("슬라네쉬");
+    if (tags.includes("chaos_lord") || tags.includes("renegade_marine")) {
+      const title = tags.includes("chaos_lord") ? "배신자 군단의 공포 — 카오스 로드 최후" : "거짓 황제를 등진 배신자 아스타르테스";
+      return withEpilogue({
+        rank: "EXCOMMUNICATE TRAITORIS — LONG WAR",
+        title,
+        verdict: `${chaosGodNames.length ? `${chaosGodNames.join("·")}의 축복을 품고 ` : ""}수많은 제국 성계를 불태운 타락한 천사가 마침내 쓰러졌다. 과거 소속 챕터는 그대의 진명을 석비에서 영구히 지워 버렸다.`
+      }, "heretic");
+    }
 
     if ((tags.includes("heretic") || state.corruption >= 65) && chaosGodNames.length > 0) {
       return withEpilogue({
@@ -1786,11 +2147,35 @@
       Math.floor(state.age * 0.4) +
       Math.floor(state.stats.Inf * 0.5);
 
+    if (tags.includes("high_lord_terra")) {
+      return withEpilogue({
+        rank: "SENATORUM IMPERIALIS — HIGH LORD OF TERRA",
+        title: `테라의 하이 로드 · ${getCareerShortName(state.careerId)}`,
+        verdict: "인류제국 100만 행성과 수천조 영혼의 운명을 황궁 의회에서 직접 재단했던 열두 지배자 가운데 한 명이었다. 황금 옥좌의 대리인으로서 남긴 칙령들은 수천 년 동안 제국의 법전으로 남았다."
+      });
+    }
+
+    if (tags.includes("warmaster") || state.careerId === "warmaster") {
+      return withEpilogue({
+        rank: "WARMASTER OF THE IMPERIAL CRUSADE",
+        title: "은하를 정복한 대성전 워마스터",
+        verdict: "수억 명의 장병과 전함을 이끌고 암흑의 성계에 황제의 깃발을 꽂았던 불세출의 총사령관이었다. 성역의 모든 군사 사관학교가 그대의 전역을 영원한 교범으로 기린다."
+      });
+    }
+
     if (tags.includes("dreadnought")) {
       return withEpilogue({
         rank: "ETERNAL SLUMBER OF THE ANCIENT",
         title: "강철 석관의 영원한 안식",
         verdict: `육신이 스러진 뒤에도 고대 드레드노트 석관 속에서 싸워 온 ${state.chapterName || "아스타르테스"}의 영웅이 마침내 영면에 들었다. 챕터 영웅의 전당에 불멸의 이름이 새겨졌다.`
+      });
+    }
+
+    if (tags.includes("chapter_master") || state.careerId === "chapter_master") {
+      return withEpilogue({
+        rank: "LORD OF THE CHAPTER — ETERNAL GUARDIAN",
+        title: `${state.chapterName || "아스타르테스"}의 위대한 챕터 마스터`,
+        verdict: "천 명의 죽음의 천사와 요새 수도원을 이끌며 수세기의 암흑을 버텨 낸 불멸의 군주였다. 그대의 유품 갑주와 무구는 챕터 성소의 가장 높은 제단에 영원히 봉안되었다."
       });
     }
 
@@ -1802,10 +2187,10 @@
       });
     }
 
-    if (state.careerId === "adeptus_custodes" || tags.includes("custodes")) {
+    if (career.tree === "custodes" || tags.includes("custodes")) {
       return withEpilogue({
-        rank: "NAMES OF THE TEN THOUSAND",
-        title: "황금 갑주 안쪽에 새겨진 이름",
+        rank: tags.includes("captain_general") ? "CAPTAIN-GENERAL OF THE TEN THOUSAND" : "NAMES OF THE TEN THOUSAND",
+        title: tags.includes("captain_general") ? "만 명의 수호자를 이끈 캡틴-제너럴" : "황금 갑주 안쪽에 새겨진 이름",
         verdict: "황금 옥좌의 방패로 살다 간 불멸의 수호자였다. 황궁 영원의 회랑에 그대의 수백 개 진명이 경건히 각인되었다."
       });
     }
@@ -1818,15 +2203,15 @@
       });
     }
 
-    if (state.careerId === "grey_knight" || tags.includes("grey_knight")) {
+    if (career.tree === "grey_knights" || tags.includes("grey_knight")) {
       return withEpilogue({
-        rank: "HALL OF CHAMPIONS — TITAN",
-        title: "타이탄 영웅의 전당 등재",
+        rank: tags.includes("gk_supreme_master") ? "SUPREME GRAND MASTER OF TITAN" : "HALL OF CHAMPIONS — TITAN",
+        title: tags.includes("gk_supreme_master") ? "타이탄의 불멸 슈프림 그랜드 마스터" : "타이탄 영웅의 전당 등재",
         verdict: "제국 시민 누구도 그대의 이름을 알지 못한다. 오직 토성의 위성 타이탄 지하 석벽만이 악마와 맞선 은빛 형제의 희생을 영원히 기억한다."
       });
     }
 
-    if (state.careerId === "inquisitor") {
+    if (career.tree === "inquisition" && tags.includes("inquisitor")) {
       const isRadical = state.corruption >= 25 || tags.includes("tech_heresy") || tags.includes("xenos_contact");
       if (isRadical) {
         return withEpilogue({
@@ -1837,8 +2222,19 @@
       }
       return withEpilogue({
         rank: "ROSETTE OF UNYIELDING PURITY",
-        title: "오르도의 불굴 심판관",
+        title: tags.includes("lord_inquisitor") ? "성역 원로원의 불굴 로드 이단심문관" : "오르도의 불굴 심판관",
         verdict: "단 한 치의 타협도 없이 이단과 외계와 악마를 정화한 정통 이단심문관이었다. 그대가 남긴 로제트는 다음 세대 수행원에게 계승되었다."
+      });
+    }
+
+    if (tags.includes("sector_lord") || tags.includes("planetary_governor")) {
+      const isSector = tags.includes("sector_lord");
+      return withEpilogue({
+        rank: isSector ? "LORD OF THE SECTOR — IMPERIAL SOVEREIGN" : "IMPERIAL COMMANDER — RULER OF WORLDS",
+        title: isSector ? "성역을 통치한 불세출의 섹터 로드" : "행성의 운명을 짊어진 임페리얼 커맨더",
+        verdict: isSector
+          ? "수십 개 행성과 수조 시민의 십일조와 방어를 통괄했던 성역의 대영주였다. 그대가 세운 통치 왕조는 성역 수도 첨탑의 황금 부조로 영원히 남았다."
+          : "황제의 이름으로 한 행성 전체를 다스리며 십일조와 방위군을 지켜 낸 행성 총독이었다. 후계 가문이 그대의 인장과 영지를 계승했다."
       });
     }
 
@@ -1872,7 +2268,7 @@
       });
     }
 
-    if (tags.includes("astartes") && (state.careerId === "astartes_captain" || state.age >= 120 || score >= 150)) {
+    if (tags.includes("astartes") && (tags.includes("astartes_captain") || tags.includes("terminator_honors") || state.age >= 120 || score >= 150)) {
       return withEpilogue({
         rank: "CODEX HONORIS — ANGEL OF DEATH",
         title: `${state.chapterName || "아스타르테스"}의 불멸 전설`,
@@ -1880,15 +2276,15 @@
       });
     }
 
-    if (state.careerId === "rogue_trader") {
+    if (career.tree === "rogue_trader" && tags.includes("rogue_trader")) {
       return withEpilogue({
         rank: "WARRANT OF TRADE — BEYOND THE HALO STARS",
-        title: "무역 영장의 전설적 개척자",
+        title: tags.includes("rt_lord_captain") ? "헤일로 스타를 제패한 로그 트레이더 대왕조 총수" : "무역 영장의 전설적 개척자",
         verdict: "제국의 성도 바깥 미지의 변경까지 항로를 넓힌 호걸이었다. 가문 함대의 기함 함교에는 그대의 초상화가 영원히 걸리게 되었다."
       });
     }
 
-    if (tags.includes("stc_finder") || state.careerId === "archmagos") {
+    if (tags.includes("stc_finder") || tags.includes("magos")) {
       return withEpilogue({
         rank: "OMNISSIAH'S CHOSEN — MARS ARCHIVE",
         title: "화성 대서고 등재 현자",
@@ -1986,7 +2382,8 @@
   }
 
   function getTravelProfile(state) {
-    const c = state.careerId;
+    const career = getCareer(state.careerId);
+    const tt = career.transitTier || "civilian";
     if (state.age < 16) {
       return { canAttempt: false, reason: "16세 이상부터 성간 이동·파견 청원이 가능하다.", authority: "미성년 제한", autoApprove: false, baseChance: 0, scope: "none" };
     }
@@ -1995,8 +2392,8 @@
       return { canAttempt: false, reason: `워프 항행 정비 중 (${left}년 후 가능)`, authority: "항행 대기", autoApprove: false, baseChance: 0, scope: "none" };
     }
 
-    // 1. 절대 지휘권/무역 영장 티어 (100% 자율 결정)
-    if (["inquisitor", "rogue_trader", "astartes_captain", "archmagos", "lord_commissar", "canoness"].includes(c)) {
+    // 1. 절대 지휘권/무역 영장/하이 로드/군주 티어 (100% 자율 결정)
+    if (tt === "autonomous") {
       return {
         canAttempt: true,
         autoApprove: true,
@@ -2008,7 +2405,7 @@
     }
 
     // 2. 쿠스토데스 (황궁 칙령)
-    if (c === "adeptus_custodes") {
+    if (tt === "custodes") {
       return {
         canAttempt: true,
         autoApprove: false,
@@ -2022,7 +2419,7 @@
     }
 
     // 3. 아스타르테스 네오파이트 (결정권은 챕터 마스터·캡틴에게!)
-    if (c === "astartes_scout") {
+    if (tt === "astartes_scout") {
       return {
         canAttempt: true,
         autoApprove: false,
@@ -2037,8 +2434,8 @@
       };
     }
 
-    // 4. 아스타르테스 배틀 브라더 (중대장 승인)
-    if (c === "astartes_brother") {
+    // 4. 아스타르테스 배틀 브라더 · 서전트 · 1중대 베테랑 (중대장 승인)
+    if (tt === "astartes_brother") {
       return {
         canAttempt: true,
         autoApprove: false,
@@ -2052,8 +2449,8 @@
       };
     }
 
-    // 5. 그레이 나이트
-    if (c === "grey_knight") {
+    // 5. 그레이 나이트 · 팔라딘
+    if (tt === "grey_knight") {
       return {
         canAttempt: true,
         autoApprove: false,
@@ -2067,48 +2464,48 @@
       };
     }
 
-    // 6. 말단 군인 / 방위군 / 스키타리 (매우 낮은 전출 승인율)
-    if (["astra_militarum", "pdf_trooper", "skitarii"].includes(c)) {
+    // 6. 말단 군인 / 분대장 / 방위군 / 스키타리 / 생도 / 어콜라이트 / 공인 사이커 (낮은 전출 승인율)
+    if (tt === "forced") {
       return {
         canAttempt: true,
         autoApprove: false,
-        baseChance: 12,
-        maxChance: 42,
-        statKey: "Fel",
-        authority: "연대 병참 장교 / 마고스 결재",
-        scope: "near",
+        baseChance: career.tier >= 3 ? 32 : 12,
+        maxChance: career.tier >= 3 ? 68 : 42,
+        statKey: career.tier >= 3 ? "Inf" : "Fel",
+        authority: "상급 지휘부 / 병참 장교 결재",
+        scope: career.tier >= 3 ? "galaxy" : "near",
         actionLabel: "타 전선 전출 청원",
-        denyText: "병참 장교가 전출 청원서를 눈앞에서 찢어 버리며 '네 자리는 지금 서 있는 그 진흙 참호다'라고 일갈했다."
+        denyText: "상급 병참 장교가 전출 청원서를 눈앞에서 찢어 버리며 '네 자리는 지금 배속된 전선이다'라고 일갈했다."
       };
     }
 
-    // 7. 중간 장교 / 정예 / 심문소 어콜라이트 / 테크프리스트 / 해군 / 수녀 / 사이커
-    if (["militarum_officer", "commissar", "tempestus_scion", "adepta_sororitas", "imperial_navy", "tech_priest", "inquisition_acolyte", "arbites", "sanctioned_psyker"].includes(c)) {
+    // 7. 중간 장교 / 정예 / 심문자 / 테크프리스트 / 해군 / 수녀 / 판관 / 프리펙트 / 세네샬 / 거두
+    if (tt === "mid") {
       return {
         canAttempt: true,
         autoApprove: false,
         baseChance: 44,
         maxChance: 86,
         statKey: "Inf",
-        authority: "상급 사령부 / 담당 이단심문관 승인",
+        authority: "상급 사령부 / 담당 기관 승인",
         scope: "galaxy",
         actionLabel: "파견 · 전출 요청",
         denyText: "상부 사령부에서 '대체 인력 부족 및 워프 항로 불안정'을 사유로 파견 신청을 기각했다."
       };
     }
 
-    // 8. 이단자 (밀항선/해적선 편승)
-    if (c === "chaos_cultist") {
+    // 8. 이단자 · 배신자 워밴드 (밀항선/약탈선 편승)
+    if (tt === "heretic") {
       return {
         canAttempt: true,
         autoApprove: false,
-        baseChance: 32,
-        maxChance: 78,
-        statKey: "Ag",
-        authority: "암시장 밀항선 편승 (민첩 판정 · 발각 위험)",
-        scope: "near",
-        actionLabel: "밀항 시도",
-        denyText: "우주항 치안대의 검문에 걸려 밀항에 실패하고 격투 끝에 부상을 입었다!",
+        baseChance: career.isTranshuman ? 52 : 32,
+        maxChance: career.isTranshuman ? 86 : 78,
+        statKey: career.isTranshuman ? "Inf" : "Ag",
+        authority: career.isTranshuman ? "배신자 약탈선 워프 도약 (발각 위험)" : "암시장 밀항선 편승 (민첩 판정 · 발각 위험)",
+        scope: career.isTranshuman ? "galaxy" : "near",
+        actionLabel: career.isTranshuman ? "약탈선 출항 시도" : "밀항 시도",
+        denyText: "제국 순찰 함대와 치안대의 검문에 걸려 이탈에 실패하고 격투 끝에 부상을 입었다!",
         denyWounds: -14
       };
     }
@@ -2363,13 +2760,15 @@
     if (pair.length < 2) return null;
     const [w1, w2] = pair;
     const c = state.careerId;
+    const career = getCareer(c);
+    const tt = career.transitTier || "civilian";
 
-    const forcedDuties = ["astra_militarum", "skitarii", "astartes_scout", "tempestus_scion", "inquisition_acolyte", "sanctioned_psyker"];
-    const autonomousCmds = ["inquisitor", "rogue_trader", "astartes_captain", "archmagos", "lord_commissar", "canoness", "adeptus_custodes"];
-    const isMidOfficer = ["militarum_officer", "commissar", "adepta_sororitas", "astartes_brother", "tech_priest", "arbites", "grey_knight", "imperial_navy"].includes(c);
+    const isForced = tt === "forced" || tt === "astartes_scout";
+    const isAutonomous = tt === "autonomous" || tt === "custodes";
+    const isMidOfficer = tt === "mid" || tt === "astartes_brother" || tt === "grey_knight";
 
     // 민간/시민/귀족 이동 가능성 사전 점검 (야만 행성·극빈층 원천 차단)
-    if (!forcedDuties.includes(c) && !autonomousCmds.includes(c) && !isMidOfficer) {
+    if (!isForced && !isAutonomous && !isMidOfficer) {
       const curWorld = getWorld(state.worldId);
       if (curWorld.tags.includes("feral") || (state.stats.Inf < 18 && !state.tags.includes("noble") && !state.tags.includes("voidborn"))) {
         return null;
@@ -2383,7 +2782,7 @@
     }
 
     // 1) 말단·하급 의무 파견 직군 (거부권 없음 — 강제 성간 파견!)
-    if (forcedDuties.includes(c)) {
+    if (isForced) {
       const absoluteObey = c === "astartes_scout" || c === "skitarii" || c === "tempestus_scion" || state.homeWorldId === "krieg";
       let title, text, badge;
       if (c === "astartes_scout") {
@@ -2453,7 +2852,7 @@
     }
 
     // 2) 최고위 지휘권자 (완전 자율 선택권 — 지원 요청 수락/거절 자유!)
-    if (autonomousCmds.includes(c)) {
+    if (isAutonomous) {
       return {
         id: `dyn_cmd_transit_${state.year}`,
         isTimeline: false,
@@ -2572,29 +2971,67 @@
 
   function getContextualOptions(state) {
     const reqCtx = makeReqContext(state);
+    const curCareer = getCareer(state.careerId);
+    const history = state.careerHistory || [state.careerId];
+    const declined = state.declinedCareers || {};
     const unlockedCareers = [];
+    const readyEventCareers = [];
     const lockedCareers = [];
+
     for (let i = 0; i < DATA.CAREERS.length; i++) {
       const c = DATA.CAREERS[i];
       if (!c.selectable || c.id === state.careerId) continue;
-      if (checkReq(state, c.req, reqCtx)) unlockedCareers.push(c);
-      else lockedCareers.push(c);
+      const eligible = checkReq(state, c.req, reqCtx);
+      const alreadyHeld = history.includes(c.id);
+      if (eligible && !alreadyHeld) {
+        if (c.entryMode === "event") {
+          const isCooling = declined[c.id] !== undefined && state.year - declined[c.id] < 8;
+          const meaningful =
+            curCareer.id === "child" ||
+            c.tier > curCareer.tier ||
+            (c.tier === curCareer.tier && (c.tree !== curCareer.tree || isDirectSuccessorReq(curCareer.id, c.req))) ||
+            c.tree === "chaos";
+          if (!isCooling && meaningful) readyEventCareers.push(c);
+          lockedCareers.push(c);
+        } else if (curCareer.id === "child" || c.tier >= curCareer.tier || c.tree === "chaos") {
+          unlockedCareers.push(c);
+        } else {
+          lockedCareers.push(c);
+        }
+      } else {
+        lockedCareers.push(c);
+      }
     }
-    unlockedCareers.sort((a, b) => b.tier - a.tier);
 
-    // 앞으로 가장 가까운 추천 진로 2개 계산 (초보자 가이드용)
+    unlockedCareers.sort((a, b) => {
+      const sa = a.tree === curCareer.tree ? 1 : 0;
+      const sb = b.tree === curCareer.tree ? 1 : 0;
+      if (sa !== sb) return sb - sa;
+      return b.tier - a.tier;
+    });
+    readyEventCareers.sort((a, b) => b.tier - a.tier);
+
+    // 앞으로 가장 가까운 추천 진로 3개 계산 (같은 트리 다음 계급 최우선!)
     const nearCareers = lockedCareers
       .filter((c) => {
+        if (history.includes(c.id)) return false;
+        if (readyEventCareers.includes(c)) return false;
         const r = c.req || {};
         if (r.gender && r.gender !== state.gender) return false;
         if (r.maxAge !== undefined && state.age > r.maxAge) return false;
         if (r.excludeTags && r.excludeTags.some((t) => reqCtx.tagSet.has(t))) return false;
         if (r.allTags && !r.allTags.every((t) => reqCtx.tagSet.has(t))) return false;
         if (r.anyCareers && !r.anyCareers.includes(state.careerId)) return false;
+        if (curCareer.id !== "child" && c.tier < curCareer.tier && c.tree !== "chaos") return false;
         return true;
       })
-      .sort((a, b) => a.tier - b.tier)
-      .slice(0, 2);
+      .sort((a, b) => {
+        const sa = a.tree === curCareer.tree ? 0 : 1;
+        const sb = b.tree === curCareer.tree ? 0 : 1;
+        if (sa !== sb) return sa - sb;
+        return a.tier - b.tier;
+      })
+      .slice(0, 3);
 
     const actions = [];
     const careerAct = getCareerAction(state);
@@ -2635,6 +3072,7 @@
 
     return {
       unlockedCareers,
+      readyEventCareers,
       lockedCareers,
       nearCareers,
       actions,
@@ -2672,6 +3110,7 @@
     performAction,
     evaluateLifeGrade,
     createWarpAnomalyTransitEvent,
+    createDynamicCareerOfferEvent,
     getTravelProfile,
     evaluateTravelAttempt,
     getTravelCandidateWorlds,
