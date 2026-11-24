@@ -27,7 +27,7 @@
 ├── AGENTS.md                         # AI 에이전트 작업 방향 · 불변 규칙 · 고증/표기 표준 · QA 게이트
 ├── PROJECT_GUIDE.md                  # (본 문서) 아키텍처 · 파일별 수록 현황 · 스키마 · 진행 보고서
 ├── scripts/
-│   ├── qa.js                         # Node.js 전용 상설 자동 QA 검증 스위트 (6대 게이트 + 고아/용량 감시)
+│   ├── qa.js                         # Node.js 전용 상설 자동 QA 검증 스위트 (6대 게이트 + --deep 심층 감사)
 │   └── sync-scripts.js               # data/events/** · data/chronicles/** 자동 스캔 -> index.html 동기화
 ├── js/
 │   ├── engine.js                     # 핵심 시뮬레이션 엔진 (window.ImperiumEngine, 동적 진로 오퍼·데이터 주도화)
@@ -92,8 +92,9 @@
   * 순수 텍스트 생애 기록서 복사(클립보드 + `file://` 폴백) 및 `.txt` 파일 저장(거쳐 온 진로 궤적 포함).
 * **`scripts/sync-scripts.js` (~101줄, Node.js 전용):**
   * `data/events/**` 및 `data/chronicles/**`의 `.js` 파일을 재귀 스캔·정렬해 `index.html`의 마커 구간을 자동 동기화(`--check` 검사 모드 지원). 향후 신규 직군/행성/챕터 1:1 승격 파일 및 외계 종족 스타팅 폴더 추가 시 자동 반영.
-* **`scripts/qa.js` (~659줄, Node.js 전용):**
+* **`scripts/qa.js` (~1,182줄, Node.js 전용):**
   * `node scripts/qa.js` 단일 명령으로 `AGENTS.md` 6대 게이트(스크립트·로드 순서·고아 파일 탐지·구문·파일 용량 상한 경고·CSS·DOM `#id`·표기/기호/크리그·출처별 ID 충돌/참조/78직군 메타데이터/태그/`describeReq`/연표/`forceCareer`/동적 진로 오퍼/데몬 프린스·최상위 부고·소프트락/유년기 풀/중복률/로그 보존·300생애 멀티-초점 시뮬레이션·1,000분기 벤치마크)를 일괄 검증.
+  * `node scripts/qa.js --deep` 확장 모드(`--lives=N` 선택 지원): **Gate 7A**(79직군 전직 도달 그래프 기반 `anyPastCareers` 모순 정적 감사) · **Gate 7B**(전체 사건·선택지·연표·연대기·직군 1,100+ 조건식 전수 합성 도달성 증명 및 직군별 직접 매칭 커버리지 집계) · **Gate 7C**(6대 초점 `forbidden` 포함 1,500생애 몬테카를로 밸런스·Tier 4~6/하이 로드/총독/초인/카오스·데몬 프린스 분포 감사).
 
 ### 3.2 데이터 파일별 수록 내용
 | 파일 | 건수 | 수록 내용 요약 |

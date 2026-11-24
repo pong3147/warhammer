@@ -2,7 +2,10 @@
 /**
  * 1 / QUADRILLION : IMPERIALIS VITA — 상설 자동 QA 검증 스위트 (Node.js 전용)
  * 브라우저(index.html)에는 로드되지 않으며, AGENTS.md 6장 6대 게이트 및 확장 불변 조건을 검증한다.
- * 실행: node scripts/qa.js
+ * 실행:
+ *   node scripts/qa.js                  # 기본 6대 게이트 + 300생애 시뮬레이션 (5초점 x 60)
+ *   node scripts/qa.js --deep           # 6대 게이트 + Gate 7(전직 그래프 모순 · 전수 합성 도달성 · 1,500생애 심층 감사)
+ *   node scripts/qa.js --deep --lives=N # --deep 정적 감사 + 초점당 N생애(총 6xN생애) 맞춤형 밸런스 감사
  */
 "use strict";
 
@@ -11,13 +14,18 @@ const path = require("path");
 const vm = require("vm");
 
 const ROOT = path.resolve(__dirname, "..");
+const DEEP_MODE = process.argv.includes("--deep");
+const livesFlag = process.argv.find((a) => a.startsWith("--lives="));
+const CUSTOM_LIVES_PER_FOCUS = livesFlag ? Math.max(10, parseInt(livesFlag.split("=")[1], 10) || 0) : 0;
 const readRel = (p) => fs.readFileSync(path.join(ROOT, p), "utf8");
 
 const errors = [];
 const warnings = [];
 const fail = (gate, msg) => errors.push(`[Gate ${gate}] ${msg}`);
 
-console.log("=== 1 / QUADRILLION : IMPERIALIS VITA — QA Regression Suite ===");
+console.log(
+  `=== 1 / QUADRILLION : IMPERIALIS VITA — QA Regression Suite${DEEP_MODE ? " [DEEP MODE]" : ""} ===`
+);
 
 // ============================================================================
 // Gate 1: index.html 스크립트 실존 · 로드 순서 · 고아 파일 · 구문 · 크기 상한 · CSS 확인
@@ -565,21 +573,505 @@ if (kidDupRate > 30) fail(5, `Childhood duplication rate ${kidDupRate.toFixed(1)
 console.log(`[Gate 5] Softlocks=0, childhood pool min(age2=${minAge2}, age10=${minAge10}), dupRate=${kidDupRate.toFixed(1)}%, 2400-log birth preserved.`);
 
 // ============================================================================
-// Gate 6: 300생애 멀티-초점 스트레스 시뮬레이션 & 1,000분기 성능 벤치마크
+// Gate 7A/7B (--deep 우선 실행): 전직 그래프 모순 · 전수 합성 도달성 감사 (Fail-Fast)
 // ============================================================================
-const focuses = ["survival", "combat", "lore", "faith", "politics"];
-const LIVES_PER_FOCUS = 60;
+const careerById = new Map(DATA.CAREERS.map((c) => [c.id, c]));
+const selectableCareers = DATA.CAREERS.filter((c) => c.selectable);
+
+if (DEEP_MODE) {
+  console.log("\n--- [Gate 7A/7B: Static Graph & Full-Corpus Reachability (--deep)] ---");
+
+  // 7A. Career Transition Reachability Graph & anyPastCareers Contradiction Audit
+  const forceCareerTargets = new Set();
+  for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
+    for (const ch of (ev.choices || [])) {
+      [ch.effect, ch.outcome, ch.success, ch.fail].forEach((o) => {
+        if (o && o.forceCareer) forceCareerTargets.add(o.forceCareer);
+      });
+    }
+  }
+
+  function careerPermTags(c) {
+    const out = new Set();
+    if (c && c.onJoin && Array.isArray(c.onJoin.addTags)) {
+      for (const t of c.onJoin.addTags) {
+        if (t !== "imperial_nihilus") out.add(t);
+      }
+    }
+    return out;
+  }
+
+  function reqCompatibleWithBase(req, currId, baseGender, baseTags) {
+    if (!req) return true;
+    if (req.gender && baseGender && req.gender !== baseGender) return false;
+    if (req.excludeTags && req.excludeTags.some((t) => baseTags.has(t))) return false;
+    if (req.anyCareers && !req.anyCareers.includes(currId)) return false;
+    if (req.or && req.or.length > 0) {
+      const anyBranchOk = req.or.some((sub) => reqCompatibleWithBase(sub, currId, baseGender, baseTags));
+      if (!anyBranchOk) return false;
+    }
+    return true;
+  }
+
+  function canDirectStep(curr, target, baseGender, baseTags, baseTranshuman) {
+    if (!curr || !target || curr.id === target.id) return false;
+    const tGender = target.req && target.req.gender ? target.req.gender : null;
+    if (baseGender && tGender && baseGender !== tGender) return false;
+
+    const effTags = new Set([...baseTags, ...careerPermTags(curr)]);
+    const effTranshuman = baseTranshuman || Boolean(curr.isTranshuman) ||
+      effTags.has("astartes") || effTags.has("custodes") || effTags.has("grey_knight") || effTags.has("daemon_prince");
+
+    if ((effTags.has("custodes") || effTags.has("grey_knight")) && target.tree === "chaos") return false;
+
+    // 1) Manual open transition
+    if (target.selectable && target.entryMode === "open") {
+      if (reqCompatibleWithBase(target.req, curr.id, baseGender, effTags)) {
+        if (!effTranshuman || Boolean(target.isTranshuman) || target.tree === "chaos") return true;
+        if (!target.req || !target.req.excludeTags || !target.req.excludeTags.some((t) => effTags.has(t))) return true;
+      }
+    }
+
+    // 2) Dynamic career offer transition
+    if (target.selectable && target.tier >= 2 && reqCompatibleWithBase(target.req, curr.id, baseGender, effTags)) {
+      if (curr.id === "child") {
+        if (Boolean(target.isTranshuman) || target.tier >= 3) return true;
+      } else {
+        if (!effTranshuman || Boolean(target.isTranshuman)) {
+          if (target.tree === curr.tree) {
+            if (target.tier >= curr.tier) return true;
+          } else {
+            const tierOk = target.tier >= curr.tier || target.tree === "chaos";
+            const lateralOk = target.entryMode === "event" || target.tree === "chaos" || Boolean(target.isTranshuman);
+            if (tierOk && lateralOk) return true;
+          }
+        }
+      }
+    }
+
+    // 3) Event forceCareer transition (with Astartes chaos_cultist -> renegade_marine redirect)
+    const forcedDirectly = forceCareerTargets.has(target.id);
+    const forcedViaRedirect = target.id === "renegade_marine" && forceCareerTargets.has("chaos_cultist") && effTags.has("astartes");
+    if (forcedDirectly || forcedViaRedirect) {
+      const targetIsTranshuman = Boolean(target.isTranshuman);
+      const isDowngrade = (effTranshuman && !targetIsTranshuman && target.tree !== "chaos") ||
+        (target.tier < curr.tier && target.tree !== "chaos");
+      if (!isDowngrade) {
+        if (!(target.id === "chaos_cultist" && effTags.has("astartes"))) return true;
+      }
+    }
+
+    return false;
+  }
+
+  const reachableFrom = new Map();
+  for (const start of DATA.CAREERS) {
+    const startGender = start.req && start.req.gender ? start.req.gender : null;
+    const startTags = careerPermTags(start);
+    const startTranshuman = Boolean(start.isTranshuman) ||
+      startTags.has("astartes") || startTags.has("custodes") || startTags.has("grey_knight") || startTags.has("daemon_prince");
+
+    const visited = new Set([start.id]);
+    const queue = [start];
+    while (queue.length > 0) {
+      const curr = queue.shift();
+      for (const next of DATA.CAREERS) {
+        if (visited.has(next.id)) continue;
+        if (canDirectStep(curr, next, startGender, startTags, startTranshuman)) {
+          visited.add(next.id);
+          queue.push(next);
+        }
+      }
+    }
+    reachableFrom.set(start.id, visited);
+  }
+
+  // Graph sanity checks (prevents silent drift of the graph analyzer itself)
+  const graphChecks = [
+    ["astra_militarum", "warmaster", true],
+    ["astra_militarum", "planetary_governor", true],
+    ["astartes_brother", "renegade_marine", true],
+    ["astartes_brother", "daemon_prince", true],
+    ["adeptus_custodes", "chaos_cultist", false],
+    ["adeptus_custodes", "daemon_prince", false],
+    ["grey_knight", "renegade_marine", false],
+    ["adepta_sororitas", "astartes_brother", false],
+    ["astartes_brother", "planetary_governor", false]
+  ];
+  for (const [fromId, toId, expected] of graphChecks) {
+    const actual = reachableFrom.has(fromId) && reachableFrom.get(fromId).has(toId);
+    if (actual !== expected) {
+      fail(7, `Career graph sanity mismatch: ${fromId} -> ${toId} expected=${expected}, got=${actual}`);
+    }
+  }
+
+  let pastCareerChecks = 0;
+  function auditPastCareerReq(req, owner, parentCareers) {
+    if (!req) return;
+    const curList = req.anyCareers || parentCareers || null;
+    if (req.anyPastCareers) {
+      pastCareerChecks++;
+      const excl = new Set(req.excludePastCareers || []);
+      const validPast = req.anyPastCareers.filter((p) => !excl.has(p));
+      if (validPast.length === 0) {
+        fail(7, `Contradictory anyPastCareers vs excludePastCareers in ${owner}`);
+      } else if (curList && curList.length > 0) {
+        let pairOk = false;
+        for (const p of validPast) {
+          const reach = reachableFrom.get(p);
+          for (const c of curList) {
+            if (p === c || (reach && reach.has(c))) {
+              pairOk = true;
+              break;
+            }
+          }
+          if (pairOk) break;
+        }
+        if (!pairOk) {
+          fail(7, `Unreachable (anyPastCareers=[${validPast.join(",")}] -> anyCareers=[${curList.join(",")}]) in ${owner}`);
+        }
+      }
+    }
+    if (req.or) {
+      req.or.forEach((sub, idx) => auditPastCareerReq(sub, `${owner}.or[${idx}]`, curList));
+    }
+  }
+
+  // 7B. Full-Corpus Synthetic Reachability Prover
+  function intersectArrays(a, b) {
+    if (!a) return b ? [...b] : null;
+    if (!b) return [...a];
+    const setB = new Set(b);
+    return a.filter((x) => setB.has(x));
+  }
+
+  function mergeFlatReq(a, b) {
+    if (!a) return b ? Object.assign({}, b) : {};
+    if (!b) return Object.assign({}, a);
+    const out = Object.assign({}, a);
+
+    const maxKeys = ["minAge", "minYear", "minFaith", "minCorruption", "minWounds"];
+    const minKeys = ["maxAge", "maxYear", "maxFaith", "maxCorruption", "maxWounds"];
+    for (const k of maxKeys) {
+      if (b[k] !== undefined) out[k] = out[k] !== undefined ? Math.max(out[k], b[k]) : b[k];
+    }
+    for (const k of minKeys) {
+      if (b[k] !== undefined) out[k] = out[k] !== undefined ? Math.min(out[k], b[k]) : b[k];
+    }
+
+    if (b.gender) {
+      if (out.gender && out.gender !== b.gender) return null;
+      out.gender = b.gender;
+    }
+    if (b.greatRift !== undefined) {
+      if (out.greatRift !== undefined && out.greatRift !== b.greatRift) return null;
+      out.greatRift = b.greatRift;
+    }
+
+    const intersectKeys = ["anyCareers", "anyChapters", "anyWorlds", "anyHomeWorlds", "anySegmenta", "anyFocus"];
+    for (const k of intersectKeys) {
+      if (b[k]) {
+        const merged = intersectArrays(out[k], b[k]);
+        if (merged.length === 0) return null;
+        out[k] = merged;
+      }
+    }
+
+    out._anyTagGroups = [...(a._anyTagGroups || (a.anyTags ? [a.anyTags] : [])), ...(b._anyTagGroups || (b.anyTags ? [b.anyTags] : []))];
+    out._anyWorldTagGroups = [...(a._anyWorldTagGroups || (a.anyWorldTags ? [a.anyWorldTags] : [])), ...(b._anyWorldTagGroups || (b.anyWorldTags ? [b.anyWorldTags] : []))];
+    out._anyPastGroups = [...(a._anyPastGroups || (a.anyPastCareers ? [a.anyPastCareers] : [])), ...(b._anyPastGroups || (b.anyPastCareers ? [b.anyPastCareers] : []))];
+    delete out.anyTags;
+    delete out.anyWorldTags;
+    delete out.anyPastCareers;
+
+    const unionKeys = ["allTags", "excludeTags", "excludeWorlds", "excludeWorldTags", "excludeChapters", "excludePastCareers"];
+    for (const k of unionKeys) {
+      if (b[k]) out[k] = [...new Set([...(out[k] || []), ...b[k]])];
+    }
+
+    if (b.stats) {
+      out.stats = Object.assign({}, out.stats || {});
+      for (const sk of Object.keys(b.stats)) {
+        out.stats[sk] = out.stats[sk] !== undefined ? Math.max(out.stats[sk], b.stats[sk]) : b.stats[sk];
+      }
+    }
+    delete out.or;
+    return out;
+  }
+
+  function expandClauses(req) {
+    if (!req) return [{}];
+    const base = Object.assign({}, req);
+    const orBranches = base.or;
+    delete base.or;
+    const baseFlat = mergeFlatReq({}, base);
+    if (!baseFlat) return [];
+    if (!orBranches || orBranches.length === 0) return [baseFlat];
+
+    const results = [];
+    for (const branch of orBranches) {
+      const subClauses = expandClauses(branch);
+      for (const sc of subClauses) {
+        const merged = mergeFlatReq(baseFlat, sc);
+        if (merged) results.push(merged);
+      }
+    }
+    return results;
+  }
+
+  function synthesizeClauseState(cl) {
+    const minAge = cl.minAge !== undefined ? cl.minAge : 0;
+    const maxAge = cl.maxAge !== undefined ? cl.maxAge : 400;
+    if (minAge > maxAge) return null;
+    const age = cl.minAge !== undefined ? cl.minAge : Math.min(25, maxAge);
+
+    let minYear = cl.minYear !== undefined ? cl.minYear : 100;
+    let maxYear = cl.maxYear !== undefined ? cl.maxYear : 1040;
+    if (cl.greatRift === true) minYear = Math.max(minYear, 999);
+    if (cl.greatRift === false) maxYear = Math.min(maxYear, 998);
+    if (minYear > maxYear) return null;
+    const year = minYear;
+
+    const minFaith = cl.minFaith !== undefined ? cl.minFaith : 0;
+    const maxFaith = cl.maxFaith !== undefined ? cl.maxFaith : 100;
+    if (minFaith > maxFaith) return null;
+    const faith = minFaith;
+
+    const minCorr = cl.minCorruption !== undefined ? cl.minCorruption : 0;
+    const maxCorr = cl.maxCorruption !== undefined ? cl.maxCorruption : 100;
+    if (minCorr > maxCorr) return null;
+    const corruption = minCorr;
+
+    const minWounds = cl.minWounds !== undefined ? cl.minWounds : 1;
+    const maxWounds = cl.maxWounds !== undefined ? cl.maxWounds : 200;
+    if (minWounds > maxWounds) return null;
+    const wounds = minWounds;
+
+    const exclWorlds = new Set(cl.excludeWorlds || []);
+    const exclWorldTags = new Set(cl.excludeWorldTags || []);
+    const worldCandidates = DATA.WORLDS.filter((w) => {
+      if (cl.anyWorlds && !cl.anyWorlds.includes(w.id)) return false;
+      if (exclWorlds.has(w.id)) return false;
+      if (cl.anySegmenta && !cl.anySegmenta.includes(w.segmentum)) return false;
+      if (exclWorldTags.size && (w.tags || []).some((t) => exclWorldTags.has(t))) return false;
+      for (const grp of (cl._anyWorldTagGroups || [])) {
+        if (!grp.some((t) => (w.tags || []).includes(t))) return false;
+      }
+      return true;
+    });
+    if (worldCandidates.length === 0) return null;
+    const chosenWorld = worldCandidates[0];
+
+    const homeWorldId = (cl.anyHomeWorlds && cl.anyHomeWorlds.length > 0) ? cl.anyHomeWorlds[0] : chosenWorld.id;
+    if (!worldIds.has(homeWorldId)) return null;
+
+    const exclChapters = new Set(cl.excludeChapters || []);
+    let chapterId = null;
+    if (cl.anyChapters) {
+      const validCh = cl.anyChapters.find((cid) => chapterIds.has(cid) && !exclChapters.has(cid));
+      if (!validCh) return null;
+      chapterId = validCh;
+    }
+
+    const exclTags = new Set(cl.excludeTags || []);
+    const tagSet = new Set(cl.allTags || []);
+    for (const t of tagSet) {
+      if (exclTags.has(t)) return null;
+    }
+    for (const grp of (cl._anyTagGroups || [])) {
+      const picked = grp.find((t) => !exclTags.has(t));
+      if (!picked) return null;
+      tagSet.add(picked);
+    }
+
+    const exclPast = new Set(cl.excludePastCareers || []);
+    let careerId = "astra_militarum";
+    if (cl.anyCareers) {
+      const validCur = cl.anyCareers.find((cid) => !exclPast.has(cid));
+      if (!validCur) return null;
+      careerId = validCur;
+    } else if (exclPast.has(careerId)) {
+      const alt = DATA.CAREERS.find((c) => !exclPast.has(c.id));
+      if (!alt) return null;
+      careerId = alt.id;
+    }
+
+    const pastHistory = [careerId];
+    if (!exclPast.has("child") && careerId !== "child") pastHistory.unshift("child");
+    for (const grp of (cl._anyPastGroups || [])) {
+      const pickedPast = grp.find((p) => {
+        if (exclPast.has(p)) return false;
+        const reach = reachableFrom.get(p);
+        return p === careerId || (reach && reach.has(careerId));
+      });
+      if (!pickedPast) return null;
+      if (!pastHistory.includes(pickedPast)) pastHistory.push(pickedPast);
+    }
+
+    const gender = cl.gender || (careerById.get(careerId) && careerById.get(careerId).req && careerById.get(careerId).req.gender) || "male";
+    const focus = (cl.anyFocus && cl.anyFocus[0]) || "survival";
+    const stats = { WS: 50, BS: 50, T: 50, Ag: 50, Int: 50, WP: 50, Fel: 50, Inf: 50 };
+    if (cl.stats) {
+      for (const sk of Object.keys(cl.stats)) stats[sk] = Math.max(stats[sk] || 50, cl.stats[sk]);
+    }
+
+    return {
+      alive: true,
+      age,
+      year,
+      quarter: 1,
+      gender,
+      worldId: chosenWorld.id,
+      homeWorldId,
+      segmentum: chosenWorld.segmentum,
+      careerId,
+      careerHistory: pastHistory,
+      chapterId,
+      focus,
+      stats,
+      faith,
+      corruption,
+      wounds,
+      maxWounds: Math.max(100, wounds),
+      tags: [...tagSet],
+      globalFlags: {
+        greatRiftOpened: cl.greatRift !== undefined ? cl.greatRift : year >= 999
+      }
+    };
+  }
+
+  function proveReachable(req, owner, origReqForCheck) {
+    if (!req) return true;
+    const clauses = expandClauses(req);
+    for (const cl of clauses) {
+      const st = synthesizeClauseState(cl);
+      if (st && Engine.checkReq(st, origReqForCheck || req)) return true;
+    }
+    fail(7, `Synthetically unreachable requirement in ${owner}`);
+    return false;
+  }
+
+  let synthChecked = 0;
+  for (let i = 0; i < DATA.EVENTS.length; i++) {
+    const ev = DATA.EVENTS[i];
+    const src = eventSourceByIndex[i] || "EVENTS";
+    const owner = `${ev.id} (${src})`;
+    auditPastCareerReq(ev.req, owner, null);
+    synthChecked++;
+    proveReachable(ev.req, owner, ev.req);
+    (ev.choices || []).forEach((ch, idx) => {
+      if (!ch.req) return;
+      const chOwner = `${ev.id}:choice[${idx}] (${src})`;
+      auditPastCareerReq(ch.req, chOwner, ev.req && ev.req.anyCareers ? ev.req.anyCareers : null);
+      synthChecked++;
+      const combined = ev.req ? { or: expandClauses(ev.req).flatMap((ec) => expandClauses(ch.req).map((cc) => mergeFlatReq(ec, cc)).filter(Boolean)) } : ch.req;
+      let ok = false;
+      const clauses = combined.or ? combined.or : expandClauses(combined);
+      for (const cl of clauses) {
+        const st = synthesizeClauseState(cl);
+        if (st && Engine.checkReq(st, ev.req) && Engine.checkReq(st, ch.req)) { ok = true; break; }
+      }
+      if (!ok) fail(7, `Choice unreachable under parent event req in ${chOwner}`);
+    });
+  }
+
+  for (const tl of DATA.TIMELINE) {
+    const owner = `timeline:${tl.id}`;
+    auditPastCareerReq(tl.filter, owner, null);
+    synthChecked++;
+    proveReachable(tl.filter, owner, tl.filter);
+    (tl.choices || []).forEach((ch, idx) => {
+      if (!ch.req) return;
+      const chOwner = `timeline:${tl.id}:choice[${idx}]`;
+      auditPastCareerReq(ch.req, chOwner, tl.filter && tl.filter.anyCareers ? tl.filter.anyCareers : null);
+      synthChecked++;
+      let ok = false;
+      const parentClauses = expandClauses(tl.filter);
+      const childClauses = expandClauses(ch.req);
+      for (const ec of parentClauses) {
+        for (const cc of childClauses) {
+          const merged = mergeFlatReq(ec, cc);
+          if (!merged) continue;
+          const st = synthesizeClauseState(merged);
+          if (st && Engine.checkReq(st, tl.filter) && Engine.checkReq(st, ch.req)) { ok = true; break; }
+        }
+        if (ok) break;
+      }
+      if (!ok) fail(7, `Timeline choice unreachable under parent filter in ${chOwner}`);
+    });
+  }
+
+  for (let i = 0; i < DATA.CHRONICLES.length; i++) {
+    const ch = DATA.CHRONICLES[i];
+    const src = chronSourceByIndex[i] || "CHRONICLES";
+    const owner = `${ch.id} (${src})`;
+    auditPastCareerReq(ch.req, owner, null);
+    synthChecked++;
+    proveReachable(ch.req, owner, ch.req);
+  }
+
+  for (const c of DATA.CAREERS) {
+    if (!c.req) continue;
+    synthChecked++;
+    proveReachable(c.req, `career:${c.id}`, c.req);
+  }
+
+  function reqMentionsCareer(req, cid) {
+    if (!req) return false;
+    if (req.anyCareers && req.anyCareers.includes(cid)) return true;
+    if (req.or && req.or.some((sub) => reqMentionsCareer(sub, cid))) return true;
+    return false;
+  }
+
+  let careersWithEvents = 0;
+  let careersWithChrons = 0;
+  for (const c of selectableCareers) {
+    const hasEv = DATA.EVENTS.some((ev) => reqMentionsCareer(ev.req, c.id));
+    const hasCh = DATA.CHRONICLES.some((ch) => reqMentionsCareer(ch.req, c.id));
+    if (hasEv) careersWithEvents++;
+    if (hasCh) careersWithChrons++;
+  }
+
+  console.log(
+    `[Gate 7A/7B] Career graph verified (${DATA.CAREERS.length} nodes, ${pastCareerChecks} anyPastCareers checks), ` +
+    `synthetic reachability proved (${synthChecked} req specs), ` +
+    `directCareerMatch(events=${careersWithEvents}/${selectableCareers.length}, chronicles=${careersWithChrons}/${selectableCareers.length}).`
+  );
+}
+
+// ============================================================================
+// Gate 6 / 7C: 멀티-초점 스트레스 시뮬레이션 (기본 300생애 / --deep 1,500생애) & 1,000분기 벤치마크
+// ============================================================================
+const focuses = DEEP_MODE
+  ? ["survival", "combat", "lore", "faith", "politics", "forbidden"]
+  : ["survival", "combat", "lore", "faith", "politics"];
+const LIVES_PER_FOCUS = CUSTOM_LIVES_PER_FOCUS || (DEEP_MODE ? 250 : 60);
+const totalSimLives = focuses.length * LIVES_PER_FOCUS;
+
 let maxRepeat = 0;
 let nihilusMismatch = 0;
 let scholaStuck = 0;
 let s8Triggers = 0;
 let careerOfferTriggers = 0;
 const reachedCareers = new Set();
+const seenEvents = new Set();
+const tierReached = { 4: 0, 5: 0, 6: 0 };
+const milestones = {
+  highLord: 0,
+  governor: 0,
+  rogueTrader: 0,
+  astartes: 0,
+  custodes: 0,
+  greyKnight: 0,
+  chaos: 0,
+  daemonPrince: 0
+};
 
 for (const foc of focuses) {
   const allAges = [];
   const mortalAges = [];
   let violent = 0;
+  let heretic = 0;
   for (let i = 0; i < LIVES_PER_FOCUS; i++) {
     const st = Engine.createCharacter({ mode: "random" });
     st.focus = foc;
@@ -600,29 +1092,52 @@ for (const foc of focuses) {
         Engine.resolvePendingChoice(st, pickSmartChoice(st));
       }
     }
-    (st.careerHistory || [st.careerId]).forEach((cid) => { if (cid && cid !== "child") reachedCareers.add(cid); });
+    let maxTier = 0;
+    for (const cid of (st.careerHistory || [st.careerId])) {
+      if (!cid || cid === "child") continue;
+      reachedCareers.add(cid);
+      const co = careerById.get(cid);
+      if (co && co.tier > maxTier) maxTier = co.tier;
+    }
+    if (DEEP_MODE) {
+      if (maxTier >= 4) tierReached[4]++;
+      if (maxTier >= 5) tierReached[5]++;
+      if (maxTier >= 6) tierReached[6]++;
+      if (st.tags.includes("high_lord_terra")) milestones.highLord++;
+      if (st.tags.includes("planetary_governor") || st.tags.includes("sector_lord")) milestones.governor++;
+      if (st.tags.includes("rogue_trader")) milestones.rogueTrader++;
+      if (st.tags.includes("astartes")) milestones.astartes++;
+      if (st.tags.includes("custodes")) milestones.custodes++;
+      if (st.tags.includes("grey_knight")) milestones.greyKnight++;
+      if (st.tags.includes("heretic") || st.tags.includes("chaos_aligned")) { milestones.chaos++; heretic++; }
+      if (st.tags.includes("daemon_prince")) milestones.daemonPrince++;
+    }
     allAges.push(st.age);
-    if (!st.tags.includes("astartes") && !st.tags.includes("custodes") && !st.tags.includes("rejuvenat")) {
+    if (!st.tags.includes("astartes") && !st.tags.includes("custodes") && !st.tags.includes("rejuvenat") && !st.tags.includes("daemon_prince")) {
       mortalAges.push(st.age);
     }
     if (!/노환|고령|수명/.test(st.deathCause || "")) violent++;
-    for (const cnt of Object.values(st.eventCounts || {})) maxRepeat = Math.max(maxRepeat, cnt);
+    for (const [eid, cnt] of Object.entries(st.eventCounts || {})) {
+      if (DEEP_MODE) seenEvents.add(eid);
+      if (cnt > maxRepeat) maxRepeat = cnt;
+    }
   }
   allAges.sort((a, b) => a - b);
   mortalAges.sort((a, b) => a - b);
   const allMed = allAges[Math.floor(allAges.length / 2)];
   const mortMed = mortalAges.length ? mortalAges[Math.floor(mortalAges.length / 2)] : 0;
+  const hereticCol = DEEP_MODE ? ` heretic=${String(Math.round((heretic / LIVES_PER_FOCUS) * 100)).padStart(2)}%` : "";
   console.log(
-    `  Focus=${foc.padEnd(8)} allMed=${String(allMed).padStart(3)} ` +
-    `mortalMed=${String(mortMed).padStart(3)} (n=${String(mortalAges.length).padStart(2)}) ` +
-    `violent=${Math.round((violent / LIVES_PER_FOCUS) * 100)}%`
+    `  Focus=${foc.padEnd(9)} allMed=${String(allMed).padStart(3)} ` +
+    `mortalMed=${String(mortMed).padStart(3)} (n=${String(mortalAges.length).padStart(3)}) ` +
+    `violent=${String(Math.round((violent / LIVES_PER_FOCUS) * 100)).padStart(2)}%${hereticCol}`
   );
 }
 
 if (maxRepeat > 2) fail(6, `Event repeat count exceeded 2: ${maxRepeat}`);
 if (nihilusMismatch > 0) fail(6, `imperial_nihilus mismatch detected in ${nihilusMismatch} quarters`);
 if (scholaStuck > 0) fail(6, `schola career remained child past age 18 in ${scholaStuck} quarters`);
-if (careerOfferTriggers === 0) fail(6, `No dynamic career offers triggered across 300 simulated lives`);
+if (careerOfferTriggers === 0) fail(6, `No dynamic career offers triggered across ${totalSimLives} simulated lives`);
 
 // 1,000-quarter engine CPU benchmark
 const benchSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "planetary_noble", traitId: "iron_will", eraId: "m41_late", gender: "male" });
@@ -640,11 +1155,19 @@ for (let i = 0; i < 1000; i++) {
 const benchMs = performance.now() - t0;
 
 console.log(
-  `[Gate 6] 300 lives complete: maxRepeat=${maxRepeat}, nihilusMismatch=${nihilusMismatch}, ` +
-  `scholaStuck=${scholaStuck}, careerOffers=${careerOfferTriggers}, reachedCareers=${reachedCareers.size}/${DATA.CAREERS.length - 1}, ` +
-  `s8Crises=${s8Triggers} (avg ${(s8Triggers / (LIVES_PER_FOCUS * focuses.length)).toFixed(1)}/life), ` +
-  `1000q=${benchMs.toFixed(1)}ms`
+  `[Gate 6${DEEP_MODE ? "/7C" : ""}] ${totalSimLives} lives complete: maxRepeat=${maxRepeat}, nihilusMismatch=${nihilusMismatch}, ` +
+  `scholaStuck=${scholaStuck}, careerOffers=${careerOfferTriggers}, reachedCareers=${reachedCareers.size}/${selectableCareers.length}, ` +
+  `s8Crises=${s8Triggers} (avg ${(s8Triggers / totalSimLives).toFixed(1)}/life), 1000q=${benchMs.toFixed(1)}ms`
 );
+if (DEEP_MODE) {
+  console.log(
+    `  [Deep Distribution] naturalEvents=${seenEvents.size}/${DATA.EVENTS.length} | ` +
+    `T4+=${tierReached[4]}, T5+=${tierReached[5]}, T6=${tierReached[6]} | ` +
+    `HighLord=${milestones.highLord}, Gov=${milestones.governor}, RT=${milestones.rogueTrader}, ` +
+    `Astartes=${milestones.astartes}, Custodes=${milestones.custodes}, GK=${milestones.greyKnight}, ` +
+    `Chaos=${milestones.chaos}, DaemonPrince=${milestones.daemonPrince}`
+  );
+}
 
 if (warnings.length) {
   console.log(`\nWARNINGS (${warnings.length}):`);
@@ -656,4 +1179,4 @@ if (errors.length) {
   errors.forEach((e) => console.error("  ERROR: " + e));
   process.exit(1);
 }
-console.log("ALL 6 QA GATES PASSED WITH 0 ERRORS.");
+console.log(DEEP_MODE ? "ALL 7 QA GATES (INCLUDING --deep) PASSED WITH 0 ERRORS." : "ALL 6 QA GATES PASSED WITH 0 ERRORS.");
