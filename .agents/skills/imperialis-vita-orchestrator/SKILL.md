@@ -16,7 +16,7 @@ description: 'Project-specific orchestrator for 1 / QUADRILLION : IMPERIALIS VIT
 | 등급 | 대상 작업 예시 | 실행 모드 | 서브에이전트 편성 | 최종 감사(`FINAL_AUDIT` + `POST_STAGE_REDTEAM`) |
 | :--- | :--- | :--- | :--- | :--- |
 | **`L1`** | 질문 답변, 단일 오타·표기 수정, 1~2줄 패치 | 메인 즉시 처리 (서브에이전트 생략) | 없음 | 생략 (필요 시 `node scripts/qa.js`만 실행) |
-| **`L2`** | 단일 파일 버그 수정, 소규모 사건/연대기 추가(1~10건), 단일 UI 개선 | 직렬 2-Phase (조사 -> 1-Shot 명세 -> 구현 -> 검증) | 메인이 직접 수행하거나 `iv_data_writer` / `iv_engine_ui` 1명 위임 | 무오류 1-Shot 완료 시 생략; 실행 중 1회 이상 오류 발생 시 필수 |
+| **`L2`** | 단일 파일 버그 수정, 소규모 사건/연대기 추가(1~10건), 단일 UI 개선 | 직렬 2-Phase (조사 -> 1-Shot 명세 -> 구현 -> 검증) | 메인이 직접 수행하거나 `iv_data_writer` / `iv_engine_ui` 1명 위임 | `node scripts/qa.js` 0오류 1-Shot 완료 시 생략; 실행 중 1회 이상 오류 발생 시 필수 |
 | **`L3`** | 대규모 서사·연대기 확충 (20건+ 추가, 1:1 파일 승격) | **병렬 집필 + 독립 교차 감사 + 2단 레드팀 종합 검수** | 메인(공유 파일 단독 소유) + `iv_data_writer` 3~5명 병렬 + `iv_lore_auditor`(읽기 전용) + `iv_prose_a11y_critic`(읽기 전용) + `iv_redteam_reviewer`(읽기 전용) | **필수** (`sync-scripts` + `qa.js --deep` + 감사관 2종 0결함 + `audit-health.js` + 레드팀 4단 리포트) |
 | **`L4`** | 엔진·UI 대개편, 성향 시스템, 신규 세력/행성/역사·네임드 추가 (16.5·17·18단계 등) | **선행 조사 -> 사용자 확정 -> 코어 직렬 고정 -> 콘텐츠 병렬 집필 -> 정밀 감사 -> 2단 레드팀 종합 검수** | `iv_lore_auditor` 선행 브리프 -> 필요 시 `AWAITING_USER` 설계 확정 -> `iv_engine_ui` 또는 메인 코어 직렬 구현 -> `iv_data_writer` 병렬 집필 -> 감사관 2종 + `iv_qa_balance` + `iv_redteam_reviewer` | **필수** (`sync-scripts` + `qa.js --deep` + 신규 전 항목 도달성 100% + `audit-health.js` + 레드팀 4단 리포트 + 메인 취사선택 소견 보고) |
 
@@ -33,7 +33,7 @@ description: 'Project-specific orchestrator for 1 / QUADRILLION : IMPERIALIS VIT
 
 ### 안전장치 2: 물리적 권한 분리 (`Hard Tool Gating`)
 * 서브에이전트는 아래 역할 테이블에 따라 `define_subagent`의 `enable_write_tools`를 엄격히 분리한다.
-* `iv_lore_auditor`, `iv_prose_a11y_critic`, `iv_redteam_reviewer`는 반드시 **`enable_write_tools: false`**로 정의해 파일 수정 자체를 물리적으로 차단한다. 감사관·리뷰어는 결함 리포트만 반환하고, 수정과 채택 판단은 메인 오케스트레이터와 사용자가 수행한다.
+* `iv_lore_auditor`, `iv_prose_a11y_critic`, `iv_redteam_reviewer`, `iv_coverage_planner`는 반드시 **`enable_write_tools: false`**로 정의해 파일 수정 자체를 물리적으로 차단한다. 감사관·리뷰어·공백 분석가는 리포트만 반환하고, 수정과 채택 판단은 메인 오케스트레이터와 사용자가 수행한다.
 * 모델 선택은 항상 `Model: "inherit"`를 유지한다(사용자가 명시적으로 티어 변경을 요청한 경우 제외).
 
 ### 안전장치 3: 구조화된 5필드 핸드오프 패킷 (서브에이전트 호출 규격)
@@ -71,7 +71,8 @@ description: 'Project-specific orchestrator for 1 / QUADRILLION : IMPERIALIS VIT
 | `iv_lore_auditor` | `references/role-lore-auditor.md` | `false` | 워해머 40k 고증, 연대기, 나무위키 표준 표기, Lexicanum 웹 검색 팩트체크 |
 | `iv_prose_a11y_critic` | `references/role-prose-a11y-critic.md` | `false` | 한국어 조사 호응, 신분·크리그 정합성, 플롯 중복, 스크린 리더 청취 UX 감사 |
 | `iv_qa_balance` | `references/role-qa-balance.md` | `true` | `scripts/qa.js`·`scripts/audit-health.js` 유지·확장, 합성 도달성 검증, 몬테카를로 밸런스 감사 |
-| `iv_redteam_reviewer` | `references/role-redteam-reviewer.md` | `false` | `L3`/`L4` 단계 완료 시 전체 시스템·런타임 UX·저장/복원·다음 단계 리스크·핵심 개선안 적대적 종합 검수 |
+| `iv_redteam_reviewer` | `references/role-redteam-reviewer.md` | `false` | `L3`/`L4` 단계 완료 시 전체 시스템·런타임 UX·청취 리듬·저장/복원·다음 단계 리스크 적대적 종합 검수 |
+| `iv_coverage_planner` | `references/role-coverage-planner.md` | `false` | **[온디맨드 기획 전용]** `scripts/coverage-report.js` 기반 직군·행성·연령대·서사 편식 공백 진단 및 다음 확장 후보 브리프 (매 단계 강제 호출 금지) |
 
 ---
 

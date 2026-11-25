@@ -506,14 +506,15 @@ function runBehavioralUiA11yTests() {
 
   // Wrap Engine in a proxy so we can deterministically control getContextualOptions for focus edge-case assertions
   let customCareersOverride = null;
+  let customActionsOverride = null;
   let forceNoEvents = false;
   const EngineProxy = Object.assign({}, Engine, {
     getContextualOptions(st) {
       const base = Engine.getContextualOptions(st);
-      if (customCareersOverride !== null) {
-        return Object.assign({}, base, { unlockedCareers: customCareersOverride });
-      }
-      return base;
+      const patched = Object.assign({}, base);
+      if (customCareersOverride !== null) patched.unlockedCareers = customCareersOverride;
+      if (customActionsOverride !== null) patched.actions = customActionsOverride;
+      return patched;
     },
     advanceQuarter(st, opts) {
       const r = Engine.advanceQuarter(st, opts);
@@ -572,26 +573,32 @@ function runBehavioralUiA11yTests() {
   const careerB = Engine.getCareer("astra_militarum");
   const careerC = Engine.getCareer("administratum");
 
+  const actA = { id: "career_action", name: "직군 행동 A", desc: "훈련 A", btnLabel: "행동 A" };
+  const actB = { id: "penance", name: "정화 고행 B", desc: "고행 B", btnLabel: "행동 B" };
+  const actC = { id: "augmetics", name: "의체 개조 C", desc: "시술 C", btnLabel: "행동 C" };
+
   forceNoEvents = true;
   customCareersOverride = [careerA, careerB];
+  customActionsOverride = [actA, actB];
   elementsById.get("btn-start-custom").click();
   flushTimeouts();
 
   const cWrap = elementsById.get("auto-careers-wrap");
+  const aWrap = elementsById.get("auto-actions-wrap");
   const recentList = elementsById.get("recent-log-list");
   const srLive = elementsById.get("sr-live");
   const stepBtn = elementsById.get("btn-step");
 
   // Test 1: Unchanged career list across quarter tick MUST keep exact same button reference & focus
-  const initialBtnA = cWrap.querySelector(`.btn-apply-career[data-cid="${careerA.id}"]`);
-  if (!initialBtnA) {
-    failures.push("UI behavioral test setup failed: career button A not rendered");
-    return failures;
+  const initialBtnB = cWrap.querySelector(`.btn-apply-career[data-cid="${careerB.id}"]`);
+  if (!initialBtnB) {
+    failures.push("UI behavioral test setup failed: career button B not rendered");
+    return { failures, listening: null };
   }
-  initialBtnA.focus();
+  initialBtnB.focus();
   const existingLogLi = recentList.children[0];
   stepBtn.click();
-  if (doc.activeElement !== initialBtnA) {
+  if (doc.activeElement !== initialBtnB) {
     failures.push("Focus lost or DOM rebuilt on unchanged career panel tick");
   }
 
@@ -600,20 +607,25 @@ function runBehavioralUiA11yTests() {
     failures.push("#recent-log-list wiped existing <li> instead of incremental afterbegin prepend");
   }
 
-  // Test 3: Career list changes while focused career remains -> focus restored to matching data-cid
-  customCareersOverride = [careerA, careerB, careerC];
-  stepBtn.click();
-  if (!doc.activeElement || doc.activeElement.dataset.cid !== careerA.id) {
-    failures.push(`Focus not restored to matching data-cid=${careerA.id} after career list change`);
-  }
-
-  // Test 4: Auto-tick removes focused career while another remains -> moves to remaining button + announces shift
+  // Test 3: Mutation-hardened career focus restore — middle button B stays focused after reorder to [C, B, A] without shift notice
   srLive.textContent = "";
-  customCareersOverride = [careerB];
+  customCareersOverride = [careerC, careerB, careerA];
   stepBtn.click();
   flushTimeouts();
   if (!doc.activeElement || doc.activeElement.dataset.cid !== careerB.id) {
-    failures.push(`Focus dropped instead of shifting to remaining career ${careerB.id} (activeElement=${doc.activeElement && doc.activeElement.id})`);
+    failures.push(`Focus not restored to matching non-first data-cid=${careerB.id} after career list reorder (got ${doc.activeElement && doc.activeElement.dataset && doc.activeElement.dataset.cid})`);
+  }
+  if (srLive.textContent.includes("초점을 옮겼다")) {
+    failures.push(`False focus-shift announcement emitted when focused career ${careerB.id} remained in list`);
+  }
+
+  // Test 4: Auto-tick removes focused career B while C remains -> moves to remaining button + announces shift
+  srLive.textContent = "";
+  customCareersOverride = [careerC];
+  stepBtn.click();
+  flushTimeouts();
+  if (!doc.activeElement || doc.activeElement.dataset.cid !== careerC.id) {
+    failures.push(`Focus dropped instead of shifting to remaining career ${careerC.id} (activeElement=${doc.activeElement && doc.activeElement.id})`);
   }
   if (!srLive.textContent.includes("초점을 옮겼다")) {
     failures.push(`Missing screen-reader shift notice when focused career vanished on auto-tick (srLive="${srLive.textContent}")`);
@@ -626,13 +638,52 @@ function runBehavioralUiA11yTests() {
     failures.push(`Focus dropped to ${doc.activeElement && (doc.activeElement.id || doc.activeElement.tagName)} instead of #heading-auto when careers exhausted`);
   }
 
-  // Test 6: #btn-new-life moves focus to #start-heading
+  // Test 6: Autonomous action panel — unchanged tick keeps DOM ref, reordered list [C, B, A] preserves middle button B without false shift notice
+  const initialActB = aWrap.querySelector(`.btn-auto-action[data-aid="${actB.id}"]`);
+  if (!initialActB) {
+    failures.push("UI behavioral test setup failed: action button B not rendered");
+  } else {
+    initialActB.focus();
+    stepBtn.click();
+    if (doc.activeElement !== initialActB) {
+      failures.push("Action panel lost focus or rebuilt DOM on unchanged tick");
+    }
+    srLive.textContent = "";
+    customActionsOverride = [actC, actB, actA];
+    stepBtn.click();
+    flushTimeouts();
+    if (!doc.activeElement || doc.activeElement.dataset.aid !== actB.id) {
+      failures.push(`Action focus not restored to non-first data-aid=${actB.id} after list reorder (got ${doc.activeElement && doc.activeElement.dataset && doc.activeElement.dataset.aid})`);
+    }
+    if (srLive.textContent.includes("초점을 옮겼다")) {
+      failures.push(`False focus-shift announcement emitted when focused action ${actB.id} remained in list`);
+    }
+  }
+
+  // Test 7: Autonomous action panel — removing focused action shifts to remaining + announces, exhausting all falls back to #heading-auto
+  srLive.textContent = "";
+  customActionsOverride = [actA];
+  stepBtn.click();
+  flushTimeouts();
+  if (!doc.activeElement || doc.activeElement.dataset.aid !== actA.id) {
+    failures.push(`Action focus dropped instead of shifting to remaining data-aid=${actA.id}`);
+  }
+  if (!srLive.textContent.includes("초점을 옮겼다")) {
+    failures.push(`Missing screen-reader shift notice when focused action vanished on auto-tick (srLive="${srLive.textContent}")`);
+  }
+  customActionsOverride = [];
+  stepBtn.click();
+  if (doc.activeElement !== elementsById.get("heading-auto")) {
+    failures.push(`Action focus dropped to ${doc.activeElement && (doc.activeElement.id || doc.activeElement.tagName)} instead of #heading-auto when actions exhausted`);
+  }
+
+  // Test 8: #btn-new-life moves focus to #start-heading
   elementsById.get("btn-new-life").click();
   if (doc.activeElement !== elementsById.get("start-heading")) {
     failures.push("#btn-new-life did not move focus to #start-heading");
   }
 
-  // Test 7: #btn-clear-hall requires 2-step confirmation (1st click must NOT wipe Hall of Souls)
+  // Test 9: #btn-clear-hall requires 2-step confirmation (1st click must NOT wipe Hall of Souls)
   localStorageMock.setItem("imperium_vita_hall_v1", JSON.stringify([{ id: "soul_test_1", name: "영웅", age: 80 }]));
   const clearBtn = elementsById.get("btn-clear-hall");
   clearBtn.click();
@@ -644,15 +695,97 @@ function runBehavioralUiA11yTests() {
     failures.push("#btn-clear-hall failed to clear Hall of Souls on 2nd confirm click");
   }
 
-  return failures;
+  // 2C. Deterministic #sr-live Listening Rhythm Telemetry (2 full-flow lives in real js/ui.js mini-DOM)
+  customCareersOverride = null;
+  customActionsOverride = null;
+  forceNoEvents = false;
+  const activeEvWrap = elementsById.get("active-event-wrap");
+  const utteranceLens = [];
+  let maxQuietStreak = 0;
+  let eventsTriggered = 0;
+  let eventFocusHeadingOK = 0;
+  let tabHopsTotal = 0;
+
+  for (let lifeIdx = 0; lifeIdx < 2; lifeIdx++) {
+    elementsById.get("sel-era").value = lifeIdx === 0 ? "cadia_rift" : "armageddon";
+    elementsById.get("sel-world").value = lifeIdx === 0 ? "cadia" : "necromunda";
+    elementsById.get("sel-origin").value = "imperial_citizen";
+    elementsById.get("sel-trait").value = "none";
+    elementsById.get("sel-gender").value = lifeIdx === 0 ? "male" : "female";
+    elementsById.get("inp-name").value = `청취점검_${lifeIdx + 1}`;
+    elementsById.get("btn-start-custom").click();
+    flushTimeouts();
+
+    let quietStreak = 0;
+    for (let q = 0; q < 100; q++) {
+      srLive.textContent = "";
+      stepBtn.click();
+      flushTimeouts();
+      const spoken = (srLive.textContent || "").replace(/\u200B/g, "").trim();
+      if (spoken.length > 0) utteranceLens.push(spoken.length);
+
+      const choiceBtns = activeEvWrap.querySelectorAll(".choice-btn");
+      if (choiceBtns.length > 0) {
+        eventsTriggered++;
+        quietStreak = 0;
+        const evHeading = activeEvWrap.querySelector("#active-event-heading");
+        if (evHeading && doc.activeElement === evHeading) eventFocusHeadingOK++;
+        // Count interactive stops before first choice button inside #active-event-wrap (e.g., named spotlight <summary>)
+        const summaries = activeEvWrap.querySelectorAll("summary").length;
+        tabHopsTotal += 1 + summaries;
+        const enabledChoices = choiceBtns.filter((b) => !b.disabled);
+        const pick = enabledChoices[0] || choiceBtns[0];
+        if (pick) {
+          pick.click();
+          flushTimeouts();
+        }
+      } else {
+        quietStreak++;
+        if (quietStreak > maxQuietStreak) maxQuietStreak = quietStreak;
+      }
+      if (elementsById.get("obit-backdrop").classList.contains("open")) {
+        elementsById.get("btn-obit-close").click();
+        break;
+      }
+    }
+    elementsById.get("btn-new-life").click();
+  }
+
+  const avgChars = utteranceLens.length ? Math.round(utteranceLens.reduce((a, b) => a + b, 0) / utteranceLens.length) : 0;
+  const maxChars = utteranceLens.length ? Math.max(...utteranceLens) : 0;
+  const avgTabsToChoice1 = eventsTriggered ? (tabHopsTotal / eventsTriggered).toFixed(2) : "0.00";
+  if (eventsTriggered > 0 && eventFocusHeadingOK < eventsTriggered) {
+    failures.push(`Active event heading focus missed in ${eventsTriggered - eventFocusHeadingOK}/${eventsTriggered} events`);
+  }
+
+  return {
+    failures,
+    listening: {
+      utterances: utteranceLens.length,
+      avgChars,
+      maxChars,
+      maxQuietStreak,
+      eventsTriggered,
+      eventFocusHeadingOK,
+      avgTabsToChoice1
+    }
+  };
 }
 
-const behavioralFailures = runBehavioralUiA11yTests();
-uiRisks.push(...behavioralFailures);
+const uiTestResult = runBehavioralUiA11yTests();
+uiRisks.push(...uiTestResult.failures);
 console.log(
-  `[UI-A11y Behavioral] tests=7, risks=${uiRisks.length}` +
-  `${uiRisks.length ? " -> " + uiRisks.join(" | ") : " (all 7 real js/ui.js focus/prepend/confirm tests PASS)"}`
+  `[UI-A11y Behavioral] tests=9, risks=${uiRisks.length}` +
+  `${uiRisks.length ? " -> " + uiRisks.join(" | ") : " (all 9 real js/ui.js career/action focus, prepend & confirm tests PASS)"}`
 );
+if (uiTestResult.listening) {
+  const L = uiTestResult.listening;
+  console.log(
+    `[Listening Rhythm] utterances=${L.utterances}, avgChars=${L.avgChars}, maxChars=${L.maxChars}, ` +
+    `maxQuietStreak=${L.maxQuietStreak}q, eventHeadingFocus=${L.eventFocusHeadingOK}/${L.eventsTriggered}, ` +
+    `avgTabsToChoice1=${L.avgTabsToChoice1}`
+  );
+}
 
 // ============================================================================
 // 3. File Size Proximity Watch (>95KB events / >58KB chronicles)
@@ -691,5 +824,5 @@ if (hardFailures.length > 0) {
 }
 console.log(
   `HEALTH CHECK PASSED (seed=${SEED}, 0 crashes, 0 softlocks, 0 migrate failures, 0 unknown-ID warnings, ` +
-  `0 incorruptible leaks, retireExec=${age500RetireExecutedOK}/${age500Plus}, maxSave=${maxJsonKB}KB<=2048KB, 7/7 behavioral UI tests PASS).`
+  `0 incorruptible leaks, retireExec=${age500RetireExecutedOK}/${age500Plus}, maxSave=${maxJsonKB}KB<=2048KB, 9/9 behavioral UI tests PASS).`
 );
