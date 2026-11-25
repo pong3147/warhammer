@@ -17,7 +17,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         "commissar_general", "lord_commissar", "navy_admiral", "cardinal", "canoness",
         "celestian", "magos", "fabricator_locum", "fabricator_general",
         "rogue_trader", "rt_lord_captain", "arbites_marshal", "departmento_head",
-        "tempestus_prime", "psyker_primaris"
+        "tempestus_prime", "psyker_primaris",
+        "assassin", "grand_master_assassins", "living_saint", "saint_vessel"
       ]
     },
     reqLabel: "자질: 블랭크 · 16세+",
@@ -37,7 +38,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
             "magos", "fabricator_locum", "fabricator_general", "tech_priest", "skitarii_marshal",
             "rogue_trader", "rt_lord_captain", "rt_seneschal", "arbites_marshal", "arbites_judge",
             "departmento_head", "admin_prefect", "tempestus_prime", "scion", "officer",
-            "guild_magnate", "crime_lord", "sanctioned_psyker", "psyker_primaris"
+            "guild_magnate", "crime_lord", "sanctioned_psyker", "psyker_primaris",
+            "assassin", "grand_master_assassins", "living_saint", "saint_vessel"
           ]
         },
         effect: {
@@ -267,9 +269,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
-        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "fabricator_general"
+        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "fabricator_general", "knight_high_king", "nav_novator"
       ]
     },
     reqLabel: "삶의 초점: 생존과 보양",
@@ -326,9 +328,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       anyFocus: ["combat"],
       excludeWorldTags: ["feral"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
-        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster",
+        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "knight_high_king", "nav_novator",
         "general_rank", "navy_admiral", "lord_inquisitor", "fabricator_general"
       ]
     },
@@ -384,7 +386,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
         "heretic", "chaos_aligned", "daemon_prince",
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "high_lord_terra", "cardinal"
       ]
     },
@@ -445,8 +447,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
         "heretic", "chaos_aligned", "daemon_prince",
-        "astartes", "custodes", "grey_knight", "dreadnought",
-        "high_lord_terra", "fabricator_general", "departmento_head"
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "assassin",
+        "high_lord_terra", "fabricator_general", "departmento_head", "knight_high_king", "nav_novator"
       ]
     },
     reqLabel: "삶의 초점: 학문과 기계 교리",
@@ -500,9 +502,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 14,
       anyFocus: ["politics"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
-        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "fabricator_general"
+        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "fabricator_general", "knight_high_king", "nav_novator"
       ],
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"]
@@ -557,9 +559,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
-        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster",
+        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "knight_high_king", "nav_novator",
         "inquisitor", "lord_inquisitor", "fabricator_general"
       ]
     },
@@ -1513,9 +1515,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
-        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "fabricator_general"
+        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "fabricator_general", "knight_high_king", "nav_novator"
       ]
     },
     reqLabel: "32세 이상 · 삶의 초점: 생존과 보양",
@@ -1569,9 +1571,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 32,
       anyFocus: ["combat"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
-        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "fabricator_general"
+        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "fabricator_general", "knight_high_king", "nav_novator"
       ]
     },
     reqLabel: "32세 이상 · 삶의 초점: 무예와 전투 훈련",
@@ -1625,7 +1627,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
         "heretic", "chaos_aligned", "daemon_prince",
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "high_lord_terra", "inquisitor", "lord_inquisitor"
       ]
     },
@@ -1687,8 +1689,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
         "heretic", "chaos_aligned", "daemon_prince",
-        "astartes", "custodes", "grey_knight", "dreadnought",
-        "high_lord_terra", "fabricator_general"
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "assassin",
+        "high_lord_terra", "fabricator_general", "knight_high_king", "nav_novator"
       ]
     },
     reqLabel: "32세 이상 · 삶의 초점: 학문과 기계 교리",
@@ -1741,9 +1743,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 32,
       anyFocus: ["politics"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
-        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "fabricator_general"
+        "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "fabricator_general", "knight_high_king", "nav_novator"
       ],
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"]
@@ -1798,9 +1800,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
-        "high_lord_terra", "inquisitor", "lord_inquisitor", "fabricator_general"
+        "high_lord_terra", "inquisitor", "lord_inquisitor", "fabricator_general", "knight_high_king", "nav_novator"
       ]
     },
     reqLabel: "28세 이상 · 삶의 초점: 금단의 지식 탐구",

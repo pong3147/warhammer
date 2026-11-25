@@ -234,6 +234,7 @@
     const byChapter = new Map();
     const byWorld = new Map();
     const byCareer = new Map();
+    const byTag = new Map();
     const general = [];
     const pushTo = (map, key, item) => {
       let arr = map.get(key);
@@ -252,11 +253,13 @@
       } else if (req && Array.isArray(req.anyCareers) && req.anyCareers.length) {
         const uniq = new Set(req.anyCareers);
         uniq.forEach((k) => pushTo(byCareer, k, item));
+      } else if (req && Array.isArray(req.allTags) && req.allTags.length) {
+        pushTo(byTag, req.allTags[0], item);
       } else {
         general.push(item);
       }
     }
-    return { count: items.length, byChapter, byWorld, byCareer, general };
+    return { count: items.length, byChapter, byWorld, byCareer, byTag, general };
   }
 
   let EVENT_INDEX = buildPoolIndex(DATA.EVENTS || []);
@@ -273,6 +276,11 @@
       const bch = EVENT_INDEX.byChapter.get(state.chapterId);
       if (bch) buckets.push(bch);
     }
+    const tags = state.tags || [];
+    for (let i = 0; i < tags.length; i++) {
+      const bt = EVENT_INDEX.byTag.get(tags[i]);
+      if (bt) buckets.push(bt);
+    }
     return buckets;
   }
 
@@ -286,6 +294,11 @@
     if (state.chapterId) {
       const bch = CHRONICLE_INDEX.byChapter.get(state.chapterId);
       if (bch) buckets.push(bch);
+    }
+    const tags = state.tags || [];
+    for (let i = 0; i < tags.length; i++) {
+      const bt = CHRONICLE_INDEX.byTag.get(tags[i]);
+      if (bt) buckets.push(bt);
     }
     return buckets;
   }
@@ -316,11 +329,15 @@
 
   function makeReqContext(state) {
     const world = getWorld(state.worldId);
+    const align = normalizeAlignment(state);
+    const alignInfo = getAlignmentInfo(state);
     return {
       world,
       worldTagSet: WORLD_TAG_SET_BY_ID.get(world.id) || new Set(world.tags || []),
       tagSet: new Set(state.tags || []),
-      pastCareerSet: new Set(state.careerHistory || [state.careerId])
+      pastCareerSet: new Set(state.careerHistory || [state.careerId]),
+      align,
+      alignDominant: alignInfo.dominant
     };
   }
 
@@ -330,9 +347,36 @@
     return c.name.replace(/\s*\([^)]*\)/g, "").split(" · ")[0];
   }
 
+  function getLivingSaintAspect(state) {
+    const tags = (state && state.tags) || [];
+    if (tags.includes("saint_mercy_aspect") && !tags.includes("saint_wrath_aspect")) return "mercy";
+    if (tags.includes("saint_wrath_aspect") && !tags.includes("saint_mercy_aspect")) return "wrath";
+    const dom = getAlignmentInfo(state).dominant;
+    if (dom === "humane") return "mercy";
+    if (dom === "dogmatic") return "wrath";
+    return "neutral";
+  }
+
   function getCareerDisplayTitle(state, careerObj) {
     const c = careerObj || getCareer(state.careerId);
     const w = getWorld(state.homeWorldId);
+    const tags = (state && state.tags) || [];
+    if (c.id === "knight_high_king") {
+      return state.gender === "female" ? "하이 퀸 (기사 행성 대군주)" : "하이 킹 (기사 행성 대군주)";
+    }
+    if (c.id === "assassin_operative") {
+      if (tags.includes("clade_vindicare")) return "빈디카레 어쌔신 (오피시오 아사시노룸)";
+      if (tags.includes("clade_callidus")) return "칼리두스 어쌔신 (오피시오 아사시노룸)";
+      if (tags.includes("clade_eversor")) return "에버서 어쌔신 (오피시오 아사시노룸)";
+      if (tags.includes("clade_culexus")) return "쿨렉수스 어쌔신 (오피시오 아사시노룸)";
+    }
+    if (c.id === "living_saint") {
+      const baseTitle = state.gender === "female" ? "살아 있는 성녀" : "살아 있는 성인";
+      const aspect = getLivingSaintAspect(state);
+      if (aspect === "mercy") return `${baseTitle} — 자비의 성광`;
+      if (aspect === "wrath") return `${baseTitle} — 심판의 성광`;
+      return `${baseTitle} (임페리얼 리빙 세인트)`;
+    }
     if (c.useRegimentName && w.guardRegiment) {
       return c.titleSuffix ? `${w.guardRegiment} ${c.titleSuffix}` : `${w.guardRegiment}`;
     }
@@ -462,7 +506,7 @@
     }
 
     if (req.minAlign || req.maxAlign || req.anyDominantAlign) {
-      const al = normalizeAlignment(state);
+      const al = ctx && ctx.align ? ctx.align : normalizeAlignment(state);
       if (req.minAlign) {
         for (const k in req.minAlign) {
           if ((al[k] || 0) < req.minAlign[k]) return false;
@@ -474,8 +518,8 @@
         }
       }
       if (req.anyDominantAlign) {
-        const info = getAlignmentInfo(state);
-        if (!req.anyDominantAlign.includes(info.dominant)) return false;
+        const dom = ctx && ctx.alignDominant ? ctx.alignDominant : getAlignmentInfo(state).dominant;
+        if (!req.anyDominantAlign.includes(dom)) return false;
       }
     }
 
@@ -987,6 +1031,120 @@
     };
   }
 
+  function isIncorruptibleState(state) {
+    const tags = (state && state.tags) || [];
+    return tags.includes("custodes") || tags.includes("grey_knight") || tags.includes("living_saint");
+  }
+
+  function hasAssassinClade(state) {
+    const tags = (state && state.tags) || [];
+    return (
+      tags.includes("clade_vindicare") ||
+      tags.includes("clade_callidus") ||
+      tags.includes("clade_eversor") ||
+      tags.includes("clade_culexus")
+    );
+  }
+
+  function createAssassinCladeEvent(state) {
+    if (!state || hasAssassinClade(state)) return null;
+    const isBlank = (state.tags || []).includes("blank");
+    const choices = [
+      {
+        label: "빈디카레 템플 — 초장거리 저격과 일발일살의 침묵 (사격 +8, 민첩 +4, 의지 +4)",
+        effect: {
+          text: "빈디카레 템플의 검은 스텔스 슈트를 입고 엑시투스 라이플과 영혼을 일체화하는 고독한 저격수의 길에 서약했다.",
+          stats: { BS: 8, Ag: 4, WP: 4 },
+          addTags: ["clade_vindicare"]
+        }
+      },
+      {
+        label: "칼리두스 템플 — 폴리모르핀 변신과 적진 심장부 잠입 (교섭 +8, 지성 +5, 민첩 +4)",
+        effect: {
+          text: "폴리모르핀 생체 변형 약물과 크탄 페이즈 소드를 하사받으며 칼리두스 템플의 천의 얼굴을 지닌 침투 암살자로 거듭났다.",
+          stats: { Fel: 8, Int: 5, Ag: 4 },
+          addTags: ["clade_callidus"]
+        }
+      },
+      {
+        label: "에버서 템플 — 광란 전투 약물과 공포의 섬멸전 (백병 +9, 강인 +6, 민첩 +4, 암흑 +4)",
+        effect: {
+          text: "심장에 생체 폭탄과 광란 약물 주입관을 이식받고 에버서 템플의 통제 불능한 살육 폭풍으로 다시 태어났다.",
+          stats: { WS: 9, T: 6, Ag: 4 },
+          align: { ruthless: 4 },
+          addTags: ["clade_eversor"]
+        }
+      },
+      {
+        label: isBlank
+          ? "쿨렉수스 템플 (블랭크 전용 · 추천) — 영혼 없는 공포의 사이커 처형자 (의지 +10, 지성 +6, 민첩 +4)"
+          : "쿨렉수스 템플 (블랭크 자질 필수) — 사이커와 악마를 소멸시키는 공허의 처형자",
+        req: { allTags: ["blank"] },
+        effect: {
+          text: "이단 사이커의 심장을 멈추는 아니무스 스페쿨룸 투구를 쓰고 쿨렉수스 템플의 살아 있는 공허로 서약했다.",
+          stats: { WP: 10, Int: 6, Ag: 4 },
+          corruptionReset: true,
+          addTags: ["clade_culexus"]
+        }
+      }
+    ];
+
+    if (isBlank) {
+      const cul = choices.pop();
+      choices.unshift(cul);
+    }
+
+    return {
+      id: `dyn_assassin_clade_${state.year}`,
+      isTimeline: false,
+      category: "템플 배정",
+      reqLabel: "오피시오 아사시노룸 입단",
+      title: "오피시오 아사시노룸 — 4대 암살 템플 서약",
+      text: "테라의 은밀한 지하 성소에서 네 명의 그림자 대리인이 그대의 적성 기록을 내려다보고 있다. 한 번 각인된 신경 개조는 되돌릴 수 없다. 어느 암살 템플의 칼날이 되어 황제의 적들을 지워 낼 것인가.",
+      choices,
+      source: "Codex: Imperial Agents / Officio Assassinorum Lore"
+    };
+  }
+
+  function applyCareerJoinEffects(state, oj) {
+    if (!oj) return;
+    if (oj.stats) {
+      for (const [k, delta] of Object.entries(oj.stats)) {
+        if (state.stats[k] !== undefined) state.stats[k] = clamp(Math.round(state.stats[k] + delta), 5, 100);
+      }
+    }
+    if (oj.woundsBonus) {
+      state.maxWounds += oj.woundsBonus;
+      state.wounds = clamp(state.wounds + oj.woundsBonus, 1, state.maxWounds);
+    }
+    if (oj.faith) {
+      state.faith = clamp(state.faith + oj.faith, 0, 100);
+    }
+    if (oj.corruption) {
+      const incorruptible = isIncorruptibleState(state);
+      if (!(incorruptible && oj.corruption > 0)) {
+        state.corruption = clamp(state.corruption + oj.corruption, 0, 100);
+      }
+    }
+    if (oj.corruptionReset) {
+      state.corruption = 0;
+    }
+    if (oj.align) {
+      applyAlignDelta(state, oj.align);
+    }
+    if (oj.lifeBonusExtra || oj.extraLifeBonus) {
+      state.extraLifeBonus += (oj.lifeBonusExtra || oj.extraLifeBonus);
+    }
+    if (oj.addTags) {
+      for (const t of oj.addTags) {
+        if (!state.tags.includes(t)) state.tags.push(t);
+      }
+    }
+    if (isIncorruptibleState(state) && state.corruption > 0) {
+      state.corruption = 0;
+    }
+  }
+
   function applyOutcome(state, outcome, rollInfo = null) {
     if (!outcome) return;
 
@@ -1016,7 +1174,7 @@
       state.faith = clamp(state.faith + outcome.faith, 0, 100);
     }
     if (outcome.corruption) {
-      const incorruptible = state.tags.includes("custodes") || state.tags.includes("grey_knight");
+      const incorruptible = isIncorruptibleState(state);
       if (!(incorruptible && outcome.corruption > 0)) {
         state.corruption = clamp(state.corruption + outcome.corruption, 0, 100);
       }
@@ -1083,41 +1241,30 @@
           state.chapterName = hw.astartesChapter || "울트라마린 후계 챕터";
         }
         if (targetCareer.onJoin) {
-          const oj = targetCareer.onJoin;
-          acceptedJoinEff = oj;
-          if (oj.stats) {
-            for (const [k, delta] of Object.entries(oj.stats)) {
-              if (state.stats[k] !== undefined) state.stats[k] = clamp(Math.round(state.stats[k] + delta), 5, 100);
-            }
-          }
-          if (oj.woundsBonus) {
-            state.maxWounds += oj.woundsBonus;
-            state.wounds = clamp(state.wounds + oj.woundsBonus, 1, state.maxWounds);
-          }
-          if (oj.corruptionReset) state.corruption = 0;
-          if (oj.addTags) {
-            for (const t of oj.addTags) {
-              if (!state.tags.includes(t)) state.tags.push(t);
-            }
-          }
+          acceptedJoinEff = targetCareer.onJoin;
+          applyCareerJoinEffects(state, targetCareer.onJoin);
         }
       }
     }
 
     if (outcome.forceCareer) {
       let resolvedId = outcome.forceCareer;
-      if (resolvedId === "chaos_cultist" && state.tags.includes("astartes") && !state.tags.includes("grey_knight") && !state.tags.includes("custodes")) {
+      if (resolvedId === "chaos_cultist" && state.tags.includes("astartes") && !isIncorruptibleState(state)) {
         resolvedId = "renegade_marine";
       }
       const targetCareer = getCareer(resolvedId);
       const curCareer = getCareer(state.careerId);
-      const isTranshuman = Boolean(curCareer.isTranshuman) || state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("grey_knight") || state.tags.includes("daemon_prince");
+      const isTranshuman = Boolean(curCareer.isTranshuman) || state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("grey_knight") || state.tags.includes("daemon_prince") || state.tags.includes("living_saint");
       const targetIsTranshuman = Boolean(targetCareer.isTranshuman);
-      const isIncorruptible = (state.tags.includes("custodes") || state.tags.includes("grey_knight")) && targetCareer.tree === "chaos";
+      const isIncorruptible = isIncorruptibleState(state) && targetCareer.tree === "chaos";
       const isChaosDemotion = curCareer.tree === "chaos" && targetCareer.tree === "chaos" && curCareer.tier >= targetCareer.tier;
+      const isSecretLocked =
+        (state.tags.includes("assassin") && targetCareer.tree !== "officio_assassinorum" && targetCareer.tree !== "chaos") ||
+        (state.tags.includes("living_saint") && targetCareer.tree !== "living_saint");
       const preventDowngrade =
         isIncorruptible ||
         isChaosDemotion ||
+        isSecretLocked ||
         (targetCareer.tree !== "chaos" &&
         (curCareer.tier > targetCareer.tier || (isTranshuman && !targetIsTranshuman)));
 
@@ -1139,6 +1286,9 @@
     if (state.tags.includes("daemon_prince") && state.corruption >= 100) {
       state.corruption = 99;
     }
+    if (isIncorruptibleState(state) && state.corruption >= 100) {
+      state.corruption = 0;
+    }
 
     const logKind = outcome.instantDeath
       ? "death"
@@ -1153,11 +1303,14 @@
       finalizeDeath(state, outcome.instantDeath);
     } else if (state.wounds <= 0) {
       finalizeDeath(state, "치명적인 부상과 가혹한 시련을 견디지 못하고 순직");
-    } else if (state.corruption >= 100 && !state.tags.includes("daemon_prince")) {
+    } else if (state.corruption >= 100 && !state.tags.includes("daemon_prince") && !isIncorruptibleState(state)) {
       finalizeDeath(state, "워프 오염이 임계치를 돌파하여 카오스 스폰으로 변이 후 정화됨");
     } else if ((outcome.forceCareer === "astartes_scout" || outcome.acceptCareerOffer === "astartes_scout") && state.careerId === "astartes_scout" && !state.chapterId && !state.pendingEvent) {
       const chapEv = createChapterSelectionEvent(state);
       if (chapEv) state.pendingEvent = chapEv;
+    } else if ((outcome.forceCareer === "assassin_initiate" || outcome.acceptCareerOffer === "assassin_initiate") && state.careerId === "assassin_initiate" && !hasAssassinClade(state) && !state.pendingEvent) {
+      const cladeEv = createAssassinCladeEvent(state);
+      if (cladeEv) state.pendingEvent = cladeEv;
     }
   }
 
@@ -1259,7 +1412,7 @@
       state.faith = clamp(state.faith + eff.faith, 0, 100);
     }
     if (eff.corruption) {
-      const incorruptible = state.tags.includes("custodes") || state.tags.includes("grey_knight");
+      const incorruptible = isIncorruptibleState(state);
       if (!(incorruptible && eff.corruption > 0)) {
         state.corruption = clamp(state.corruption + eff.corruption, 0, 99);
       }
@@ -1294,6 +1447,9 @@
     if (state.tags.includes("custodes")) {
       return `황궁의 금빛 회랑에서 철학과 무예를 연마하며 황금 옥좌를 수호했다.`;
     }
+    if (state.tags.includes("living_saint")) {
+      return `황제의 성광을 품고 절망에 빠진 제국 전선들을 순례하며 기적을 이어 갔다.`;
+    }
     return `[${getCareerDisplayTitle(state, career)}] 복무 중 '${focus.name}'에 매진하며 한 해를 넘겼다.`;
   }
 
@@ -1318,7 +1474,19 @@
     if (isNewYear) {
       // 14세 도달 시 출신 배경에 맞는 자연스러운 첫 직무 편입
       if (state.age === 14 && state.careerId === "child") {
-        if (state.tags.includes("mechanicus_blood")) {
+        const knightSquireCareer = getCareer("knight_squire");
+        if (state.tags.includes("navigator")) {
+          state.careerId = "nav_apprentice";
+          state.careerHistory.push("nav_apprentice");
+          if (!state.tags.includes("voidborn")) state.tags.push("voidborn");
+          addLog(state, "14세가 되어 나비스 노빌리테 가문의 항법탑에 올라 견습 항법사로 첫 성간 항로를 배웠다.", "career", null, { badge: "직무 편입" });
+        } else if (state.tags.includes("knight_blood") && knightSquireCareer && checkReq(state, knightSquireCareer.req)) {
+          state.careerId = "knight_squire";
+          state.careerHistory.push("knight_squire");
+          if (!state.tags.includes("imperial_knight")) state.tags.push("imperial_knight");
+          if (!state.tags.includes("imperial_military")) state.tags.push("imperial_military");
+          addLog(state, "14세가 되어 기사 가문의 종자 서약을 올리고 아미저 보행 병기의 헬름 메카니쿰 훈련에 돌입했다.", "career", null, { badge: "직무 편입" });
+        } else if (state.tags.includes("mechanicus_blood")) {
           state.careerId = "skitarii";
           state.careerHistory.push("skitarii");
           if (!state.tags.includes("mechanicus")) state.tags.push("mechanicus");
@@ -1395,7 +1563,7 @@
       state.wounds = clamp(state.wounds + baseNaturalHeal + focusHeal, 0, state.maxWounds);
       state.faith = clamp(state.faith + (focus.faithDelta || 0), 0, 100);
       const rawCorrDelta = focus.corruptionDelta || 0;
-      const incorruptible = state.tags.includes("custodes") || state.tags.includes("grey_knight");
+      const incorruptible = isIncorruptibleState(state);
       if (rawCorrDelta > 0) {
         if (!incorruptible) {
           let effCorrDelta = state.age < 12 ? Math.min(rawCorrDelta, 2) : rawCorrDelta;
@@ -1457,10 +1625,10 @@
     if (state.tags.includes("daemon_prince") && state.corruption >= 100) {
       state.corruption = 99;
     }
-    if ((state.tags.includes("custodes") || state.tags.includes("grey_knight")) && state.corruption >= 100) {
+    if (isIncorruptibleState(state) && state.corruption >= 100) {
       state.corruption = 0;
     }
-    if (state.corruption >= 100 && !state.tags.includes("daemon_prince")) {
+    if (state.corruption >= 100 && !state.tags.includes("daemon_prince") && !isIncorruptibleState(state)) {
       finalizeDeath(state, "워프 오염이 한계를 넘어 육신이 카오스 스폰으로 붕괴됨");
       return { status: "dead" };
     }
@@ -1611,6 +1779,24 @@
     return false;
   }
 
+  function isCareerTransitionBlocked(state, targetCareer, curCareer = null, alignInfo = null) {
+    if (!state || !targetCareer) return true;
+    const cur = curCareer || getCareer(state.careerId);
+    const tags = state.tags || [];
+    const curIsTranshuman = Boolean(cur.isTranshuman) || tags.includes("astartes") || tags.includes("custodes") || tags.includes("grey_knight") || tags.includes("daemon_prince") || tags.includes("living_saint");
+    if (tags.includes("assassin") && targetCareer.tree !== "officio_assassinorum" && targetCareer.tree !== "chaos") return true;
+    if (tags.includes("living_saint") && targetCareer.tree !== "living_saint") return true;
+    if (tags.includes("navigator") && ["astartes", "grey_knights", "custodes", "sororitas"].includes(targetCareer.tree)) return true;
+    if (cur.id !== "child" && curIsTranshuman && !targetCareer.isTranshuman && targetCareer.tree !== "chaos") return true;
+    if (isIncorruptibleState(state) && targetCareer.tree === "chaos") return true;
+    const aInfo = alignInfo || getAlignmentInfo(state);
+    if (
+      (targetCareer.id === "hive_crime_lord" || targetCareer.id === "underhive_boss") &&
+      (aInfo.dominant === "humane" || aInfo.dominant === "dogmatic")
+    ) return true;
+    return false;
+  }
+
   function createDynamicCareerOfferEvent(state, reqCtx = null, options = {}) {
     if (!state || !state.alive || state.pendingEvent) return null;
 
@@ -1621,7 +1807,7 @@
 
     const history = state.careerHistory || [state.careerId];
     const declined = state.declinedCareers || {};
-    const curIsTranshuman = Boolean(cur.isTranshuman) || state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("grey_knight") || state.tags.includes("daemon_prince");
+    const curIsTranshuman = Boolean(cur.isTranshuman) || state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("grey_knight") || state.tags.includes("daemon_prince") || state.tags.includes("living_saint");
     const alignInfo = getAlignmentInfo(state);
 
     const candidates = [];
@@ -1631,10 +1817,7 @@
       if (history.includes(c.id)) continue;
       if (!options.ignoreCooldown && declined[c.id] !== undefined && state.year - declined[c.id] < 8) continue;
       if (c.id === "chaos_cultist" && cur.tier >= 4) continue;
-      if (
-        (c.id === "hive_crime_lord" || c.id === "underhive_boss") &&
-        (alignInfo.dominant === "humane" || alignInfo.dominant === "dogmatic")
-      ) continue;
+      if (isCareerTransitionBlocked(state, c, cur, alignInfo)) continue;
       if (!checkReq(state, c.req, ctx)) continue;
 
       if (cur.id === "child") {
@@ -1650,7 +1833,8 @@
           const lateralAllowed =
             c.entryMode === "event" ||
             c.tree === "chaos" ||
-            Boolean(c.isTranshuman);
+            Boolean(c.isTranshuman) ||
+            Boolean(c.allowLateralOffer);
           if (!lateralAllowed) continue;
         }
       }
@@ -1660,6 +1844,17 @@
       if (c.id === "daemon_prince") {
         w = 90;
         prob = 0.28;
+      } else if (c.id === "living_saint") {
+        w = 45;
+        prob = 0.08;
+      } else if (c.id === "saint_vessel") {
+        const hasMiracleSpark = state.tags.includes("living_miracle") || state.tags.includes("saint_spark");
+        w = hasMiracleSpark ? 14 : 6;
+        prob = hasMiracleSpark ? 0.024 : 0.008;
+      } else if (c.id === "assassin_initiate") {
+        const isBlank = state.tags.includes("blank");
+        w = isBlank ? 28 : 14;
+        prob = isBlank ? 0.08 : 0.025;
       } else if (c.tier >= 6) {
         w = 35;
         prob = 0.025;
@@ -1679,12 +1874,12 @@
         w = cur.tier >= 5 ? 8 : 14;
         prob = cur.tier >= 5 ? 0.022 : 0.032;
       }
-      if (alignInfo.dominant === "dogmatic" && ["commissariat", "sororitas", "arbites", "inquisition"].includes(c.tree)) {
+      if (alignInfo.dominant === "dogmatic" && ["commissariat", "sororitas", "arbites", "inquisition", "living_saint"].includes(c.tree)) {
         w = Math.round(w * 1.35);
-      } else if (alignInfo.dominant === "humane" && c.tree === "ecclesiarchy") {
-        w = Math.round(w * 1.3);
-      } else if (alignInfo.dominant === "ruthless" && (c.id === "hive_crime_lord" || c.id === "underhive_boss" || c.tree === "chaos" || c.tree === "rogue_trader")) {
-        w = Math.round(w * 1.45);
+      } else if (alignInfo.dominant === "humane" && (c.tree === "ecclesiarchy" || c.tree === "living_saint")) {
+        w = Math.round(w * 1.35);
+      } else if (alignInfo.dominant === "ruthless" && (c.id === "hive_crime_lord" || c.id === "underhive_boss" || c.tree === "chaos" || c.tree === "rogue_trader" || c.tree === "officio_assassinorum")) {
+        w = Math.round(w * 1.4);
       }
       candidates.push({ item: c, w, prob });
     }
@@ -1707,7 +1902,9 @@
     const isLateral = cur.id !== "child" && picked.tree !== cur.tree;
     const category = picked.tree === "chaos"
       ? (picked.id === "daemon_prince" ? "승천의 의식" : "암흑의 부름")
-      : (picked.tier >= 6 ? "제국 최고위 추대" : (isLateral ? "평행 횡단 · 특임 발탁" : "승급 · 진로 발탁"));
+      : (picked.tree === "living_saint"
+        ? "황제의 성광"
+        : (picked.tier >= 6 ? "제국 최고위 추대" : (isLateral ? "평행 횡단 · 특임 발탁" : "승급 · 진로 발탁")));
 
     const lifeStr = picked.lifeBonus >= 0 ? `+${picked.lifeBonus}년` : `${picked.lifeBonus}년`;
     const joinPreview = picked.onJoin && picked.onJoin.stats
@@ -1790,6 +1987,9 @@
       return { ok: false, msg: "해당 상위·특임 직책은 조건 달성 시 임명·발탁 이벤트를 통해 수임할 수 있다." };
     }
     if (state.careerId === career.id) return { ok: false, msg: "이미 해당 직군에 복무 중이다." };
+    if (isCareerTransitionBlocked(state, career)) {
+      return { ok: false, msg: "현재 소속 기관의 비밀 서약·초인 위상 또는 성향 제약으로 해당 직군에 지원할 수 없다." };
+    }
     if (!checkReq(state, career.req)) return { ok: false, msg: `요구 조건 미달: ${describeReq(career.req)}` };
 
     // 선발 시련(Trial)이 있는 특수 병종
@@ -1827,14 +2027,17 @@
     if (career.id === "astartes_scout" && !state.chapterId && state.alive && !state.pendingEvent) {
       const chapEv = createChapterSelectionEvent(state);
       if (chapEv) state.pendingEvent = chapEv;
+    } else if (career.id === "assassin_initiate" && !hasAssassinClade(state) && state.alive && !state.pendingEvent) {
+      const cladeEv = createAssassinCladeEvent(state);
+      if (cladeEv) state.pendingEvent = cladeEv;
     }
 
     return { ok: true, career, openedEvent: state.pendingEvent || null };
   }
 
   function canUseRejuvenat(state) {
-    if (state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("daemon_prince")) {
-      return { ok: false, reason: "초인·불멸 개조 신체는 일반 리주버냇 시술이 불필요하다." };
+    if (state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("daemon_prince") || state.tags.includes("living_saint")) {
+      return { ok: false, reason: "초인·불멸·성광 개조 신체는 일반 리주버냇 시술이 불필요하다." };
     }
     if (state.rejuvenatCount >= 3) return { ok: false, reason: "세포 한계에 도달해 더 이상 리주버냇 시술을 받을 수 없다." };
     if (state.age < 50) return { ok: false, reason: "50세 이후부터 수명 연장 시술이 가능하다." };
@@ -1850,7 +2053,9 @@
   }
 
   function canUseAugmetics(state) {
-    if (state.tags.includes("daemon_prince")) return { ok: false, reason: "불멸의 악마 육신에는 기계 의체 개조가 무의미하다." };
+    if (state.tags.includes("daemon_prince") || state.tags.includes("living_saint")) {
+      return { ok: false, reason: "불멸의 초월 육신에는 일반 기계 의체 개조가 무의미하다." };
+    }
     if (state.augmeticsCount >= 3) return { ok: false, reason: "이미 3단계 생체 의체 개조를 완료했다." };
     const career = getCareer(state.careerId);
     const world = getWorld(state.worldId);
@@ -2121,6 +2326,75 @@
         effects: { stats: { WP: 4, Int: 2 }, corruption: -6 }
       };
     }
+    if (ag === "navigator") {
+      return {
+        id: "career_action",
+        name: "아스트로노미칸 성도 측량 · 제3의 눈 조율",
+        desc: "의지 +3, 지성 +3, 권위 +2, 오염 -4 (재사용 4년)",
+        btnLabel: "워프 성도 측량",
+        toastMsg: "아스트로노미칸 등불과 워프 조류를 측량했다.",
+        logText: "항법탑의 황동 천구의 앞에서 제3의 눈을 열어 격동하는 워프 조류의 안전한 항로를 새로 기록했다.",
+        effects: { stats: { WP: 3, Int: 3, Inf: 2 }, corruption: -4 }
+      };
+    }
+    if (ag === "assassin") {
+      return {
+        id: "career_action",
+        name: "신전 살상 의례 · 표적 동선 분석",
+        desc: "민첩 +3, 백병 +2, 사격 +2, 의지 +2, 암흑 +2 (재사용 4년)",
+        btnLabel: "살상 의례 수행",
+        toastMsg: "암살 신전의 살상 의례와 표적 분석을 마쳤다.",
+        logText: "정지장 보관소에서 무구와 독극물을 점검하며 제국 고위 표적의 경비 허점을 냉철하게 계산했다.",
+        effects: { stats: { Ag: 3, WS: 2, BS: 2, WP: 2 }, align: { ruthless: 2 } }
+      };
+    }
+    if (ag === "knight") {
+      const isSquire = state.careerId === "knight_squire" && !state.tags.includes("knight_scion");
+      return {
+        id: "career_action",
+        name: isSquire ? "헬름 메카니쿰 교감 · 아미저 무장 조율" : "스론 메카니쿰 교감 · 이온 실드 조율",
+        desc: "백병 +3, 사격 +2, 의지 +3, 권위 +1 (재사용 4년)",
+        btnLabel: isSquire ? "아미저 무장 조율" : "기사 장갑 조율",
+        toastMsg: isSquire ? "헬름 메카니쿰 교감과 아미저 무장 점검을 마쳤다." : "스론 메카니쿰 교감과 무장 점검을 마쳤다.",
+        logText: isSquire
+          ? "사크리스탄 사제들의 향불 속에서 아미저의 헬름 메카니쿰과 리퍼 체인클리버의 신경 반응을 조율했다."
+          : "사크리스탄 사제들의 향불 속에서 나이트 아머의 이온 실드와 선조 기계령의 기억을 조화시켰다.",
+        effects: { stats: { WS: 3, BS: 2, WP: 3, Inf: 1 } }
+      };
+    }
+    if (ag === "knight_lord") {
+      return {
+        id: "career_action",
+        name: "기사 대의회 소집 · 기사단 출정 사열",
+        desc: "권위 +4, 교섭 +3, 의지 +2, 백병 +2 (재사용 4년)",
+        btnLabel: "기사 대의회 소집",
+        toastMsg: "기사 가문 대의회와 출정 사열을 주재했다.",
+        logText: "기사 행성의 깃발 아래 수십 기의 임페리얼 나이트 랜스를 사열하고 가문 간 동맹 서약을 갱신했다.",
+        effects: { stats: { Inf: 4, Fel: 3, WP: 2, WS: 2 } }
+      };
+    }
+    if (ag === "living_saint") {
+      const aspect = getLivingSaintAspect(state);
+      const isWrath = aspect === "wrath";
+      const isVessel = state.careerId === "saint_vessel" && !state.tags.includes("living_saint");
+      return {
+        id: "career_action",
+        name: isWrath ? "심판의 성광 현현 · 이단 정화 축복" : "자비의 성광 현현 · 전선 치유 축복",
+        desc: isWrath
+          ? "의지 +4, 백병 +3, 권위 +3, 신앙 +10, 오염 -12, 교조 +3 (재사용 4년)"
+          : "의지 +4, 교섭 +3, 권위 +3, 신앙 +10, 오염 -12, 자비 +3, 생명력 +12 (재사용 4년)",
+        btnLabel: "황금 성광 현현",
+        toastMsg: isWrath ? "심판의 성광으로 전선의 이단과 어둠을 불태웠다." : "자비의 성광으로 절망에 빠진 장병과 피난민을 어루만졌다.",
+        logText: isWrath
+          ? (isVessel
+              ? "황금빛 불꽃이 검과 두 손에 서리며 전선의 공포를 단숨에 몰아내고 이단의 그림자를 정화했다."
+              : "황금빛 불꽃이 검과 날개에 서리며 전선의 공포를 단숨에 몰아내고 이단의 그림자를 정화했다.")
+          : "따스한 황금빛 성광이 잿빛 전장을 감싸자 부상병의 고통이 잦아들고 병사들이 다시 눈물을 닦고 일어섰다.",
+        effects: isWrath
+          ? { stats: { WP: 4, WS: 3, Inf: 3 }, faith: 10, corruption: -12, align: { dogmatic: 3 } }
+          : { stats: { WP: 4, Fel: 3, Inf: 3 }, wounds: 12, faith: 10, corruption: -12, align: { humane: 3 } }
+      };
+    }
     if (ag === "daemon_prince") {
       return {
         id: "career_action",
@@ -2194,7 +2468,11 @@
         state.wounds = clamp(state.wounds + eff.wounds, floor, state.maxWounds);
       }
       if (eff.faith) state.faith = clamp(state.faith + eff.faith, 0, 100);
-      if (eff.corruption) state.corruption = clamp(state.corruption + eff.corruption, 0, 99);
+      if (eff.corruption) {
+        if (!(eff.corruption > 0 && isIncorruptibleState(state))) {
+          state.corruption = clamp(state.corruption + eff.corruption, 0, 99);
+        }
+      }
       if (eff.align) applyAlignDelta(state, eff.align);
       addLog(state, act.logText, "success", null, {
         badge: "직군 고유 행동",
@@ -2351,6 +2629,22 @@
         btnLabel: "최후의 결단 열기"
       };
     }
+    if (career.tree === "chaos" || tags.includes("heretic")) {
+      return {
+        ok: true,
+        name: "공포의 눈 최후 약탈 원정 (생애 마감)",
+        desc: "남은 워밴드를 이끌고 대균열 심연으로 마지막 항해에 나서 배교의 연대기를 완결한다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
+    if (career.tree === "living_saint" || tags.includes("living_saint")) {
+      return {
+        ok: true,
+        name: "황금 성광으로의 승화 (생애 마감)",
+        desc: "필멸의 은하에 기적의 빛을 남기고 황금 옥좌의 부름에 응해 성광 속으로 영원히 승화한다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
     if (career.tree === "custodes" || tags.includes("custodes")) {
       return {
         ok: true,
@@ -2375,19 +2669,35 @@
         btnLabel: "최후의 결단 열기"
       };
     }
+    if (career.tree === "imperial_knight" || tags.includes("imperial_knight")) {
+      return {
+        ok: true,
+        name: "스론 메카니쿰 영원한 안치 (생애 마감)",
+        desc: "후계자에게 기사 갑주와 가문의 맹세를 물려주고 선조들의 기억 속으로 명예롭게 합일한다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
+    if (career.tree === "officio_assassinorum" || tags.includes("assassin")) {
+      return {
+        ok: true,
+        name: "테라 비밀 신전 영구 동면 (생애 마감)",
+        desc: "모든 표적 장부를 봉인하고 이름 없는 정지장 관 속으로 들어가 영원한 침묵의 휴식에 든다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
+    if (career.tree === "navis_navigator" || tags.includes("navigator")) {
+      return {
+        ok: true,
+        name: "항법사 성소 최후의 성도 봉헌 (생애 마감)",
+        desc: "일생 동안 측량한 워프 항로와 성도를 가문 대서고에 남기고 파테르노바의 품으로 물러난다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
     if (career.tree === "mechanicus" || tags.includes("magos")) {
       return {
         ok: true,
         name: "대서고 데이터 합일 승화 (생애 마감)",
         desc: "축적한 지식과 기억을 기계교 성소 코지테이터에 영구 이관하고 옴니시아의 품으로 든다.",
-        btnLabel: "최후의 결단 열기"
-      };
-    }
-    if (career.tree === "chaos" || tags.includes("heretic")) {
-      return {
-        ok: true,
-        name: "공포의 눈 최후 약탈 원정 (생애 마감)",
-        desc: "남은 워밴드를 이끌고 대균열 심연으로 마지막 항해에 나서 배교의 연대기를 완결한다.",
         btnLabel: "최후의 결단 열기"
       };
     }
@@ -2416,6 +2726,18 @@
       retireLabel = "물질 우주를 뒤로하고 워프 심연의 위대한 게임으로 영구 승천한다 (영혼의 전당 등재)";
       retireText = "현실의 막 너머로 걸어 들어간 그대의 이름은 오르도 말레우스 금서고에 영원한 재앙으로 각인되었다.";
       retireCause = `향년 ${state.age}세, 물질 우주의 연대기를 마치고 워프 심연의 위대한 게임으로 영구 승천`;
+    } else if (career.tree === "chaos" || tags.includes("heretic")) {
+      title = "생애의 갈무리 — 공포의 눈 최후 원정";
+      text = `${state.age}세에 이른 배교자 [${titleStr}]은(는) 이미 은하에 지워지지 않을 피의 흔적을 남겼다. 워밴드의 기함을 몰아 대균열의 가장 깊은 폭풍 속으로 최후의 약탈 원정을 떠나 연대기를 마감할 수 있다.`;
+      retireLabel = "대균열 심연으로 최후의 약탈 원정을 떠난다 (영혼의 전당 등재)";
+      retireText = "붉은 워프의 폭풍 속으로 사라진 그대의 기함은 훗날 제국 함대의 공포스러운 전설로만 전해졌다.";
+      retireCause = `향년 ${state.age}세, 대균열 심연으로 최후의 배신자 원정을 떠나 행방불명`;
+    } else if (career.tree === "living_saint" || tags.includes("living_saint")) {
+      title = "생애의 갈무리 — 황금 성광으로의 승화";
+      text = `${state.age}세의 세월 동안 어둠 속 전장을 밝혀 온 [${titleStr}] 위로 아스트로노미칸의 따스한 빛기둥이 내려앉았다. 지금 이 순간 필멸의 형상을 내려놓고 황제의 곁으로 돌아가, 언젠가 인류가 가장 절망할 때 다시 강림할 약속으로 남을 수 있다.`;
+      retireLabel = "찬란한 황금 성광 속으로 승화해 황제의 곁으로 돌아간다 (영혼의 전당 등재)";
+      retireText = "황금빛 깃털과 향기만 남긴 채 그대의 형상이 빛 속으로 녹아들었다. 모든 성당의 종이 저절로 울려 퍼졌다.";
+      retireCause = `향년 ${state.age}세, ${world.name} 전선 위에 황금 성광을 남기고 황제의 곁으로 영구 승화`;
     } else if (career.tree === "custodes" || tags.includes("custodes")) {
       title = "생애의 갈무리 — 황제의 눈으로 물러나다";
       text = `${state.age}세에 이른 쿠스토데스로서 반사 속도가 단 0.01초 무뎌졌음을 스스로 깨달았다. 만 명의 수호자 전통에 따라 황금 갑주와 가디언 스피어를 무기고에 반납하고, 제국 변방의 위협을 감시하는 '황제의 눈'으로 은퇴할 수 있다.`;
@@ -2434,18 +2756,30 @@
       retireLabel = "형제들에게 유산을 맡기고 최후의 영광스러운 성전에 출정한다 (영혼의 전당 등재)";
       retireText = "황제의 이름을 외치며 적진 한가운데로 돌격한 그대의 마지막 전투는 수천 년 동안 챕터의 서사시로 노래되었다.";
       retireCause = `향년 ${state.age}세, 최전선 최후의 성전에서 수많은 적을 쓰러뜨리고 영광스럽게 순직`;
+    } else if (career.tree === "imperial_knight" || tags.includes("imperial_knight")) {
+      title = "생애의 갈무리 — 스론 메카니쿰의 선조가 되다";
+      text = `${state.age}세에 이른 [${titleStr}]의 기사 갑주가 사크리스탄 성소로 돌아왔다. 젊은 후계자에게 고삐를 넘겨주고 스론 메카니쿰 속 선조들의 메아리로 영원히 자리 잡을 시간이다.`;
+      retireLabel = "후계자에게 기사 갑주를 물려주고 선조들의 기억 속으로 안식한다 (영혼의 전당 등재)";
+      retireText = "사크리스탄의 축성 종소리 속에 그대의 인장이 기사 갑주의 제단에 봉안되었고, 다음 세대 조종사의 정신 속에 그대의 지혜가 깃들었다.";
+      retireCause = `향년 ${state.age}세, 기사 가문 성소에 갑주를 봉납하고 스론 메카니쿰의 선조로 영면`;
+    } else if (career.tree === "officio_assassinorum" || tags.includes("assassin")) {
+      title = "생애의 갈무리 — 이름 없는 정지장 관의 침묵";
+      text = `${state.age}세의 세월 동안 제국의 적들을 그림자 속에서 지워 온 [${titleStr}]의 임무 장부가 마지막 줄에 다다랐다. 테라 비밀 신전의 영구 정지장 관에 몸을 눕혀 영원한 침묵으로 생애를 닫을 수 있다.`;
+      retireLabel = "표적 장부를 봉인하고 테라 비밀 신전의 영구 정지장 관에 든다 (영혼의 전당 등재)";
+      retireText = "차가운 정지장 뚜껑이 닫히며 어떤 공식 기록에도 남지 않은 위대한 암살자의 연대기가 완결되었다.";
+      retireCause = `향년 ${state.age}세, 오피시오 아사시노룸 비밀 신전의 영구 정지장 관에 안치되어 생애 마감`;
+    } else if (career.tree === "navis_navigator" || tags.includes("navigator")) {
+      title = "생애의 갈무리 — 최후의 워프 성도 봉헌";
+      text = `${state.age}세의 세월 동안 아스트로노미칸의 빛을 따라 은하를 가로질러 온 [${titleStr}]의 제3의 눈이 깊은 평온을 맞았다. 가문 대서고에 모든 항로 성도를 봉헌하고 항법사 궁정에서 조용히 눈을 감을 수 있다.`;
+      retireLabel = "가문 대서고에 워프 성도를 봉헌하고 명예롭게 은퇴한다 (영혼의 전당 등재)";
+      retireText = "그대가 남긴 황금 항로도는 수백 년 동안 제국 함대와 상선들을 워프의 폭풍에서 지켜 냈다.";
+      retireCause = `향년 ${state.age}세, 나비스 노빌리테 대서고에 최후의 성도를 봉헌하고 파테르노바의 품으로 영면`;
     } else if (career.tree === "mechanicus" || tags.includes("magos")) {
       title = "생애의 갈무리 — 대서고 데이터 합일 의식";
       text = `${state.age}세 동안 축적한 연산 기록과 지식의 총합이 임계점에 도달했다. 육신의 껍질을 내려놓고 화성 대서고의 신성한 코지테이터와 영구히 합일해 옴니시아의 기록으로 남을 수 있다.`;
       retireLabel = "기억과 지식을 대서고에 봉헌하고 옴니시아와 합일한다 (영혼의 전당 등재)";
       retireText = "이진법 찬가가 성소를 울리는 가운데 그대의 모든 지혜가 신성한 데이터 저장소에 영구 각인되었다.";
       retireCause = `향년 ${state.age}세, 기계교 대서고에 전 생애의 연산 기록을 봉헌하고 옴니시아와 합일`;
-    } else if (career.tree === "chaos" || tags.includes("heretic")) {
-      title = "생애의 갈무리 — 공포의 눈 최후 원정";
-      text = `${state.age}세에 이른 배교자 [${titleStr}]은(는) 이미 은하에 지워지지 않을 피의 흔적을 남겼다. 워밴드의 기함을 몰아 대균열의 가장 깊은 폭풍 속으로 최후의 약탈 원정을 떠나 연대기를 마감할 수 있다.`;
-      retireLabel = "대균열 심연으로 최후의 약탈 원정을 떠난다 (영혼의 전당 등재)";
-      retireText = "붉은 워프의 폭풍 속으로 사라진 그대의 기함은 훗날 제국 함대의 공포스러운 전설로만 전해졌다.";
-      retireCause = `향년 ${state.age}세, 대균열 심연으로 최후의 배신자 원정을 떠나 행방불명`;
     }
 
     return {
@@ -2565,7 +2899,7 @@
       lines.push("평생을 겨루었던 숙명의 정적만이 그대의 부고 앞에서 말없이 모자를 벗고 잔을 기울였다.");
     }
 
-    const isSecretGuardian = tags.includes("grey_knight") || tags.includes("custodes") || tags.includes("sister_of_silence");
+    const isSecretGuardian = tags.includes("grey_knight") || tags.includes("custodes") || tags.includes("sister_of_silence") || tags.includes("assassin");
     if (alignInfo.dominant === "humane") {
       if (isSecretGuardian) {
         lines.push("이름조차 세상에 남길 수 없는 비밀의 사명 속에서도, 필멸의 생명을 아끼던 그대의 조용한 절제는 동료 형제들의 기억 속에 남았다.");
@@ -2662,7 +2996,15 @@
       }, "heretic");
     }
 
-    if (tags.includes("heretic") || state.corruption >= 65 || tags.includes("wanted_by_inquisition")) {
+    if (
+      tags.includes("heretic") ||
+      state.corruption >= 65 ||
+      (tags.includes("wanted_by_inquisition") &&
+        !tags.includes("high_lord_terra") &&
+        !tags.includes("living_saint") &&
+        !tags.includes("custodes") &&
+        !tags.includes("grey_knight"))
+    ) {
       return withEpilogue({
         rank: "EXCOMMUNICATE TRAITORIS",
         title: "이단 기록 말소 대상",
@@ -2682,6 +3024,26 @@
         rank: "SENATORUM IMPERIALIS — HIGH LORD OF TERRA",
         title: `테라의 하이 로드 · ${getCareerShortName(state.careerId)}`,
         verdict: "인류제국 100만 행성과 수천조 영혼의 운명을 황궁 의회에서 직접 재단했던 열두 지배자 가운데 한 명이었다. 황금 옥좌의 대리인으로서 남긴 칙령들은 수천 년 동안 제국의 법전으로 남았다."
+      });
+    }
+
+    if (tags.includes("living_saint") || state.careerId === "living_saint") {
+      const saintNoun = state.gender === "female" ? "성녀" : "성인";
+      const aspect = getLivingSaintAspect(state);
+      const isMercy = aspect === "mercy";
+      const isWrath = aspect === "wrath";
+      return withEpilogue({
+        rank: "IMPERIAL LIVING SAINT — GOLDEN APOTHEOSIS",
+        title: isMercy
+          ? `자비의 성광을 비춘 살아 있는 ${saintNoun}`
+          : isWrath
+          ? `심판의 불꽃을 내린 살아 있는 ${saintNoun}`
+          : `황금 날개의 살아 있는 ${saintNoun}`,
+        verdict: isMercy
+          ? "가장 깊은 어둠 속에서도 피난민과 부상병의 손을 놓지 않고 자비의 기적을 현현시켰던 불멸의 등불이었다. 인류가 다시 절망에 잠길 때 그대의 황금빛 날개가 어김없이 내려올 것이다."
+          : isWrath
+          ? "타협 없는 성광의 불길로 악마와 배교의 군세를 잿더미로 만들었던 황제의 살아 있는 심판자였다. 오펠리아 VII과 테라 대성당의 종이 그대의 이름을 영원히 기린다."
+          : `필멸의 한계를 넘어 황제의 기적을 전장에 직접 구현했던 살아 있는 ${saintNoun === "성녀" ? "성녀였다" : "성인이었다"}. 시노드 대성당의 황금 성인전 첫머리에 그대의 전설이 영구 봉안되었다.`
       });
     }
 
@@ -2738,6 +3100,71 @@
         rank: tags.includes("gk_supreme_master") ? "SUPREME GRAND MASTER OF TITAN" : "HALL OF CHAMPIONS — TITAN",
         title: tags.includes("gk_supreme_master") ? "타이탄의 불멸 슈프림 그랜드 마스터" : "타이탄 영웅의 전당 등재",
         verdict: "제국 시민 누구도 그대의 이름을 알지 못한다. 오직 토성의 위성 타이탄 지하 석벽만이 악마와 맞선 은빛 형제의 희생을 영원히 기억한다."
+      });
+    }
+
+    if (career.tree === "officio_assassinorum" || tags.includes("assassin")) {
+      const cladeLabel = tags.includes("clade_vindicare")
+        ? "빈디카레 템플의 유령 저격수"
+        : tags.includes("clade_callidus")
+        ? "칼리두스 템플의 천의 얼굴"
+        : tags.includes("clade_eversor")
+        ? "에버서 템플의 광폭한 심판자"
+        : tags.includes("clade_culexus")
+        ? "쿨렉수스 템플의 영혼 없는 파멸자"
+        : "오피시오 아사시노룸의 그림자 요원";
+      return withEpilogue({
+        rank: "OFFICIO ASSASSINORUM — REDACTED ARCHIVE",
+        title: cladeLabel,
+        verdict: "제국 공식 연대기 어디에도 그대의 이름은 남아 있지 않다. 그러나 단 한 발의 총성과 단 한 번의 잠입으로 무너진 반역 왕조의 폐허가 그대의 공훈을 영원히 증언한다."
+      });
+    }
+
+    if (career.tree === "imperial_knight" || tags.includes("imperial_knight")) {
+      if (tags.includes("knight_high_king") || state.careerId === "knight_high_king") {
+        const kingWord = state.gender === "female" ? "하이 퀸" : "하이 킹";
+        return withEpilogue({
+          rank: "HIGH MONARCH OF THE KNIGHT WORLD",
+          title: `기사 가문 대의회를 이끈 ${kingWord}`,
+          verdict: "수십 기의 임페리얼 나이트와 기사 행성의 명예를 어깨에 짊어졌던 불굴의 대군주였다. 그대의 기억과 기사도는 스론 메카니쿰의 가장 고귀한 메아리로 영원히 계승된다."
+        });
+      }
+      if (tags.includes("knight_freeblade") || state.careerId === "knight_freeblade") {
+        return withEpilogue({
+          rank: "LEGEND OF THE FREEBLADE",
+          title: "문장 없이 싸운 전설의 프리블레이드",
+          verdict: "가문의 울타리를 떠나 가장 절망적인 제국 전선마다 홀로 강림했던 방랑 기사였다. 그대가 구해 낸 행성들의 서사시 속에 이름 없는 거신의 전설이 남았다."
+        });
+      }
+      if (state.careerId === "knight_squire" && !tags.includes("knight_scion")) {
+        return withEpilogue({
+          rank: "HELM MECHANICUM — ARMIGER SQUIRE",
+          title: "헬름 메카니쿰에 서약한 기사 가문 종자",
+          verdict: "아미저의 리퍼 체인클리버와 이온 실드로 귀족 기사들의 측면을 엄호했던 충직한 종자였다. 비록 대기사 스론에 오르기 전에 생을 마감했으나, 가문의 종소리 속에 용맹한 서약의 이름이 새겨졌다."
+        });
+      }
+      return withEpilogue({
+        rank: "THRONE MECHANICUM — HONORED SCION",
+        title: "스론 메카니쿰에 새겨진 임페리얼 나이트",
+        verdict: "이온 실드와 리퍼 체인소드로 제국의 적진을 돌파했던 고귀한 기사였다. 사크리스탄 성소의 축성 종소리 속에 그대의 인장이 가문 제단에 영원히 봉안되었다."
+      });
+    }
+
+    if (career.tree === "navis_navigator" || tags.includes("nav_novator") || tags.includes("navis_officer")) {
+      const isNovator = tags.includes("nav_novator") || state.careerId === "nav_novator";
+      const isSenior = tags.includes("navis_officer") || state.careerId === "nav_senior";
+      return withEpilogue({
+        rank: isNovator ? "NOVATOR OF THE NAVIS NOBILITE" : isSenior ? "CHARTMASTER OF THE ASTRONOMICAN" : "APPRENTICE OF THE THIRD EYE",
+        title: isNovator
+          ? "은하 항로를 지배한 항법사 대가주 노바토르"
+          : isSenior
+          ? "아스트로노미칸의 빛을 읽은 선임 항법사"
+          : "제3의 눈으로 첫 성도를 열었던 견습 항법사",
+        verdict: isNovator
+          ? "수백 명의 항법사와 제국 성간 항로 지분을 통괄했던 나비스 노빌리테 대가문의 수장이었다. 그대가 개척한 황금 성도는 수세기 동안 제국 함대의 생명선이 되었다."
+          : isSenior
+          ? "제3의 눈으로 워프 폭풍을 꿰뚫으며 수많은 함선과 장병을 안전히 실우주로 인도했던 선임 항법사였다. 가문 대서고에 그대가 그린 성도가 영구 보존되었다."
+          : "가문 탑을 떠나 제3의 눈으로 워프의 조류를 처음 읽었던 젊은 견습 항법사였다. 짧은 항해 끝에 남긴 초안 성도가 가문 서고의 한쪽 구석에 경건히 보관되었다."
       });
     }
 
@@ -2901,6 +3328,7 @@
     if (world.id === "tanith") return "안개 삼림 행성";
     if (world.id === "nocturne") return "화산 장인 행성";
     if (world.id === "ophelia7") return "국교·수녀회 성지";
+    if (world.id === "generic_knight") return "봉건 기사 행성";
     return world.worldClass.split(" (")[0];
   }
 
@@ -3124,7 +3552,7 @@
     return DATA.WORLDS.filter((w) => {
       if (w.id === state.worldId) return false;
       if (w.destroyedYear && state.year >= w.destroyedYear) return false;
-      if (!w.named && w.id !== "voidborn") return false;
+      if (!w.named && w.id !== "voidborn" && w.id !== "generic_knight") return false;
       const dist = getSegmentumDistance(state.segmentum, w);
       if (profile.scope === "near" && dist.level === "far") return false;
       return true;
@@ -3502,6 +3930,7 @@
   function getContextualOptions(state) {
     const reqCtx = makeReqContext(state);
     const curCareer = getCareer(state.careerId);
+    const alignInfo = reqCtx.align || getAlignmentInfo(state);
     const history = state.careerHistory || [state.careerId];
     const declined = state.declinedCareers || {};
     const unlockedCareers = [];
@@ -3511,7 +3940,8 @@
     for (let i = 0; i < DATA.CAREERS.length; i++) {
       const c = DATA.CAREERS[i];
       if (!c.selectable || c.id === state.careerId) continue;
-      const eligible = checkReq(state, c.req, reqCtx);
+      const blocked = isCareerTransitionBlocked(state, c, curCareer, alignInfo);
+      const eligible = !blocked && checkReq(state, c.req, reqCtx);
       const alreadyHeld = history.includes(c.id);
       if (eligible && !alreadyHeld) {
         if (c.entryMode === "event") {
@@ -3546,6 +3976,7 @@
       .filter((c) => {
         if (history.includes(c.id)) return false;
         if (readyEventCareers.includes(c)) return false;
+        if (isCareerTransitionBlocked(state, c, curCareer, alignInfo)) return false;
         const r = c.req || {};
         if (r.gender && r.gender !== state.gender) return false;
         if (r.maxAge !== undefined && state.age > r.maxAge) return false;
@@ -3663,6 +4094,7 @@
     evaluateLifeGrade,
     createWarpAnomalyTransitEvent,
     createDynamicCareerOfferEvent,
+    createAssassinCladeEvent,
     getTravelProfile,
     evaluateTravelAttempt,
     getTravelCandidateWorlds,

@@ -189,7 +189,28 @@ window.IMPERIUM_DATA.TAG_LABELS = Object.assign(window.IMPERIUM_DATA.TAG_LABELS 
   // 3대 도덕 성향 정점 이력 태그 (16.5단계)
   align_beacon_mercy: "자비의 등불",
   align_iron_dogma: "교조의 심판자",
-  align_shadow_broker: "암흑가의 밀거래자"
+  align_shadow_broker: "암흑가의 밀거래자",
+
+  // 신규 4대 세력 · 12하이 로드 완비 · 기사 가문 · 리빙 세인트 태그 (17단계)
+  knight_blood: "기사 가문 혈통",
+  navis_officer: "선임 항법사",
+  nav_novator: "나비스 노바토르",
+  paternoval_envoy: "파테르노발 특사",
+  assassin: "오피시오 아사시노룸",
+  clade_vindicare: "빈디카레 템플",
+  clade_callidus: "칼리두스 템플",
+  clade_eversor: "에버서 템플",
+  clade_culexus: "쿨렉수스 템플",
+  grand_master_assassins: "암살청 총수",
+  imperial_knight: "임페리얼 나이트",
+  knight_scion: "퀘스토리스 기사",
+  knight_freeblade: "프리블레이드 방랑 기사",
+  knight_high_king: "기사 행성 대군주",
+  sacristan_oath: "기계교 사크리스탄 맹약",
+  saint_vessel: "기적의 그릇",
+  living_saint: "살아 있는 성인",
+  saint_mercy_aspect: "자비의 성광",
+  saint_wrath_aspect: "심판의 성광"
 });
 
 // 행성 유형 태그 한글 라벨 사전 (describeReq 표시용)
@@ -239,5 +260,8 @@ window.IMPERIUM_DATA.WORLD_TAG_LABELS = Object.assign(window.IMPERIUM_DATA.WORLD
   paradise: "낙원 행성",
   wealthy: "부유 행성",
   voidborn: "성간 함선",
-  navy: "제국 해군"
+  navy: "제국 해군",
+  knight_world: "기사 행성",
+  feudal: "봉건 기사령",
+  noble_house: "기사 대가문"
 });

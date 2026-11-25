@@ -1,4 +1,4 @@
-// 일상 연대기 — 유아기(1~5세) · 아동기(6~13세) 전 22개 행성 및 신분별 성장 기록
+// 일상 연대기 — 유아기(1~5세) · 아동기(6~13세) 전 23개 행성 및 신분별 성장 기록
 window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
 (window.IMPERIUM_DATA.CHRONICLES = window.IMPERIUM_DATA.CHRONICLES || []).push(
   {
@@ -895,5 +895,59 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { minAge: 6, maxAge: 13, anyWorlds: ["krieg"] },
     text: "강당 확성기에서 500년 내전의 죄과와 데스 코어 오브 크리그의 속죄 서약이 울려 퍼졌다. 모든 유년 개체가 한목소리로 복창했다.",
     effect: { faith: 2, stats: { WP: 1 } }
+  },
+  {
+    id: "ch_kid_knight_infant_1",
+    badge: "기사 행성 유아기",
+    priority: 3,
+    req: { minAge: 1, maxAge: 5, anyWorlds: ["generic_knight"] },
+    text: "석조 성채 밖 들판을 거대한 퀘스토리스 나이트 순찰대가 지나갈 때마다 요람이 쿵쿵 울렸다. 둔중한 강철 발소리와 멀리서 울리는 전장의 뿔피리 소리를 들으며 옹알이를 뗐다.",
+    effect: { stats: { T: 1, WP: 1 } },
+    source: "Codex: Imperial Knights / Lexicanum: Knight World"
+  },
+  {
+    id: "ch_kid_knight_infant_2",
+    badge: "기사 행성 유아기",
+    priority: 3,
+    req: { minAge: 1, maxAge: 5, anyWorlds: ["generic_knight"] },
+    text: "문장 깃발이 나부끼는 성채 안뜰에서 붉은 로브의 사크리스탄 수행원들이 황동 향로를 들고 지나가는 행렬을 바라보았다. 매캐한 성유와 기계 향기가 어릴 적부터 코끝에 배었다.",
+    effect: { faith: 2, stats: { Int: 1 } },
+    source: "Codex: Imperial Knights / Lexicanum: Sacristan"
+  },
+  {
+    id: "ch_kid_knight_infant_3",
+    badge: "기사 행성 유아기",
+    priority: 3,
+    req: { minAge: 1, maxAge: 5, anyWorlds: ["generic_knight"] },
+    text: "돌바닥 마당에 나무로 깎은 기사 인형과 채색 방패 조각을 늘어놓고 놀았다. 음유시인이 들려주는 옛 기사와 거대 괴수 사냥 이야기를 들으며 첫 걸음마를 뗐다.",
+    effect: { stats: { Fel: 1, WS: 1 } },
+    source: "Codex: Imperial Knights / Lexicanum: Knight World"
+  },
+  {
+    id: "ch_kid_knight_child_1",
+    badge: "기사 행성 유년기",
+    priority: 3,
+    req: { minAge: 6, maxAge: 13, anyWorlds: ["generic_knight"] },
+    text: "성채 마상 경기장 관람석에서 젊은 아미저 기체들의 모의 비무 경기를 지켜보았다. 푸른빛 이온 실드가 연습 포탄을 튕겨 내는 장면에서 한참 동안 눈을 떼지 못했다.",
+    effect: { stats: { WS: 1, BS: 1 } },
+    source: "Codex: Imperial Knights / Lexicanum: Armiger"
+  },
+  {
+    id: "ch_kid_knight_child_2",
+    badge: "기사 행성 유년기",
+    priority: 3,
+    req: { minAge: 6, maxAge: 13, anyWorlds: ["generic_knight"] },
+    text: "해 질 녘 성채 외곽 구릉지에서 목동들이 거대 야수 떼를 쇠울타리 안으로 몰아넣는 일을 거들었다. 봉건 변경의 거친 자연 속에서 일찍부터 담력과 발놀림이 단단해졌다.",
+    effect: { stats: { T: 1, Ag: 1 } },
+    source: "Codex: Imperial Knights / Lexicanum: Knight World"
+  },
+  {
+    id: "ch_kid_knight_child_3",
+    badge: "기사 행성 유년기",
+    priority: 3,
+    req: { minAge: 6, maxAge: 13, anyWorlds: ["generic_knight"] },
+    text: "성채 회랑에서 기록관이 낭송하는 기사도 규범과 스론 메카니쿰을 계승한 영웅들의 연대기를 귀 기울여 들었다. 명예와 예절, 그리고 서약의 무게가 자연스레 몸에 스며들었다.",
+    effect: { stats: { WP: 1, Fel: 1, Inf: 1 } },
+    source: "Codex: Imperial Knights / Lexicanum: Ritual of Becoming"
   }
 );

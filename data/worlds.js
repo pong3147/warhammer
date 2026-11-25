@@ -300,7 +300,7 @@ window.IMPERIUM_DATA.WORLDS = [
     source: "Lexicanum: Ophelia VII / Codex: Adepta Sororitas"
   },
 
-  // ===== 일반 제국 행성 유형 6종 (100만 행성 인구 가중치 반영!) =====
+  // ===== 일반 제국 행성 유형 7종 (100만 행성 인구 가중치 반영 · 총 23개 행성!) =====
   {
     id: "generic_hive",
     name: "제국 하이브 월드",
@@ -433,5 +433,24 @@ window.IMPERIUM_DATA.WORLDS = [
     astartesChapter: null,
     desc: "단 한 번도 행성의 흙을 밟아 보지 못한 채 수 세대에 걸쳐 거대 우주선과 궤도 정거장에서 태어나고 죽는 별의 아이들.",
     source: "Lexicanum: Voidborn / Imperium Maledictum Core"
+  },
+  {
+    id: "generic_knight",
+    name: "임페리얼 나이트 기사 행성",
+    en: "Imperial Knight World",
+    named: false,
+    segmentum: "random",
+    worldClass: "기사 행성 (Knight World)",
+    classCode: "κ-Class",
+    population: "1억 ~ 15억",
+    spawnWeight: 4,
+    baseLifeExpectancy: 58,
+    annualHazard: 0.013,
+    statMods: { WS: 6, WP: 5, Fel: 4, Inf: 4, Int: -2 },
+    tags: ["knight_world", "feudal", "noble_house"],
+    guardRegiment: "기사 가문 시종 보병대 (Household Guard)",
+    astartesChapter: null,
+    desc: "기술의 암흑기 유산인 거대 보행 병기 '임페리얼 나이트'를 세습하는 기사 대가문들이 다스리는 봉건 행성. 고성 첨탑과 사크리스탄 성소가 어우러지며 명예와 기사도가 생사를 가른다.",
+    source: "Lexicanum: Knight World / Codex: Imperial Knights"
   }
 ];

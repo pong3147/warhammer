@@ -1000,11 +1000,16 @@
     // 1. 지금 지원 가능한 진로/승급 + 발탁 이벤트 대기 안내 (변경 시에만 재렌더 + 포커스 복원)
     const cWrap = $("#auto-careers-wrap");
     const readyOffers = ctx.readyEventCareers || [];
+    const displayTagsSig = (state.tags || [])
+      .filter((t) => t.startsWith("clade_") || t === "saint_mercy_aspect" || t === "saint_wrath_aspect")
+      .join(",");
     const careersSig = [
       busy ? "1" : "0",
       state.careerId,
       state.chapterId || "",
       state.homeWorldId || "",
+      Engine.getAlignmentInfo(state).dominant,
+      displayTagsSig,
       readyOffers.map((c) => c.id).join(","),
       ctx.unlockedCareers.map((c) => c.id).join(","),
       ctx.nearCareers.map((c) => c.id).join(",")
@@ -1125,7 +1130,7 @@
       }
     }
 
-    // 3. 계급 기반 성간 이동 / 파견 청원 (드롭다운 포커스 유실 방지를 위한 부분 갱신)
+    // 3. 계급 기반 성간 이동 / 파견 청원 (드롭다운·버튼 포커스 유실 방지를 위한 부분 갱신 및 복원)
     const tWrap = $("#auto-travel-wrap");
     const tp = ctx.travelProfile;
     lastTravelProfile = tp;
@@ -1133,6 +1138,8 @@
     if (!tp.canAttempt || ctx.travelWorlds.length === 0) {
       const emptyTravelSig = `EMPTY|${tp.authority}|${tp.reason || ""}`;
       if (lastTravelSignature !== emptyTravelSig) {
+        const activeEl = document.activeElement;
+        const wasTravelFocused = Boolean(activeEl && tWrap.contains(activeEl));
         lastTravelSignature = emptyTravelSig;
         tWrap.innerHTML = `
           <div class="empty-hint-box">
@@ -1141,18 +1148,29 @@
             <div class="travel-note">※ 직접 청원하지 않아도 시간이 흐르면 상황에 맞는 파견·순례 이벤트가 자연스럽게 찾아온다.</div>
           </div>
         `;
+        if (wasTravelFocused && !busy) {
+          const fallback = $("#heading-auto") || $("#recent-chronicle-heading");
+          if (fallback) {
+            fallback.focus();
+            if (!suppressAutoFocusNotice) {
+              pendingFocusShiftNote = "이동 청원 목록이 비활성화되어 자율 선택 구역 제목으로 초점을 옮겼다.";
+            }
+          }
+        }
       }
     } else {
       if (!selectedTravelWorldId || !ctx.travelWorlds.some((w) => w.id === selectedTravelWorldId)) {
         selectedTravelWorldId = ctx.travelWorlds[0].id;
       }
-      const sig = `${tp.authority}|${ctx.travelWorlds.map((w) => w.id).join(",")}`;
+      const sig = `${busy ? "1" : "0"}|${tp.authority}|${ctx.travelWorlds.map((w) => w.id).join(",")}`;
       const existingSel = $("#sel-travel-world");
 
       if (existingSel && lastTravelSignature === sig) {
         existingSel.value = selectedTravelWorldId;
         updateTravelPreview(selectedTravelWorldId);
       } else {
+        const activeEl = document.activeElement;
+        const focusedTravelId = activeEl && tWrap.contains(activeEl) && activeEl.id ? activeEl.id : null;
         lastTravelSignature = sig;
         const evalMap = new Map();
         ctx.travelWorlds.forEach((w) => evalMap.set(w.id, Engine.evaluateTravelAttempt(state, w.id)));
@@ -1182,6 +1200,19 @@
             <div class="travel-note">※ 높은 계급일수록 승인율이 오르며, 최고위 지휘관·하이 로드·행성 총독·로그 트레이더는 즉시 출항할 수 있다.</div>
           </div>
         `;
+
+        if (focusedTravelId && !busy) {
+          const sameCtrl = $(`#${focusedTravelId}`);
+          const restored = (sameCtrl && !sameCtrl.disabled)
+            ? sameCtrl
+            : ($("#sel-travel-world") || $("#heading-auto") || $("#recent-chronicle-heading"));
+          if (restored) {
+            restored.focus();
+            if (!sameCtrl && !suppressAutoFocusNotice) {
+              pendingFocusShiftNote = "성간 이동 목록이 갱신되어 초점을 다시 맞췄다.";
+            }
+          }
+        }
       }
     }
 

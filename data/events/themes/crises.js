@@ -65,8 +65,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
-        "dreadnought", "grey_knight", "custodes",
-        "high_lord_terra", "chapter_master", "planetary_governor", "sector_lord", "warmaster"
+        "dreadnought", "grey_knight", "custodes", "living_saint", "assassin",
+        "high_lord_terra", "chapter_master", "planetary_governor", "sector_lord", "warmaster",
+        "knight_high_king", "nav_novator"
       ]
     },
     reqLabel: "745.M41 이후 · 16세 이상 · 울티마·템페스투스·파시피쿠스 · 비야만 행성",
@@ -124,9 +125,9 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       ],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
-        "custodes", "grey_knight", "dreadnought",
+        "custodes", "grey_knight", "dreadnought", "living_saint", "assassin",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "chapter_master",
-        "cardinal", "fabricator_general", "fabricator_locum"
+        "cardinal", "fabricator_general", "fabricator_locum", "knight_high_king", "nav_novator"
       ]
     },
     reqLabel: "16세 이상 · 아마겟돈·발할라 또는 제국 무장 인원",
@@ -482,12 +483,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 15,
       anyWorldTags: ["hive"],
       excludeTags: [
-        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought", "living_saint", "assassin",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
         "commissar_general", "lord_inquisitor", "inquisitor", "cardinal", "canoness",
         "fabricator_locum", "fabricator_general", "magos", "navy_admiral", "arbites_marshal",
-        "departmento_head", "rt_lord_captain"
+        "departmento_head", "rt_lord_captain", "knight_high_king", "nav_novator"
       ]
     },
     reqLabel: "15세 이상 · 하이브 월드 거주자 · 필멸자",

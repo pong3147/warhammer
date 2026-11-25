@@ -255,6 +255,10 @@ const producedTags = new Set([
   "imperial_nihilus",
   "bionic",
   "rejuvenat",
+  "clade_vindicare",
+  "clade_callidus",
+  "clade_eversor",
+  "clade_culexus",
   ...DATA.ORIGINS.flatMap((o) => o.tags || []),
   ...DATA.TRAITS.flatMap((t) => t.tags || []),
   ...DATA.CAREERS.flatMap((c) => (c.onJoin && c.onJoin.addTags) || []),
@@ -642,8 +646,8 @@ for (const ch of DATA.CHRONICLES) {
     fail(4, `Penance failed to shift ruthless(-3) / dogmatic(+1): ${JSON.stringify(ruth.alignment)}`);
   }
 
-  // Red-Team regression: Custodes & Grey Knight remain incorruptible even under forbidden focus
-  for (const [cid, tag] of [["adeptus_custodes", "custodes"], ["grey_knight", "grey_knight"]]) {
+  // Red-Team regression: Custodes, Grey Knight & Living Saint remain incorruptible even under forbidden focus
+  for (const [cid, tag] of [["adeptus_custodes", "custodes"], ["grey_knight", "grey_knight"], ["living_saint", "living_saint"]]) {
     const inc = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "terra_high_blood", traitId: "none", eraId: "armageddon", gender: "male" });
     inc.age = 40;
     inc.careerId = cid;
@@ -660,9 +664,106 @@ for (const ch of DATA.CHRONICLES) {
       fail(4, `Incorruptible ${cid} gained corruption under forbidden focus (alive=${inc.alive}, corr=${inc.corruption})`);
     }
   }
+
+  // Stage 17: Officio Assassinorum clade choice (normal & blank -> Culexus + real attemptCareerChange auto-open + isolation), Living Saint real acceptCareerOffer & aspect SSOT, Knight High Queen title & generic_knight travel
+  {
+    const assNorm = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "schola_progenium", traitId: "none", eraId: "armageddon", gender: "female" });
+    assNorm.age = 16;
+    assNorm.stats = { WS: 50, BS: 52, T: 45, Ag: 99, Int: 45, WP: 52, Fel: 40, Inf: 35 };
+    const origRand = Math.random;
+    Math.random = () => 0.1; // guarantee trialCheck pass
+    let joinRes;
+    try {
+      joinRes = Engine.attemptCareerChange(assNorm, "assassin_initiate");
+    } finally {
+      Math.random = origRand;
+    }
+    if (!joinRes || !joinRes.ok || !assNorm.pendingEvent || !(assNorm.pendingEvent.id || "").startsWith("dyn_assassin_clade_")) {
+      fail(4, `attemptCareerChange(assassin_initiate) did not auto-open dyn_assassin_clade event`);
+    }
+    Engine.resolvePendingChoice(assNorm, 0);
+    if (!assNorm.tags.includes("clade_vindicare")) {
+      fail(4, `Resolving Vindicare choice did not grant clade_vindicare tag`);
+    }
+    // Isolation check: assassin must be blocked from manual non-assassin career change
+    assNorm.age = 20;
+    assNorm.stats = { WS: 70, BS: 70, T: 70, Ag: 70, Int: 70, WP: 70, Fel: 70, Inf: 70 };
+    const escRes = Engine.attemptCareerChange(assNorm, "commissar");
+    if (escRes.ok) {
+      fail(4, `Assassin initiate was allowed to escape into commissar via attemptCareerChange`);
+    }
+
+    const assBlank = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "schola_progenium", traitId: "blank", eraId: "armageddon", gender: "male" });
+    assBlank.age = 16;
+    assBlank.stats = { WS: 50, BS: 50, T: 45, Ag: 56, Int: 45, WP: 52, Fel: 30, Inf: 35 };
+    const culexEv = Engine.createAssassinCladeEvent(assBlank);
+    if (!culexEv || !culexEv.choices.some((ch) => ch.effect && (ch.effect.addTags || []).includes("clade_culexus"))) {
+      fail(4, `Blank assassin initiate was not offered Culexus clade`);
+    }
+
+    // Living Saint real acceptCareerOffer + aspect priority SSOT (wrath tag overrides humane alignment consistently)
+    const snt = Engine.createCharacter({ mode: "custom", worldId: "ophelia7", originId: "ecclesiarchy_novice", traitId: "emperor_blessed", eraId: "armageddon", gender: "female" });
+    snt.age = 36;
+    snt.careerId = "saint_vessel";
+    snt.tags.push("saint_vessel", "living_miracle", "align_beacon_mercy");
+    snt.faith = 97;
+    snt.corruption = 0;
+    snt.alignment = { humane: 70, dogmatic: 10, ruthless: 0 };
+    snt.stats = { WS: 75, BS: 65, T: 65, Ag: 65, Int: 70, WP: 99, Fel: 82, Inf: 75 };
+    const sntOffer = Engine.createDynamicCareerOfferEvent(snt, null, { forceOffer: true, targetCareerId: "living_saint" });
+    if (!sntOffer || sntOffer.offeredCareerId !== "living_saint") {
+      fail(4, `createDynamicCareerOfferEvent failed to offer living_saint to eligible saint_vessel`);
+    }
+    snt.pendingEvent = sntOffer;
+    Math.random = () => 0.1;
+    try {
+      Engine.resolvePendingChoice(snt, 0);
+    } finally {
+      Math.random = origRand;
+    }
+    if (snt.careerId !== "living_saint" || !snt.tags.includes("living_saint") || !snt.tags.includes("transhuman")) {
+      fail(4, `Resolving living_saint offer did not transition cleanly via applyCareerJoinEffects`);
+    }
+    // Check explicit wrath tag beats humane dominant across title, action, and obituary
+    snt.tags.push("saint_wrath_aspect");
+    const wrathTitle = Engine.getCareerDisplayTitle(snt);
+    const wrathAct = Engine.getCareerAction(snt);
+    const wrathGrade = Engine.evaluateLifeGrade(snt);
+    if (!wrathTitle.includes("심판의 성광") || !wrathAct.name.includes("심판의 성광") || !wrathGrade.title.includes("심판의 불꽃")) {
+      fail(4, `Living Saint aspect priority mismatch: title="${wrathTitle}", act="${wrathAct && wrathAct.name}", obit="${wrathGrade.title}"`);
+    }
+    snt.tags = snt.tags.filter((t) => t !== "saint_wrath_aspect");
+    snt.tags.push("saint_mercy_aspect");
+    const sntGrade = Engine.evaluateLifeGrade(snt);
+    if (!sntGrade.rank.includes("LIVING SAINT")) {
+      fail(4, `Living Saint obituary rank mismatch: ${sntGrade.rank}`);
+    }
+    const sntTitle = Engine.getCareerDisplayTitle(snt);
+    if (!sntTitle.includes("살아 있는 성녀") || !sntTitle.includes("자비의 성광")) {
+      fail(4, `Female humane Living Saint display title mismatch: "${sntTitle}"`);
+    }
+    snt.age = 60;
+    if (!Engine.canRetireHonorably(snt).ok) {
+      fail(4, `Tier 6 Living Saint at age 60 should qualify for honorable ending`);
+    }
+
+    // Knight High Queen gender display title & generic_knight travel candidate
+    const kq = Engine.createCharacter({ mode: "custom", worldId: "generic_knight", originId: "knight_house", traitId: "none", eraId: "armageddon", gender: "female" });
+    kq.age = 42;
+    kq.careerId = "knight_high_king";
+    kq.tags.push("knight_high_king", "imperial_knight");
+    const kqTitle = Engine.getCareerDisplayTitle(kq);
+    if (!kqTitle.includes("하이 퀸")) {
+      fail(4, `Female knight_high_king display title mismatch: "${kqTitle}"`);
+    }
+    const travFromTerra = Engine.getTravelCandidateWorlds(gen);
+    if (!travFromTerra.some((w) => w.id === "generic_knight")) {
+      fail(4, `generic_knight missing from getTravelCandidateWorlds`);
+    }
+  }
 }
 
-console.log(`[Gate 4] Integrity, 78-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & guards verified.`);
+console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17 guards verified.`);
 
 // ============================================================================
 // Gate 5: 소프트락 · 유년기 풀(22행성 각 4+) · fastChildhood · 2400로그 보존 · 중복률
@@ -802,9 +903,12 @@ if (DEEP_MODE) {
 
     const effTags = new Set([...baseTags, ...careerPermTags(curr)]);
     const effTranshuman = baseTranshuman || Boolean(curr.isTranshuman) ||
-      effTags.has("astartes") || effTags.has("custodes") || effTags.has("grey_knight") || effTags.has("daemon_prince");
+      effTags.has("astartes") || effTags.has("custodes") || effTags.has("grey_knight") || effTags.has("daemon_prince") || effTags.has("living_saint");
 
-    if ((effTags.has("custodes") || effTags.has("grey_knight")) && target.tree === "chaos") return false;
+    if ((effTags.has("custodes") || effTags.has("grey_knight") || effTags.has("living_saint")) && target.tree === "chaos") return false;
+    if (effTags.has("assassin") && target.tree !== "officio_assassinorum" && target.tree !== "chaos") return false;
+    if (effTags.has("living_saint") && target.tree !== "living_saint") return false;
+    if (effTags.has("navigator") && ["astartes", "grey_knights", "custodes", "sororitas"].includes(target.tree)) return false;
 
     // 1) Manual open transition
     if (target.selectable && target.entryMode === "open") {
@@ -824,7 +928,7 @@ if (DEEP_MODE) {
             if (target.tier >= curr.tier) return true;
           } else {
             const tierOk = target.tier >= curr.tier || target.tree === "chaos";
-            const lateralOk = target.entryMode === "event" || target.tree === "chaos" || Boolean(target.isTranshuman);
+            const lateralOk = target.entryMode === "event" || target.tree === "chaos" || Boolean(target.isTranshuman) || Boolean(target.allowLateralOffer);
             if (tierOk && lateralOk) return true;
           }
         }
@@ -851,7 +955,7 @@ if (DEEP_MODE) {
     const startGender = start.req && start.req.gender ? start.req.gender : null;
     const startTags = careerPermTags(start);
     const startTranshuman = Boolean(start.isTranshuman) ||
-      startTags.has("astartes") || startTags.has("custodes") || startTags.has("grey_knight") || startTags.has("daemon_prince");
+      startTags.has("astartes") || startTags.has("custodes") || startTags.has("grey_knight") || startTags.has("daemon_prince") || startTags.has("living_saint");
 
     const visited = new Set([start.id]);
     const queue = [start];
@@ -878,7 +982,16 @@ if (DEEP_MODE) {
     ["adeptus_custodes", "daemon_prince", false],
     ["grey_knight", "renegade_marine", false],
     ["adepta_sororitas", "astartes_brother", false],
-    ["astartes_brother", "planetary_governor", false]
+    ["astartes_brother", "planetary_governor", false],
+    ["nav_apprentice", "paternoval_envoy", true],
+    ["nav_apprentice", "adeptus_custodes", false],
+    ["nav_apprentice", "astartes_scout", false],
+    ["assassin_initiate", "grand_master_of_assassins", true],
+    ["assassin_initiate", "commissar", false],
+    ["assassin_initiate", "inquisition_acolyte", false],
+    ["knight_squire", "knight_high_king", true],
+    ["adepta_sororitas", "living_saint", true],
+    ["living_saint", "chaos_cultist", false]
   ];
   for (const [fromId, toId, expected] of graphChecks) {
     const actual = reachableFrom.has(fromId) && reachableFrom.get(fromId).has(toId);
@@ -1313,6 +1426,10 @@ const milestones = {
   astartes: 0,
   custodes: 0,
   greyKnight: 0,
+  navigator: 0,
+  assassin: 0,
+  knight: 0,
+  livingSaint: 0,
   chaos: 0,
   daemonPrince: 0
 };
@@ -1361,11 +1478,15 @@ for (const foc of focuses) {
       if (st.tags.includes("astartes")) milestones.astartes++;
       if (st.tags.includes("custodes")) milestones.custodes++;
       if (st.tags.includes("grey_knight")) milestones.greyKnight++;
+      if (st.tags.includes("navigator")) milestones.navigator++;
+      if (st.tags.includes("assassin")) milestones.assassin++;
+      if (st.tags.includes("imperial_knight")) milestones.knight++;
+      if (st.tags.includes("living_saint")) milestones.livingSaint++;
       if (st.tags.includes("heretic") || st.tags.includes("chaos_aligned")) { milestones.chaos++; heretic++; }
       if (st.tags.includes("daemon_prince")) milestones.daemonPrince++;
     }
     allAges.push(st.age);
-    if (!st.tags.includes("astartes") && !st.tags.includes("custodes") && !st.tags.includes("rejuvenat") && !st.tags.includes("daemon_prince")) {
+    if (!st.tags.includes("astartes") && !st.tags.includes("custodes") && !st.tags.includes("rejuvenat") && !st.tags.includes("daemon_prince") && !st.tags.includes("living_saint") && !st.tags.includes("navigator")) {
       mortalAges.push(st.age);
     }
     if (!/노환|고령|수명/.test(st.deathCause || "")) violent++;
@@ -1418,6 +1539,7 @@ if (DEEP_MODE) {
     `T4+=${tierReached[4]}, T5+=${tierReached[5]}, T6=${tierReached[6]} | ` +
     `HighLord=${milestones.highLord}, Gov=${milestones.governor}, RT=${milestones.rogueTrader}, ` +
     `Astartes=${milestones.astartes}, Custodes=${milestones.custodes}, GK=${milestones.greyKnight}, ` +
+    `Nav=${milestones.navigator}, Ass=${milestones.assassin}, Knight=${milestones.knight}, Saint=${milestones.livingSaint}, ` +
     `Chaos=${milestones.chaos}, DaemonPrince=${milestones.daemonPrince}`
   );
 

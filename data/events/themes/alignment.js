@@ -12,8 +12,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight",
-        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "assassin",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "knight_high_king", "nav_novator",
         "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"
       ],
       excludeWorldTags: ["feral", "krieg"]
@@ -66,8 +66,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight",
-        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "assassin",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "knight_high_king", "nav_novator",
         "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"
       ],
       excludeWorldTags: ["feral", "krieg"]
@@ -126,8 +126,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: {
       minAge: 14,
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight",
-        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "assassin",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "knight_high_king", "nav_novator",
         "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"
       ],
       excludeWorldTags: ["feral", "krieg"]
@@ -177,7 +177,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     alignBias: "humane",
     req: {
       minAge: 14,
-      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"],
+      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "assassin", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "knight_high_king", "nav_novator", "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"],
       excludeWorldTags: ["feral", "krieg"]
     },
     reqLabel: "성인 14세+",
@@ -244,8 +244,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAlign: { humane: 20 },
       anyDominantAlign: ["humane"],
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight",
-        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "assassin",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "knight_high_king", "nav_novator",
         "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"
       ],
       excludeWorldTags: ["feral", "krieg"]
@@ -300,9 +300,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAlign: { humane: 20 },
       anyDominantAlign: ["humane"],
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "assassin",
         "inquisitor", "lord_inquisitor", "high_lord_terra", "warmaster",
-        "sector_lord", "planetary_governor", "rogue_trader", "rt_lord_captain",
+        "sector_lord", "planetary_governor", "knight_high_king", "nav_novator",
+        "rogue_trader", "rt_lord_captain",
         "fabricator_locum", "fabricator_general", "cardinal", "canoness",
         "magos", "heretic", "chaos_aligned", "daemon_prince"
       ]
@@ -1149,9 +1150,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAlign: { ruthless: 20 },
       anyDominantAlign: ["ruthless"],
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince",
+        "astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince", "living_saint", "assassin",
         "heretic", "chaos_aligned", "high_lord_terra", "warmaster",
-        "sector_lord", "planetary_governor", "inquisitor", "lord_inquisitor", "chapter_master"
+        "sector_lord", "planetary_governor", "knight_high_king", "nav_novator",
+        "inquisitor", "lord_inquisitor", "chapter_master"
       ],
       excludeWorldTags: ["feral", "krieg"]
     },
@@ -1210,7 +1212,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 18,
       minAlign: { ruthless: 30 },
       anyDominantAlign: ["ruthless"],
-      excludeTags: ["align_shadow_broker", "astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince"],
+      excludeTags: ["align_shadow_broker", "astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince", "living_saint", "assassin", "high_lord_terra", "knight_high_king", "nav_novator"],
       excludeWorldTags: ["feral", "krieg"]
     },
     reqLabel: "암흑 30+ · 주성향 암흑",

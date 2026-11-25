@@ -171,7 +171,7 @@ for (let i = 0; i < FUZZ_LIVES; i++) {
         Engine.resolvePendingChoice(st, chosen);
       }
 
-      if ((st.tags.includes("custodes") || st.tags.includes("grey_knight")) && st.corruption > 0) {
+      if ((st.tags.includes("custodes") || st.tags.includes("grey_knight") || st.tags.includes("living_saint")) && st.corruption > 0) {
         incorruptibleCorrupted++;
       }
     }
@@ -180,7 +180,7 @@ for (let i = 0; i < FUZZ_LIVES; i++) {
     if (st.age > maxAgeSeen) maxAgeSeen = st.age;
     if (st.age >= 300) {
       age300Plus++;
-      const hasLongevity = ["astartes", "custodes", "grey_knight", "daemon_prince", "dreadnought", "rejuvenat", "bionic", "transhuman"]
+      const hasLongevity = ["astartes", "custodes", "grey_knight", "daemon_prince", "dreadnought", "rejuvenat", "bionic", "transhuman", "navigator", "living_saint"]
         .some((t) => st.tags.includes(t));
       if (!hasLongevity) mortalOver300++;
     }
@@ -507,6 +507,7 @@ function runBehavioralUiA11yTests() {
   // Wrap Engine in a proxy so we can deterministically control getContextualOptions for focus edge-case assertions
   let customCareersOverride = null;
   let customActionsOverride = null;
+  let customTravelOverride = null;
   let forceNoEvents = false;
   const EngineProxy = Object.assign({}, Engine, {
     getContextualOptions(st) {
@@ -514,6 +515,10 @@ function runBehavioralUiA11yTests() {
       const patched = Object.assign({}, base);
       if (customCareersOverride !== null) patched.unlockedCareers = customCareersOverride;
       if (customActionsOverride !== null) patched.actions = customActionsOverride;
+      if (customTravelOverride !== null) {
+        patched.travelProfile = customTravelOverride.profile;
+        patched.travelWorlds = customTravelOverride.worlds;
+      }
       return patched;
     },
     advanceQuarter(st, opts) {
@@ -677,13 +682,45 @@ function runBehavioralUiA11yTests() {
     failures.push(`Action focus dropped to ${doc.activeElement && (doc.activeElement.id || doc.activeElement.tagName)} instead of #heading-auto when actions exhausted`);
   }
 
-  // Test 8: #btn-new-life moves focus to #start-heading
+  // Test 8: #auto-travel-wrap preserves #btn-travel-go focus across authority/world-list rerender and falls back to #heading-auto when disabled
+  const wTerra = Engine.getWorld("terra");
+  const wMars = Engine.getWorld("mars");
+  customTravelOverride = {
+    profile: { canAttempt: true, authority: "상부 전출 결재", actionLabel: "이동 청원" },
+    worlds: [wTerra, wMars]
+  };
+  stepBtn.click();
+  const travelBtn = elementsById.get("auto-travel-wrap").querySelector("#btn-travel-go");
+  if (!travelBtn) {
+    failures.push("UI behavioral test setup failed: #btn-travel-go not rendered");
+  } else {
+    travelBtn.focus();
+    customTravelOverride = {
+      profile: { canAttempt: true, authority: "자율 함대 출항", actionLabel: "즉시 출항" },
+      worlds: [wMars]
+    };
+    stepBtn.click();
+    if (!doc.activeElement || doc.activeElement.id !== "btn-travel-go") {
+      failures.push(`#auto-travel-wrap dropped #btn-travel-go focus on rerender (got ${doc.activeElement && (doc.activeElement.id || doc.activeElement.tagName)})`);
+    }
+    customTravelOverride = {
+      profile: { canAttempt: false, authority: "이동 제한", reason: "전시 봉쇄" },
+      worlds: []
+    };
+    stepBtn.click();
+    if (doc.activeElement !== elementsById.get("heading-auto")) {
+      failures.push(`#auto-travel-wrap dropped focus instead of falling back to #heading-auto when disabled (got ${doc.activeElement && (doc.activeElement.id || doc.activeElement.tagName)})`);
+    }
+  }
+  customTravelOverride = null;
+
+  // Test 9: #btn-new-life moves focus to #start-heading
   elementsById.get("btn-new-life").click();
   if (doc.activeElement !== elementsById.get("start-heading")) {
     failures.push("#btn-new-life did not move focus to #start-heading");
   }
 
-  // Test 9: #btn-clear-hall requires 2-step confirmation (1st click must NOT wipe Hall of Souls)
+  // Test 10: #btn-clear-hall requires 2-step confirmation (1st click must NOT wipe Hall of Souls)
   localStorageMock.setItem("imperium_vita_hall_v1", JSON.stringify([{ id: "soul_test_1", name: "영웅", age: 80 }]));
   const clearBtn = elementsById.get("btn-clear-hall");
   clearBtn.click();
@@ -698,6 +735,7 @@ function runBehavioralUiA11yTests() {
   // 2C. Deterministic #sr-live Listening Rhythm Telemetry (2 full-flow lives in real js/ui.js mini-DOM)
   customCareersOverride = null;
   customActionsOverride = null;
+  customTravelOverride = null;
   forceNoEvents = false;
   const activeEvWrap = elementsById.get("active-event-wrap");
   const utteranceLens = [];
@@ -775,8 +813,8 @@ function runBehavioralUiA11yTests() {
 const uiTestResult = runBehavioralUiA11yTests();
 uiRisks.push(...uiTestResult.failures);
 console.log(
-  `[UI-A11y Behavioral] tests=9, risks=${uiRisks.length}` +
-  `${uiRisks.length ? " -> " + uiRisks.join(" | ") : " (all 9 real js/ui.js career/action focus, prepend & confirm tests PASS)"}`
+  `[UI-A11y Behavioral] tests=10, risks=${uiRisks.length}` +
+  `${uiRisks.length ? " -> " + uiRisks.join(" | ") : " (all 10 real js/ui.js career/action/travel focus, prepend & confirm tests PASS)"}`
 );
 if (uiTestResult.listening) {
   const L = uiTestResult.listening;
@@ -824,5 +862,5 @@ if (hardFailures.length > 0) {
 }
 console.log(
   `HEALTH CHECK PASSED (seed=${SEED}, 0 crashes, 0 softlocks, 0 migrate failures, 0 unknown-ID warnings, ` +
-  `0 incorruptible leaks, retireExec=${age500RetireExecutedOK}/${age500Plus}, maxSave=${maxJsonKB}KB<=2048KB, 9/9 behavioral UI tests PASS).`
+  `0 incorruptible leaks, retireExec=${age500RetireExecutedOK}/${age500Plus}, maxSave=${maxJsonKB}KB<=2048KB, 10/10 behavioral UI tests PASS).`
 );

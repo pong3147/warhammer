@@ -112,7 +112,7 @@ window.IMPERIUM_DATA.ORIGINS = [
     id: "navigator_house",
     name: "나비스 노빌리테 (항해사 가문)",
     en: "Navis Nobilite",
-    weight: 0.7,
+    weight: 1.8,
     excludeWorlds: ["krieg"],
     excludeWorldTags: ["feral"],
     statMods: { WP: 14, Int: 10, Inf: 18, T: -5, Fel: -4 },
@@ -134,6 +134,19 @@ window.IMPERIUM_DATA.ORIGINS = [
     tags: ["noble", "terra_elite", "custodes_candidate"],
     desc: "황궁 인근 최상류 귀족 가문에서 태어난 영아. 극소수는 황금 갑주의 수호자, 아뎁투스 쿠스토데스의 연금술적 개조 후보로 바쳐진다.",
     source: "Codex: Adeptus Custodes"
+  },
+  {
+    id: "knight_house",
+    name: "임페리얼 나이트 기사 가문 직계",
+    en: "Imperial Knight House Scion",
+    weight: 18,
+    worldFilter: ["generic_knight"],
+    statMods: { WS: 8, WP: 8, Fel: 6, Inf: 16, T: 4 },
+    lifeMod: 18,
+    faithMod: 10,
+    tags: ["noble", "knight_blood", "wealthy"],
+    desc: "기사 행성의 요새 성채에서 선조의 나이트 아머를 계승할 운명을 안고 태어난 고귀한 기사 가문 직계 혈손. 어려서부터 검술과 마상 창술, 그리고 스론 메카니쿰의 명예 규율을 익힌다.",
+    source: "Lexicanum: Knight House / Codex: Imperial Knights"
   }
 ];
 

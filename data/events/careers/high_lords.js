@@ -1,4 +1,4 @@
-// 분기 사건 — 직군 계열: 테라의 하이 로드 (세나토룸 임페리알리스 10석 전용)
+// 분기 사건 — 직군 계열: 테라의 하이 로드 (세나토룸 임페리알리스 12석 공용 + 10석 전용)
 window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
 (window.IMPERIUM_DATA.EVENTS = window.IMPERIUM_DATA.EVENTS || []).push(
   {
@@ -17,12 +17,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         "lord_high_admiral",
         "grand_provost_marshal",
         "master_of_administratum",
-        "master_of_astronomicum"
+        "master_of_astronomicum",
+        "paternoval_envoy",
+        "grand_master_of_assassins"
       ]
     },
-    reqLabel: "직군: 테라의 하이 로드 (10석 공용)",
+    reqLabel: "직군: 테라의 하이 로드 (12석 공용)",
     weight: 38,
-    text: "황궁 심장부의 거대한 세나토룸 임페리알리스 원형 의사당이 팽팽한 침묵과 냉랭한 살기로 가득 찼다. 은하 변방 세 개 세그멘툼에서 동시다발적 침공이 보고되자, 새로운 대성전을 선포하고 100만 행성의 군수·병력 십일조를 일괄 증세하자는 긴급 안건이 상정된 것이다. 화성 파브리케이터와 아드미니스트라툼, 국교와 군부 의석 사이에서 수십억 필멸자의 운명을 저울질하는 험악한 수 싸움이 오간다. 이제 테라의 하이 로드로서 어떤 의결을 밀어붙일지 그대의 인장이 모든 방향을 가른다.",
+    text: "황궁 심장부의 거대한 세나토룸 임페리알리스 원형 의사당이 팽팽한 침묵과 냉랭한 살기로 가득 찼다. 은하 변방 세 개 세그멘툼에서 동시다발적 침공이 보고되자, 새로운 대성전을 선포하고 100만 행성의 군수·병력 십일조를 일괄 증세하자는 긴급 안건이 상정된 것이다. 화성 파브리케이터와 아드미니스트라툼, 국교와 군부, 항법사와 암살청 의석 사이에서 수십억 필멸자의 운명을 저울질하는 험악한 수 싸움이 오간다. 이제 테라의 하이 로드로서 어떤 의결을 밀어붙일지 그대의 인장이 모든 방향을 가른다.",
     choices: [
       {
         label: "[군사·집행 의석 전용 · 권위 판정] 육군·함대·황궁 근위·제국법의 합동 권한으로 즉각 징발령을 관철한다",
@@ -45,17 +47,18 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[신앙·심문 의석 전용 · 교섭 판정] 황제의 성호와 침묵의 사찰을 앞세워 성전 십일조의 신성한 의무를 선포한다",
+        label: "[신앙·심문·암살 의석 전용 · 교섭 판정] 황제의 성호와 침묵의 감시를 앞세워 성전 십일조의 신성한 의무를 선포한다",
         req: {
           anyCareers: [
             "abbess_sanctorum",
             "ecclesiarch",
-            "inquisitor_representative"
+            "inquisitor_representative",
+            "grand_master_of_assassins"
           ]
         },
         check: { stat: "Fel", diff: -20 },
         success: {
-          text: "대성전의 정당성이 신앙의 율법으로 승화되고, 배후에서 속삭이던 반대파 의석마저 심문소의 냉엄한 시선 앞에 꼬리를 내렸다. 은하 전역 대성당과 성역 평의회에서 자발적 헌납과 성전 열기가 타올랐다.",
+          text: "대성전의 정당성이 신앙의 율법으로 승화되고, 배후에서 속삭이던 반대파 의석마저 심문소와 그림자 의석의 냉엄한 시선 앞에 꼬리를 내렸다. 은하 전역 대성당과 성역 평의회에서 자발적 헌납과 성전 열기가 타올랐다.",
           stats: { Fel: 6, Inf: 5, WP: 3 },
           faith: 8
         },
@@ -66,12 +69,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         }
       },
       {
-        label: "[화성·행정·텔레파티카 의석 전용 · 지성 판정] 십일조 장부와 포지 생산량, 검은 함선 항로를 재연산해 지속 가능한 증세안을 통과시킨다",
+        label: "[화성·행정·항로 의석 전용 · 지성 판정] 십일조 장부와 포지 생산량, 워프 항로와 아스트로노미칸 조류를 재연산해 지속 가능한 증세안을 통과시킨다",
         req: {
           anyCareers: [
             "fabricator_general",
             "master_of_administratum",
-            "master_of_astronomicum"
+            "master_of_astronomicum",
+            "paternoval_envoy"
           ]
         },
         check: { stat: "Int", diff: -20 },
@@ -113,10 +117,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         "lord_high_admiral",
         "grand_provost_marshal",
         "master_of_administratum",
-        "master_of_astronomicum"
+        "master_of_astronomicum",
+        "paternoval_envoy",
+        "grand_master_of_assassins"
       ]
     },
-    reqLabel: "인도미투스 성전 이후(001.M42+) · 테라의 하이 로드 (10석 공용)",
+    reqLabel: "인도미투스 성전 이후(001.M42+) · 테라의 하이 로드 (12석 공용)",
     weight: 40,
     text: "시카트릭스 말레딕툼이 은하를 두 동강 낸 뒤, 1만 년의 잠에서 깨어난 제국 섭정 로부테 길리먼이 푸른 황금 갑주를 울리며 원로원 의장석 앞에 섰다. 프라이마크는 썩어 문드러진 행정 특권과 구시대적 법령을 혁파하고, 인도미투스 성전에 모든 역량을 집중할 대개혁 칙령을 내밀었다. 일부 보수파 하이 로드들이 비밀리에 '육두정치' 반발을 모의하며 그대에게 은밀한 눈길을 보내는 사이, 반신의 차갑고도 지친 눈동자가 그대를 정면으로 꿰뚫는다. 황제의 아들이 제시한 새 질서에 설 것인가, 1만 년 원로원의 전통을 수호할 것인가.",
     choices: [

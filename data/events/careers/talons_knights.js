@@ -334,7 +334,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         "chaos_aligned",
         "daemon_prince",
         "astartes",
-        "custodes"
+        "custodes",
+        "assassin",
+        "imperial_knight",
+        "living_saint",
+        "saint_vessel"
       ]
     },
     reqLabel: "여성 · 16~35세 · 블랭크 자질",

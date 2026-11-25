@@ -1,4 +1,4 @@
-// 일상 연대기 — 22개 행성(테라 · 네임드 15 · 무명 7 · 보이드본) 풍토 및 생활상
+// 일상 연대기 — 23개 행성(테라 · 네임드 15 · 무명 8 · 보이드본 포함) 풍토 및 생활상
 window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
 (window.IMPERIUM_DATA.CHRONICLES = window.IMPERIUM_DATA.CHRONICLES || []).push(
   {
@@ -657,5 +657,32 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { minAge: 14, anyWorlds: ["nocturne"] },
     text: "용암 강 너머로 붉은 노을이 지는 저녁, 성채 마을 대장간마다 쇠를 두드리는 망치 소리가 리듬처럼 울려 퍼졌다.",
     effect: { stats: { T: 1, Int: 1 } }
+  },
+  {
+    id: "ch_s17_world_knight_1",
+    badge: "봉건 성채의 종소리",
+    priority: 3,
+    req: { minAge: 14, anyWorlds: ["generic_knight"] },
+    text: "검은 절벽 위에 솟은 고성 첨탑마다 유서 깊은 기사 가문의 문장 깃발이 바람에 펄럭이고, 해 질 녘이면 성하 마을 전체에 묵직한 철종 소리가 울려 퍼진다. 제국법만큼이나 오래된 봉건 서약과 가문의 명예가 이곳의 일상을 빈틈없이 지배한다.",
+    effect: { stats: { Fel: 1, WP: 1 } },
+    source: "Codex: Imperial Knights / Lexicanum: Knight World"
+  },
+  {
+    id: "ch_s17_world_knight_2",
+    badge: "사크리스탄 성유 행렬",
+    priority: 3,
+    req: { minAge: 14, anyWorlds: ["generic_knight"] },
+    text: "사크리스탄 성소로 이어지는 돌길 위로 붉은 로브의 수호 사제들과 중량 운반 서비터들이 축성된 성유통과 이온 실드 예비 코일을 싣고 엄숙히 행진했다. 고딕 아치 사이로 메아리치는 이진법 찬송가가 기사 행성의 오래된 기술 맹약을 일깨웠다.",
+    effect: { stats: { Int: 1, T: 1 } },
+    source: "Codex: Imperial Knights / Lexicanum: Sacristan"
+  },
+  {
+    id: "ch_s17_world_knight_3",
+    badge: "임페리얼 나이트 출정 행군",
+    priority: 3,
+    req: { minAge: 14, anyWorlds: ["generic_knight"] },
+    text: "새벽 안개를 찢는 장엄한 뿔피리 소리와 함께 퀘스토리스 나이트 랜스와 호위 아미저 편대가 성채 거대 성문을 통과해 행군을 개시했다. 강철 발걸음마다 돌길이 흔들리는 위용 앞에서 광장에 모인 모든 이가 숨을 죽이고 경의를 표했다.",
+    effect: { stats: { WS: 1, WP: 1 }, faith: 1 },
+    source: "Codex: Imperial Knights / Lexicanum: Knight World"
   }
 );

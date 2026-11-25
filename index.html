@@ -67,8 +67,8 @@
             <p>제국의 인구 확률에 몸을 맡긴다. 행성·신분·시대에 맞는 연대기 기록과 자연스러운 선택지가 차례로 펼쳐진다.</p>
             <ul class="feature-list">
               <li>1년 = 30초 (1년 3분기 · 10초마다 새 기록이나 사건 전개)</li>
-              <li>17개 세력 78종 풀 계급도(하이 로드·총독·챕터 마스터·데몬 프린스) 및 발탁·평행 횡단 이벤트</li>
-              <li>22개 행성·직군·챕터·시기·3대 도덕 성향(자비·교조·암흑) 700종+ 연대기 및 630종+ 분기·역사 사건</li>
+              <li>21개 세력 91종 풀 계급도(하이 로드 12석 완비·임페리얼 나이트·아사시노룸·리빙 세인트·데몬 프린스) 및 발탁·평행 횡단 이벤트</li>
+              <li>23개 행성·직군·챕터·시기·3대 도덕 성향(자비·교조·암흑) 730종+ 연대기 및 660종+ 분기·역사 사건</li>
               <li>9대 아스타르테스 챕터 서약 · 20인 네임드 조우 · 8대 특성치(d100 판정)</li>
             </ul>
           </div>
@@ -354,7 +354,7 @@
   <!-- ==================== 사망 부고 모달 ==================== -->
   <div id="obit-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="obit-title" aria-hidden="true">
     <div class="obituary-modal">
-      <div id="obit-rank" class="obit-rank">-</div>
+      <div id="obit-rank" class="obit-rank" aria-hidden="true">-</div>
       <h2 id="obit-title" class="obit-title" tabindex="-1">-</h2>
       <p id="obit-verdict" class="obit-verdict">-</p>
       <div id="obit-body"></div>
@@ -386,10 +386,14 @@
   <script src="./data/events/careers/governor.js"></script>
   <script src="./data/events/careers/guardsman.js"></script>
   <script src="./data/events/careers/high_lords.js"></script>
+  <script src="./data/events/careers/imperial_knight.js"></script>
   <script src="./data/events/careers/inquisition.js"></script>
+  <script src="./data/events/careers/living_saint.js"></script>
   <script src="./data/events/careers/mechanicus.js"></script>
   <script src="./data/events/careers/militarum_ranks.js"></script>
   <script src="./data/events/careers/militarum.js"></script>
+  <script src="./data/events/careers/navis_navigator.js"></script>
+  <script src="./data/events/careers/officio_assassinorum.js"></script>
   <script src="./data/events/careers/rogue_trader.js"></script>
   <script src="./data/events/careers/talons_knights.js"></script>
   <script src="./data/events/careers/transhuman_faith_ranks.js"></script>
@@ -424,6 +428,7 @@
   <!-- DATA-CHRONICLES:START -->
   <script src="./data/chronicles/alignment.js"></script>
   <script src="./data/chronicles/arcs_named.js"></script>
+  <script src="./data/chronicles/careers_factions_s17.js"></script>
   <script src="./data/chronicles/careers_ranks.js"></script>
   <script src="./data/chronicles/careers_specialists.js"></script>
   <script src="./data/chronicles/careers.js"></script>

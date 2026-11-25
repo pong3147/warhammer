@@ -16,7 +16,10 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         "commissar_general", "lord_commissar", "navy_admiral", "cardinal", "inquisitor", "lord_inquisitor",
         "canoness", "celestian", "magos", "fabricator_locum", "fabricator_general",
         "rogue_trader", "rt_lord_captain", "arbites_marshal", "departmento_head",
-        "tempestus_prime", "interrogator_rank"
+        "tempestus_prime", "interrogator_rank",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
+        "imperial_knight", "knight_scion", "knight_high_king",
+        "assassin", "grand_master_assassins", "living_saint", "saint_vessel"
       ]
     },
     reqLabel: "자질: 미공인 잠재 사이커",
@@ -70,7 +73,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 16,
       allTags: ["psyker"],
       excludeChapters: ["black_templars"],
-      excludeTags: ["custodes", "grey_knight", "daemon_prince", "heretic", "chaos_aligned", "blank", "dreadnought"]
+      excludeTags: ["custodes", "grey_knight", "daemon_prince", "heretic", "chaos_aligned", "blank", "dreadnought", "living_saint"]
     },
     reqLabel: "자질: 사이커",
     weight: 16,
@@ -204,7 +207,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 16,
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
-      excludeTags: ["custodes", "grey_knight", "dreadnought", "heretic", "chaos_aligned", "daemon_prince"],
+      excludeTags: ["custodes", "grey_knight", "dreadnought", "heretic", "chaos_aligned", "daemon_prince", "living_saint", "saint_vessel", "assassin"],
       or: [{ stats: { Int: 42 } }, { minCorruption: 15 }]
     },
     reqLabel: "지성 42+ 또는 오염 15+",

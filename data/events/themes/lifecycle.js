@@ -523,6 +523,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       minAge: 55,
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "rejuvenat",
+        "living_saint", "saint_vessel", "assassin",
         "magos", "fabricator_locum", "fabricator_general", "high_lord_terra",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
@@ -1597,6 +1598,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeTags: [
         "bond_family",
         "astartes", "custodes", "grey_knight", "dreadnought",
+        "living_saint", "saint_vessel", "assassin",
         "sororitas_novitiate", "sororitas", "celestian", "canoness",
         "mechanicus", "magos", "fabricator_locum", "fabricator_general",
         "krieg_grenadier",
@@ -1651,6 +1653,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeTags: [
         "bond_heir",
         "astartes", "custodes", "grey_knight", "dreadnought",
+        "living_saint", "saint_vessel", "assassin",
         "sororitas_novitiate", "sororitas", "celestian", "canoness",
         "mechanicus", "magos", "fabricator_locum", "fabricator_general",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
