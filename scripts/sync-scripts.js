@@ -77,12 +77,14 @@ function main() {
   const eventFiles = sortEventFiles(collectJsFiles("data/events"));
   const chronFiles = sortChronicleFiles(collectJsFiles("data/chronicles"));
 
+  const normalizeEol = (s) => s.replace(/\r\n/g, "\n");
   const original = fs.readFileSync(INDEX_PATH, "utf8");
-  let updated = replaceMarkerBlock(original, "DATA-EVENTS", eventFiles);
+  const normalizedOrig = normalizeEol(original);
+  let updated = replaceMarkerBlock(normalizedOrig, "DATA-EVENTS", eventFiles);
   updated = replaceMarkerBlock(updated, "DATA-CHRONICLES", chronFiles);
 
   if (checkOnly) {
-    if (updated !== original) {
+    if (updated !== normalizedOrig) {
       console.error("[sync-scripts] index.html is out of sync with data/events/ or data/chronicles/. Run: node scripts/sync-scripts.js");
       process.exit(1);
     }

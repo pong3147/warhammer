@@ -30,6 +30,8 @@
   let saveStorageWarned = false;
   let clearHallArmed = false;
   let clearHallTimer = null;
+  let suppressAutoFocusNotice = false;
+  let pendingFocusShiftNote = "";
   let lastLockedCareers = [];
   let knownUnlockedCareerIds = new Set();
 
@@ -521,7 +523,10 @@
     if (state.alive && (res.isNewYear || res.status === "event" || (newlyUnlocked.length > 0 && isCareerAlertEnabled()) || state.logs.length <= 20)) {
       saveActiveState();
     }
+    pendingFocusShiftNote = "";
     renderAll();
+    const shiftNote = pendingFocusShiftNote;
+    pendingFocusShiftNote = "";
 
     if (res.status === "event" && state.pendingEvent) {
       const evHead = $("#active-event-heading");
@@ -535,12 +540,14 @@
     } else if (res.status === "ok" && newlyUnlocked.length > 0 && isCareerAlertEnabled()) {
       const names = newlyUnlocked.map((c) => Engine.getCareerDisplayTitle(state, c)).slice(0, 3).join(", ");
       const extra = newlyUnlocked.length > 3 ? ` 외 ${newlyUnlocked.length - 3}종` : "";
-      showToast(`새 진로 해금: ${names}${extra}. 자동 일시정지했다.`);
+      showToast(`${shiftNote ? shiftNote + " " : ""}새 진로 해금: ${names}${extra}. 자동 일시정지했다.`);
     } else if (res.status === "ok" && isAutoAnnounceEnabled() && state.logs[0] && state.logs[0] !== prevTopLog) {
       const latest = state.logs[0];
       const badge = latest.badge ? `${latest.badge}. ` : "";
       const delta = latest.deltaText ? ` (${latest.deltaText})` : "";
-      announce(`${latest.age}세, ${badge}${latest.text}${delta}`);
+      announce(`${shiftNote ? shiftNote + " " : ""}${latest.age}세, ${badge}${latest.text}${delta}`);
+    } else if (res.status === "ok" && shiftNote) {
+      announce(shiftNote);
     }
   }
 
@@ -1061,11 +1068,17 @@
       }
 
       if (focusedCid && !busy) {
-        const restored = cWrap.querySelector(`.btn-apply-career[data-cid="${focusedCid}"]:not([disabled])`) ||
+        const sameBtn = cWrap.querySelector(`.btn-apply-career[data-cid="${focusedCid}"]:not([disabled])`);
+        const restored = sameBtn ||
           cWrap.querySelector(".btn-apply-career:not([disabled])") ||
           $("#heading-auto") ||
           $("#recent-chronicle-heading");
-        if (restored) restored.focus();
+        if (restored) {
+          restored.focus();
+          if (!sameBtn && !suppressAutoFocusNotice) {
+            pendingFocusShiftNote = "보던 진로가 목록에서 제외되어 다음 항목으로 초점을 옮겼다.";
+          }
+        }
       }
     }
 
@@ -1098,11 +1111,17 @@
       }
 
       if (focusedAid && !busy) {
-        const restored = aWrap.querySelector(`.btn-auto-action[data-aid="${focusedAid}"]:not([disabled])`) ||
+        const sameAct = aWrap.querySelector(`.btn-auto-action[data-aid="${focusedAid}"]:not([disabled])`);
+        const restored = sameAct ||
           aWrap.querySelector(".btn-auto-action:not([disabled])") ||
           $("#heading-auto") ||
           $("#recent-chronicle-heading");
-        if (restored) restored.focus();
+        if (restored) {
+          restored.focus();
+          if (!sameAct && !suppressAutoFocusNotice) {
+            pendingFocusShiftNote = "보던 행동이 목록에서 제외되어 다음 항목으로 초점을 옮겼다.";
+          }
+        }
       }
     }
 
@@ -1889,31 +1908,36 @@
       const btn = e.target.closest(".btn-apply-career");
       if (!btn || btn.disabled || !state || !state.alive) return;
       const res = Engine.attemptCareerChange(state, btn.dataset.cid);
-      if (!res.ok) {
-        showToast(res.msg);
-        if (res.dead) {
+      suppressAutoFocusNotice = true;
+      try {
+        if (!res.ok) {
+          showToast(res.msg);
+          if (res.dead) {
+            setSpeed(0);
+            saveToHall(state);
+            clearActiveState();
+            openObituaryModal();
+          } else {
+            syncKnownUnlockedCareers(state);
+            saveActiveState();
+          }
+          renderAll();
+        } else if (state.pendingEvent) {
           setSpeed(0);
-          saveToHall(state);
-          clearActiveState();
-          openObituaryModal();
+          syncKnownUnlockedCareers(state);
+          saveActiveState();
+          renderAll();
+          const evHead = $("#active-event-heading");
+          if (evHead) evHead.focus();
+          announce(`전직 성공. ${state.pendingEvent.title}`);
         } else {
           syncKnownUnlockedCareers(state);
           saveActiveState();
+          showToast(`${Engine.getCareerDisplayTitle(state, res.career)}(으)로 전직/승급했다!`);
+          renderAll();
         }
-        renderAll();
-      } else if (state.pendingEvent) {
-        setSpeed(0);
-        syncKnownUnlockedCareers(state);
-        saveActiveState();
-        renderAll();
-        const evHead = $("#active-event-heading");
-        if (evHead) evHead.focus();
-        announce(`전직 성공. ${state.pendingEvent.title}`);
-      } else {
-        syncKnownUnlockedCareers(state);
-        saveActiveState();
-        showToast(`${Engine.getCareerDisplayTitle(state, res.career)}(으)로 전직/승급했다!`);
-        renderAll();
+      } finally {
+        suppressAutoFocusNotice = false;
       }
     });
 
@@ -1921,20 +1945,25 @@
       const btn = e.target.closest(".btn-auto-action");
       if (!btn || btn.disabled || !state || !state.alive) return;
       const res = Engine.performAction(state, btn.dataset.aid);
-      if (res.ok && res.openedEvent) {
-        setSpeed(0);
+      suppressAutoFocusNotice = true;
+      try {
+        if (res.ok && res.openedEvent) {
+          setSpeed(0);
+          syncKnownUnlockedCareers(state);
+          saveActiveState();
+          renderAll();
+          const evHead = $("#active-event-heading");
+          if (evHead) evHead.focus();
+          announce(`사건 발생. ${res.openedEvent.title}`);
+          return;
+        }
         syncKnownUnlockedCareers(state);
         saveActiveState();
+        showToast(res.ok ? (res.msg || "행동을 완료했다!") : res.msg);
         renderAll();
-        const evHead = $("#active-event-heading");
-        if (evHead) evHead.focus();
-        announce(`사건 발생. ${res.openedEvent.title}`);
-        return;
+      } finally {
+        suppressAutoFocusNotice = false;
       }
-      syncKnownUnlockedCareers(state);
-      saveActiveState();
-      showToast(res.ok ? (res.msg || "행동을 완료했다!") : res.msg);
-      renderAll();
     });
 
     $("#auto-travel-wrap").addEventListener("change", (e) => {

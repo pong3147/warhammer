@@ -100,7 +100,7 @@
 * **`scripts/qa.js` (~1,500줄, Node.js 전용) · `scripts/audit-health.js` (~180줄) & `.github/workflows/qa.yml`:**
   * `node scripts/qa.js` 단일 명령으로 `AGENTS.md` 6대 게이트(63스크립트·로드 순서·고아 파일·구문·파일 용량 상한·CSS·DOM `#id` 103종·표기/기호/크리그·ID/참조/78직군 메타데이터/성향 스키마/태그/`describeReq`/연표/`forceCareer`/동적 오퍼/`migrateState`/명예 마감/상태 요약/초인 오염 면역 회귀 테스트·소프트락/유년기 풀/중복률/로그 보존·300생애 멀티-초점 시뮬레이션·1,000분기 벤치마크) 일괄 검증.
   * `node scripts/qa.js --deep`: **Gate 7A**(79직군 전직 도달 그래프 기반 `anyPastCareers` 모순 감사) · **Gate 7B**(전체 1,620개 조건식 전수 합성 도달성 증명 · 3성향 조건 포함) · **Gate 7C**(6대 초점 1,500생애 분포 + 3대 성향 대조 롤플레이 시뮬레이션).
-  * `node scripts/audit-health.js`: 200생애 무작위 플레이·7분기마다 JSON/`migrateState` 왕복 퍼징, 초장수 명예 마감 탈출성, UI 포커스 정적 위험, 파일 용량 근접 경고를 자동 검사.
+  * `node scripts/audit-health.js` (`--lives=N`, `--seed=S`): 결정론적 `mulberry32` 시드 기반 200생애 무작위 플레이(전직·자율행동·성간이동·7분기마다 JSON/`migrateState` 왕복·500세+ 명예 마감 실실행·초인 오염 면역·비초인 필멸자 300세 이상치·저장 2,048KB 상한 검증), 순수 Node.js 무의존성 미니 DOM 샌드박스 기반 **실제 `js/ui.js` 행동형 포커스·증분 로그·2단계 초기화 7종 테스트**, 파일 용량 근접 경고를 자동 검사.
   * `.github/workflows/qa.yml`: `main` 브랜치 push/PR마다 `sync-scripts --check && qa.js && audit-health.js --lives=100` 자동 회귀 검증 실행.
 
 ### 3.2 데이터 파일별 수록 내용
