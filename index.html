@@ -184,7 +184,10 @@
       <section class="panel" aria-labelledby="heading-control">
         <div class="panel-header" style="margin-bottom:10px;">
           <h2 id="heading-control" class="panel-title">시간 제어 및 삶의 초점</h2>
-          <button id="btn-new-life" class="btn-ghost">새 인생 시작</button>
+          <div class="header-btn-group">
+            <button id="btn-status-summary" class="btn-ghost">현재 상태 요약 듣기</button>
+            <button id="btn-new-life" class="btn-ghost">새 인생 시작</button>
+          </div>
         </div>
 
         <div class="control-box">
@@ -195,6 +198,7 @@
               <button id="btn-speed-2" class="btn-ghost" aria-pressed="false">2배속 (1년 15초)</button>
               <button id="btn-speed-4" class="btn-ghost" aria-pressed="false">4배속 (1년 7.5초)</button>
               <button id="btn-step" class="btn-gold">다음 분기 진행</button>
+              <button id="btn-fast-forward" class="btn-ghost">다음 사건까지 진행</button>
             </div>
             <div class="pref-toggles">
               <label class="live-toggle">
@@ -321,7 +325,12 @@
     <div class="panel">
       <div class="panel-header">
         <h2 id="heading-hall" class="panel-title">영혼의 전당 (역대 생애 기록)</h2>
-        <button id="btn-clear-hall" class="btn-ghost">기록 초기화</button>
+        <div class="header-btn-group">
+          <button id="btn-export-save" class="btn-ghost">저장본 백업 (.json)</button>
+          <button id="btn-import-save" class="btn-ghost">백업 불러오기 (.json)</button>
+          <input type="file" id="inp-import-save" accept=".json,application/json" class="sr-only" tabindex="-1" aria-hidden="true" />
+          <button id="btn-clear-hall" class="btn-ghost">기록 초기화</button>
+        </div>
       </div>
       <div id="hall-summary" class="hall-summary-grid"></div>
       <div id="hall-codex-wrap"></div>

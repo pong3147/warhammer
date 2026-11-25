@@ -1,5 +1,12 @@
 (function (global) {
   const DATA = global.IMPERIUM_DATA;
+  const SAVE_VERSION = 2;
+
+  function warnUnknownId(kind, id) {
+    if (typeof console !== "undefined" && typeof console.warn === "function") {
+      console.warn(`[Imperialis Vita] Unknown ${kind} ID "${id}" — falling back to default.`);
+    }
+  }
 
   const STAT_META = {
     WS:  { key: "WS",  name: "백병", en: "Weapon Skill", desc: "근접전·체인소드·도검 전투력" },
@@ -539,7 +546,11 @@
     // 1. 시대 / 출생 연도
     let birthYear;
     if (mode === "custom" && config.eraId) {
-      const preset = ERA_PRESETS.find((e) => e.id === config.eraId) || ERA_PRESETS[0];
+      let preset = ERA_PRESETS.find((e) => e.id === config.eraId);
+      if (!preset) {
+        warnUnknownId("eraId", config.eraId);
+        preset = ERA_PRESETS[0];
+      }
       birthYear = randInt(preset.minYear, preset.maxYear);
     } else {
       // 운명 모드: 85% 확률로 카디아/아마겟돈/대균열을 관통하는 핵심 격동기, 15% 확률로 사바트~바답 시대
@@ -549,6 +560,7 @@
     // 2. 행성 선택 (이미 파괴된 행성 고증 보정)
     let world;
     if (mode === "custom" && config.worldId && config.worldId !== "random") {
+      if (!WORLD_BY_ID.has(config.worldId)) warnUnknownId("worldId", config.worldId);
       world = getWorld(config.worldId);
       if (world.destroyedYear && birthYear >= world.destroyedYear - 4) {
         birthYear = world.destroyedYear - 18;
@@ -570,6 +582,7 @@
     // 4. 출생 신분
     let origin;
     if (mode === "custom" && config.originId && config.originId !== "random") {
+      if (!ORIGIN_BY_ID.has(config.originId)) warnUnknownId("originId", config.originId);
       origin = getOrigin(config.originId);
     } else {
       const worldTags = world.tags || [];
@@ -585,6 +598,7 @@
     // 5. 선천 자질
     let trait;
     if (mode === "custom" && config.traitId && config.traitId !== "random") {
+      if (!TRAIT_BY_ID.has(config.traitId)) warnUnknownId("traitId", config.traitId);
       trait = getTrait(config.traitId);
     } else {
       trait = pickWeighted(DATA.TRAITS, "weight");
@@ -611,6 +625,7 @@
     const wounds = clamp(82 + Math.floor((stats.T - 25) / 2), 65, 100);
 
     const state = {
+      saveVersion: SAVE_VERSION,
       id: `soul_${Date.now()}_${randInt(100, 999)}`,
       mode,
       name,
@@ -672,6 +687,82 @@
     addLog(state, birthLogText, "birth");
 
     return state;
+  }
+
+  function migrateState(raw) {
+    if (!raw || typeof raw !== "object" || !raw.id || !raw.stats || !Array.isArray(raw.logs)) {
+      return null;
+    }
+    const st = raw;
+    if (!WORLD_BY_ID.has(st.worldId)) {
+      warnUnknownId("worldId", st.worldId);
+      st.worldId = DATA.WORLDS[0].id;
+    }
+    if (!WORLD_BY_ID.has(st.homeWorldId)) {
+      st.homeWorldId = st.worldId;
+    }
+    if (!ORIGIN_BY_ID.has(st.originId)) {
+      warnUnknownId("originId", st.originId);
+      st.originId = DATA.ORIGINS[0].id;
+    }
+    if (!TRAIT_BY_ID.has(st.traitId)) {
+      warnUnknownId("traitId", st.traitId);
+      st.traitId = DATA.TRAITS[0].id;
+    }
+    if (!CAREER_BY_ID.has(st.careerId)) {
+      warnUnknownId("careerId", st.careerId);
+      st.careerId = "child";
+    }
+    if (st.chapterId && !CHAPTER_BY_ID.has(st.chapterId)) {
+      warnUnknownId("chapterId", st.chapterId);
+      st.chapterId = null;
+    }
+    if (!DATA.SEGMENTA[st.segmentum]) {
+      const curW = getWorld(st.worldId);
+      st.segmentum = curW.segmentum === "random" ? "solar" : curW.segmentum;
+    }
+    if (!FOCUSES[st.focus]) st.focus = "survival";
+    st.quarter = clamp(Number(st.quarter) || 1, 1, 3);
+    st.age = Math.max(0, Number(st.age) || 0);
+    st.birthYear = Number.isFinite(st.birthYear) ? st.birthYear : 980;
+    st.year = Number.isFinite(st.year) ? st.year : st.birthYear + st.age;
+    st.maxWounds = Math.max(50, Number(st.maxWounds) || 100);
+    st.wounds = clamp(Number.isFinite(st.wounds) ? st.wounds : st.maxWounds, 0, st.maxWounds);
+    st.faith = clamp(Number.isFinite(st.faith) ? st.faith : 50, 0, 100);
+    st.corruption = clamp(Number.isFinite(st.corruption) ? st.corruption : 0, 0, 100);
+
+    for (const key of Object.keys(STAT_META)) {
+      if (!Number.isFinite(st.stats[key])) st.stats[key] = 25;
+      else st.stats[key] = clamp(Math.round(st.stats[key]), 5, 100);
+    }
+
+    st.extraLifeBonus = Number(st.extraLifeBonus) || 0;
+    st.rejuvenatCount = Number(st.rejuvenatCount) || 0;
+    st.augmeticsCount = Number(st.augmeticsCount) || 0;
+    st.lastRejuvenatAge = Number.isFinite(st.lastRejuvenatAge) ? st.lastRejuvenatAge : -99;
+    st.lastAugmeticsAge = Number.isFinite(st.lastAugmeticsAge) ? st.lastAugmeticsAge : -99;
+    st.lastPenanceYear = Number.isFinite(st.lastPenanceYear) ? st.lastPenanceYear : -999;
+    st.lastTravelYear = Number.isFinite(st.lastTravelYear) ? st.lastTravelYear : -999;
+    st.lastCareerActionYear = Number.isFinite(st.lastCareerActionYear) ? st.lastCareerActionYear : -999;
+    st.lastCareerOfferYear = Number.isFinite(st.lastCareerOfferYear) ? st.lastCareerOfferYear : -999;
+    if (!st.declinedCareers || typeof st.declinedCareers !== "object") st.declinedCareers = {};
+    if (!st.eventCounts || typeof st.eventCounts !== "object") st.eventCounts = {};
+    if (!st.globalFlags || typeof st.globalFlags !== "object") {
+      st.globalFlags = { greatRiftOpened: st.year >= 999 };
+    }
+    if (!Array.isArray(st.visitedWorlds) || !st.visitedWorlds.length) st.visitedWorlds = [st.worldId];
+    if (!Array.isArray(st.careerHistory) || !st.careerHistory.length) st.careerHistory = [st.careerId];
+    if (!Array.isArray(st.tags)) st.tags = [];
+    if (!Array.isArray(st.seenEvents)) st.seenEvents = [];
+    if (!Array.isArray(st.recentEvents)) st.recentEvents = [];
+    if (!Array.isArray(st.seenTimeline)) st.seenTimeline = [];
+    if (!Array.isArray(st.heardNews)) st.heardNews = [];
+    if (!Array.isArray(st.recentChronicles)) st.recentChronicles = [];
+    if (!Array.isArray(st.metCharacters)) st.metCharacters = [];
+
+    syncImperialNihilus(st);
+    st.saveVersion = SAVE_VERSION;
+    return st;
   }
 
   const MAX_LOGS = 2400;
@@ -2052,7 +2143,196 @@
       return { ok: true, target, autoApprove: evalRes.autoApprove };
     }
 
+    if (actionId === "retire_honorable") {
+      const chk = canRetireHonorably(state);
+      if (!chk.ok) return { ok: false, msg: chk.reason };
+      const ev = createHonorableEndingEvent(state);
+      state.pendingEvent = ev;
+      return { ok: true, openedEvent: ev, msg: "생애를 갈무리할 최후의 결단을 열었다." };
+    }
+
     return { ok: false, msg: "알 수 없는 행동이다." };
+  }
+
+  function canRetireHonorably(state) {
+    if (!state || !state.alive || state.careerId === "child") {
+      return { ok: false, reason: "성년 직무 편입 후 100세 이상, 최고위 계급 55세 이상, 또는 기대수명 85% 도달 시 생애를 명예롭게 마감할 수 있다." };
+    }
+    const career = getCareer(state.careerId);
+    const lifeExp = computeLifeExpectancy(state);
+    const isCentenarian = state.age >= 100;
+    const isApexVeteran = career.tier >= 6 && state.age >= 55;
+    const isElderTwilight = state.age >= 65 && state.age >= Math.floor(lifeExp * 0.85);
+    if (!isCentenarian && !isApexVeteran && !isElderTwilight) {
+      return { ok: false, reason: "아직 생애를 마감할 고령이나 최고위 정점에 이르지 않았다." };
+    }
+
+    const tags = state.tags || [];
+    if (tags.includes("daemon_prince") || state.careerId === "daemon_prince") {
+      return {
+        ok: true,
+        name: "위대한 게임 영구 승천 (생애 마감)",
+        desc: "필멸의 은하를 뒤로하고 워프 심연의 영원한 전장으로 물러나 영혼의 전당에 기록을 남긴다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
+    if (career.tree === "custodes" || tags.includes("custodes")) {
+      return {
+        ok: true,
+        name: "황제의 눈 은퇴 의식 (생애 마감)",
+        desc: "황금 갑주를 무기고에 반납하고 제국 변방의 은밀한 감시자로 물러나 생애를 명예롭게 갈무리한다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
+    if (tags.includes("dreadnought")) {
+      return {
+        ok: true,
+        name: "강철 석관의 영원한 안식 (생애 마감)",
+        desc: "수세기의 봉사를 마치고 챕터 영웅의 전당에서 영구 동면에 들어 생애를 명예롭게 마감한다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
+    if (career.tree === "astartes" || career.tree === "grey_knights" || tags.includes("astartes") || tags.includes("grey_knight")) {
+      return {
+        ok: true,
+        name: "최후의 영광스러운 성전 출정 (생애 마감)",
+        desc: "노쇠한 육신으로 제국 최전선에 마지막 돌격을 감행해 영혼의 전당에 불멸의 이름을 새긴다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
+    if (career.tree === "mechanicus" || tags.includes("magos")) {
+      return {
+        ok: true,
+        name: "대서고 데이터 합일 승화 (생애 마감)",
+        desc: "축적한 지식과 기억을 기계교 성소 코지테이터에 영구 이관하고 옴니시아의 품으로 든다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
+    if (career.tree === "chaos" || tags.includes("heretic")) {
+      return {
+        ok: true,
+        name: "공포의 눈 최후 약탈 원정 (생애 마감)",
+        desc: "남은 워밴드를 이끌고 대균열 심연으로 마지막 항해에 나서 배교의 연대기를 완결한다.",
+        btnLabel: "최후의 결단 열기"
+      };
+    }
+    return {
+      ok: true,
+      name: "명예로운 퇴임과 생애 갈무리 (생애 마감)",
+      desc: "후계자에게 직책과 유산을 물려주고 황제의 품으로 평온히 물러나 영혼의 전당에 기록을 남긴다.",
+      btnLabel: "최후의 결단 열기"
+    };
+  }
+
+  function createHonorableEndingEvent(state) {
+    const career = getCareer(state.careerId);
+    const titleStr = getCareerDisplayTitle(state, career);
+    const tags = state.tags || [];
+    const world = getWorld(state.worldId);
+    let title = "생애의 갈무리 — 명예로운 퇴임의 시간";
+    let text = `어느덧 ${state.age}세에 이른 [${titleStr}]로서 수십 년에 걸친 제국의 풍파를 버텨 냈다. 지금 직책을 내려놓고 후대에 기록을 남길 것인지, 아니면 끝까지 현역으로 싸울 것인지 스스로 결정할 때다.`;
+    let retireLabel = "후계자에게 직책을 물려주고 명예롭게 생애를 마감한다 (영혼의 전당 등재)";
+    let retireText = `긴 세월의 소임을 마친 [${titleStr}]은(는) 모든 인장과 기록을 정돈한 뒤 조용히 눈을 감았다. 그대의 생애는 제국 영혼의 전당에 영구히 등재되었다.`;
+    let retireCause = `향년 ${state.age}세, ${world.name}에서 긴 소임을 완수하고 명예로운 퇴임 끝에 황제의 품으로 영면`;
+
+    if (tags.includes("daemon_prince") || state.careerId === "daemon_prince") {
+      title = "생애의 갈무리 — 위대한 게임으로의 영구 승천";
+      text = `${state.age}세의 세월 동안 필멸의 은하를 짓밟아 온 불멸의 데몬 프린스 앞에 워프 심연의 거대한 균열이 열렸다. 물질 우주에서의 연대기를 여기서 갈무리하고 암흑 신들의 위대한 게임으로 영구히 승천할 수 있다.`;
+      retireLabel = "물질 우주를 뒤로하고 워프 심연의 위대한 게임으로 영구 승천한다 (영혼의 전당 등재)";
+      retireText = "현실의 막 너머로 걸어 들어간 그대의 이름은 오르도 말레우스 금서고에 영원한 재앙으로 각인되었다.";
+      retireCause = `향년 ${state.age}세, 물질 우주의 연대기를 마치고 워프 심연의 위대한 게임으로 영구 승천`;
+    } else if (career.tree === "custodes" || tags.includes("custodes")) {
+      title = "생애의 갈무리 — 황제의 눈으로 물러나다";
+      text = `${state.age}세에 이른 쿠스토데스로서 반사 속도가 단 0.01초 무뎌졌음을 스스로 깨달았다. 만 명의 수호자 전통에 따라 황금 갑주와 가디언 스피어를 무기고에 반납하고, 제국 변방의 위협을 감시하는 '황제의 눈'으로 은퇴할 수 있다.`;
+      retireLabel = "황금 갑주를 반납하고 '황제의 눈'으로 명예 은퇴한다 (영혼의 전당 등재)";
+      retireText = "황궁 영원의 회랑에 그대의 수백 개 진명이 새겨졌고, 그대는 검은 망토를 걸친 채 황금 옥좌의 그림자 너머로 조용히 떠났다.";
+      retireCause = `향년 ${state.age}세, 쿠스토데스 전통에 따라 황금 갑주를 반납하고 황제의 눈으로 명예 은퇴`;
+    } else if (tags.includes("dreadnought")) {
+      title = "생애의 갈무리 — 강철 석관의 영원한 안식";
+      text = `수세기를 싸워 온 고대 드레드노트의 동력로가 고요히 숨을 고른다. 테크마린과 채플린이 지켜보는 가운데 챕터 영웅의 전당으로 돌아가 영원한 안식에 들 수 있다.`;
+      retireLabel = "챕터 성소의 제단에서 영원한 안식에 든다 (영혼의 전당 등재)";
+      retireText = "성유와 향불 속에서 고대인의 사르코파구스가 영원히 잠들었다. 챕터의 모든 형제들이 무릎을 꿇고 경례를 올렸다.";
+      retireCause = `향년 ${state.age}세, 챕터 영웅의 전당에서 강철 석관의 영원한 안식에 듦`;
+    } else if (career.tree === "astartes" || career.tree === "grey_knights" || tags.includes("astartes") || tags.includes("grey_knight")) {
+      title = "생애의 갈무리 — 최후의 영광스러운 성전";
+      text = `${state.age}세의 장구한 세월 동안 수백 개의 전장을 누빈 [${titleStr}] 앞에 마지막 결전의 부름이 울린다. 후배 형제들에게 챕터의 미래를 맡기고 가장 치열한 전선으로 최후의 출정에 나설 수 있다.`;
+      retireLabel = "형제들에게 유산을 맡기고 최후의 영광스러운 성전에 출정한다 (영혼의 전당 등재)";
+      retireText = "황제의 이름을 외치며 적진 한가운데로 돌격한 그대의 마지막 전투는 수천 년 동안 챕터의 서사시로 노래되었다.";
+      retireCause = `향년 ${state.age}세, 최전선 최후의 성전에서 수많은 적을 쓰러뜨리고 영광스럽게 순직`;
+    } else if (career.tree === "mechanicus" || tags.includes("magos")) {
+      title = "생애의 갈무리 — 대서고 데이터 합일 의식";
+      text = `${state.age}세 동안 축적한 연산 기록과 지식의 총합이 임계점에 도달했다. 육신의 껍질을 내려놓고 화성 대서고의 신성한 코지테이터와 영구히 합일해 옴니시아의 기록으로 남을 수 있다.`;
+      retireLabel = "기억과 지식을 대서고에 봉헌하고 옴니시아와 합일한다 (영혼의 전당 등재)";
+      retireText = "이진법 찬가가 성소를 울리는 가운데 그대의 모든 지혜가 신성한 데이터 저장소에 영구 각인되었다.";
+      retireCause = `향년 ${state.age}세, 기계교 대서고에 전 생애의 연산 기록을 봉헌하고 옴니시아와 합일`;
+    } else if (career.tree === "chaos" || tags.includes("heretic")) {
+      title = "생애의 갈무리 — 공포의 눈 최후 원정";
+      text = `${state.age}세에 이른 배교자 [${titleStr}]은(는) 이미 은하에 지워지지 않을 피의 흔적을 남겼다. 워밴드의 기함을 몰아 대균열의 가장 깊은 폭풍 속으로 최후의 약탈 원정을 떠나 연대기를 마감할 수 있다.`;
+      retireLabel = "대균열 심연으로 최후의 약탈 원정을 떠난다 (영혼의 전당 등재)";
+      retireText = "붉은 워프의 폭풍 속으로 사라진 그대의 기함은 훗날 제국 함대의 공포스러운 전설로만 전해졌다.";
+      retireCause = `향년 ${state.age}세, 대균열 심연으로 최후의 배신자 원정을 떠나 행방불명`;
+    }
+
+    return {
+      id: `dyn_honorable_end_${state.year}`,
+      isTimeline: false,
+      isHonorableEnding: true,
+      category: "생애의 갈무리",
+      reqLabel: `${state.age}세 · 명예 생애 마감`,
+      title,
+      text,
+      choices: [
+        {
+          label: retireLabel,
+          effect: {
+            text: retireText,
+            instantDeath: retireCause
+          }
+        },
+        {
+          label: "아직 바칠 사명이 남아 있다. 생애를 계속 이어 간다",
+          effect: {
+            text: "아직 물러날 때가 아니라고 다짐하고 다시 앞을 향해 걸음을 내디뎠다.",
+            stats: { WP: 1 }
+          }
+        }
+      ],
+      source: "Imperium Vita Chronicle / Eyes of the Emperor & Chapter Lore"
+    };
+  }
+
+  function buildStatusSummary(state) {
+    if (!state) return "진행 중인 생애가 없다.";
+    const world = getWorld(state.worldId);
+    const focus = FOCUSES[state.focus] || FOCUSES.survival;
+    const careerTitle = getCareerDisplayTitle(state);
+    const lifeExp = computeLifeExpectancy(state);
+    const parts = [
+      `${state.name}, ${state.age}세, ${formatImperialDate(state.year, state.quarter)}.`,
+      `직책 ${careerTitle}, 현재 행성 ${world.name}.`,
+      `생명력 ${state.wounds}/${state.maxWounds}, 기대수명 약 ${lifeExp}세, 황제 신앙 ${state.faith}, 워프 오염 ${state.corruption}.`,
+      `삶의 초점: ${focus.name}.`
+    ];
+    if (!state.alive) {
+      parts.push(`사망 상태: ${state.deathCause || "생애 종료"}.`);
+      return parts.join(" ");
+    }
+    if (state.pendingEvent) {
+      parts.push(`현재 진행 중인 사건: ${state.pendingEvent.title}.`);
+      return parts.join(" ");
+    }
+    const ctx = getContextualOptions(state);
+    if (ctx.unlockedCareers.length > 0) {
+      const names = ctx.unlockedCareers.slice(0, 2).map((c) => getCareerDisplayTitle(state, c)).join(", ");
+      parts.push(`즉시 지원 가능한 진로 ${ctx.unlockedCareers.length}종: ${names}.`);
+    } else if (ctx.readyEventCareers.length > 0) {
+      const names = ctx.readyEventCareers.slice(0, 2).map((c) => getCareerDisplayTitle(state, c)).join(", ");
+      parts.push(`발탁 이벤트 대기 중인 상위 진로 ${ctx.readyEventCareers.length}종: ${names}.`);
+    } else if (ctx.nearCareers.length > 0) {
+      const next = ctx.nearCareers[0];
+      parts.push(`다음 목표 진로 ${next.name}, 필요 조건: ${describeReq(next.req) || "조건 없음"}.`);
+    }
+    return parts.join(" ");
   }
 
   function buildObituaryEpilogue(state, mode) {
@@ -3104,6 +3384,15 @@
         btnLabel: "수명 연장 신청"
       });
     }
+    const retireChk = canRetireHonorably(state);
+    if (retireChk.ok) {
+      actions.push({
+        id: "retire_honorable",
+        name: retireChk.name,
+        desc: retireChk.desc,
+        btnLabel: retireChk.btnLabel
+      });
+    }
 
     return {
       unlockedCareers,
@@ -3117,6 +3406,7 @@
   }
 
   const Engine = {
+    SAVE_VERSION,
     STAT_META,
     FOCUSES,
     ERA_PRESETS,
@@ -3138,11 +3428,15 @@
     rollD100,
     computeLifeExpectancy,
     createCharacter,
+    migrateState,
     advanceQuarter,
     advanceYear,
     resolvePendingChoice,
     attemptCareerChange,
     performAction,
+    canRetireHonorably,
+    createHonorableEndingEvent,
+    buildStatusSummary,
     evaluateLifeGrade,
     createWarpAnomalyTransitEvent,
     createDynamicCareerOfferEvent,

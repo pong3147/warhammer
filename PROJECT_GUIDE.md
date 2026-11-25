@@ -71,14 +71,14 @@
 ## 3. 파일별 역할 및 현재 수록 현황
 
 ### 3.1 프론트엔드 코어 · 자동화 스크립트
-* **`index.html` (~419줄):**
+* **`index.html` (~428줄):**
   * Google Fonts(`Cinzel`, `Noto Serif KR`, `JetBrains Mono`) `<link rel="preconnect">` 병렬 로드 (`display=swap`).
-  * 4개 메인 탭 뷰: `view-game`(생애 시뮬레이션 + `#resume-banner` 이어하기 배너 + 편의 토글 3종), `view-chronicle`(전체 인생 기록서 + 텍스트 복사/`.txt` 저장), `view-codex`(제국 코덱스 5개 탭, 17개 세력 계급도 아코디언), `view-hall`(영혼의 전당 + `careerHistory` 누적 도감 수집 현황 및 미수집 힌트).
+  * 4개 메인 탭 뷰: `view-game`(생애 시뮬레이션 + `#resume-banner` 이어하기 배너 + `#btn-status-summary` 상태 요약 듣기 + `#btn-fast-forward` 다음 사건까지 진행 + 편의 토글 3종), `view-chronicle`(전체 인생 기록서 + 텍스트 복사/`.txt` 저장), `view-codex`(제국 코덱스 5개 탭, 17개 세력 계급도 아코디언), `view-hall`(영혼의 전당 + `.json` 저장본 백업 내보내기/불러오기 + `careerHistory` 누적 도감 수집 현황 및 미수집 힌트).
   * 3단 플레이 대시보드, 사망 부고 모달(`#obit-backdrop`, `role="dialog"`, 배경 `inert` + `Tab` 트랩 + 부고 복사), 단일 라이브 영역(`#sr-live`), 자동 동기화 마커(`DATA-EVENTS` · `DATA-CHRONICLES`, 총 61개 `<script>`).
-* **`styles.css` (~1,740줄):**
-  * 황동·검정·진홍·코지테이터 녹색의 제국 데이터슬레이트 테마, `.sr-only`, 고대비 금색 `:focus-visible` 포커스 링, 네임드 스포트라이트 펼침 애니메이션(`prefers-reduced-motion` 존중), `.ready-offer-box` 발탁 대기 배너 · `.career-tree-group`/`.codex-tree-group` 17개 세력 아코디언 · 이어하기 배너 · 영혼의 전당 도감/조서 스타일, 1200px/820px 반응형 그리드.
-* **`js/engine.js` (~3,147줄):**
-  * **메타 상수 & O(1) 인덱스:** `STAT_META`(8대 특성치), `FOCUSES`(6대 연간 초점), `ERA_PRESETS`(7개 시대), `data/tags.js` 연동 `TAG_LABELS`(167종) · `WORLD_TAG_LABELS`(46종), 8종 `Map` 인덱스 및 `EVENTS`/`CHRONICLES` 무손실 파티션 버킷(`byChapter`/`byWorld`/`byCareer`/`general`).
+* **`styles.css` (~1,748줄):**
+  * 황동·검정·진홍·코지테이터 녹색의 제국 데이터슬레이트 테마, `.sr-only`, 고대비 금색 `:focus-visible` 포커스 링, 네임드 스포트라이트 펼침 애니메이션(`prefers-reduced-motion` 존중), `.ready-offer-box` 발탁 대기 배너 · `.career-tree-group`/`.codex-tree-group` 17개 세력 아코디언 · `.header-btn-group` · 이어하기 배너 · 영혼의 전당 도감/조서 스타일, 1200px/820px 반응형 그리드.
+* **`js/engine.js` (~3,448줄):**
+  * **메타 상수 & O(1) 인덱스:** `SAVE_VERSION = 2`, `STAT_META`(8대 특성치), `FOCUSES`(6대 연간 초점), `ERA_PRESETS`(7개 시대), `data/tags.js` 연동 `TAG_LABELS`(167종) · `WORLD_TAG_LABELS`(46종), 8종 `Map` 인덱스 및 `EVENTS`/`CHRONICLES` 무손실 파티션 버킷(`byChapter`/`byWorld`/`byCareer`/`general`), `warnUnknownId` 미등록 커스텀 ID 개발 경고, `migrateState(raw)` 구세이브 마이그레이션.
   * **조건·판정·동기화 엔진:** `checkReq(state, req, ctx)`(`excludeChapters`, `anyPastCareers`, `excludePastCareers`, `excludeHomeWorlds` 포함) / `describeReq(req)`(전 조건 키·복합 `or` 한글화) / `syncImperialNihilus(state)` / `rollD100(state, check)` / `evaluateLifeGrade(state)`(하이 로드·워마스터·챕터 마스터·슈프림 그랜드 마스터·캡틴-제너럴·행성 총독/섹터 로드·아스타르테스 4대 직책·카오스 로드·데몬 프린스 등 최상위 맞춤 부고 27종+ 및 동적 추모 에필로그).
   * **분기 진행 파이프라인 (`advanceQuarter`):**
     1. 분기 증가(1 -> 2 -> 3 -> 새해 1; 선택형 `fastChildhood` 시 0~12세 연 1분기). 새해 정산 시 14세 자동 직무 편입, 18세 `schola` 졸업 자동 배치 폴백, 초점+직군 스탯 성장(12세 미만 `forbidden` 오염 상한 `+2/년` · 이단자 고오염 구간 자동 감쇠 제어), 하이브리드 체력 회복·비선형 노화, 환경 위험 판정.
@@ -88,16 +88,17 @@
     5. **2순위:** `EVENTS` 확률 선판정(28~34%) 후 파티션 버킷 기반 동적 분기 사건 발동(생애 최대 2회 상한 + 최근 14개 방지 + 챕터/네임드 3.0배 · `anyPastCareers` 전 계급 대비 2.8배 · 행성/직군/시기 2.6배 · 미낙인 이단자 `ev_chaos_whispers` 5.0배 우대).
     6. **2.5순위:** `createDynamicTransitEvent` `transitTier` 기반 강제 파견/배치 선택/순례선 이벤트(워프 항해 이상 변주 포함).
     7. **3순위:** `applyChronicle` 파티션 버킷 기반 일상·부조리 연대기 로그 출력(최근 28개 방지, `MAX_LOGS = 2,400`건 스마트 보존).
-  * **자율 행동 & 이동:** `getCareerAction(state)`(25종 `actionGroup` 프로필 기반 78개 직군 고유 행동, 4년 재사용), `canUsePenance`/`canUseAugmetics`/`canUseRejuvenat`, `getTravelProfile`/`evaluateTravelAttempt`/`getTravelCandidateWorlds`, `getContextualOptions`(`unlockedCareers` · `readyEventCareers` · `lockedCareers` · `nearCareers` 반환).
-* **`js/ui.js` (~1,763줄):**
-  * 100ms 틱 진행 바, `announce()` 타이머 안전 비가시 공백 교차 알림, `#focus-grid`/`#sel-travel-world` 포커스 보존 부분 갱신, 이벤트 위임(`#active-event-wrap`·`#auto-*`), 17개 세력 `<details>` 계급도 그룹화(`groupCareersByTree`) 및 `#all-careers-preview` 지연 렌더링, 부고 모달 `inert`·포커스 트랩·복원.
-  * `localStorage` 3중 저장: `imperium_vita_active_v1`(진행 중 생애 자동 저장·이어하기), `imperium_vita_prefs_v1`(알림·유년기 빠른 진행·새 진로 해금 알림/일시정지), `imperium_vita_hall_v1`(영혼의 전당 최대 60생애 + `careerHistory` 누적 집계·도감 수집률·미수집 힌트·거쳐 온 진로 궤적 조서).
+  * **자율 행동 · 이동 · 접근성 요약:** `getCareerAction(state)`(25종 `actionGroup` 프로필 기반 78개 직군 고유 행동, 4년 재사용), `canUsePenance`/`canUseAugmetics`/`canUseRejuvenat`, `canRetireHonorably`/`createHonorableEndingEvent`(초장수·최고위 자발적 명예 마감 분기), `buildStatusSummary(state)`(스크린 리더 1클릭 요약), `getTravelProfile`/`evaluateTravelAttempt`/`getTravelCandidateWorlds`, `getContextualOptions`.
+* **`js/ui.js` (~2,095줄):**
+  * 100ms 틱 진행 바, `announce()` 타이머 안전 비가시 공백 교차 알림, **전 패널 포커스 보존 렌더링**(`#focus-grid`·`#sel-travel-world`·`#auto-careers-wrap`·`#auto-actions-wrap`·`#stats-grid`·`#tag-cloud`·`#all-careers-preview` 시그니처 비교 및 `[data-cid]`/`[data-aid]` 포커스 복원 + `#recent-log-list` 증분 `prepend`), `fastForwardToEvent`(최대 10년/사건 정지), `announceStatusSummary`, 이벤트 위임, 부고 모달 `inert`·포커스 트랩·복원.
+  * `localStorage` 3중 저장 + 견고화: `imperium_vita_active_v1`(`saveVersion: 2`·`migrateState`·새해/사건/일시정지/이탈 시 저장 최적화·저장 실패 1회 경고), `imperium_vita_prefs_v1`, `imperium_vita_hall_v1` + **`.json` 통합 백업 내보내기·불러오기**(`exportBackupJson`/`importBackupJson`, `file://` ↔ GitHub Pages 이관 지원).
   * 순수 텍스트 생애 기록서 복사(클립보드 + `file://` 폴백) 및 `.txt` 파일 저장(거쳐 온 진로 궤적 포함).
 * **`scripts/sync-scripts.js` (~101줄, Node.js 전용):**
   * `data/events/**` 및 `data/chronicles/**`의 `.js` 파일을 재귀 스캔·정렬해 `index.html`의 마커 구간을 자동 동기화(`--check` 검사 모드 지원). 향후 신규 직군/행성/챕터 1:1 승격 파일 및 외계 종족 스타팅 폴더 추가 시 자동 반영.
-* **`scripts/qa.js` (~1,182줄, Node.js 전용):**
-  * `node scripts/qa.js` 단일 명령으로 `AGENTS.md` 6대 게이트(스크립트·로드 순서·고아 파일 탐지·구문·파일 용량 상한 경고·CSS·DOM `#id`·표기/기호/크리그·출처별 ID 충돌/참조/78직군 메타데이터/태그/`describeReq`/연표/`forceCareer`/동적 진로 오퍼/데몬 프린스·최상위 부고·소프트락/유년기 풀/중복률/로그 보존·300생애 멀티-초점 시뮬레이션·1,000분기 벤치마크)를 일괄 검증.
+* **`scripts/qa.js` (~1,240줄, Node.js 전용) & `.github/workflows/qa.yml`:**
+  * `node scripts/qa.js` 단일 명령으로 `AGENTS.md` 6대 게이트(스크립트·로드 순서·고아 파일 탐지·구문·파일 용량 상한 경고·CSS·DOM `#id` 96종·표기/기호/크리그·출처별 ID 충돌/참조/78직군 메타데이터/태그/`describeReq`/연표/`forceCareer`/동적 진로 오퍼/`migrateState`/명예 마감/상태 요약·소프트락/유년기 풀/중복률/로그 보존·300생애 멀티-초점 시뮬레이션·1,000분기 벤치마크)를 일괄 검증.
   * `node scripts/qa.js --deep` 확장 모드(`--lives=N` 선택 지원): **Gate 7A**(79직군 전직 도달 그래프 기반 `anyPastCareers` 모순 정적 감사) · **Gate 7B**(전체 사건·선택지·연표·연대기·직군 1,562+ 조건식 전수 합성 도달성 증명 및 직군별 직접 매칭 커버리지 집계) · **Gate 7C**(6대 초점 `forbidden` 포함 1,500생애 몬테카를로 밸런스·Tier 4~6/하이 로드/총독/초인/카오스·데몬 프린스 분포 감사).
+  * `.github/workflows/qa.yml`: `main` 브랜치 push/PR마다 `sync-scripts --check && qa.js` 자동 회귀 검증 실행.
 
 ### 3.2 데이터 파일별 수록 내용
 | 파일 | 건수 | 수록 내용 요약 |
@@ -408,11 +409,12 @@
 | **14.5단계 (전수 검수)** | 전체 500사건 · 590연대기 고증 · 연대기 · 신분 정합 · 문체 · TTS 일괄 교정 | `[완료]` | 100% (**33개 파일 교정 · 기존 ID 100% 보존 · 발화 괄호/약어/오표기 0건 · `qa.js --deep` 7대 게이트 0오류·0경고**) | Read-Only 독립 교차 감사 8기 전수 분석 후 7개 병렬 작성 슬라이스 + 공유 파일 일괄 교정: `excludeHomeWorlds` 엔진/QA 가드, 쿠스토데스·그레이 나이트 오염 면역, 카오스 상위 강등 차단, M41~M42 연대기·신분 누수·중복 플롯·동음이의어·표준 표기·단일 판정 라벨 전면 정비 |
 | **15단계 (5차 4단계)** | 네임드 15행성 & 파견 전용 연작 대확장 | `[완료]` | 100% (목표 +48 초과 달성: **+51사건 · +45연대기 · 핵심 4행성 1:1 승격 · 15행성 파견 3건+ · 2종 독립 감사 PASS · QA `--deep` 0오류**) | 핵심 4행성(`terra`/`cadia`/`krieg`/`armageddon`) 1:1 단독 파일 승격 + 15개 네임드 행성 파견(`anyWorlds`) 연작·연대기(`worlds_dispatch.js`) 대확충 |
 | **16단계 (5차 5단계)** | 9대 챕터 1:1 승격 · 초인 초장수기 · 카오스 4대 신/CSM 엔드게임 | `[완료]` | 100% (목표 +45/+36 초과 달성: **+49사건 · +38연대기 · 9대 챕터 1:1 승격 · 총 600사건 돌파 · 2종 독립 교차 감사 전량 해소 · QA `--deep` 0오류**) | 9대 챕터 1:1 단독 파일 승격(각 6종 + 합동 공조 6종), 140~400세+ 초장수기(`longevity.js`), 카오스 4대 신 2막·배신자 군단·데몬 프린스 엔드게임(`chaos_ranks.js` · `chaos_endgame.js`) 완비 |
+| **16.2단계 (접근성 · 안정화)** | 전 패널 포커스 보존 · 상태 요약 듣기 · 초장수 명예 마감 · 저장 견고화 · CI | `[완료]` | 100% (**6대 핵심 결함 전량 해소 · UI `#id` 96종 0오류 · `qa.js --deep` 7대 게이트 0오류·0경고 · GitHub Actions CI 신설**) | 진로/행동/스탯/태그/잠긴 진로 시그니처 비교+포커스 복원 & 실시간 기록 증분 `prepend`, `현재 상태 요약 듣기`, 초장수 자발적 명예 마감(`retire_honorable`) & `다음 사건까지 진행`, `saveVersion: 2`·`migrateState`·실패 경고·`.json` 백업, `qa.js` 무효 ID 10곳 교정, `.github/workflows/qa.yml` |
 | **16.5단계 (선행 확장)** | 워해머 40k 정통 3대 성향 시스템 (`자비 · 교조 · 암흑`) 도입 | `[예정]` | 0% | 3축 누적 성향(`humane`/`dogmatic`/`ruthless`), `alignBias` 소프트 가중치 + 성향 전용 루트 + 특수 진로 `or` 우대·오퍼 필터 + UI/기록서/부고 연동 + 기존 핵심 ~110건 선별 태깅 (`+3태그 · +30사건 · +27연대기 · QA 7대 게이트 확장`) |
 | **17단계 (5차 6단계)** | 인류제국 신규 4대 세력 풀 트리 & 기사 행성 추가 | `[예정]` | 0% | `navis_navigator`(파테르노발 특사 하이 로드 포함), `officio_assassinorum`(4대 클레이드·그랜드 마스터 하이 로드 포함), `imperial_knight`(+`generic_knight` 행성), `living_saint`(16.5단계 3대 성향 연동) 풀 트리 + 엔진/도감 연동 (`+4세력 · +1행성 · +36사건 · +32연대기`) |
 | **18단계 (5차 7단계)** | M41~M42 핵심 역사 5종 · 신규 네임드 8인 · 정사 크로스오버 · 거시 파장 | `[예정]` | 0% | 고딕 전쟁·1차 아마겟돈(수치의 달들)·3차 타이라니드·옥타리우스·역병 전쟁 추가, 네임드 8인(28인 체제) 단독 조우·정사 크로스오버·거시 결단 파장 연계, 시대 프리셋 2종 (`+5역사 · +8인물 · +28사건 · +28연대기`) |
 
-* **5차 인류제국 대확장 전체 누적 완성도:** `7 / 10 단계 완료 (70.0% · 12~16단계 완료, 잔여: 16.5~18단계)`
+* **5차 인류제국 대확장 전체 누적 완성도:** `8 / 11 단계 완료 (72.7% · 12~16.2단계 완료, 잔여: 16.5~18단계)`
 
 ### 12단계 (5차 1단계): 기존 27개 직군 전면 심화 · 아스타르테스 4대 직책 · 가드맨 연대 특화 `[완료]`
 * **완성도:** **100% 완료** (예정 목표 `+54사건`을 초과해 **+64사건 · +40연대기 · +12태그 · 1:1 파일 승격 2종 · 아스타르테스 4대 직책 부고 4종** 구현, `sync-scripts --check` 및 `qa.js` 6대 게이트 0오류·0경고, 신규 전 항목 도달 가능성 100% 검증 완료)
@@ -578,6 +580,31 @@
      * **Gate 7A/7B:** 79직군 전직 그래프 `65 anyPastCareers` 모순 0건, 전체 조건식 **1,562종** 합성 도달성 증명 완료, **`directCareerMatch(events = 78/78, chronicles = 78/78)` 100% 유지**.
      * **Gate 6/7C (1,500생애 멀티-초점):** `maxRepeat = 2`, `nihilusMismatch = 0`, `scholaStuck = 0`, `careerOffers = 5,904`, `reachedCareers = 56/78`, `naturalEvents = 487/576`, `1,000분기 = 391.1ms`.
      * 분포 지표: `T4+ = 933`, `T5+ = 856`, `T6 = 120`, `HighLord = 79`, `Gov = 324`, `RT = 335`, `Astartes = 58`, `GK = 8`, `Chaos = 254`, `DaemonPrince = 4`, `Focus=forbidden (allMed = 24세, heretic = 83%)`, 비금단 초점 이단 `0~6%`. **0 ERRORS · 0 WARNINGS.**
+
+### 16.2단계 (접근성 · 안정화): 전 패널 포커스 보존 · 상태 요약 듣기 · 초장수 명예 마감 · 저장 견고화 · QA/CI 정비 `[완료]`
+* **완성도:** **100% 완료** (독립 코드 검수에서 도출된 핵심 결함 6대 축 — 스크린 리더 포커스 유실, 상태 요약 부재, 초장수 캐릭터 자발적 엔딩 부재, 저장 버전 관리·실패 안내·백업 이관, `qa.js` 무효 ID 10곳, CI 부재 — 전량 해소, `sync-scripts --check` 및 `qa.js --deep` 7대 게이트 **0오류·0경고** 통과)
+* **완료 내역 (수정·신설 파일 및 핵심 개선 내역):**
+  1. **전 패널 스크린 리더 포커스 유실 완전 차단 (`js/ui.js`):**
+     * `#auto-careers-wrap`(진로), `#auto-actions-wrap`(자율 행동), `#auto-travel-wrap`(빈 상태 포함), `#stats-grid`, `#tag-cloud`, `#all-careers-preview`에 시그니처 캐싱을 적용해 내용 변동이 없을 때 DOM을 전혀 덮어쓰지 않도록 개선했다.
+     * 진로·행동 내용이 실제로 변경되어 재렌더링할 때도 현재 포커스가 놓인 `[data-cid]`/`[data-aid]` 버튼을 기억해 자동 복원한다.
+     * `#recent-log-list`를 매 분기 `innerHTML` 통째 교체에서 **증분 `prepend` + 12건 초과 끝 노드 제거** 방식으로 전환해 스크린 리더 탐색 커서가 초기화되지 않게 보호했다.
+  2. **스크린 리더 1클릭 `현재 상태 요약 듣기` (`js/engine.js`, `js/ui.js`, `index.html`, `styles.css`):**
+     * `Engine.buildStatusSummary(state)` 및 `#btn-status-summary` 버튼을 추가해 이름·나이·시점·직책·행성·생명력·기대수명·신앙·오염·초점·현재 사건 또는 다음 진로 힌트를 장식 기호 없이 단 한 번의 클릭으로 `#sr-live`에 명료히 안내한다.
+  3. **초장수 · 최고위 자발적 명예 생애 마감 & `다음 사건까지 진행` (`js/engine.js`, `js/ui.js`, `index.html`):**
+     * `canRetireHonorably(state)` · `createHonorableEndingEvent(state)` · `performAction("retire_honorable")`를 신설해 100세 이상 초장수, Tier 6 최고위(55세+), 기대수명 85% 도달 고령자(65세+)가 자율 행동 패널에서 확인 분기를 거쳐 직군별 고증 엔딩(쿠스토데스 '황제의 눈' 은퇴, 아스타르테스 최후의 성전, 드레드노트 영면, 기계교 대서고 합일, 데몬 프린스 위대한 게임 승천, 필멸자 명예 퇴임)으로 영혼의 전당에 정상 등재하며 생애를 마감할 수 있게 했다(취소 선택지로 실수 방지).
+     * `#btn-fast-forward`(`다음 사건까지 진행`)를 추가해 최대 30분기(10년) 동안 사건·발탁·사망·(옵션 ON 시) 새 진로 해금 시점까지 즉시 진행해 초장수 구간의 불필요한 대기 시간을 해소했다.
+  4. **저장 구조 견고화 · 버전 마이그레이션 · `.json` 백업 이관 (`js/engine.js`, `js/ui.js`, `index.html`):**
+     * `SAVE_VERSION = 2` 및 `Engine.migrateState(raw)`를 도입해 구버전 저장본의 누락 필드·`imperial_nihilus` 동기화·유효 ID를 자동 복원하며, 커스텀 출생에 미등록 ID가 넘어오면 `warnUnknownId`로 개발 콘솔 경고를 남긴다.
+     * `localStorage` 저장 실패 시 최초 1회 사용자 경고(`notifyStorageFailureOnce`)를 출력하고, 분기 진행 중 자동 저장을 새해·사건·일시정지·전직/행동·`beforeunload` 중심으로 최적화해 2,400로그 초장수 세이브의 불필요한 반복 직렬화를 줄였다.
+     * 영혼의 전당 상단에 `#btn-export-save` · `#btn-import-save`(`.json` 통합 백업 내보내기·불러오기)를 추가해 로컬(`file://`)과 GitHub Pages 간 세이브 이관·복원을 지원한다(진행 중 생애 포함 시 즉시 일시정지 복원해 기존 세션 덮어쓰기 차단).
+  5. **`scripts/qa.js` 무효 ID 10곳 교정 · 신규 단위 테스트 · GitHub Actions CI (`.github/workflows/qa.yml`):**
+     * `scripts/qa.js`의 존재하지 않던 `eraId`(`m41_late`/`m41_early`), `originId`(`terra_highborn`/`hive_worker`/`military_family`), `traitId`(`iron_will`) 10곳을 정식 ID로 전량 교정했다.
+     * Gate 4에 `saveVersion` · `migrateState` · `canRetireHonorably` · 명예 마감 취소/확정 · `buildStatusSummary` 단위 테스트를 추가했다.
+     * `.github/workflows/qa.yml`을 신설해 `main` 브랜치 push/PR마다 Node.js 22에서 `sync-scripts --check && qa.js` 회귀 검증을 자동 실행한다.
+  6. **최종 QA `--deep` 7대 게이트 검증 결과 (`node scripts/sync-scripts.js --check && node scripts/qa.js --deep`):**
+     * **Gate 1~5:** `index.html` 61개 스크립트 동기화 일치, 고아 파일 0건, UI `#id` **96종** 0오류, 금지 표기·장식 기호·미등록 ID 경고·소프트락 0건, 유년기 중복률 `21.0%`, `TAG_LABELS` **167/167 미회수 0건**.
+     * **Gate 7A/7B:** 79직군 전직 그래프 `65 anyPastCareers` 모순 0건, 전체 조건식 **1,562종** 합성 도달성 증명 완료, `directCareerMatch(events = 78/78, chronicles = 78/78)` 100% 유지.
+     * **Gate 6/7C (1,500생애 멀티-초점):** `maxRepeat = 2`, `nihilusMismatch = 0`, `scholaStuck = 0`, `careerOffers = 5,920`, `reachedCareers = 59/78`, `naturalEvents = 496/576`, `1,000분기 = 362.3ms`. **0 ERRORS · 0 WARNINGS.**
 
 ---
 

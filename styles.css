@@ -1717,6 +1717,13 @@ body {
   margin-top: 12px;
 }
 
+.header-btn-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 /* ===== 스크롤바 ===== */
 ::-webkit-scrollbar { width: 7px; height: 7px; }
 ::-webkit-scrollbar-track { background: #0e0c0a; }

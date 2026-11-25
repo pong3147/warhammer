@@ -1,0 +1,25 @@
+name: Imperialis Vita QA
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check index.html script sync
+        run: node scripts/sync-scripts.js --check
+
+      - name: Run 6-Gate QA Suite
+        run: node scripts/qa.js

@@ -18,8 +18,29 @@
   let focusGridInitialized = false;
   let lastTravelSignature = "";
   let lastTravelProfile = null;
+  let lastCareersSignature = "";
+  let lastActionsSignature = "";
+  let lastStatsSignature = "";
+  let lastTagsSignature = "";
+  let lastLockedSignature = "";
+  let lastRecentLogStateId = null;
+  let lastRecentTopLog = null;
+  let lastRecentLogCount = 0;
+  let saveStorageWarned = false;
   let lastLockedCareers = [];
   let knownUnlockedCareerIds = new Set();
+
+  function resetRenderSignatures() {
+    lastTravelSignature = "";
+    lastCareersSignature = "";
+    lastActionsSignature = "";
+    lastStatsSignature = "";
+    lastTagsSignature = "";
+    lastLockedSignature = "";
+    lastRecentLogStateId = null;
+    lastRecentTopLog = null;
+    lastRecentLogCount = 0;
+  }
 
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
@@ -124,6 +145,12 @@
   }
 
   // ===== 로컬 스토리지: 진행 중 생애 자동 저장 =====
+  function notifyStorageFailureOnce() {
+    if (saveStorageWarned) return;
+    saveStorageWarned = true;
+    showToast("주의: 브라우저 저장 공간이 가득 차거나 차단되어 자동 저장에 실패했다. 영혼의 전당에서 .json 백업을 저장해 두라.");
+  }
+
   function saveActiveState() {
     try {
       if (state && state.alive) {
@@ -131,14 +158,19 @@
       } else {
         localStorage.removeItem(ACTIVE_SAVE_KEY);
       }
-    } catch {}
+      return true;
+    } catch {
+      notifyStorageFailureOnce();
+      return false;
+    }
   }
 
   function loadActiveState() {
     try {
       const raw = JSON.parse(localStorage.getItem(ACTIVE_SAVE_KEY) || "null");
-      if (!raw || !raw.id || !raw.alive || !raw.stats || !Array.isArray(raw.logs)) return null;
-      return raw;
+      if (!raw || !raw.alive) return null;
+      const migrated = Engine.migrateState(raw);
+      return migrated && migrated.alive ? migrated : null;
     } catch {
       return null;
     }
@@ -194,7 +226,7 @@
     setSpeed(0);
     yearElapsedMs = 0;
     selectedTravelWorldId = null;
-    lastTravelSignature = "";
+    resetRenderSignatures();
     state = saved;
     syncKnownUnlockedCareers(state);
     $("#start-screen").style.display = "none";
@@ -210,7 +242,8 @@
   // ===== 로컬 스토리지: 영혼의 전당 =====
   function loadHall() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
@@ -220,6 +253,7 @@
     const list = loadHall();
     if (list.some((x) => x.id === charState.id)) return;
     list.unshift({
+      saveVersion: Engine.SAVE_VERSION,
       id: charState.id,
       name: charState.name,
       gender: charState.gender,
@@ -245,7 +279,112 @@
     if (list.length > 60) list.pop();
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } catch {}
+    } catch {
+      notifyStorageFailureOnce();
+    }
+  }
+
+  // ===== .json 저장본 백업 내보내기 · 불러오기 =====
+  function exportBackupJson() {
+    const activeData = state && state.alive ? state : loadActiveState();
+    const hallData = loadHall();
+    const payload = {
+      format: "imperialis_vita_backup",
+      saveVersion: Engine.SAVE_VERSION,
+      exportedAt: new Date().toISOString(),
+      active: activeData || null,
+      hall: hallData,
+      prefs
+    };
+    const json = JSON.stringify(payload, null, 2);
+    const stamp = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const blob = new Blob([json], { type: "application/json;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `imperialis_vita_backup_${stamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast(`저장본 백업을 내보냈다. 영혼의 전당 ${hallData.length}명${activeData ? `, 진행 중 생애 1건 포함.` : "."}`);
+  }
+
+  function importBackupJson(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(String(reader.result || ""));
+        if (!data || typeof data !== "object") {
+          showToast("올바른 백업 JSON 파일이 아니다.");
+          return;
+        }
+        let importedHall = 0;
+        let migratedActive = null;
+
+        if (data.format === "imperialis_vita_backup") {
+          if (Array.isArray(data.hall)) {
+            const current = loadHall();
+            const byId = new Map();
+            [...data.hall, ...current].forEach((entry) => {
+              if (entry && entry.id && !byId.has(entry.id)) byId.set(entry.id, entry);
+            });
+            const merged = Array.from(byId.values()).slice(0, 60);
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+            } catch {
+              notifyStorageFailureOnce();
+            }
+            importedHall = data.hall.length;
+          }
+          if (data.prefs && typeof data.prefs === "object") {
+            prefs = Object.assign(prefs, data.prefs);
+            savePrefs();
+            applyPrefsToUI();
+          }
+          if (data.active) {
+            const migrated = Engine.migrateState(data.active);
+            if (migrated && migrated.alive) {
+              migratedActive = migrated;
+            }
+          }
+        } else if (data.id && data.stats && Array.isArray(data.logs)) {
+          const migrated = Engine.migrateState(data);
+          if (migrated && migrated.alive) {
+            migratedActive = migrated;
+          }
+        } else {
+          showToast("지원하지 않는 백업 파일 형식이다.");
+          return;
+        }
+
+        if (migratedActive) {
+          setSpeed(0);
+          yearElapsedMs = 0;
+          selectedTravelWorldId = null;
+          resetRenderSignatures();
+          state = migratedActive;
+          syncKnownUnlockedCareers(state);
+          saveActiveState();
+          $("#start-screen").style.display = "none";
+          $("#play-dashboard").style.display = "grid";
+          closeObituaryModal(false);
+          renderAll();
+        }
+
+        renderResumeBanner();
+        renderHall();
+        if (migratedActive) {
+          showToast(`백업을 불러왔다. 영혼의 전당 ${importedHall}명 반영, 진행 중 생애 ${migratedActive.name}(${migratedActive.age}세)을(를) 일시정지 상태로 복원했다. 생애 시뮬레이션 탭에서 이어서 진행할 수 있다.`);
+        } else {
+          showToast(`백업을 불러왔다. 영혼의 전당 ${importedHall}명의 기록을 반영했다.`);
+        }
+      } catch {
+        showToast("백업 파일을 읽는 중 오류가 발생했다. JSON 형식을 확인해 보라.");
+      }
+    };
+    reader.readAsText(file, "utf-8");
   }
 
   // ===== 커스텀 시작 폼 초기화 =====
@@ -306,6 +445,7 @@
   }
 
   function setSpeed(speed) {
+    const prevSpeed = currentSpeed;
     currentSpeed = speed;
     clearInterval(tickIntervalId);
     tickIntervalId = null;
@@ -321,6 +461,10 @@
       el.classList.toggle("active", isOn);
       el.setAttribute("aria-pressed", isOn ? "true" : "false");
     });
+
+    if (speed === 0 && prevSpeed > 0 && state && state.alive) {
+      saveActiveState();
+    }
 
     if (speed > 0 && state && state.alive && !state.pendingEvent) {
       const targetMs = SPEED_MS[speed];
@@ -369,7 +513,9 @@
         setSpeed(0);
       }
     }
-    if (state.alive) saveActiveState();
+    if (state.alive && (res.isNewYear || res.status === "event" || (newlyUnlocked.length > 0 && isCareerAlertEnabled()) || state.logs.length <= 20)) {
+      saveActiveState();
+    }
     renderAll();
 
     if (res.status === "event" && state.pendingEvent) {
@@ -393,12 +539,80 @@
     }
   }
 
+  function fastForwardToEvent() {
+    if (!state || !state.alive) {
+      setSpeed(0);
+      return;
+    }
+    if (state.pendingEvent) {
+      setSpeed(0);
+      showToast("먼저 발생한 사건의 선택지를 결정해야 한다.");
+      return;
+    }
+
+    setSpeed(0);
+    yearElapsedMs = 0;
+    const startAge = state.age;
+    const fastKid = isFastChildhoodEnabled();
+    let steps = 0;
+    let res = { status: "ok" };
+    let newlyUnlocked = [];
+
+    while (steps < 30 && state.alive && !state.pendingEvent) {
+      steps++;
+      res = Engine.advanceQuarter(state, { fastChildhood: fastKid });
+      if (res.status === "event" || res.status === "dead") break;
+      newlyUnlocked = detectNewCareerUnlocks(state);
+      if (newlyUnlocked.length > 0 && isCareerAlertEnabled()) break;
+    }
+
+    if (res.status === "dead" || !state.alive) {
+      saveToHall(state);
+      clearActiveState();
+      openObituaryModal();
+      renderAll();
+      return;
+    }
+
+    saveActiveState();
+    renderAll();
+
+    const elapsedYears = state.age - startAge;
+    const spanText = elapsedYears > 0 ? `${elapsedYears}년 경과(${state.age}세)` : `${steps}분기 경과(${state.age}세)`;
+
+    if (res.status === "event" && state.pendingEvent) {
+      const evHead = $("#active-event-heading");
+      if (evHead) evHead.focus();
+      const namedNames = (state.pendingEvent.characters || [])
+        .map((cid) => Engine.getCharacter(cid))
+        .filter(Boolean)
+        .map((c) => c.name);
+      const namedNote = namedNames.length ? ` 네임드 인물 조우: ${namedNames.join(", ")}.` : "";
+      announce(`${spanText}. 사건 발생.${namedNote} ${state.pendingEvent.title}`);
+    } else if (newlyUnlocked.length > 0 && isCareerAlertEnabled()) {
+      const names = newlyUnlocked.map((c) => Engine.getCareerDisplayTitle(state, c)).slice(0, 3).join(", ");
+      const extra = newlyUnlocked.length > 3 ? ` 외 ${newlyUnlocked.length - 3}종` : "";
+      showToast(`${spanText}. 새 진로 해금: ${names}${extra}.`);
+    } else {
+      showToast(`${spanText}. 큰 사건 없이 세월이 흘렀다.`);
+    }
+  }
+
+  function announceStatusSummary() {
+    if (!state) {
+      showToast("진행 중인 생애가 없다.");
+      return;
+    }
+    const summary = Engine.buildStatusSummary(state);
+    showToast(summary, true);
+  }
+
   // ===== 게임 시작 =====
   function startNewGame(config) {
     setSpeed(0);
     yearElapsedMs = 0;
     selectedTravelWorldId = null;
-    lastTravelSignature = "";
+    resetRenderSignatures();
     state = Engine.createCharacter(config);
     syncKnownUnlockedCareers(state);
     saveActiveState();
@@ -480,18 +694,23 @@
     $("#val-corruption").textContent = `${state.corruption} / 100`;
     $("#bar-corruption").style.width = `${state.corruption}%`;
 
-    $("#stats-grid").innerHTML = Object.values(Engine.STAT_META).map((m) => {
-      const val = state.stats[m.key];
-      return `
-        <div class="stat-item" title="${escapeHtml(m.desc)}">
-          <div class="stat-top">
-            <dt><span class="stat-key" aria-hidden="true">${m.key}</span>${m.name}</dt>
-            <dd class="stat-num">${val}</dd>
+    const statKeys = Object.keys(Engine.STAT_META);
+    const statsSig = statKeys.map((k) => state.stats[k]).join(",");
+    if (statsSig !== lastStatsSignature) {
+      lastStatsSignature = statsSig;
+      $("#stats-grid").innerHTML = Object.values(Engine.STAT_META).map((m) => {
+        const val = state.stats[m.key];
+        return `
+          <div class="stat-item" title="${escapeHtml(m.desc)}">
+            <div class="stat-top">
+              <dt><span class="stat-key" aria-hidden="true">${m.key}</span>${m.name}</dt>
+              <dd class="stat-num">${val}</dd>
+            </div>
+            <div class="stat-mini-bar" aria-hidden="true"><div class="stat-mini-fill" style="width:${val}%"></div></div>
           </div>
-          <div class="stat-mini-bar" aria-hidden="true"><div class="stat-mini-fill" style="width:${val}%"></div></div>
-        </div>
-      `;
-    }).join("");
+        `;
+      }).join("");
+    }
 
     const dangerTags = new Set([
       "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
@@ -499,9 +718,13 @@
       "wanted_by_inquisition", "rogue_psyker", "imperial_nihilus", "tech_heresy"
     ]);
     const visibleTags = state.tags.filter((t) => !t.startsWith("met_"));
-    $("#tag-cloud").innerHTML = visibleTags.length
-      ? visibleTags.map((t) => `<li class="tag-chip ${dangerTags.has(t) ? "danger" : ""}">${escapeHtml(Engine.TAG_LABELS[t] || t)}</li>`).join("")
-      : `<li style="font-size:11.5px;color:var(--text-muted);">특이 이력 없음</li>`;
+    const tagsSig = visibleTags.join(",");
+    if (tagsSig !== lastTagsSignature) {
+      lastTagsSignature = tagsSig;
+      $("#tag-cloud").innerHTML = visibleTags.length
+        ? visibleTags.map((t) => `<li class="tag-chip ${dangerTags.has(t) ? "danger" : ""}">${escapeHtml(Engine.TAG_LABELS[t] || t)}</li>`).join("")
+        : `<li style="font-size:11.5px;color:var(--text-muted);">특이 이력 없음</li>`;
+    }
   }
 
   function renderFocuses() {
@@ -641,8 +864,34 @@
 
   function renderRecentLogs() {
     $("#recent-log-total").textContent = `${state.logs.length}건`;
+    const list = $("#recent-log-list");
     const recent = state.logs.slice(0, 12);
-    $("#recent-log-list").innerHTML = recent.map(renderLogItemHtml).join("");
+
+    if (
+      lastRecentLogStateId === state.id &&
+      list.children.length > 0 &&
+      lastRecentTopLog
+    ) {
+      const idx = recent.indexOf(lastRecentTopLog);
+      if (idx === 0 && lastRecentLogCount === state.logs.length) {
+        return;
+      }
+      if (idx > 0 && idx < recent.length) {
+        const addedHtml = recent.slice(0, idx).map(renderLogItemHtml).join("");
+        list.insertAdjacentHTML("afterbegin", addedHtml);
+        while (list.children.length > 12) {
+          list.lastElementChild.remove();
+        }
+        lastRecentTopLog = recent[0] || null;
+        lastRecentLogCount = state.logs.length;
+        return;
+      }
+    }
+
+    list.innerHTML = recent.map(renderLogItemHtml).join("");
+    lastRecentLogStateId = state.id;
+    lastRecentTopLog = recent[0] || null;
+    lastRecentLogCount = state.logs.length;
   }
 
   function updateTravelPreview(targetId) {
@@ -675,9 +924,12 @@
     }));
   }
 
-  function renderLockedCareersPreview() {
+  function renderLockedCareersPreview(force = false) {
     const wrap = $("#all-careers-preview");
     if (!wrap) return;
+    const sig = lastLockedCareers.map((c) => c.id).join(",");
+    if (!force && sig === lastLockedSignature && wrap.children.length > 0) return;
+    lastLockedSignature = sig;
     const grouped = groupCareersByTree(lastLockedCareers);
     wrap.innerHTML = grouped.map((g) => `
       <details class="career-tree-group">
@@ -702,80 +954,121 @@
     `).join("");
   }
 
-  // ===== 우측 통합 자율 선택 패널 (상황에 맞는 항목만 노출!) =====
+  // ===== 우측 통합 자율 선택 패널 (상황에 맞는 항목만 노출 · 시그니처 비교로 포커스 유실 차단) =====
   function renderAutonomousPanel() {
     const ctx = Engine.getContextualOptions(state);
     const busy = !state.alive || Boolean(state.pendingEvent);
 
-    // 1. 지금 지원 가능한 진로/승급 + 발탁 이벤트 대기 안내
+    // 1. 지금 지원 가능한 진로/승급 + 발탁 이벤트 대기 안내 (변경 시에만 재렌더 + 포커스 복원)
     const cWrap = $("#auto-careers-wrap");
     const readyOffers = ctx.readyEventCareers || [];
-    const readyBannerHtml = readyOffers.length > 0
-      ? `
-        <div class="ready-offer-box">
-          <strong>상위 · 특임 발탁 조건 달성 (${readyOffers.length}종)</strong>
-          <p>${escapeHtml(readyOffers.slice(0, 3).map((c) => Engine.getCareerDisplayTitle(state, c)).join(", "))}${readyOffers.length > 3 ? ` 외 ${readyOffers.length - 3}종` : ""} — 시간이 흐르면 임명·발탁 사건이 도착한다.</p>
-        </div>
-      `
-      : "";
+    const careersSig = [
+      busy ? "1" : "0",
+      state.careerId,
+      state.chapterId || "",
+      state.homeWorldId || "",
+      readyOffers.map((c) => c.id).join(","),
+      ctx.unlockedCareers.map((c) => c.id).join(","),
+      ctx.nearCareers.map((c) => c.id).join(",")
+    ].join("|");
 
-    if (ctx.unlockedCareers.length > 0) {
-      cWrap.innerHTML = readyBannerHtml + ctx.unlockedCareers.map((c) => {
-        const displayName = Engine.getCareerDisplayTitle(state, c);
-        const trialNote = c.trialCheck ? ` · [시련: ${Engine.STAT_META[c.trialCheck.stat].name}]` : "";
-        return `
-          <div class="career-card unlocked" style="margin-bottom:8px;">
-            <div class="career-top">
-              <div>
-                <div class="career-name">${escapeHtml(displayName)}</div>
-                <div class="career-faction">${escapeHtml(c.faction)} · Tier ${c.tier}${trialNote}</div>
+    if (careersSig !== lastCareersSignature) {
+      const activeEl = document.activeElement;
+      const focusedCareerBtn = activeEl && cWrap.contains(activeEl) ? activeEl.closest("[data-cid]") : null;
+      const focusedCid = focusedCareerBtn ? focusedCareerBtn.dataset.cid : null;
+      lastCareersSignature = careersSig;
+
+      const readyBannerHtml = readyOffers.length > 0
+        ? `
+          <div class="ready-offer-box">
+            <strong>상위 · 특임 발탁 조건 달성 (${readyOffers.length}종)</strong>
+            <p>${escapeHtml(readyOffers.slice(0, 3).map((c) => Engine.getCareerDisplayTitle(state, c)).join(", "))}${readyOffers.length > 3 ? ` 외 ${readyOffers.length - 3}종` : ""} — 시간이 흐르면 임명·발탁 사건이 도착한다.</p>
+          </div>
+        `
+        : "";
+
+      if (ctx.unlockedCareers.length > 0) {
+        cWrap.innerHTML = readyBannerHtml + ctx.unlockedCareers.map((c) => {
+          const displayName = Engine.getCareerDisplayTitle(state, c);
+          const trialNote = c.trialCheck ? ` · [시련: ${Engine.STAT_META[c.trialCheck.stat].name}]` : "";
+          return `
+            <div class="career-card unlocked" style="margin-bottom:8px;">
+              <div class="career-top">
+                <div>
+                  <div class="career-name">${escapeHtml(displayName)}</div>
+                  <div class="career-faction">${escapeHtml(c.faction)} · Tier ${c.tier}${trialNote}</div>
+                </div>
+                <span class="ev-badge">수명 ${c.lifeBonus >= 0 ? "+" + c.lifeBonus : c.lifeBonus}</span>
               </div>
-              <span class="ev-badge">수명 ${c.lifeBonus >= 0 ? "+" + c.lifeBonus : c.lifeBonus}</span>
+              <div class="career-desc">${escapeHtml(c.desc)}</div>
+              <button class="btn-gold btn-apply-career" data-cid="${c.id}" ${busy ? "disabled" : ""} style="width:100%;">
+                ${c.trialCheck ? "선발 시련 도전" : "이 진로로 지원 / 승급"}
+              </button>
             </div>
-            <div class="career-desc">${escapeHtml(c.desc)}</div>
-            <button class="btn-gold btn-apply-career" data-cid="${c.id}" ${busy ? "disabled" : ""} style="width:100%;">
-              ${c.trialCheck ? "선발 시련 도전" : "이 진로로 지원 / 승급"}
-            </button>
+          `;
+        }).join("");
+      } else {
+        const hintHtml = ctx.nearCareers.length
+          ? `<div class="near-goal-list">
+              ${ctx.nearCareers.map((c) => {
+                const modeHint = c.entryMode === "event" ? " [발탁 이벤트]" : "";
+                return `
+                  <div class="near-goal-item">
+                    <strong>다음 목표 힌트 · ${escapeHtml(c.name)}${modeHint}</strong>
+                    <span style="color:var(--text-muted);">필요: ${escapeHtml(Engine.describeReq(c.req))}</span>
+                  </div>
+                `;
+              }).join("")}
+            </div>`
+          : "";
+        cWrap.innerHTML = readyBannerHtml + `
+          <div class="empty-hint-box">
+            지금 직접 지원할 수 있는 진로가 없다. <strong>삶의 초점</strong>으로 스탯을 키우거나 공훈을 쌓으면 승급·횡단 발탁 사건이 자연스럽게 찾아온다.
+            ${hintHtml}
           </div>
         `;
-      }).join("");
-    } else {
-      const hintHtml = ctx.nearCareers.length
-        ? `<div class="near-goal-list">
-            ${ctx.nearCareers.map((c) => {
-              const modeHint = c.entryMode === "event" ? " [발탁 이벤트]" : "";
-              return `
-                <div class="near-goal-item">
-                  <strong>다음 목표 힌트 · ${escapeHtml(c.name)}${modeHint}</strong>
-                  <span style="color:var(--text-muted);">필요: ${escapeHtml(Engine.describeReq(c.req))}</span>
-                </div>
-              `;
-            }).join("")}
-          </div>`
-        : "";
-      cWrap.innerHTML = readyBannerHtml + `
-        <div class="empty-hint-box">
-          지금 직접 지원할 수 있는 진로가 없다. <strong>삶의 초점</strong>으로 스탯을 키우거나 공훈을 쌓으면 승급·횡단 발탁 사건이 자연스럽게 찾아온다.
-          ${hintHtml}
-        </div>
-      `;
+      }
+
+      if (focusedCid && !busy) {
+        const restored = cWrap.querySelector(`.btn-apply-career[data-cid="${focusedCid}"]:not([disabled])`) ||
+          cWrap.querySelector(".btn-apply-career:not([disabled])");
+        if (restored) restored.focus();
+      }
     }
 
-    // 2. 현재 조건이 맞는 자율 행동만 노출
+    // 2. 현재 조건이 맞는 자율 행동만 노출 (변경 시에만 재렌더 + 포커스 복원)
     const aSec = $("#auto-actions-section");
     const aWrap = $("#auto-actions-wrap");
-    if (ctx.actions.length > 0) {
-      aSec.style.display = "block";
-      aWrap.innerHTML = ctx.actions.map((a) => `
-        <div class="action-card">
-          <h4>${escapeHtml(a.name)}</h4>
-          <p>${escapeHtml(a.desc)}</p>
-          <button class="btn-ghost btn-auto-action" data-aid="${a.id}" ${busy ? "disabled" : ""} style="width:100%;">${escapeHtml(a.btnLabel)}</button>
-        </div>
-      `).join("");
-    } else {
-      aSec.style.display = "none";
-      aWrap.innerHTML = "";
+    const actionsSig = [
+      busy ? "1" : "0",
+      ctx.actions.map((a) => `${a.id}|${a.name}|${a.desc}|${a.btnLabel}`).join(";;")
+    ].join("||");
+
+    if (actionsSig !== lastActionsSignature) {
+      const activeEl = document.activeElement;
+      const focusedActBtn = activeEl && aWrap.contains(activeEl) ? activeEl.closest("[data-aid]") : null;
+      const focusedAid = focusedActBtn ? focusedActBtn.dataset.aid : null;
+      lastActionsSignature = actionsSig;
+
+      if (ctx.actions.length > 0) {
+        aSec.style.display = "block";
+        aWrap.innerHTML = ctx.actions.map((a) => `
+          <div class="action-card">
+            <h4>${escapeHtml(a.name)}</h4>
+            <p>${escapeHtml(a.desc)}</p>
+            <button class="btn-ghost btn-auto-action" data-aid="${a.id}" ${busy ? "disabled" : ""} style="width:100%;">${escapeHtml(a.btnLabel)}</button>
+          </div>
+        `).join("");
+      } else {
+        aSec.style.display = "none";
+        aWrap.innerHTML = "";
+      }
+
+      if (focusedAid && !busy) {
+        const restored = aWrap.querySelector(`.btn-auto-action[data-aid="${focusedAid}"]:not([disabled])`) ||
+          aWrap.querySelector(".btn-auto-action:not([disabled])");
+        if (restored) restored.focus();
+      }
     }
 
     // 3. 계급 기반 성간 이동 / 파견 청원 (드롭다운 포커스 유실 방지를 위한 부분 갱신)
@@ -784,14 +1077,17 @@
     lastTravelProfile = tp;
 
     if (!tp.canAttempt || ctx.travelWorlds.length === 0) {
-      lastTravelSignature = "";
-      tWrap.innerHTML = `
-        <div class="empty-hint-box">
-          <div class="travel-auth-label">${escapeHtml(tp.authority)}</div>
-          <div>${escapeHtml(tp.reason || "현재 이동할 수 있는 인접 행성이 없다.")}</div>
-          <div class="travel-note">※ 직접 청원하지 않아도 시간이 흐르면 상황에 맞는 파견·순례 이벤트가 자연스럽게 찾아온다.</div>
-        </div>
-      `;
+      const emptyTravelSig = `EMPTY|${tp.authority}|${tp.reason || ""}`;
+      if (lastTravelSignature !== emptyTravelSig) {
+        lastTravelSignature = emptyTravelSig;
+        tWrap.innerHTML = `
+          <div class="empty-hint-box">
+            <div class="travel-auth-label">${escapeHtml(tp.authority)}</div>
+            <div>${escapeHtml(tp.reason || "현재 이동할 수 있는 인접 행성이 없다.")}</div>
+            <div class="travel-note">※ 직접 청원하지 않아도 시간이 흐르면 상황에 맞는 파견·순례 이벤트가 자연스럽게 찾아온다.</div>
+          </div>
+        `;
+      }
     } else {
       if (!selectedTravelWorldId || !ctx.travelWorlds.some((w) => w.id === selectedTravelWorldId)) {
         selectedTravelWorldId = ctx.travelWorlds[0].id;
@@ -835,7 +1131,7 @@
       }
     }
 
-    // 4. 접이식 전체 병종 도감 미리보기 (아코디언이 열려 있을 때만 지연 렌더링)
+    // 4. 접이식 전체 병종 도감 미리보기 (아코디언이 열려 있을 때만 지연·시그니처 렌더링)
     lastLockedCareers = ctx.lockedCareers || DATA.CAREERS.filter((c) => c.selectable && c.id !== state.careerId && !Engine.checkReq(state, c.req));
     $("#locked-career-count").textContent = `${lastLockedCareers.length}종`;
     const detailsEl = $("#locked-careers-details");
@@ -844,6 +1140,8 @@
     }
 
     $("#btn-step").disabled = busy;
+    const ffBtn = $("#btn-fast-forward");
+    if (ffBtn) ffBtn.disabled = busy;
   }
 
   // ===== 인생 기록서 전용 뷰 (전체 연대기 몰아보기) =====
@@ -1482,6 +1780,8 @@
     $("#btn-speed-2").addEventListener("click", () => setSpeed(2));
     $("#btn-speed-4").addEventListener("click", () => setSpeed(4));
     $("#btn-step").addEventListener("click", () => stepOneYear());
+    $("#btn-fast-forward").addEventListener("click", () => fastForwardToEvent());
+    $("#btn-status-summary").addEventListener("click", () => announceStatusSummary());
 
     $("#btn-new-life").addEventListener("click", () => {
       setSpeed(0);
@@ -1575,6 +1875,16 @@
       const btn = e.target.closest(".btn-auto-action");
       if (!btn || btn.disabled || !state || !state.alive) return;
       const res = Engine.performAction(state, btn.dataset.aid);
+      if (res.ok && res.openedEvent) {
+        setSpeed(0);
+        syncKnownUnlockedCareers(state);
+        saveActiveState();
+        renderAll();
+        const evHead = $("#active-event-heading");
+        if (evHead) evHead.focus();
+        announce(`사건 발생. ${res.openedEvent.title}`);
+        return;
+      }
       syncKnownUnlockedCareers(state);
       saveActiveState();
       showToast(res.ok ? (res.msg || "행동을 완료했다!") : res.msg);
@@ -1676,11 +1986,26 @@
     });
     $("#codex-search").addEventListener("input", renderCodex);
 
-    // 영혼의 전당 초기화
+    // 영혼의 전당 백업 내보내기 · 불러오기 · 초기화
+    $("#btn-export-save").addEventListener("click", () => exportBackupJson());
+    $("#btn-import-save").addEventListener("click", () => {
+      const inp = $("#inp-import-save");
+      if (inp) inp.click();
+    });
+    $("#inp-import-save").addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) importBackupJson(file);
+      e.target.value = "";
+    });
     $("#btn-clear-hall").addEventListener("click", () => {
       localStorage.removeItem(STORAGE_KEY);
       renderHall();
       showToast("영혼의 전당 기록을 초기화했다.");
+    });
+
+    // 브라우저 닫기·새로고침 시 진행 중 생애 안전 저장
+    window.addEventListener("beforeunload", () => {
+      if (state && state.alive) saveActiveState();
     });
 
     // 부고 모달 버튼

@@ -351,9 +351,9 @@ for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
 const kriegCheckState = Engine.createCharacter({
   mode: "custom",
   worldId: "krieg",
-  originId: "hive_worker",
-  traitId: "iron_will",
-  eraId: "m41_late",
+  originId: "imperial_citizen",
+  traitId: "none",
+  eraId: "armageddon",
   gender: "male"
 });
 for (const ch of DATA.CHRONICLES) {
@@ -365,9 +365,12 @@ for (const ch of DATA.CHRONICLES) {
   }
 }
 
-// Unit test: forceCareer downgrade protection, Astartes chaos redirect, dynamic offers, anyPastCareers, apex obituaries
+// Unit test: forceCareer downgrade protection, Astartes chaos redirect, dynamic offers, anyPastCareers, apex obituaries, save migration, honorable ending, status summary
 {
-  const cust = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "terra_highborn", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+  const cust = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "terra_high_blood", traitId: "none", eraId: "armageddon", gender: "male" });
+  if (cust.saveVersion !== Engine.SAVE_VERSION) {
+    fail(4, `createCharacter missing saveVersion (got ${cust.saveVersion}, expected ${Engine.SAVE_VERSION})`);
+  }
   cust.careerId = "adeptus_custodes";
   cust.tags.push("custodes", "transhuman");
   cust.pendingEvent = {
@@ -389,7 +392,7 @@ for (const ch of DATA.CHRONICLES) {
     fail(4, `forceCareer corrupted custodes to ${cust.careerId}`);
   }
 
-  const marine = Engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "hive_worker", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+  const marine = Engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "underhive_scum", traitId: "none", eraId: "armageddon", gender: "male" });
   marine.age = 40;
   marine.careerId = "astartes_brother";
   marine.careerHistory = ["child", "astartes_scout", "astartes_brother"];
@@ -411,7 +414,7 @@ for (const ch of DATA.CHRONICLES) {
     fail(4, `forceCareer chaos_cultist on Astartes did not redirect to renegade_marine (got ${marine.careerId})`);
   }
 
-  const recruit = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "hive_worker", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+  const recruit = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "underhive_scum", traitId: "none", eraId: "armageddon", gender: "male" });
   recruit.careerId = "menial_worker";
   recruit.pendingEvent = {
     id: "qa_tag_sync_test",
@@ -424,7 +427,7 @@ for (const ch of DATA.CHRONICLES) {
   }
 
   // anyPastCareers + excludePastCareers + dynamic career offer accept/decline cooldown
-  const gen = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "military_family", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+  const gen = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "militarum_family", traitId: "none", eraId: "armageddon", gender: "male" });
   gen.age = 56;
   gen.careerId = "militarum_general";
   gen.careerHistory = ["child", "astra_militarum", "militarum_sergeant", "militarum_officer", "militarum_general"];
@@ -462,7 +465,7 @@ for (const ch of DATA.CHRONICLES) {
   }
 
   // Apex obituaries & Daemon Prince corruption-100 immunity
-  const dp = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "hive_worker", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+  const dp = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "underhive_scum", traitId: "none", eraId: "armageddon", gender: "male" });
   dp.age = 80;
   dp.careerId = "daemon_prince";
   dp.tags.push("daemon_prince", "heretic", "chaos_aligned", "mark_khorne");
@@ -479,9 +482,54 @@ for (const ch of DATA.CHRONICLES) {
   gen.tags.push("warmaster");
   const wmGrade = Engine.evaluateLifeGrade(gen);
   if (!wmGrade.rank.includes("WARMASTER")) fail(4, `Warmaster obituary rank mismatch: ${wmGrade.rank}`);
+
+  // Stage 16.2: migrateState legacy save compatibility
+  const legacyRaw = {
+    id: "soul_legacy_test",
+    name: "구버전 테스트",
+    gender: "male",
+    birthYear: 985,
+    year: 1005,
+    age: 20,
+    alive: true,
+    worldId: "baal",
+    homeWorldId: "baal",
+    originId: "imperial_citizen",
+    traitId: "none",
+    careerId: "astra_militarum",
+    stats: { WS: 40, BS: 42 },
+    logs: []
+  };
+  const migrated = Engine.migrateState(legacyRaw);
+  if (!migrated || migrated.saveVersion !== Engine.SAVE_VERSION || !migrated.tags.includes("imperial_nihilus") || !migrated.declinedCareers || migrated.stats.Int !== 25) {
+    fail(4, `migrateState failed to upgrade legacy save properly`);
+  }
+
+  // Stage 16.2: Honorable retirement / ending event (cancel keeps alive, confirm ends cleanly with obituary)
+  cust.age = 220;
+  if (!Engine.canRetireHonorably(cust).ok) {
+    fail(4, `220-year-old Custodes should qualify for honorable ending`);
+  }
+  const openRes = Engine.performAction(cust, "retire_honorable");
+  if (!openRes.ok || !cust.pendingEvent || !cust.pendingEvent.isHonorableEnding) {
+    fail(4, `performAction(retire_honorable) did not open honorable ending event`);
+  }
+  Engine.resolvePendingChoice(cust, 1); // Cancel choice
+  if (!cust.alive) fail(4, `Honorable ending cancel choice killed character`);
+  Engine.performAction(cust, "retire_honorable");
+  Engine.resolvePendingChoice(cust, 0); // Confirm honorable retirement
+  if (cust.alive || !cust.finalGrade || !cust.finalGrade.rank.includes("TEN THOUSAND")) {
+    fail(4, `Honorable ending confirm choice failed to conclude Custodes life cleanly`);
+  }
+
+  // Stage 16.2: buildStatusSummary screen reader clarity check
+  const summary = Engine.buildStatusSummary(gen);
+  if (!summary || !summary.includes(gen.name) || forbiddenSymbols.test(summary)) {
+    fail(4, `buildStatusSummary invalid or contains forbidden symbols: "${summary}"`);
+  }
 }
 
-console.log(`[Gate 4] Integrity, 78-career metadata, tag production, describeReq, dynamic offers, and apex guards verified.`);
+console.log(`[Gate 4] Integrity, 78-career metadata, tag production, describeReq, dynamic offers, migration, honorable ending & guards verified.`);
 
 // ============================================================================
 // Gate 5: 소프트락 · 유년기 풀(22행성 각 4+) · fastChildhood · 2400로그 보존 · 중복률
@@ -489,7 +537,7 @@ console.log(`[Gate 4] Integrity, 78-career metadata, tag production, describeReq
 let minAge2 = 999;
 let minAge10 = 999;
 for (const w of DATA.WORLDS) {
-  const st = Engine.createCharacter({ mode: "custom", worldId: w.id, originId: "hive_worker", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+  const st = Engine.createCharacter({ mode: "custom", worldId: w.id, originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
   st.age = 2;
   const c2 = DATA.CHRONICLES.filter((c) => Engine.checkReq(st, c.req)).length;
   st.age = 10;
@@ -521,7 +569,7 @@ function pickSmartChoice(st) {
 
 // fastChildhood unit test
 {
-  const fastSt = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "hive_worker", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+  const fastSt = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
   let ticks = 0;
   while (fastSt.alive && fastSt.age < 13 && ticks < 40) {
     Engine.advanceQuarter(fastSt, { fastChildhood: true });
@@ -533,7 +581,7 @@ function pickSmartChoice(st) {
 
 // 2400-log birth preservation unit test
 {
-  const longSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "planetary_noble", traitId: "iron_will", eraId: "m41_early", gender: "male" });
+  const longSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "planetary_noble", traitId: "none", eraId: "eisenhorn", gender: "male" });
   longSt.careerId = "adeptus_custodes";
   longSt.tags.push("custodes", "transhuman");
   const birthLog = longSt.logs[0];
@@ -1152,7 +1200,7 @@ if (scholaStuck > 0) fail(6, `schola career remained child past age 18 in ${scho
 if (careerOfferTriggers === 0) fail(6, `No dynamic career offers triggered across ${totalSimLives} simulated lives`);
 
 // 1,000-quarter engine CPU benchmark
-const benchSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "planetary_noble", traitId: "iron_will", eraId: "m41_late", gender: "male" });
+const benchSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "planetary_noble", traitId: "none", eraId: "armageddon", gender: "male" });
 benchSt.careerId = "inquisitor";
 benchSt.tags.push("inquisitor", "rosette", "ordo_hereticus", "rejuvenat");
 const t0 = performance.now();
