@@ -1,6 +1,6 @@
 ---
 name: imperialis-vita-orchestrator
-description: 'Project-specific orchestrator for 1 / QUADRILLION : IMPERIALIS VITA (pong3147/warhammer). Routes work by L1-L4 complexity across hybrid parallel data authoring and 2-Phase closed-loop engineering, enforces hard read-only gating for auditors, structured handoff/handback packets, circuit breakers, and 6-gate QA + GitHub release closeout.'
+description: 'Project-specific orchestrator for 1 / QUADRILLION : IMPERIALIS VITA (pong3147/warhammer). Routes work by L1-L4 complexity across hybrid parallel data authoring and 2-Phase closed-loop engineering, enforces hard read-only gating for auditors, structured handoff/handback packets, circuit breakers, 6-gate QA, and 2-tier post-stage Red-Team holistic review.'
 ---
 # Imperialis Vita Orchestrator (Warhammer 40k 전용 오케스트레이터)
 
@@ -13,12 +13,12 @@ description: 'Project-specific orchestrator for 1 / QUADRILLION : IMPERIALIS VIT
 
 요청을 받으면 먼저 작업 범위를 `L1`~`L4`로 분류한다. 사소한 작업에 과잉 계획이나 서브에이전트를 띄우지 않는다.
 
-| 등급 | 대상 작업 예시 | 실행 모드 | 서브에이전트 편성 | 최종 감사(`FINAL_AUDIT`) |
+| 등급 | 대상 작업 예시 | 실행 모드 | 서브에이전트 편성 | 최종 감사(`FINAL_AUDIT` + `POST_STAGE_REDTEAM`) |
 | :--- | :--- | :--- | :--- | :--- |
 | **`L1`** | 질문 답변, 단일 오타·표기 수정, 1~2줄 패치 | 메인 즉시 처리 (서브에이전트 생략) | 없음 | 생략 (필요 시 `node scripts/qa.js`만 실행) |
-| **`L2`** | 단일 파일 버그 수정, 소규모 사건/연대기 추가(1~10건), 단일 UI 개선 | 직렬 2-Phase (조사 -> 1-Shot 명세 -> 구현 -> 검증) | 메인이 직접 수행하거나 `role-data-writer` / `role-engine-ui` 1명 위임 | 무오류 1-Shot 완료 시 생략; 실행 중 1회 이상 오류 발생 시 필수 |
-| **`L3`** | 대규모 서사·연대기 확충 (14·15·16단계 등 20건+ 추가, 1:1 파일 승격) | **병렬 집필 + 독립 교차 감사** | 메인(공유 파일 단독 소유) + `role-data-writer` 3~5명 병렬 + `role-lore-auditor`(읽기 전용) + `role-prose-a11y-critic`(읽기 전용) | **필수** (`sync-scripts` + `qa.js --deep` + 감사관 2종 리포트 0결함) |
-| **`L4`** | 엔진·UI 대개편, 신규 세력/행성/역사·네임드 추가 (17·18단계 등) | **선행 조사 -> 사용자 확정 -> 코어 직렬 고정 -> 콘텐츠 병렬 집필 -> 정밀 감사** | `role-lore-auditor` 선행 브리프 -> 필요 시 `AWAITING_USER` 설계 확정 -> `role-engine-ui` 코어 직렬 구현 -> `role-data-writer` 병렬 집필 -> 감사관 2종 + `role-qa-balance` | **필수** (`sync-scripts` + `qa.js --deep` + 신규 전 항목 도달성 100% 검증) |
+| **`L2`** | 단일 파일 버그 수정, 소규모 사건/연대기 추가(1~10건), 단일 UI 개선 | 직렬 2-Phase (조사 -> 1-Shot 명세 -> 구현 -> 검증) | 메인이 직접 수행하거나 `iv_data_writer` / `iv_engine_ui` 1명 위임 | 무오류 1-Shot 완료 시 생략; 실행 중 1회 이상 오류 발생 시 필수 |
+| **`L3`** | 대규모 서사·연대기 확충 (20건+ 추가, 1:1 파일 승격) | **병렬 집필 + 독립 교차 감사 + 2단 레드팀 종합 검수** | 메인(공유 파일 단독 소유) + `iv_data_writer` 3~5명 병렬 + `iv_lore_auditor`(읽기 전용) + `iv_prose_a11y_critic`(읽기 전용) + `iv_redteam_reviewer`(읽기 전용) | **필수** (`sync-scripts` + `qa.js --deep` + 감사관 2종 0결함 + `audit-health.js` + 레드팀 4단 리포트) |
+| **`L4`** | 엔진·UI 대개편, 성향 시스템, 신규 세력/행성/역사·네임드 추가 (16.5·17·18단계 등) | **선행 조사 -> 사용자 확정 -> 코어 직렬 고정 -> 콘텐츠 병렬 집필 -> 정밀 감사 -> 2단 레드팀 종합 검수** | `iv_lore_auditor` 선행 브리프 -> 필요 시 `AWAITING_USER` 설계 확정 -> `iv_engine_ui` 또는 메인 코어 직렬 구현 -> `iv_data_writer` 병렬 집필 -> 감사관 2종 + `iv_qa_balance` + `iv_redteam_reviewer` | **필수** (`sync-scripts` + `qa.js --deep` + 신규 전 항목 도달성 100% + `audit-health.js` + 레드팀 4단 리포트 + 메인 취사선택 소견 보고) |
 
 ---
 
@@ -28,12 +28,12 @@ description: 'Project-specific orchestrator for 1 / QUADRILLION : IMPERIALIS VIT
 * 병렬 실행 중 아래 **공유 파일은 메인 오케스트레이터 1명만 단독으로 수정**한다. 서브에이전트에게 절대 동시 편집을 맡기지 않는다:
   * `data/tags.js`, `data/careers.js`, `data/worlds.js`, `data/origins.js`, `data/chapters.js`, `data/characters.js`, `data/timeline.js`
   * `js/engine.js`, `js/ui.js`, `styles.css`, `index.html`, `PROJECT_GUIDE.md`, `README.md`, `AGENTS.md`
-* 병렬 작성 서브에이전트(`role-data-writer`)에게는 **서로 겹치지 않는 독립 데이터 파일**(`data/events/**`, `data/chronicles/**`)과 **고유 ID 접두사**(`ev_s14_hl_*`, `ev_s14_gov_*`, `ch_s14_*` 등)만 배타적으로 할당한다.
+* 병렬 작성 서브에이전트(`iv_data_writer`)에게는 **서로 겹치지 않는 독립 데이터 파일**(`data/events/**`, `data/chronicles/**`)과 **고유 ID 접두사**(`ev_s165_*`, `ev_s17_*`, `ch_s165_*` 등)만 배타적으로 할당한다.
 * 신규 태그가 필요하면 메인 오케스트레이터가 병렬 실행 **전에** `data/tags.js`에 먼저 등록하거나, 작성자가 반환한 `needed_tags` 목록을 메인이 일괄 통합 등록한다.
 
 ### 안전장치 2: 물리적 권한 분리 (`Hard Tool Gating`)
 * 서브에이전트는 아래 역할 테이블에 따라 `define_subagent`의 `enable_write_tools`를 엄격히 분리한다.
-* `role-lore-auditor`와 `role-prose-a11y-critic`은 반드시 **`enable_write_tools: false`**로 정의해 파일 수정 자체를 물리적으로 차단한다. 감사관은 결함 리포트만 반환하고, 수정은 메인 또는 작성자가 수행한다.
+* `iv_lore_auditor`, `iv_prose_a11y_critic`, `iv_redteam_reviewer`는 반드시 **`enable_write_tools: false`**로 정의해 파일 수정 자체를 물리적으로 차단한다. 감사관·리뷰어는 결함 리포트만 반환하고, 수정과 채택 판단은 메인 오케스트레이터와 사용자가 수행한다.
 * 모델 선택은 항상 `Model: "inherit"`를 유지한다(사용자가 명시적으로 티어 변경을 요청한 경우 제외).
 
 ### 안전장치 3: 구조화된 5필드 핸드오프 패킷 (서브에이전트 호출 규격)
@@ -70,7 +70,8 @@ description: 'Project-specific orchestrator for 1 / QUADRILLION : IMPERIALIS VIT
 | `iv_engine_ui` | `references/role-engine-ui.md` | `true` | `js/engine.js`, `js/ui.js`, `styles.css`, `index.html` 개발 및 접근성 보강 |
 | `iv_lore_auditor` | `references/role-lore-auditor.md` | `false` | 워해머 40k 고증, 연대기, 나무위키 표준 표기, Lexicanum 웹 검색 팩트체크 |
 | `iv_prose_a11y_critic` | `references/role-prose-a11y-critic.md` | `false` | 한국어 조사 호응, 신분·크리그 정합성, 플롯 중복, 스크린 리더 청취 UX 감사 |
-| `iv_qa_balance` | `references/role-qa-balance.md` | `true` | `scripts/qa.js` 유지·확장, 합성 도달성 검증, 몬테카를로 밸런스 감사 |
+| `iv_qa_balance` | `references/role-qa-balance.md` | `true` | `scripts/qa.js`·`scripts/audit-health.js` 유지·확장, 합성 도달성 검증, 몬테카를로 밸런스 감사 |
+| `iv_redteam_reviewer` | `references/role-redteam-reviewer.md` | `false` | `L3`/`L4` 단계 완료 시 전체 시스템·런타임 UX·저장/복원·다음 단계 리스크·핵심 개선안 적대적 종합 검수 |
 
 ---
 
@@ -81,11 +82,15 @@ description: 'Project-specific orchestrator for 1 / QUADRILLION : IMPERIALIS VIT
 3. **병렬 집필 (`iv_data_writer`):** 5필드 핸드오프 패킷으로 파일 소유권이 겹치지 않게 동시 실행한다. `[HANDBACK]`이 오면 이전 실패를 반복 지시하지 말고 수정된 잔여 계획으로 재지시한다(최대 3회 회로 차단기).
 4. **1차 통합 및 자동 게이트:**
    * `node scripts/sync-scripts.js` 실행해 `index.html` 동기화.
-   * `node scripts/qa.js --deep` 실행해 6대 게이트 + `anyPastCareers` 정적 모순 + 전수 합성 도달성 + 대규모 밸런스 분포 확인.
+   * `node scripts/qa.js --deep` 실행해 7대 게이트(기본 6대 + `anyPastCareers` 정적 모순 + 전수 합성 도달성 + 대규모 밸런스 분포) 확인.
 5. **독립 교차 감사 (`FINAL_AUDIT`):**
    * `git diff --stat`과 신규/수정 파일 목록을 `iv_lore_auditor`와 `iv_prose_a11y_critic`(둘 다 읽기 전용)에게 병렬 전달한다.
    * 두 감사관이 보고한 `P0`/`P1` 결함을 메인 또는 작성자가 전량 수정한다.
-6. **최종 재검증 및 문서·Git 마감:**
-   * `node scripts/sync-scripts.js --check && node scripts/qa.js --deep` 0오류·0경고 최종 확인.
+6. **2단 레드팀 종합 검수 (`POST_STAGE_REDTEAM` — `L3`/`L4` 필수, `L1`/`L2` 생략):**
+   * **1단 (기계적 퍼징·헬스 체크):** `node scripts/audit-health.js`를 실행해 200생애 무작위 플레이·세이브/마이그레이션 왕복 퍼징, 초장수 명예 마감 탈출성, UI 포커스 정적 위험, 파일 용량 근접 경고를 수집한다.
+   * **2단 (읽기 전용 레드팀 리뷰어):** `iv_redteam_reviewer`(`enable_write_tools: false`)에게 `audit-health.js` 원시 출력, `git diff --stat`, 코어 파일(`js/engine.js`, `js/ui.js`, `index.html`, `scripts/qa.js`, `PROJECT_GUIDE.md`)을 전달해 4단 압축 보고서를 수령한다.
+   * **주체성 게이트:** 명백한 `P0` 결함(크래시·포커스 유실·저장 손상·소프트락)은 즉시 수정하고 재검증한다. 반면 개선 아이디어나 `P2` 제안은 메인 오케스트레이터가 프로젝트 철학·로드맵 기준으로 옥석을 가린 소견을 덧붙여 사용자에게 보고하고, 사용자가 채택한 항목만 후속 반영한다(무단 범위 확장 금지).
+7. **최종 재검증 및 문서·Git 마감:**
+   * `node scripts/sync-scripts.js --check && node scripts/qa.js --deep && node scripts/audit-health.js` 0오류·0경고 최종 확인.
    * `PROJECT_GUIDE.md`의 디렉토리 수록 건수, 단계 `[완료]` 상태, 실제 추가 건수, QA 실측 결과, 누적 달성률을 갱신한다(`README.md` 총 수록 건수도 필요 시 동기화).
-   * 변경 내역을 확인(`git status`, `git diff --stat`)한 뒤 명확한 커밋 메시지로 커밋하고 `origin/main`에 푸시한다.
+   * 변경 내역을 확인(`git status`, `git diff --stat`)한 뒤 명확한 커밋 메시지로 커밋하고 `origin/main`에 푸시하며, 사용자 최종 보고에 레드팀 검수 요약 + 메인 취사선택 소견을 함께 첨부한다.
