@@ -368,7 +368,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "배신자 선봉대의 목을 베고 제국 지원군이 도착할 때까지 방어선을 지켜 냈다!",
           wounds: -20,
           stats: { WS: 6, WP: 5, Inf: 5 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "워프에 물든 체인액스의 일격이 방어를 박살 냈다. 마지막까지 황제의 이름을 부르며 산화했다.",
@@ -382,12 +383,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "질서 정연한 대피와 지연전으로 수백 명의 목숨을 구해 냈다! 지역 사령부가 공로를 높이 샀다.",
           wounds: -14,
           stats: { Fel: 6, Inf: 6, WP: 3 },
-          faith: 4
+          faith: 4,
+          align: { humane: 9 }
         },
         fail: {
           text: "혼란 속에 유탄을 맞고 쓰러졌으며, 암흑 신들의 저주받은 외침이 정신에 상처를 남겼다.",
           wounds: -36,
-          corruption: 8
+          corruption: 8,
+          align: { humane: 5 }
         }
       },
       {
@@ -497,12 +500,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "정확한 구조 판단이 기적을 낳았다! 아치 아래 생존 공간을 확보해 구역 주민 수십 명과 함께 생환했다.",
           wounds: -12,
-          stats: { Int: 6, Fel: 4, Inf: 4 }
+          stats: { Int: 6, Fel: 4, Inf: 4 },
+          align: { humane: 8 }
         },
         fail: {
           text: "2차 낙반이 통로를 막아 잔해 속에 사흘간 갇힌 끝에 심각한 부상을 입고 구조되었다.",
           wounds: -38,
-          stats: { T: 2 }
+          stats: { T: 2 },
+          align: { humane: 4 }
         }
       },
       {
@@ -512,12 +517,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "단호한 권위 앞에 경비병이 길을 열었다. 아래 구획이 붕괴하는 굉음을 뒤로하고 상층부로 빠져나왔다.",
           wounds: -8,
-          stats: { Inf: 4, Fel: 2 }
+          stats: { Inf: 4, Fel: 2 },
+          align: { ruthless: 8 }
         },
         fail: {
           text: "경비병과 실랑이를 벌이던 중 천장 파편이 승강기 입구를 덮쳐 큰 부상을 입었다.",
           wounds: -34,
-          stats: { Inf: -4 }
+          stats: { Inf: -4 },
+          align: { ruthless: 5 }
         }
       },
       {
@@ -635,12 +642,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "과학적 격리 조치로 구획 사망률을 극적으로 낮췄다! 봉쇄가 해제된 뒤 행성 의료국과 행정부의 찬사를 받았다.",
           wounds: -12,
-          stats: { Int: 6, Inf: 5, Fel: 3 }
+          stats: { Int: 6, Inf: 5, Fel: 3 },
+          align: { humane: 9 }
         },
         fail: {
           text: "감염원을 추적하던 중 역병 포자에 노출되어 고열과 극심한 쇠약 속에 겨우 버텨 냈다.",
           wounds: -38,
-          corruption: 6
+          corruption: 6,
+          align: { humane: 5 }
         }
       },
       {
@@ -650,12 +659,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "완벽한 서류와 노련한 화술로 검역선을 합법적으로 통과해 역병 지대에서 벗어났다.",
           wounds: -8,
           stats: { Fel: 5, Inf: 3 },
-          faith: -3
+          faith: -3,
+          align: { ruthless: 8 }
         },
         fail: {
           text: "위조와 청탁 의혹으로 검문소에서 구타당하고 가장 위험한 격리 수용소로 내던져졌다.",
           wounds: -36,
-          stats: { Inf: -5 }
+          stats: { Inf: -5 },
+          align: { ruthless: 5 }
         }
       },
       {
@@ -677,7 +688,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "기근과 가벼운 감염 증상으로 크게 쇠약해졌으나, 끝내 화염 정화를 피하고 살아남았다.",
           wounds: -25,
           faith: 5,
-          stats: { WP: 2 }
+          stats: { WP: 2 },
+          align: { dogmatic: 6 }
         }
       }
     ],
@@ -711,12 +723,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "번개 같은 코드 입력으로 방화 격벽이 완전 폐쇄되었다! 구획 선원 전원의 목숨을 구한 영웅이 되었다.",
           wounds: -14,
-          stats: { Int: 6, Inf: 5, Fel: 3 }
+          stats: { Int: 6, Inf: 5, Fel: 3 },
+          align: { humane: 8 }
         },
         fail: {
           text: "단말기 합선으로 감전되어 저산소증으로 의식을 잃기 직전, 겨우 구조반에 구출되었다.",
           wounds: -38,
-          stats: { Int: 2 }
+          stats: { Int: 2 },
+          align: { humane: 4 }
         }
       },
       {
@@ -725,7 +739,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "마지막 숨이 다하기 직전 헬멧 잠금장치를 체결했다! 차가운 진공 속에서 홀로 살아남았다.",
           wounds: -16,
-          stats: { Ag: 6, T: 3 }
+          stats: { Ag: 6, T: 3 },
+          align: { ruthless: 4 }
         },
         fail: {
           text: "기압 폭풍이 안전줄을 끊어 버렸다. 찢어진 선체 틈새 너머 차가운 공허로 빨려 들어가고 말았다.",
@@ -769,12 +784,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "정확한 이진법 제어 의례로 노심 폭주를 막았다! 상급 마고스가 그대의 연산 능력을 높이 평가했다.",
           wounds: -15,
-          stats: { Int: 6, Inf: 5 }
+          stats: { Int: 6, Inf: 5 },
+          align: { dogmatic: 6 }
         },
         fail: {
           text: "셔터가 내려오기 직전 강한 방사선 펄스를 정면으로 맞아 극심한 방사능 피폭을 입었다.",
           wounds: -40,
-          stats: { T: 2 }
+          stats: { T: 2 },
+          align: { dogmatic: 3 }
         }
       },
       {
@@ -784,12 +801,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "보안 서비터가 그대의 계급 인장을 인식해 차폐문을 열었다. 최소 피해로 누출을 피했다.",
           wounds: -10,
-          stats: { Inf: 3 }
+          stats: { Inf: 3 },
+          align: { ruthless: 7 }
         },
         fail: {
           text: "보안 인증이 지연되는 사이 치명적 방사선 파동에 노출되어 쓰러졌다.",
           wounds: -36,
-          stats: { Inf: -3 }
+          stats: { Inf: -3 },
+          align: { ruthless: 4 }
         }
       },
       {
@@ -843,12 +862,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "정확한 기상 판단으로 현장 인부들과 함께 안전 고지대에 도달했다!",
           wounds: -12,
-          stats: { Int: 6, Fel: 4 }
+          stats: { Int: 6, Fel: 4 },
+          align: { humane: 8 }
         },
         fail: {
           text: "갑작스러운 돌풍에 독성 안개를 정면으로 들이마셔 폐에 큰 손상을 입었다.",
           wounds: -36,
-          stats: { T: 2 }
+          stats: { T: 2 },
+          align: { humane: 4 }
         }
       },
       {
@@ -857,12 +878,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "남은 수확 장부 보전을 조건으로 내걸어 감독관의 차에 올라타 무사히 빠져나왔다.",
           wounds: -10,
-          stats: { Fel: 5, Inf: 4 }
+          stats: { Fel: 5, Inf: 4 },
+          align: { ruthless: 7 }
         },
         fail: {
           text: "감독관이 문을 닫아걸고 떠나 버려, 뒤늦게 뛰다가 독성 연무에 심하게 중독되었다.",
           wounds: -36,
-          stats: { Inf: -3 }
+          stats: { Inf: -3 },
+          align: { ruthless: 4 }
         }
       },
       {
@@ -1056,7 +1079,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "빈틈없는 장부 대조로 진짜 횡령범인 상급 서기관을 밝혀냈다! 감사관이 그대를 치하하며 결원 자리로 승진시켰다.",
-          stats: { Int: 7, Inf: 7, WP: 3 }
+          stats: { Int: 7, Inf: 7, WP: 3 },
+          align: { dogmatic: 6 }
         },
         fail: {
           text: "결정적 전표가 이미 소각되어 있었다! 무고함을 입증하지 못한 채 '행정 태만 징벌형'으로 서비터 공장에 끌려갔다.",
@@ -1068,13 +1092,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "노련한 정치적 거래가 통했다! 감사관은 그대의 오기를 '경미한 행정 오차'로 덮고 새 표적으로 향했다.",
-          stats: { Fel: 6, Inf: 5, Int: 2 }
+          stats: { Fel: 6, Inf: 5, Int: 2 },
+          align: { ruthless: 7 }
         },
         fail: {
           text: "흥정이 뇌물 시도로 간주되어 공개 태형과 직위 강등 처분을 받고 만신창이가 되었다.",
           wounds: -34,
           stats: { Inf: -10 },
-          addTags: ["penal_mark"]
+          addTags: ["penal_mark"],
+          align: { ruthless: 4 }
         }
       },
       {
@@ -1083,12 +1109,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Inf", diff: 0 },
         success: {
           text: "막강한 인맥의 압력 아래 감사가 조용히 종결되었다. 제국 관료제에서 진실보다 강한 것은 서열이었다.",
-          stats: { Inf: 5, Fel: 3 }
+          stats: { Inf: 5, Fel: 3 },
+          align: { ruthless: 6 }
         },
         fail: {
           text: "후원자마저 몸을 사리며 꼬리 자르기에 나섰다! 혹독한 구금 심문 끝에 겨우 풀려났다.",
           wounds: -30,
-          stats: { Inf: -12 }
+          stats: { Inf: -12 },
+          align: { ruthless: 3 }
         }
       },
       {
@@ -1200,6 +1228,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "18세 이상 · 비야만 행성 · 크리그 제외 · 필멸자",
     weight: 14,
+    alignBias: "dogmatic",
     text: "시기심에 눈먼 정적이 조작한 고발장 한 통으로, 그대는 오르도 헤레티쿠스 심문관과 국교 주교가 앉은 지하 심문 법정에 사슬로 묶여 끌려왔다. '무고함은 아무것도 증명하지 못한다. 변론하라!' 차가운 쇠사슬 소리와 화로에서 피어오르는 향 연기 너머로 서기 서비터의 펜촉이 판결문을 기록할 준비를 마쳤다.",
     choices: [
       {
@@ -1208,7 +1237,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "강철 같은 신앙심과 당당한 기개에 주교가 고개를 끄덕였다! 오히려 거짓 고발을 꾸민 정적이 이단 선동죄로 체포되었다.",
           stats: { WP: 7, Inf: 6 },
-          faith: 10
+          faith: 10,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "고문실의 공포 속에 말문이 막히고 말았다. 법정은 '잠재적 배교 혐의 확정 — 정화의 화형'을 선고했다.",
@@ -1248,7 +1278,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "등이 피투성이가 되는 혹독한 참회형을 견뎌 내고 석방되었다. 살아남았으나 명예에 큰 흠집이 남았다.",
           wounds: -26,
           faith: 6,
-          stats: { Inf: -6, WP: 3 }
+          stats: { Inf: -6, WP: 3 },
+          align: { dogmatic: 6 }
         }
       }
     ],
@@ -1361,7 +1392,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "압도적인 카리스마와 진심 어린 호소에 폭도들이 무기를 내려놓고 무릎을 꿇었다! 구역 전체의 신망을 얻었다.",
           stats: { Fel: 8, Inf: 6 },
-          faith: 8
+          faith: 8,
+          align: { humane: 7 }
         },
         fail: {
           text: "성난 군중 속 배교 선동가가 던진 화염병과 돌팔매에 휩쓸렸다. 불타는 청사 앞에서 끝내 일어나지 못했다.",
@@ -1373,12 +1405,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "실질적인 식량 분배안이 군중의 광기를 단숨에 가라앉혔다! 폭동 없이 사태를 수습한 명관으로 기록되었다.",
-          stats: { Int: 6, Fel: 4, Inf: 4 }
+          stats: { Int: 6, Fel: 4, Inf: 4 },
+          align: { humane: 9 }
         },
         fail: {
           text: "창고마저 텅 비어 있음이 들통나며 군중이 더욱 격분했다! 투석 세례를 뚫고 겨우 몸을 피했다.",
           wounds: -36,
-          stats: { Inf: -6 }
+          stats: { Inf: -6 },
+          align: { humane: 5 }
         }
       },
       {
@@ -1388,12 +1422,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "쇼크 마울과 최루탄을 앞세운 아르비테스 진압대가 10분 만에 광장을 평정했다. 냉혹하지만 질서는 지켜졌다.",
           wounds: -10,
-          stats: { Inf: 5, Fel: -3 }
+          stats: { Inf: 5, Fel: -3 },
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "진압대가 도착하기 전 정문이 뚫려 화염과 난투 속에 큰 부상을 입었다.",
           wounds: -34,
-          stats: { Inf: -4 }
+          stats: { Inf: -4 },
+          align: { dogmatic: 5 }
         }
       },
       {
@@ -1401,7 +1437,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "유독 연기와 부상을 안은 채 탈출했으나, 청사가 불탄 책임으로 평판이 크게 추락했다.",
           wounds: -22,
-          stats: { Inf: -8, WP: 2 }
+          stats: { Inf: -8, WP: 2 },
+          align: { ruthless: 6 }
         }
       }
     ],
@@ -1445,12 +1482,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "천재적인 함내 통제와 항해 기동으로 반란군을 산소 부족으로 항복시키고 해적선까지 따돌렸다!",
-          stats: { Int: 8, Ag: 4, Inf: 5 }
+          stats: { Int: 8, Ag: 4, Inf: 5 },
+          align: { ruthless: 7 }
         },
         fail: {
           text: "과부하로 함교 콘솔이 폭발해 화상을 입었으며, 겨우 비상 부스터로 성계를 벗어났다.",
           wounds: -36,
-          stats: { Int: 2 }
+          stats: { Int: 2 },
+          align: { ruthless: 4 }
         }
       },
       {
@@ -1460,12 +1499,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "황금의 위력 앞에 용병들이 반란을 진압하고 해적선까지 보급 호위로 돌아섰다!",
           wounds: -10,
-          stats: { Inf: 6, Fel: 3 }
+          stats: { Inf: 6, Fel: 3 },
+          align: { ruthless: 6 }
         },
         fail: {
           text: "용병 일부마저 배신해 난전이 벌어졌고, 큰 부상을 입은 채 겨우 반란을 틀어막았다.",
           wounds: -34,
-          stats: { Inf: -6 }
+          stats: { Inf: -6 },
+          align: { ruthless: 3 }
         }
       },
       {
@@ -1473,7 +1514,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "피비린내 나는 학살은 피했으나, 난투 중 부상을 입고 막대한 재정·권위 손실을 떠안았다.",
           wounds: -20,
-          stats: { Inf: -10, Fel: -2 }
+          stats: { Inf: -10, Fel: -2 },
+          align: { humane: 6 }
         }
       }
     ],
@@ -1511,7 +1553,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "완벽한 역추적에 길드가 꼬리를 내리고 협박장을 거둬들였다! 오히려 지하 세계가 그대를 두려워하게 되었다.",
-          stats: { Int: 7, Inf: 6 }
+          stats: { Int: 7, Inf: 6 },
+          align: { ruthless: 6 }
         },
         fail: {
           text: "역추적이 발각되어 그날 밤 침실로 숨어든 길드 자객의 독침에 목숨을 잃었다.",
@@ -1523,12 +1566,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "지하 세력끼리 피 튀기는 항쟁이 벌어지며 그대에 대한 청부가 자동 폐기되었다! 손 안 대고 위기를 넘겼다.",
-          stats: { Fel: 7, Inf: 5 }
+          stats: { Fel: 7, Inf: 5 },
+          align: { ruthless: 8 }
         },
         fail: {
           text: "양쪽 조직의 배신 속에 길거리 습격을 받아 큰 상처를 입고 겨우 달아났다.",
           wounds: -36,
-          stats: { Inf: -6 }
+          stats: { Inf: -6 },
+          align: { ruthless: 5 }
         }
       },
       {
@@ -1537,12 +1582,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Inf", diff: 0 },
         success: {
           text: "새벽녘 아르비테스의 장갑차가 길드 본거지를 박살 냈다! 협박 문서는 흔적도 없이 소각되었다.",
-          stats: { Inf: 6, WP: 3 }
+          stats: { Inf: 6, WP: 3 },
+          align: { dogmatic: 7 }
         },
         fail: {
           text: "급습 정보가 사전에 새어 나가 길드 잔당의 보복 총격을 받고 중상을 입었다.",
           wounds: -34,
-          stats: { Inf: -4 }
+          stats: { Inf: -4 },
+          align: { dogmatic: 4 }
         }
       },
       {
@@ -1587,7 +1634,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "이단심문관의 절대 권한 아래 서고 방화 격벽이 즉시 폐쇄되고, 수행원들이 축성 화염으로 저주받은 사본을 흔적 없이 소각했다!",
           wounds: -10,
           stats: { WP: 5, Inf: 5 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 8 }
         }
       },
       {
@@ -1609,12 +1657,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "불굴의 신념이 저주의 속삭임을 꺾었다! 사본이 검은 재로 변하며 서고의 악몽이 끝났다.",
           wounds: -14,
           stats: { WP: 7, Inf: 4 },
-          faith: 8
+          faith: 8,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "저주받은 문자가 시신경을 할퀴고 정신에 깊은 워프 오염을 새긴 뒤에야 불길이 사본을 삼켰다.",
           wounds: -34,
-          corruption: 14
+          corruption: 14,
+          align: { dogmatic: 5 }
         }
       },
       {
@@ -1623,12 +1673,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "일사불란한 통솔력으로 전원 대피와 서고 정화 봉쇄를 완수했다!",
           wounds: -10,
-          stats: { Fel: 6, Inf: 5 }
+          stats: { Fel: 6, Inf: 5 },
+          align: { humane: 8 }
         },
         fail: {
           text: "혼비백산한 인파에 깔리고 유독 정화 가스를 마셔 심각한 부상을 입었다.",
           wounds: -34,
-          corruption: 6
+          corruption: 6,
+          align: { humane: 4 }
         }
       },
       {

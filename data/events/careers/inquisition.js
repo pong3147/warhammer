@@ -206,7 +206,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "행성 지표 전체가 불길에 삼켜졌다. 수십억 영혼의 무게가 어깨를 짓누르지만, 성계 전체의 재앙은 단 한 번의 서명으로 차단되었다.",
           stats: { Inf: 12, WP: 6, Fel: -6 },
-          faith: -4
+          faith: -4,
+          align: { dogmatic: 9 }
         }
       },
       {
@@ -215,12 +216,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "기적적인 참수 작전으로 하이브 월드의 40억 시민을 구해 냈다! 이단심문소 내 청교도파의 영웅이 되었다.",
           stats: { Int: 8, WS: 5, Inf: 14, Fel: 6 },
-          faith: 15
+          faith: 15,
+          align: { humane: 10 }
         },
         fail: {
           text: "작전 도중 치명상을 입고 퇴각했으며, 결국 행성은 끝없는 내전 지옥에 빠졌다.",
           wounds: -34,
-          stats: { Inf: -6 }
+          stats: { Inf: -6 },
+          align: { humane: 7 }
         }
       }
     ],
@@ -280,11 +283,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "청교도파 다수의 지지를 얻어 위험한 데몬호스트 실험을 봉쇄하고 명성을 쌓았다!",
           stats: { WP: 6, Inf: 8 },
           faith: 12,
-          corruption: -8
+          corruption: -8,
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "급진파의 역공에 밀려 암살 시도를 겪으며 부상을 입었다.",
-          wounds: -20
+          wounds: -20,
+          align: { dogmatic: 7 }
         }
       },
       {
@@ -294,12 +299,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "금지된 지식과 비밀 정보망을 공유받으며 압도적 성과를 올렸지만 영혼에 어둠이 스몄다.",
           stats: { Int: 8, Inf: 8 },
           corruption: 14,
-          faith: -10
+          faith: -10,
+          align: { ruthless: 9 }
         },
         fail: {
           text: "통제에서 벗어난 워프 에너지에 휘말려 큰 내상을 입었다.",
           wounds: -24,
-          corruption: 16
+          corruption: 16,
+          align: { ruthless: 7 }
         }
       }
     ],
@@ -321,12 +328,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "황제의 이름으로 성채 정문을 부수고 항명한 총독을 현장에서 파면 체포했다! 성역 전역의 귀족들이 다시 이단심문소 로제트 앞에 무릎을 꿇었다.",
           stats: { Inf: 10, WP: 6 },
-          faith: 8
+          faith: 8,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "총독 측 사병대와 유혈 시가전이 벌어지며 부상을 입었고, 군수 보급이 일시 마비되어 성역 원로회의 질책을 받았다.",
           wounds: -18,
-          stats: { Inf: -4, Fel: -3 }
+          stats: { Inf: -4, Fel: -3 },
+          align: { dogmatic: 6 }
         }
       },
       {
@@ -334,19 +343,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: 0 },
         success: {
           text: "포성 한 번 울리지 않고 반항적인 총독을 실각시킨 뒤 심문소에 충성하는 새 총독을 앉혔다! 콘클라베 원로들이 그대의 정치적 수완에 감탄했다.",
-          stats: { Int: 8, Inf: 9, Fel: 5 }
+          stats: { Int: 8, Inf: 9, Fel: 5 },
+          align: { ruthless: 7 }
         },
         fail: {
           text: "밀약이 사전에 누설되어 반격 자객의 습격을 받았다. 총독은 결국 숙청했으나 현지 정보망의 절반을 잃었다.",
           wounds: -14,
-          stats: { Inf: -4 }
+          stats: { Inf: -4 },
+          align: { ruthless: 5 }
         }
       },
       {
         label: "행성 십일조를 관할하는 아드미니스트라툼 감사국과 공조해 총독의 자금줄과 궤도 통행권을 합법적으로 동결한다",
         effect: {
           text: "시간은 다소 걸렸으나 병참 손실 없이 총독을 굴복시키고 이단 혐의자 전원을 넘겨받았다.",
-          stats: { Int: 5, Inf: 6 }
+          stats: { Int: 5, Inf: 6 },
+          align: { humane: 6 }
         }
       }
     ],
@@ -368,12 +380,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "지하 납골당에서 가짜 성유물과 배교 추기경의 카오스 서약서를 찾아냈다! 오르도 헤레티쿠스 의회가 그대의 단호한 정화에 찬사를 보냈다.",
           stats: { Int: 6, WP: 5, Inf: 8 },
-          faith: 10
+          faith: 10,
+          align: { dogmatic: 7 }
         },
         fail: {
           text: "추기경 측 무장 광신도들의 매복에 휘말려 부상을 입었으나, 결국 성당을 진압하고 잔당을 심문소에 압송했다.",
           wounds: -18,
-          stats: { WP: 3, Inf: -2 }
+          stats: { WP: 3, Inf: -2 },
+          align: { dogmatic: 5 }
         }
       },
       {
@@ -381,13 +395,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "민중의 신앙이 흔들리기 전에 주교구 스스로 배교자를 단죄하도록 압박했다. 한 방울의 내전 피도 흘리지 않고 성역을 정화했다.",
-          stats: { Fel: 6, Int: 4, Inf: 9 }
+          stats: { Fel: 6, Int: 4, Inf: 9 },
+          align: { humane: 8 }
         },
         fail: {
           text: "정치적 흥정 도중 정보가 새어 추기경이 워프 밀수선으로 도주했다. 뒤늦게 추격령을 내렸으나 위신에 흠집이 남았다.",
           wounds: -10,
           stats: { Inf: -4 },
-          corruption: 3
+          corruption: 3,
+          align: { humane: 5 }
         }
       },
       {
@@ -395,7 +411,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "불길과 공포 속에 배교자들은 재가 되었고, 행성 전역에 오르도 헤레티쿠스의 엄혹한 이름이 각인되었다.",
           stats: { Inf: 6, WP: 4, Fel: -3 },
-          faith: 8
+          faith: 8,
+          align: { dogmatic: 10 }
         }
       }
     ],
@@ -417,12 +434,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "검은 갑주의 데스워치 베테랑들과 합동 강습을 감행해 지하 패트리아크의 머리를 베어 냈다! 성계 전체를 외계 침공의 위기에서 구해 냈다.",
           stats: { Inf: 8, BS: 5, WS: 4 },
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact"],
+          align: { dogmatic: 6 }
         },
         fail: {
           text: "패트리아크의 발톱에 중상을 입었으나 데스워치 킬 팀의 엄호로 둥지를 멜타 폭탄으로 붕괴시키는 데 성공했다.",
           wounds: -20,
-          stats: { T: 4, Inf: 3 }
+          stats: { T: 4, Inf: 3 },
+          align: { dogmatic: 4 }
         }
       },
       {
@@ -430,19 +449,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "진스틸러 봉기를 부추겨 노예를 낚아채려던 드루카리 약탈선까지 궤도 함포로 격침했다! 오르도 제노스 교과서에 실릴 수사였다.",
-          stats: { Int: 8, Ag: 4, Inf: 7 }
+          stats: { Int: 8, Ag: 4, Inf: 7 },
+          align: { humane: 6 }
         },
         fail: {
           text: "추적 도중 외계 독침 함정에 걸려 부상을 입었으나, 교단 지휘부의 암호 장부는 확보했다.",
           wounds: -16,
-          stats: { Int: 3 }
+          stats: { Int: 3 },
+          align: { humane: 4 }
         }
       },
       {
         label: "궤도 함대에 광산 구역 정밀 폭격을 명령해 대규모 외계 침공을 부를 유인 신호를 원천 차단한다",
         effect: {
           text: "수십만 명의 광부가 붕괴한 갱도와 함께 묻혔으나, 성역은 외계 포식자의 시선을 피했다. 이것이 오르도 제노스의 냉혹한 계산이다.",
-          stats: { Inf: 5, Int: 4, Fel: -4 }
+          stats: { Inf: 5, Int: 4, Fel: -4 },
+          align: { dogmatic: 8, humane: -5 }
         }
       }
     ],
@@ -465,13 +487,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "은빛 네메시스 포스 웨폰과 그대의 성스러운 진명 봉인이 맞물리며 악마가 비명을 지르고 흩어졌다! 악마의 천적으로 이름을 새겼다.",
           stats: { WP: 9, Inf: 8 },
           faith: 10,
-          addTags: ["daemon_bane"]
+          addTags: ["daemon_bane"],
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "워프 화염에 심각한 화상과 정신 타격을 입었으나, 그레이 나이트 형제들이 최후의 일격으로 균열을 닫았다.",
           wounds: -24,
           stats: { WP: 4 },
-          corruption: 8
+          corruption: 8,
+          align: { dogmatic: 6 }
         }
       },
       {
@@ -480,12 +504,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "금지된 사슬로 악마의 자백을 뜯어낸 뒤 소각했다! 수많은 행성을 구할 기밀을 얻었으나 영혼에 짙은 그림자가 스며들었다.",
           stats: { Int: 9, WP: 4, Inf: 7 },
-          corruption: 14
+          corruption: 14,
+          align: { ruthless: 9 }
         },
         fail: {
           text: "구속진이 순간 풀리며 악마의 저주가 정신을 할퀴고 지나갔다. 간신히 봉인했으나 끔찍한 오염이 남았다.",
           wounds: -22,
-          corruption: 18
+          corruption: 18,
+          align: { ruthless: 7 }
         }
       },
       {
@@ -493,7 +519,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "공포스러운 진실은 비밀 기록고에 봉인되었고, 목격자들은 침묵 속으로 사라졌다. 오르도 말레우스의 의무는 자비를 허락하지 않는다.",
           stats: { WP: 5, Inf: 5, Fel: -5 },
-          faith: -4
+          faith: -4,
+          align: { dogmatic: 7 }
         }
       }
     ],
@@ -785,12 +812,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "치열한 사투 끝에 소환진을 깨뜨리고 스승을 체포했다! 청교도파 콘클라베가 그대의 흔들리지 않는 순결을 높이 평가했다.",
           stats: { WP: 8, Inf: 9, WS: 4 },
-          faith: 10
+          faith: 10,
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "스승의 사이킥 반격에 중상을 입고 도주했으나, 콘클라베에 정식 고발장을 올리는 데는 성공했다.",
           wounds: -22,
-          stats: { WP: 5, Inf: 5 }
+          stats: { WP: 5, Inf: 5 },
+          align: { dogmatic: 7 }
         }
       },
       {
@@ -799,19 +828,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "어둠을 써서 더 큰 어둠을 막는 급진파의 위험한 비술을 터득했다. 지식과 권력은 커졌으나 영혼에 그림자가 드리웠다.",
           stats: { Int: 8, WP: 5, Inf: 6 },
-          corruption: 10
+          corruption: 10,
+          align: { ruthless: 9 }
         },
         fail: {
           text: "의식 잔류 파동에 휘말려 며칠간 악몽에 시달렸고 오염이 스며들었다.",
           corruption: 12,
-          stats: { Int: 4 }
+          stats: { Int: 4 },
+          align: { ruthless: 6 }
         }
       },
       {
         label: "보지 못한 척 조용히 문을 닫고 나와 타 오르도 심문관에게 익명으로 감찰 요청을 보낸다",
         effect: {
           text: "석 달 뒤 스승이 비밀리에 실종 처리되었다. 살아남은 수행원만이 다음 로제트를 쥔다.",
-          stats: { Int: 5, WP: 4 }
+          stats: { Int: 5, WP: 4 },
+          align: { ruthless: 6 }
         }
       }
     ],
@@ -832,12 +864,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "서로 으르렁거리던 세 인재가 그대의 카리스마 아래 최강의 비밀 요원 팀으로 거듭났다! 이후 모든 수사가 일사천리로 풀렸다.",
-          stats: { Fel: 8, Inf: 8, Int: 5 }
+          stats: { Fel: 8, Inf: 8, Int: 5 },
+          align: { ruthless: 7 }
         },
         fail: {
           text: "추방자 기계교도가 기밀 장비를 무단 개조하다 폭주 사고를 일으켜 수행단이 반파되었고, 사건 은폐에 적지 않은 권위를 소모했다.",
           wounds: -10,
-          stats: { Inf: -3, Fel: -3 }
+          stats: { Inf: -3, Fel: -3 },
+          align: { ruthless: 5 }
         }
       },
       {
@@ -846,18 +880,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "단 한 치의 배신 우려도 없는 철벽 수행단이 완성되었다! 콘클라베에서도 모범적인 인선이라 호평했다.",
           stats: { WP: 7, Inf: 6, WS: 4 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "배제된 두 후보가 원한을 품고 성역 암흑가에 수사 동선을 흘리는 바람에 핵심 단서를 놓치고 체면을 구겼다.",
-          stats: { Inf: -3, Fel: -3 }
+          stats: { Inf: -3, Fel: -3 },
+          align: { dogmatic: 6 }
         }
       },
       {
         label: "세 후보에게 각자 소규모 예비 임무를 맡겨 살아남아 증명한 자만 정식 어콜라이트로 들인다",
         effect: {
           text: "잔혹하지만 확실한 이단심문소 전통 검증법으로 가장 믿을 만한 심복을 얻었다.",
-          stats: { Int: 5, Inf: 6 }
+          stats: { Int: 5, Inf: 6 },
+          align: { ruthless: 6 }
         }
       }
     ],

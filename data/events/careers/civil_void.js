@@ -27,12 +27,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "수억 명의 기아와 내전을 펜촉 하나로 막아 냈다! 고위 아뎁트가 그대의 유능함을 극찬했다.",
-          stats: { Int: 6, Inf: 10, Fel: 3 }
+          stats: { Int: 6, Inf: 10, Fel: 3 },
+          align: { humane: 8 }
         },
         fail: {
           text: "과로로 쓰러졌고 서류는 결국 예상 대기 기간 42년짜리 재검토 보류 서랍에 처박혔다.",
           wounds: -12,
-          stats: { WP: 2 }
+          stats: { WP: 2 },
+          align: { humane: 5 }
         }
       },
       {
@@ -41,7 +43,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "행성 하나가 폭동에 휩싸였다는 소식이 3년 뒤 들려왔지만, 그대의 평온한 출세길엔 흠집이 없었다.",
           stats: { Inf: 4 },
           faith: -5,
-          corruption: 4
+          corruption: 4,
+          align: { ruthless: 8 }
         }
       }
     ],
@@ -116,7 +119,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         req: { anyTags: ["inquisitor", "commissar", "lord_commissar"] },
         effect: {
           text: "단 한 발의 볼트 탄환이 선동가의 가면을 꿰뚫자 군중이 일제히 무릎을 꿇었다! 압도적 위엄으로 사태를 종결했다.",
-          stats: { WP: 5, Inf: 8 }
+          stats: { WP: 5, Inf: 8 },
+          align: { dogmatic: 8 }
         }
       },
       {
@@ -124,12 +128,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "최소한의 유혈로 폭동을 가라앉히고 배후의 카오스 세포까지 일망타진했다!",
-          stats: { Fel: 6, Int: 4, Inf: 8 }
+          stats: { Fel: 6, Int: 4, Inf: 8 },
+          align: { humane: 8 }
         },
         fail: {
           text: "군중의 투석과 화염병에 휘말려 부상을 입고 체면을 구겼다.",
           wounds: -18,
-          stats: { Inf: -4 }
+          stats: { Inf: -4 },
+          align: { humane: 5 }
         }
       },
       {
@@ -137,11 +143,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WS", diff: 5 },
         success: {
           text: "쇼크 마울과 샷건의 벽 앞에 폭동은 3시간 만에 진압되었다. 냉혹한 질서가 회복되었다.",
-          stats: { WS: 5, WP: 4, Inf: 5, Fel: -3 }
+          stats: { WS: 5, WP: 4, Inf: 5, Fel: -3 },
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "은신해 있던 무장 갱단의 반격에 중상을 입었다.",
-          wounds: -24
+          wounds: -24,
+          align: { dogmatic: 5 }
         }
       }
     ],
@@ -166,11 +174,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "동료 둘을 살려 냈지만 기계가 손상되었다는 죄목으로 한 달 치 배급이 삭감되고 태형을 맞았다. 그래도 동료들의 눈빛이 달라졌다.",
           stats: { Ag: 4, Fel: 6, WP: 4 },
-          wounds: -12
+          wounds: -12,
+          align: { humane: 9 }
         },
         fail: {
           text: "쇳물에 화상을 입고 동료도 구하지 못한 채 작업 태만으로 매질까지 당했다.",
-          wounds: -28
+          wounds: -28,
+          align: { humane: 6 }
         }
       },
       {
@@ -178,7 +188,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "동료들의 비명이 멎은 뒤, 기계교 사제가 그대의 '올바른 우선순위'를 치하하며 반장 직책과 약간의 권위를 내렸다.",
           stats: { Int: 4, Inf: 6, Fel: -4 },
-          faith: -3
+          faith: -3,
+          align: { ruthless: 7 }
         }
       }
     ],
@@ -202,12 +213,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WP", diff: -5 },
         success: {
           text: "제국법은 행성 총독 위에도 군림한다! 성역 로드 마셜이 그대의 철두철미한 법 집행을 극찬했다.",
-          stats: { WP: 6, Inf: 10, WS: 4 }
+          stats: { WP: 6, Inf: 10, WS: 4 },
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "총독 사병대와의 총격전에서 중상을 입었지만 끝내 영장을 집행했다.",
           wounds: -24,
-          stats: { WP: 5, Inf: 6 }
+          stats: { WP: 5, Inf: 6 },
+          align: { dogmatic: 7 }
         }
       },
       {
@@ -216,7 +229,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "총독 가문의 막대한 후원금이 들어왔지만, 제국법의 수호자라는 양심에는 검은 얼룩이 졌다.",
           stats: { Inf: 8, Fel: 4 },
           corruption: 10,
-          faith: -6
+          faith: -6,
+          align: { ruthless: 9 }
         }
       }
     ],
@@ -240,12 +254,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WS", diff: -5 },
         success: {
           text: "유혈을 최소화하고 폭동을 진압했다! 살아남은 노역자들 덕분에 다음 전투에서 함포 장전 속도가 오히려 빨라졌다.",
-          stats: { WS: 5, Fel: 6, Inf: 5 }
+          stats: { WS: 5, Fel: 6, Inf: 5 },
+          align: { humane: 9 }
         },
         fail: {
           text: "분노한 노역자들의 렌치 공격에 큰 부상을 입고 간신히 진압을 마쳤다.",
           wounds: -24,
-          stats: { WS: 3 }
+          stats: { WS: 3 },
+          align: { humane: 6 }
         }
       },
       {
@@ -253,7 +269,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "30초 만에 반란이 끝났다. 새 노역자는 다음 하이브 월드 정박 때 다시 징발하면 그만이다. 냉혹한 효율이 함대의 신임을 얻었다.",
           stats: { Inf: 8, WP: 3, Fel: -5 },
-          faith: -3
+          faith: -3,
+          align: { ruthless: 9 }
         }
       }
     ],
@@ -338,11 +355,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "기적적으로 서비터 개조 명령이 철회되었다! 구역 사람들 사이에서 그대의 덕망이 높아졌다.",
-          stats: { Fel: 5, Inf: 5, WP: 3 }
+          stats: { Fel: 5, Inf: 5, WP: 3 },
+          align: { humane: 8 }
         },
         fail: {
           text: "재판관이 '범죄자 두둔은 동조 혐의'라며 싸늘하게 경고해 입을 다물 수밖에 없었다.",
-          stats: { Inf: -4, WP: 2 }
+          stats: { Inf: -4, WP: 2 },
+          align: { humane: 5 }
         }
       },
       {
@@ -350,7 +369,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "일주일 뒤 공장에 새로 배치된 문지기 서비터가 텅 빈 눈으로 그대를 향해 자동문을 열어 주었다.",
           stats: { WP: 2 },
-          faith: -3
+          faith: -3,
+          align: { ruthless: 5 }
         }
       }
     ],
@@ -729,6 +749,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "직군: 언더하이브 갱단원",
     weight: 34,
+    alignBias: "ruthless",
     text: "하층 돔의 생명줄인 정화수 배관 교차점을 두고 라이벌 갱단 세 곳이 피비린내 나는 전쟁을 벌이고 있다. 지금 이 교차점을 장악하면 하층 구역 전체의 통행세와 암시장을 주무르는 구역 두목이 된다!",
     choices: [
       {
@@ -737,12 +758,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "적 두목이 쓰러지자 양쪽 갱단원들이 일제히 무릎을 꿇었다! 하층 3개 구역이 그대의 이름 아래 통일되었다.",
           stats: { WS: 7, Inf: 9, Fel: 5 },
-          addTags: ["ganger_baron"]
+          addTags: ["ganger_baron"],
+          align: { ruthless: 7 }
         },
         fail: {
           text: "독가스 함정에 걸려 크게 다쳤으나 부하들의 엄호로 간신히 구역을 지켜 냈다.",
           wounds: -20,
-          stats: { T: 4, WS: 3 }
+          stats: { T: 4, WS: 3 },
+          align: { ruthless: 4 }
         }
       },
       {
@@ -751,12 +774,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "피 한 방울 거의 흘리지 않고 암시장과 수로를 손에 넣었다! 지하 세계의 전설적인 책사로 불리게 되었다.",
           stats: { Fel: 7, Int: 6, Inf: 9 },
-          addTags: ["ganger_baron"]
+          addTags: ["ganger_baron"],
+          align: { ruthless: 8 }
         },
         fail: {
           text: "이간질이 들통나 양쪽에서 협공당했으나 뒷골목 통로로 탈출해 목숨을 건졌다.",
           wounds: -16,
-          stats: { Ag: 4, Int: 3 }
+          stats: { Ag: 4, Int: 3 },
+          align: { ruthless: 5 }
         }
       },
       {
@@ -786,12 +811,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Ag", diff: 5 },
         success: {
           text: "군말 없는 일 처리에 상층 가문이 대만족했다! 고가의 불법 플라즈마 권총과 거액을 손에 넣었다.",
-          stats: { Ag: 6, Inf: 8, BS: 4 }
+          stats: { Ag: 6, Inf: 8, BS: 4 },
+          align: { ruthless: 8 }
         },
         fail: {
           text: "청년을 보호하던 지하 경호원들과 총격전을 벌여 부상을 입었으나 임무는 완수했다.",
           wounds: -16,
-          stats: { BS: 3, Inf: 4 }
+          stats: { BS: 3, Inf: 4 },
+          align: { ruthless: 6 }
         }
       },
       {
@@ -799,19 +826,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "완벽한 양면 거래로 귀족의 입막음 비용과 지하 세계의 신용을 동시에 챙겼다!",
-          stats: { Int: 7, Fel: 6, Inf: 8 }
+          stats: { Int: 7, Fel: 6, Inf: 8 },
+          align: { ruthless: 9 }
         },
         fail: {
           text: "귀족 가문이 보낸 암살자에게 추격당해 한동안 구역을 옮겨 숨어 지내야 했다.",
           wounds: -18,
-          stats: { Ag: 4, Inf: -3 }
+          stats: { Ag: 4, Inf: -3 },
+          align: { ruthless: 6 }
         }
       },
       {
         label: "장부만 아르비테스 익명 투서함에 던져 주고 현상금 의뢰는 조용히 손을 뗀다",
         effect: {
           text: "돈은 못 벌었지만 상층 첨탑의 더러운 권력 싸움에 휘말리지 않았다.",
-          stats: { WP: 4, Int: 4 }
+          stats: { WP: 4, Int: 4 },
+          align: { humane: 6 }
         }
       }
     ],
@@ -883,11 +913,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: 5 },
         success: {
           text: "제국 국고에 막대한 광물과 십일조 공급원이 복구되었다! 대서기관장이 그대의 매서운 눈썰미를 격찬했다.",
-          stats: { Int: 7, Inf: 8, WP: 4 }
+          stats: { Int: 7, Inf: 8, WP: 4 },
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "오류를 인정하기 싫어한 상급 부서가 보고서를 심의 보류함에 처박고 그대에게 월권 경고를 내렸다.",
-          stats: { Inf: -4, WP: -2 }
+          stats: { Inf: -4, WP: -2 },
+          align: { dogmatic: 6 }
         }
       },
       {
@@ -895,18 +927,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Inf", diff: 0 },
         success: {
           text: "제국은 새로운 자원 창고를 얻고 행성은 반란을 피했다! 진정한 제국 행정의 달인이다.",
-          stats: { Inf: 8, Fel: 6, Int: 5 }
+          stats: { Inf: 8, Fel: 6, Int: 5 },
+          align: { humane: 7 }
         },
         fail: {
           text: "감사부에서 절차 위반을 지적받아 시말서를 쓰고 징계 감봉을 당했다.",
-          stats: { Inf: -4, Fel: -2 }
+          stats: { Inf: -4, Fel: -2 },
+          align: { humane: 5 }
         }
       },
       {
         label: "400년 된 낡은 철자에 손을 댔다가 선배 부서들의 책임을 건드릴 수 있으니 조용히 서고 깊숙이 되돌려 놓는다",
         effect: {
           text: "은하계 어딘가의 평화로운 변경 주민들은 자신이 어떤 거대한 재앙을 피했는지 영원히 모를 것이다.",
-          stats: { WP: 3, Fel: 3 }
+          stats: { WP: 3, Fel: 3 },
+          align: { humane: 4 }
         }
       }
     ],
@@ -931,12 +966,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "법정의 위엄 앞에 길드들이 굴복했다! 마셜이 그대의 냉혹한 공정함을 인정해 판관 배지를 수여했다.",
           stats: { WP: 8, Inf: 9, Int: 4 },
-          addTags: ["arbites_judge"]
+          addTags: ["arbites_judge"],
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "판결 직후 상층 길드가 고용한 용병대가 법정 밖을 습격해 부상을 입었고, 소요 사태 책임으로 판관 임명이 보류되었다.",
           wounds: -18,
-          stats: { Inf: -3, Fel: -2 }
+          stats: { Inf: -3, Fel: -2 },
+          align: { dogmatic: 6 }
         }
       },
       {
@@ -945,18 +982,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "완벽한 법리적 기습으로 반발 세력의 숨통을 단번에 끊었다! 전설적인 판관의 탄생이다.",
           stats: { Int: 8, Inf: 9, WP: 5 },
-          addTags: ["arbites_judge"]
+          addTags: ["arbites_judge"],
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "법리 논쟁이 길어지며 판결이 연기되었고, 그 틈에 길드 측이 증거를 은멸해 승진 심사에서 탈락했다.",
-          stats: { Inf: -3, Fel: -2 }
+          stats: { Inf: -3, Fel: -2 },
+          align: { dogmatic: 5 }
         }
       },
       {
         label: "피고인의 유죄를 확정하되 길드 파업을 막기 위해 몰수 재산 운영권만 임시 위원회에 위임한다",
         effect: {
           text: "법의 원칙과 행성 질서를 균형 있게 지켜 냈다.",
-          stats: { Int: 5, Fel: 4, Inf: 5 }
+          stats: { Int: 5, Fel: 4, Inf: 5 },
+          align: { humane: 5 }
         }
       }
     ],

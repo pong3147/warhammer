@@ -111,12 +111,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "들키지 않고 묵직한 공구와 이틀 치 식량을 손에 넣었다! 제국 하층에서 살아남는 약삭빠른 감각이 일찍 눈떴다.",
           stats: { Ag: 5, Int: 3 },
-          addTags: ["streetwise"]
+          addTags: ["streetwise"],
+          align: { ruthless: 5 }
         },
         fail: {
           text: "경비 서비터의 경고음에 놀라 달아나다 무릎을 심하게 긁혔다. 도둑질도 요령이 필요하다는 뼈아픈 교훈을 얻었다.",
           wounds: -8,
-          stats: { Ag: 2 }
+          stats: { Ag: 2 },
+          align: { ruthless: 3 }
         }
       },
       {
@@ -136,7 +138,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "줄을 지키며 차례를 기다려 가족과 나눌 배급 식량을 성실히 받아 든다",
         effect: {
           text: "회색 영양 죽은 텁텁했지만, 정직하게 버텨 내는 인내심이 어린 몸에 단단히 자리 잡았다.",
-          stats: { T: 4, WP: 3 }
+          stats: { T: 4, WP: 3 },
+          align: { humane: 5 }
         }
       }
     ],
@@ -165,12 +168,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "어린 나이에도 흔들리지 않는 눈빛을 본 사제가 머리에 손을 얹고 축복을 내렸다! 강인한 신심이 싹텄다.",
           stats: { WP: 5 },
-          faith: 10
+          faith: 10,
+          align: { dogmatic: 6 }
         },
         fail: {
           text: "궤도에서 내려오는 사이킥 억제 파동에 어지럼증을 느껴 주저앉았으나, 곧 정신을 추슬렀다.",
           wounds: -6,
-          stats: { WP: 2 }
+          stats: { WP: 2 },
+          align: { dogmatic: 3 }
         }
       },
       {
@@ -225,19 +230,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "혹독한 추위를 눈 하나 깜짝 않고 버텨 내자 상급생들마저 혀를 내둘렀다! 타고난 지휘관의 기개가 드러났다.",
           stats: { WP: 6, Fel: 5 },
-          faith: 6
+          faith: 6,
+          align: { humane: 7 }
         },
         fail: {
           text: "새벽 무렵 저체온으로 쓰러져 의무실에 실려 갔으나, 의리만큼은 기숙사 전체에 각인되었다.",
           wounds: -8,
-          stats: { WP: 3 }
+          stats: { WP: 3 },
+          align: { humane: 4 }
         }
       },
       {
         label: "쓸데없는 다툼을 피하고 밤새 제국 전술 교본과 성가를 완벽히 암송해 성적으로 압도한다",
         effect: {
           text: "다음 날 구술 시험에서 단 한 글자도 틀리지 않아 교관의 호평을 받았다.",
-          stats: { Int: 4, WP: 3 }
+          stats: { Int: 4, WP: 3 },
+          align: { dogmatic: 4 }
         }
       }
     ],
@@ -419,12 +427,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "교관이 기록판에 '우수 소모 자원 — 척탄병 적성'이라 기입했다. 고통을 묵묵히 견디는 크리그의 영혼이 빚어졌다.",
           stats: { T: 6, WP: 5 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 6 }
         },
         fail: {
           text: "모의 자극 가스에 폐가 타는 듯한 기침을 쏟았으나, 끝까지 방독면을 벗지 않고 버텨 냈다.",
           wounds: -10,
-          stats: { T: 3, WP: 2 }
+          stats: { T: 3, WP: 2 },
+          align: { dogmatic: 4 }
         }
       },
       {
@@ -445,7 +455,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "크리그의 아이에게 이름이나 안락은 필요 없다. 오직 황제께 바칠 속죄의 날을 준비할 뿐이다.",
           stats: { T: 3, WP: 4 },
-          faith: 5
+          faith: 5,
+          align: { dogmatic: 6 }
         }
       }
     ],
@@ -525,11 +536,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WP", diff: 0 },
         success: {
           text: "경험이 담긴 노장의 한마디가 수많은 신참의 실수를 막아 주었다! 구역 전체에서 존경받는 원로로 자리 잡았다.",
-          stats: { WP: 6, Fel: 5, Inf: 5 }
+          stats: { WP: 6, Fel: 5, Inf: 5 },
+          align: { humane: 6 }
         },
         fail: {
           text: "변화한 젊은 세대의 방식과 부딪쳐 씁쓸히 자리를 물러나야 했으나, 진심만은 일부 후배들에게 전해졌다.",
-          stats: { WP: 2, Inf: -2 }
+          stats: { WP: 2, Inf: -2 },
+          align: { humane: 3 }
         }
       },
       {
@@ -538,12 +551,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "젊은이들도 혀를 내두르는 노익장으로 임무를 완수해 냈다! 쇠락 앞에서도 고개 숙이지 않는 긍지다.",
           stats: { T: 5, WP: 5, Inf: 4 },
-          wounds: -6
+          wounds: -6,
+          align: { dogmatic: 5 }
         },
         fail: {
           text: "무리를 하다 호흡이 가빠져 며칠간 몸져누웠다. 세월의 무게가 뼈저리게 다가왔다.",
           wounds: -14,
-          stats: { WP: 3 }
+          stats: { WP: 3 },
+          align: { dogmatic: 3 }
         }
       },
       {
@@ -582,11 +597,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: 0 },
         success: {
           text: "세월이 흘러도 인연은 다음 세대로 이어진다. 젊은 후손들의 눈빛 속에서 떠난 벗들의 웃음을 다시 보았다.",
-          stats: { Fel: 6, Inf: 7, WP: 4 }
+          stats: { Fel: 6, Inf: 7, WP: 4 },
+          align: { humane: 7 }
         },
         fail: {
           text: "세대 간의 거리감에 어색한 침묵만 흘렀으나, 조직의 원로로서 예우는 굳건히 지켰다.",
-          stats: { Inf: 2, Fel: -2 }
+          stats: { Inf: 2, Fel: -2 },
+          align: { humane: 4 }
         }
       },
       {
@@ -594,11 +611,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: 0 },
         success: {
           text: "짧은 생을 사는 자들은 결코 보지 못하는 수십 년 단위의 흐름을 꿰뚫어 거대한 권위를 구축했다!",
-          stats: { Int: 7, Inf: 8, Fel: -3 }
+          stats: { Int: 7, Inf: 8, Fel: -3 },
+          align: { ruthless: 7 }
         },
         fail: {
           text: "지나치게 냉혹한 태도가 주변의 반감을 사 한동안 고립감이 더 짙어졌다.",
-          stats: { Int: 3, Fel: -4 }
+          stats: { Int: 3, Fel: -4 },
+          align: { ruthless: 4 }
         }
       },
       {
@@ -637,12 +656,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "두려움도 망설임도 사라진 냉철한 지성이 깨어났다! 육신의 쇠락마저 늦추며 기계적 효율을 극대화했다.",
           stats: { Int: 8, WP: 5, Fel: -5 },
-          lifeBonusExtra: 12
+          lifeBonusExtra: 12,
+          align: { ruthless: 6 }
         },
         fail: {
           text: "신경 접합부가 거부 반응을 일으켜 극심한 두통을 앓았으나, 보조 연산 장치만은 무사히 안착했다.",
           wounds: -12,
-          stats: { Int: 4, Fel: -3 }
+          stats: { Int: 4, Fel: -3 },
+          align: { ruthless: 4 }
         }
       },
       {
@@ -651,12 +672,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "차가운 강철 가슴 속에서도 꺼지지 않는 인간성의 온기를 지켜 냈다! 주변 사람들이 그대의 의지에 깊이 감명받았다.",
           stats: { WP: 7, Fel: 5 },
-          faith: 6
+          faith: 6,
+          align: { humane: 8 }
         },
         fail: {
           text: "신경 간섭으로 일부 기억이 흐릿해졌으나, 소중한 이름 몇 개만은 끝내 붙들어 두었다.",
           wounds: -8,
-          stats: { WP: 4 }
+          stats: { WP: 4 },
+          align: { humane: 5 }
         }
       },
       {
@@ -698,11 +721,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "'그대의 증조부는 불바다 속에서도 단 한 발짝도 물러서지 않았다.' 눈시울을 붉힌 젊은 장교가 선조에 부끄럽지 않은 헌신을 맹세했다!",
           stats: { Fel: 6, Inf: 7 },
-          faith: 8
+          faith: 8,
+          align: { humane: 7 }
         },
         fail: {
           text: "세월을 초월한 존재의 위압감에 젊은이가 얼어붙어 대화는 짧게 끝났으나, 잊혀 가던 선조의 명예만은 전해졌다.",
-          stats: { Inf: 2, Fel: -2 }
+          stats: { Inf: 2, Fel: -2 },
+          align: { humane: 4 }
         }
       },
       {
@@ -710,11 +735,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WP", diff: 0 },
         success: {
           text: "수많은 세대가 스러져도 제국은 계속 이어져야 한다. 시간의 흐름조차 흔들지 못하는 초연한 의지가 완성되었다.",
-          stats: { WP: 8, Int: 4 }
+          stats: { WP: 8, Int: 4 },
+          align: { dogmatic: 6 }
         },
         fail: {
           text: "지나간 세월의 무게와 고독이 가슴을 무겁게 눌러 잠시 타인과의 거리가 더 멀어졌다.",
-          stats: { WP: 2, Fel: -2 }
+          stats: { WP: 2, Fel: -2 },
+          align: { dogmatic: 3 }
         }
       },
       {
@@ -722,7 +749,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "긴 말은 필요 없다. 손바닥에 남은 차가운 금속의 무게가 한 세기를 건너 두 사람을 이었다.",
           stats: { WP: 5 },
-          faith: 6
+          faith: 6,
+          align: { humane: 4 }
         }
       }
     ],
@@ -799,6 +827,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "55세+ · 제국 무관·치안 노병",
     weight: 34,
+    alignBias: "humane",
     text: "전선 출정을 하루 앞둔 주둔지 주점에서 앳된 신병들이 잔뜩 긴장한 얼굴로 늙은 백전노장인 그대의 주변으로 모여든다. '선배님, 진짜 첫 전투에 들어가면 어떻게 살아남습니까?'",
     choices: [
       {
@@ -806,11 +835,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: 0 },
         success: {
           text: "신병들의 덜덜 떨리던 손이 진정되었다. 그대의 실질적인 조언이 내일 전장에서 몇 명의 목숨은 틀림없이 구할 것이다.",
-          stats: { Fel: 6, Int: 5, Inf: 5 }
+          stats: { Fel: 6, Int: 5, Inf: 5 },
+          align: { humane: 7 }
         },
         fail: {
           text: "잔소리가 길어져 신병들이 주눅 들고 어색하게 자리를 떴으나, 중요한 수칙 몇 가지는 새겨 두었다.",
-          stats: { Int: 2, Fel: -2 }
+          stats: { Int: 2, Fel: -2 },
+          align: { humane: 4 }
         }
       },
       {
@@ -819,12 +850,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "거짓 없는 노병의 고백이 헛된 허세를 걷어 내고 진짜 용기를 일깨웠다.",
           stats: { WP: 7 },
-          faith: 6
+          faith: 6,
+          align: { humane: 5 }
         },
         fail: {
           text: "오래전 잃은 전우들의 얼굴이 떠올라 가슴이 먹먹해지며 밤새 잠을 설쳤으나, 신병들은 조용히 경례로 화답했다.",
           wounds: -5,
-          stats: { WP: 2 }
+          stats: { WP: 2 },
+          align: { humane: 3 }
         }
       },
       {
@@ -832,7 +865,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "부디 이들 중 절반이라도 살아서 돌아오기를. 노병의 짧은 기도가 주점의 소음 속으로 스며들었다.",
           stats: { WP: 4 },
-          faith: 5
+          faith: 5,
+          align: { humane: 4 }
         }
       }
     ],
@@ -866,20 +900,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "수천조 인류가 스쳐 가는 차가운 제국에서 목숨을 맡길 진짜 전우를 얻었다! 훗날 이 인연은 큰 울림으로 돌아올 것이다.",
           stats: { Fel: 5, WP: 5 },
-          addTags: ["bond_comrade"]
+          addTags: ["bond_comrade"],
+          align: { humane: 6 }
         },
         fail: {
           text: "어색한 침묵 속에 밤새 빗물과 먼지를 뒤집어쓰며 고생했지만, 위기를 함께 넘긴 뒤 두 사람 사이에는 말없는 연대가 싹텄다.",
           wounds: -6,
           stats: { WP: 2 },
-          addTags: ["bond_comrade"]
+          addTags: ["bond_comrade"],
+          align: { humane: 4 }
         }
       },
       {
         label: "감상에 젖지 않고 물통만 감사히 받아 마신 뒤 냉정하게 각자의 임무에 집중한다",
         effect: {
           text: "제국에서는 정을 줄수록 잃을 것도 많아진다. 냉철한 거리를 유지하며 밤을 넘겼다.",
-          stats: { WP: 4, Int: 2 }
+          stats: { WP: 4, Int: 2 },
+          align: { ruthless: 4 }
         }
       }
     ],
@@ -909,13 +946,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "'역시 올 줄 알았어, 이 고집쟁이야.' 포연 속에서 다시 맞잡은 손이 그 어떤 훈장보다 뜨거웠다! 두 사람의 우정이 전설이 되었다.",
           stats: { T: 6, WP: 7, Fel: 6, Inf: 5 },
           faith: 8,
-          wounds: -12
+          wounds: -12,
+          align: { humane: 10 }
         },
         fail: {
           text: "겨우 전우의 곁에 닿았을 때 이미 숨이 멎어 가고 있었다. 마지막으로 건네받은 낡은 인식표를 가슴에 품고 피투성이로 돌아왔다.",
           wounds: -20,
           stats: { WP: 8 },
-          faith: 6
+          faith: 6,
+          align: { humane: 7 }
         }
       },
       {
@@ -923,11 +962,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Inf", diff: 0 },
         success: {
           text: "그대의 끈질긴 청원 끝에 구조 셔틀이 가까스로 도착해 전우를 살려 냈다! 며칠 뒤 도착한 감사 편지에 눈시울이 뜨거워졌다.",
-          stats: { Inf: 6, Fel: 6, WP: 5 }
+          stats: { Inf: 6, Fel: 6, WP: 5 },
+          align: { humane: 6 }
         },
         fail: {
           text: "관료주의의 서류 절차와 파벌 견제에 막혀 구조선은 하루 늦게 도착했다. 잿빛 인식표와 짧은 유언장만이 우편으로 돌아왔다.",
-          stats: { WP: 4, Inf: -3 }
+          stats: { WP: 4, Inf: -3 },
+          align: { humane: 4 }
         }
       },
       {
@@ -1112,12 +1153,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "'제법이군, 역시 내 적수다워.' 사선을 함께 넘은 뒤 두 사람은 서로의 실력을 누구보다 잘 아는 유능한 협력자가 되었다!",
-          stats: { Fel: 7, Inf: 8, WP: 5 }
+          stats: { Fel: 7, Inf: 8, WP: 5 },
+          align: { humane: 8 }
         },
         fail: {
           text: "탈출에는 성공했으나 끝내 앙금은 완전히 풀리지 않았다. 그래도 서로의 등 뒤에 칼을 꽂지 않는 암묵적 존중은 남았다.",
           wounds: -12,
-          stats: { Fel: 3, Inf: 3 }
+          stats: { Fel: 3, Inf: 3 },
+          align: { humane: 4 }
         }
       },
       {
@@ -1125,12 +1168,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "냉혹하지만 완벽한 승리였다! 정적은 변방으로 좌천되었고, 그대의 권위는 구역 내에서 흔들리지 않게 되었다.",
-          stats: { Int: 7, Inf: 10 }
+          stats: { Int: 7, Inf: 10 },
+          align: { ruthless: 9 }
         },
         fail: {
           text: "정적의 거센 반격에 휘말려 함께 중상을 입고 겨우 현장을 빠져나왔다.",
           wounds: -20,
-          stats: { Inf: -3 }
+          stats: { Inf: -3 },
+          align: { ruthless: 6 }
         }
       },
       {
@@ -1166,12 +1211,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Ag", diff: 0 },
         success: {
           text: "간발의 차로 동료를 구하고 압연기 폭발까지 막아 냈다! 하층 공단의 노동자들이 어린 그대를 믿음직한 일원으로 인정했다.",
-          stats: { Ag: 6, Fel: 5, T: 3 }
+          stats: { Ag: 6, Fel: 5, T: 3 },
+          align: { humane: 8 }
         },
         fail: {
           text: "동료는 구했으나 뜨거운 증기에 팔을 데이고 할당량 미달로 감봉 처분을 받았다.",
           wounds: -14,
-          stats: { T: 3, WP: 3 }
+          stats: { T: 3, WP: 3 },
+          align: { humane: 6 }
         }
       },
       {
@@ -1191,7 +1238,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "규정대로 안전선 밖으로 물러나 감독관의 지시를 따르며 살아남는 법을 배운다",
         effect: {
           text: "제국의 공장에서 감정은 사치다. 냉혹한 현실 속에서 묵묵히 하루를 버텨 냈다.",
-          stats: { T: 4, WP: 4 }
+          stats: { T: 4, WP: 4 },
+          align: { ruthless: 5 }
         }
       }
     ],
@@ -1274,11 +1322,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Ag", diff: 0 },
         success: {
           text: "손가락에 물집이 잡히도록 필사해 단 한 글자의 티도 없이 장부를 바로잡았다! 안도의 한숨과 함께 제국 행정의 무서움을 배웠다.",
-          stats: { Ag: 5, Int: 5, WP: 4 }
+          stats: { Ag: 5, Int: 5, WP: 4 },
+          align: { humane: 6 }
         },
         fail: {
           text: "수레를 막아 세우다 상급 서기에게 들켜 혹독한 징계 기록을 남겼으나, 대형 참사만은 막았다.",
-          stats: { Inf: -3, Int: 4 }
+          stats: { Inf: -3, Int: 4 },
+          align: { humane: 4 }
         }
       },
       {
@@ -1286,12 +1336,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "까다로운 정정 서식을 한 치의 오차도 없이 채워 올리자 상급 서기관이 '정직하고 유능한 인재'라며 도리어 신뢰를 보냈다!",
-          stats: { Int: 7, Inf: 5, WP: 3 }
+          stats: { Int: 7, Inf: 5, WP: 3 },
+          align: { dogmatic: 6 }
         },
         fail: {
           text: "정정 심사를 받느라 일주일간 무급 야근과 태형 징계를 받았으나, 목숨과 직책은 보전했다.",
           wounds: -10,
-          stats: { WP: 4, Int: 3 }
+          stats: { WP: 4, Int: 3 },
+          align: { dogmatic: 4 }
         }
       },
       {
@@ -1299,7 +1351,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "제국 관료제가 진짜로 굴러가는 방식을 첫해부터 뼈저리게 깨우쳤다.",
           stats: { Fel: 5, Inf: 3 },
-          faith: -3
+          faith: -3,
+          align: { ruthless: 7 }
         }
       }
     ],
@@ -1439,12 +1492,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "단 한 발의 실탄도 쓰지 않고 폭동 직전의 광장을 진정시켰다! 냉철한 위엄과 통솔력을 동시에 증명했다.",
-          stats: { Fel: 7, WP: 5, Inf: 5 }
+          stats: { Fel: 7, WP: 5, Inf: 5 },
+          align: { humane: 8 }
         },
         fail: {
           text: "군중 속에서 날아온 돌멩이에 맞고 결국 충격봉 진압으로 이어졌으나, 대규모 사상자만은 막았다.",
           wounds: -12,
-          stats: { WP: 4 }
+          stats: { WP: 4 },
+          align: { humane: 5 }
         }
       },
       {
@@ -1452,12 +1507,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WS", diff: 0 },
         success: {
           text: "민간인을 다치게 하지 않고 진짜 배후만 일격에 꺾어 버렸다! 상관이 탁월한 현장 판단력이라며 칭찬했다.",
-          stats: { WS: 6, Ag: 4, Inf: 5 }
+          stats: { WS: 6, Ag: 4, Inf: 5 },
+          align: { humane: 5 }
         },
         fail: {
           text: "난전 속에 멍과 찰과상을 입었으나, 선동 주동자 체포에는 성공했다.",
           wounds: -14,
-          stats: { WS: 4, T: 3 }
+          stats: { WS: 4, T: 3 },
+          align: { humane: 3 }
         }
       },
       {
@@ -1465,7 +1522,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "동정심은 반란의 씨앗이 될 뿐이다. 교본 그대로 임무를 완수하며 제국 집행관의 강철 심장을 굳혔다.",
           stats: { WP: 6, Inf: 4 },
-          faith: 4
+          faith: 4,
+          align: { dogmatic: 8 }
         }
       }
     ],

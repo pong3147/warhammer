@@ -67,7 +67,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "10만 순례자의 환호와 엄청난 봉헌금이 쏟아졌다. 어차피 기적은 뼈가 아니라 믿음에서 나오는 법이다.",
           stats: { Fel: 6, Inf: 8 },
           faith: 4,
-          corruption: 4
+          corruption: 4,
+          align: { ruthless: 8 }
         }
       },
       {
@@ -76,12 +77,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "분노하던 군중을 압도적인 설교로 감화시켜 대성당의 부패를 정화했다!",
           stats: { WP: 7, Fel: 5, Inf: 5 },
-          faith: 16
+          faith: 16,
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "성유물 장사로 배를 불리던 상급 사제들에게 미운털이 박혀 변방 교구로 좌천되었다.",
           stats: { Inf: -8 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 7 }
         }
       }
     ],
@@ -182,12 +185,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "흔들리지 않는 순수한 신앙의 눈에 숨어 있던 컬트 간부 셋이 저절로 발각되었다! 무고한 시민들은 참회 노동으로 구명되었고 수녀회의 품격이 빛났다.",
           stats: { WP: 6, Fel: 6, Inf: 5 },
           faith: 12,
-          corruption: -6
+          corruption: -6,
+          align: { humane: 9 }
         },
         fail: {
           text: "심문 중 숨어 있던 광신도가 폭탄을 터뜨려 부상을 입었으나, 그대는 끝내 쓰러지지 않고 적을 정화했다.",
           wounds: -18,
-          faith: 8
+          faith: 8,
+          align: { humane: 6 }
         }
       },
       {
@@ -195,7 +200,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "불길과 찬송가가 하늘을 뒤덮었다. 국교 고위층은 그대의 무자비한 순결을 칭송했다.",
           stats: { WP: 4, BS: 4, Inf: 5, Fel: -4 },
-          faith: 10
+          faith: 10,
+          align: { dogmatic: 10 }
         }
       }
     ],
@@ -302,12 +308,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "사이킥 탐지기조차 고요한 가운데 그대의 기도 소리에 성당의 촛불이 일제히 타올랐다! 국교와 심문소 모두가 공식 축복을 인정했다.",
           stats: { WP: 8, Inf: 10 },
           faith: 15,
-          corruption: -12
+          corruption: -12,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "며칠간 이어진 가혹한 고행 검증 끝에 탈진해 쓰러졌으나, 이단 혐의만은 깨끗이 벗어났다.",
           wounds: -18,
-          stats: { Inf: -3, WP: 3 }
+          stats: { Inf: -3, WP: 3 },
+          align: { dogmatic: 5 }
         }
       },
       {
@@ -316,11 +324,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "우상 숭배 대신 이웃과 전선을 돕는 실질적 자선으로 신앙을 이끌어 국교와 행정부 양쪽의 찬사를 받았다.",
           stats: { Fel: 8, Inf: 7 },
-          faith: 10
+          faith: 10,
+          align: { humane: 9 }
         },
         fail: {
           text: "헌금 배분을 두고 지역 성직자들과 마찰이 빚어져 구설에 올랐다.",
-          stats: { Inf: -3, Fel: 2 }
+          stats: { Inf: -3, Fel: 2 },
+          align: { humane: 6 }
         }
       },
       {
@@ -354,12 +364,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "'황제께서 지켜보신다! 두려움을 불태워라!' 달아나던 병사들이 일제히 총검을 고쳐 쥐고 역습에 나서 승리를 거머쥐었다!",
           stats: { Fel: 8, WP: 5, Inf: 7 },
-          faith: 12
+          faith: 12,
+          align: { dogmatic: 7 }
         },
         fail: {
           text: "포탄 파편에 어깨를 다쳐 확성기를 놓쳤으나, 피를 흘리며 외친 기도 소리가 일부 병사들을 붙들어 세웠다.",
           wounds: -14,
-          faith: 4
+          faith: 4,
+          align: { dogmatic: 5 }
         }
       },
       {
@@ -368,12 +380,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "광신적인 기세로 이단 지휘관을 두 동강 내자 아군 전체가 열광하며 진격했다!",
           stats: { WS: 7, WP: 6 },
-          faith: 10
+          faith: 10,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "적의 집중 사격에 쓰러져 야전 의무실로 실려 갔으나, 순교를 두려워하지 않은 용기에 성당의 찬사가 쏟아졌다.",
           wounds: -22,
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 6 }
         }
       },
       {
@@ -381,7 +395,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "전장의 광기 속에서도 마지막 자비를 지켰다. 병사들이 평온한 얼굴로 황제의 품에 눈을 감았다.",
           stats: { WP: 5, Fel: 4 },
-          faith: 8
+          faith: 8,
+          align: { humane: 9 }
         }
       }
     ],
@@ -465,13 +480,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "고통에 뒤틀렸던 죄수의 얼굴에 마침내 평온이 찾아왔다. 신앙의 엄정함과 자비를 함께 품은 진정한 전투 수녀의 결단이었다.",
           stats: { WP: 7, Fel: 4, BS: 3 },
-          faith: 8
+          faith: 8,
+          align: { humane: 8 }
         },
         fail: {
           text: "사격 순간 적 저격탄이 파워 아머 어깨를 스쳤으나, 그대는 흔들리지 않고 죄수에게 황제의 안식을 내려 주었다.",
           wounds: -12,
           stats: { WP: 4 },
-          faith: 5
+          faith: 5,
+          align: { humane: 6 }
         }
       },
       {
@@ -493,7 +510,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "흔들림 없는 신앙과 규율로 이단 성채의 최상층까지 정화했다.",
           stats: { WP: 5, BS: 4 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 8 }
         }
       }
     ],
@@ -565,13 +583,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "진실에 눈뜬 노동자들이 스스로 이단 선동가를 붙잡아 그대 앞에 끌어냈다! 공장에 다시 진정한 황제 찬가가 울려 퍼졌다.",
           stats: { Fel: 8, WP: 6, Inf: 7 },
-          faith: 10
+          faith: 10,
+          align: { humane: 7 }
         },
         fail: {
           text: "광기에 물든 추종자 몇 명이 쇠파이프를 던져 부상을 입었으나 끝내 군중의 마음을 돌렸다.",
           wounds: -14,
           stats: { Fel: 4, WP: 5 },
-          faith: 6
+          faith: 6,
+          align: { humane: 5 }
         }
       },
       {
@@ -580,13 +600,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "쓰러진 선동가의 로브 아래에서 진짜 진스틸러 혼혈의 기형 팔이 드러나자 군중이 공포와 경외 속에 무릎을 꿇었다!",
           stats: { WS: 7, WP: 6, Inf: 6 },
-          faith: 10
+          faith: 10,
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "변이된 이단자의 기습 발톱에 깊은 상처를 입었으나 끝내 이단자를 정화했다.",
           wounds: -20,
           stats: { WS: 4, T: 4 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 7 }
         }
       },
       {
@@ -594,7 +616,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "배고픈 이에게 빵과 믿음을 함께 건넨 현명한 사목으로 이단의 싹을 조용히 잘라 냈다.",
           stats: { Int: 5, Fel: 5, Inf: 4 },
-          faith: 6
+          faith: 6,
+          align: { humane: 9 }
         }
       }
     ],

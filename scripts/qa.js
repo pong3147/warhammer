@@ -275,6 +275,27 @@ for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
   }
 }
 
+const alignKeys = new Set(Engine.ALIGNMENT_KEYS || ["humane", "dogmatic", "ruthless"]);
+const domAlignKeys = new Set(["humane", "dogmatic", "ruthless", "neutral"]);
+
+function validateAlignObj(obj, owner, allowNegative) {
+  if (!obj) return;
+  if (typeof obj !== "object" || Array.isArray(obj)) {
+    fail(4, `Invalid align object in ${owner}`);
+    return;
+  }
+  for (const [k, v] of Object.entries(obj)) {
+    if (!alignKeys.has(k)) fail(4, `Unknown alignment key "${k}" in ${owner}`);
+    if (typeof v !== "number" || !Number.isFinite(v)) {
+      fail(4, `Non-numeric alignment value "${v}" for "${k}" in ${owner}`);
+    } else if (!allowNegative && (v < 0 || v > 100)) {
+      fail(4, `Out-of-bounds alignment threshold ${v} for "${k}" in ${owner}`);
+    } else if (allowNegative && (v < -100 || v > 100)) {
+      fail(4, `Out-of-bounds alignment delta ${v} for "${k}" in ${owner}`);
+    }
+  }
+}
+
 function validateReq(req, owner) {
   if (!req) return;
   (req.anyWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown world "${w}" in ${owner}`); });
@@ -288,6 +309,18 @@ function validateReq(req, owner) {
   (req.excludeChapters || []).forEach((c) => { if (!chapterIds.has(c)) fail(4, `Unknown excludeChapter "${c}" in ${owner}`); });
   (req.anySegmenta || []).forEach((s) => { if (!segIds.has(s)) fail(4, `Unknown segmentum "${s}" in ${owner}`); });
   (req.anyFocus || []).forEach((f) => { if (!focusIds.has(f)) fail(4, `Unknown focus "${f}" in ${owner}`); });
+  if (req.minAlign) validateAlignObj(req.minAlign, `${owner}.minAlign`, false);
+  if (req.maxAlign) validateAlignObj(req.maxAlign, `${owner}.maxAlign`, false);
+  if (req.minAlign && req.maxAlign) {
+    for (const k of Object.keys(req.minAlign)) {
+      if (req.maxAlign[k] !== undefined && req.minAlign[k] > req.maxAlign[k]) {
+        fail(4, `Contradictory minAlign > maxAlign for "${k}" in ${owner}`);
+      }
+    }
+  }
+  (req.anyDominantAlign || []).forEach((a) => {
+    if (!domAlignKeys.has(a)) fail(4, `Unknown dominant alignment "${a}" in ${owner}`);
+  });
   (req.or || []).forEach((sub) => validateReq(sub, `${owner}.or`));
 
   const checkTagList = (list) => (list || []).forEach((t) => {
@@ -322,6 +355,9 @@ for (const c of DATA.CAREERS) {
 
 for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
   validateReq(ev.req || ev.filter, ev.id);
+  if (ev.alignBias && !alignKeys.has(ev.alignBias)) {
+    fail(4, `Unknown alignBias "${ev.alignBias}" on event ${ev.id}`);
+  }
   (ev.characters || []).forEach((cid) => {
     if (!charIds.has(cid)) fail(4, `Unknown character "${cid}" in ${ev.id}`);
   });
@@ -338,6 +374,7 @@ for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
       if (!o) return;
       if (o.forceCareer && !careerIds.has(o.forceCareer)) fail(4, `Unknown forceCareer "${o.forceCareer}" in ${ev.id}`);
       if (o.moveWorld && !worldIds.has(o.moveWorld)) fail(4, `Unknown moveWorld "${o.moveWorld}" in ${ev.id}`);
+      if (o.align) validateAlignObj(o.align, `${ev.id}:outcome.align`, true);
       (o.addTags || []).forEach((t) => {
         if (!t.startsWith("met_") && !t.startsWith("chapter_") && !tagLabels[t]) {
           fail(4, `Missing TAG_LABELS for added tag "${t}" in ${ev.id}`);
@@ -358,6 +395,15 @@ const kriegCheckState = Engine.createCharacter({
 });
 for (const ch of DATA.CHRONICLES) {
   validateReq(ch.req, ch.id);
+  if (ch.alignBias && !alignKeys.has(ch.alignBias)) {
+    fail(4, `Unknown alignBias "${ch.alignBias}" on chronicle ${ch.id}`);
+  }
+  if (ch.effects) {
+    fail(4, `Chronicle ${ch.id} uses plural "effects" instead of "effect"`);
+  }
+  if (ch.effect && ch.effect.align) {
+    validateAlignObj(ch.effect.align, `${ch.id}:effect.align`, true);
+  }
   kriegCheckState.age = Math.max(1, (ch.req && ch.req.minAge) || 5);
   const cleaned = (ch.text || "").replace(/어머니의 품 대신/g, "");
   if (/어머니|아버지|부모님|자장가|가족 식탁|가정식|엄마|아빠/.test(cleaned) && Engine.checkReq(kriegCheckState, ch.req)) {
@@ -365,7 +411,7 @@ for (const ch of DATA.CHRONICLES) {
   }
 }
 
-// Unit test: forceCareer downgrade protection, Astartes chaos redirect, dynamic offers, anyPastCareers, apex obituaries, save migration, honorable ending, status summary
+// Unit test: forceCareer downgrade protection, Astartes chaos redirect, dynamic offers, anyPastCareers, apex obituaries, save migration, honorable ending, status summary, Stage 16.5 alignment
 {
   const cust = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "terra_high_blood", traitId: "none", eraId: "armageddon", gender: "male" });
   if (cust.saveVersion !== Engine.SAVE_VERSION) {
@@ -483,7 +529,7 @@ for (const ch of DATA.CHRONICLES) {
   const wmGrade = Engine.evaluateLifeGrade(gen);
   if (!wmGrade.rank.includes("WARMASTER")) fail(4, `Warmaster obituary rank mismatch: ${wmGrade.rank}`);
 
-  // Stage 16.2: migrateState legacy save compatibility
+  // Stage 16.2 / 16.5: migrateState legacy save compatibility (including alignment backfill)
   const legacyRaw = {
     id: "soul_legacy_test",
     name: "구버전 테스트",
@@ -501,7 +547,17 @@ for (const ch of DATA.CHRONICLES) {
     logs: []
   };
   const migrated = Engine.migrateState(legacyRaw);
-  if (!migrated || migrated.saveVersion !== Engine.SAVE_VERSION || !migrated.tags.includes("imperial_nihilus") || !migrated.declinedCareers || migrated.stats.Int !== 25) {
+  if (
+    !migrated ||
+    migrated.saveVersion !== Engine.SAVE_VERSION ||
+    !migrated.tags.includes("imperial_nihilus") ||
+    !migrated.declinedCareers ||
+    migrated.stats.Int !== 25 ||
+    !migrated.alignment ||
+    migrated.alignment.humane !== 0 ||
+    migrated.alignment.dogmatic !== 0 ||
+    migrated.alignment.ruthless !== 0
+  ) {
     fail(4, `migrateState failed to upgrade legacy save properly`);
   }
 
@@ -522,14 +578,91 @@ for (const ch of DATA.CHRONICLES) {
     fail(4, `Honorable ending confirm choice failed to conclude Custodes life cleanly`);
   }
 
-  // Stage 16.2: buildStatusSummary screen reader clarity check
+  // Stage 16.2 / 16.5: buildStatusSummary screen reader clarity check
   const summary = Engine.buildStatusSummary(gen);
-  if (!summary || !summary.includes(gen.name) || forbiddenSymbols.test(summary)) {
-    fail(4, `buildStatusSummary invalid or contains forbidden symbols: "${summary}"`);
+  if (!summary || !summary.includes(gen.name) || !summary.includes("도덕 성향") || forbiddenSymbols.test(summary)) {
+    fail(4, `buildStatusSummary invalid or missing alignment/contains forbidden symbols: "${summary}"`);
+  }
+
+  // Stage 16.5: 3-way Alignment Engine Unit Tests
+  const aTest = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "underhive_scum", traitId: "none", eraId: "armageddon", gender: "male" });
+  aTest.age = 26;
+  const info0 = Engine.getAlignmentInfo(aTest);
+  if (info0.dominant !== "neutral" || info0.tier !== 0 || info0.label !== "실리적 중립") {
+    fail(4, `Initial alignment info mismatch: ${JSON.stringify(info0)}`);
+  }
+  Engine.applyAlignDelta(aTest, { humane: 20, dogmatic: 20, ruthless: -5 });
+  const infoTie = Engine.getAlignmentInfo(aTest);
+  if (infoTie.dominant !== "neutral" || !infoTie.tied || infoTie.label !== "갈등하는 신념" || aTest.alignment.ruthless !== 0) {
+    fail(4, `Tied alignment or clamp mismatch: ${JSON.stringify(infoTie)}`);
+  }
+  Engine.applyAlignDelta(aTest, { humane: 160 });
+  if (aTest.alignment.humane !== 100 || Engine.getAlignmentInfo(aTest).dominant !== "humane" || Engine.getAlignmentInfo(aTest).tier !== 3) {
+    fail(4, `Alignment upper clamp or tier 3 mismatch: ${JSON.stringify(Engine.getAlignmentInfo(aTest))}`);
+  }
+  if (!Engine.checkReq(aTest, { minAlign: { humane: 60 }, maxAlign: { ruthless: 10 }, anyDominantAlign: ["humane"] })) {
+    fail(4, `checkReq alignment conditions failed on valid state`);
+  }
+  if (Engine.checkReq(aTest, { anyDominantAlign: ["ruthless"] })) {
+    fail(4, `checkReq anyDominantAlign matched wrong dominant alignment`);
+  }
+  const descAlign = Engine.describeReq({ minAlign: { humane: 20 }, maxAlign: { ruthless: 15 }, anyDominantAlign: ["humane"] });
+  if (!descAlign || !descAlign.includes("자비") || !descAlign.includes("암흑")) {
+    fail(4, `describeReq alignment formatting failed: "${descAlign}"`);
+  }
+
+  // Underhive boss offer blocked for humane dominant
+  aTest.careerId = "underhive_ganger";
+  aTest.stats = { WS: 60, BS: 50, T: 55, Ag: 55, Int: 50, WP: 50, Fel: 60, Inf: 65 };
+  const blockedCrimeOffer = Engine.createDynamicCareerOfferEvent(aTest, null, { forceOffer: true, targetCareerId: "hive_crime_lord" });
+  if (blockedCrimeOffer && blockedCrimeOffer.offeredCareerId === "hive_crime_lord") {
+    fail(4, `Humane dominant character was offered hive_crime_lord`);
+  }
+
+  // Ruthless secular villain separation, chaos_cultist shortcut (corr>=35 + ruthless>=40), obituary epilogue & penance shift
+  const ruth = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "underhive_scum", traitId: "none", eraId: "armageddon", gender: "male" });
+  ruth.age = 30;
+  ruth.careerId = "menial_worker";
+  ruth.corruption = 18;
+  ruth.alignment = { humane: 0, dogmatic: 5, ruthless: 40 };
+  if (Engine.checkReq(ruth, Engine.getCareer("chaos_cultist").req)) {
+    fail(4, `Low-corruption secular ruthless character (corr=18) should not unlock chaos_cultist`);
+  }
+  const ruthGrade = Engine.evaluateLifeGrade(ruth);
+  if (!ruthGrade.verdict.includes("세속적 악인")) {
+    fail(4, `Secular ruthless obituary epilogue missing: "${ruthGrade.verdict}"`);
+  }
+  ruth.corruption = 36;
+  if (!Engine.checkReq(ruth, Engine.getCareer("chaos_cultist").req)) {
+    fail(4, `Ruthless >= 40 + corruption >= 35 shortcut failed to unlock chaos_cultist`);
+  }
+  ruth.year = 960;
+  const penRes = Engine.performAction(ruth, "penance");
+  if (!penRes.ok || ruth.alignment.ruthless !== 37 || ruth.alignment.dogmatic !== 6) {
+    fail(4, `Penance failed to shift ruthless(-3) / dogmatic(+1): ${JSON.stringify(ruth.alignment)}`);
+  }
+
+  // Red-Team regression: Custodes & Grey Knight remain incorruptible even under forbidden focus
+  for (const [cid, tag] of [["adeptus_custodes", "custodes"], ["grey_knight", "grey_knight"]]) {
+    const inc = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "terra_high_blood", traitId: "none", eraId: "armageddon", gender: "male" });
+    inc.age = 40;
+    inc.careerId = cid;
+    inc.tags.push(tag, "transhuman");
+    inc.corruption = 0;
+    inc.focus = "forbidden";
+    for (let q = 0; q < 30; q++) {
+      inc.pendingEvent = null;
+      inc.wounds = inc.maxWounds;
+      Engine.advanceQuarter(inc);
+      inc.pendingEvent = null;
+    }
+    if (!inc.alive || inc.corruption !== 0) {
+      fail(4, `Incorruptible ${cid} gained corruption under forbidden focus (alive=${inc.alive}, corr=${inc.corruption})`);
+    }
   }
 }
 
-console.log(`[Gate 4] Integrity, 78-career metadata, tag production, describeReq, dynamic offers, migration, honorable ending & guards verified.`);
+console.log(`[Gate 4] Integrity, 78-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & guards verified.`);
 
 // ============================================================================
 // Gate 5: 소프트락 · 유년기 풀(22행성 각 4+) · fastChildhood · 2400로그 보존 · 중복률
@@ -817,7 +950,7 @@ if (DEEP_MODE) {
       out.greatRift = b.greatRift;
     }
 
-    const intersectKeys = ["anyCareers", "anyChapters", "anyWorlds", "anyHomeWorlds", "anySegmenta", "anyFocus"];
+    const intersectKeys = ["anyCareers", "anyChapters", "anyWorlds", "anyHomeWorlds", "anySegmenta", "anyFocus", "anyDominantAlign"];
     for (const k of intersectKeys) {
       if (b[k]) {
         const merged = intersectArrays(out[k], b[k]);
@@ -842,6 +975,18 @@ if (DEEP_MODE) {
       out.stats = Object.assign({}, out.stats || {});
       for (const sk of Object.keys(b.stats)) {
         out.stats[sk] = out.stats[sk] !== undefined ? Math.max(out.stats[sk], b.stats[sk]) : b.stats[sk];
+      }
+    }
+    if (b.minAlign) {
+      out.minAlign = Object.assign({}, out.minAlign || {});
+      for (const ak of Object.keys(b.minAlign)) {
+        out.minAlign[ak] = out.minAlign[ak] !== undefined ? Math.max(out.minAlign[ak], b.minAlign[ak]) : b.minAlign[ak];
+      }
+    }
+    if (b.maxAlign) {
+      out.maxAlign = Object.assign({}, out.maxAlign || {});
+      for (const ak of Object.keys(b.maxAlign)) {
+        out.maxAlign[ak] = out.maxAlign[ak] !== undefined ? Math.min(out.maxAlign[ak], b.maxAlign[ak]) : b.maxAlign[ak];
       }
     }
     delete out.or;
@@ -895,6 +1040,49 @@ if (DEEP_MODE) {
     const maxWounds = cl.maxWounds !== undefined ? cl.maxWounds : 200;
     if (minWounds > maxWounds) return null;
     const wounds = minWounds;
+
+    const minA = { humane: 0, dogmatic: 0, ruthless: 0 };
+    const maxA = { humane: 100, dogmatic: 100, ruthless: 100 };
+    for (const ak of ["humane", "dogmatic", "ruthless"]) {
+      if (cl.minAlign && cl.minAlign[ak] !== undefined) minA[ak] = Math.max(minA[ak], cl.minAlign[ak]);
+      if (cl.maxAlign && cl.maxAlign[ak] !== undefined) maxA[ak] = Math.min(maxA[ak], cl.maxAlign[ak]);
+      if (minA[ak] > maxA[ak]) return null;
+    }
+    let alignment = { humane: minA.humane, dogmatic: minA.dogmatic, ruthless: minA.ruthless };
+    if (cl.anyDominantAlign && cl.anyDominantAlign.length > 0) {
+      let solved = null;
+      for (const dom of cl.anyDominantAlign) {
+        if (dom === "neutral") {
+          const topMin = Math.max(minA.humane, minA.dogmatic, minA.ruthless);
+          if (topMin < 15) {
+            solved = { humane: minA.humane, dogmatic: minA.dogmatic, ruthless: minA.ruthless };
+            break;
+          }
+          // Try a tie at topMin between two axes within bounds
+          const pairs = [["humane", "dogmatic", "ruthless"], ["humane", "ruthless", "dogmatic"], ["dogmatic", "ruthless", "humane"]];
+          for (const [k1, k2, k3] of pairs) {
+            const v = Math.max(15, minA[k1], minA[k2], minA[k3]);
+            if (v <= maxA[k1] && v <= maxA[k2] && minA[k3] <= v) {
+              const cand = { [k1]: v, [k2]: v, [k3]: minA[k3] };
+              if (Engine.getAlignmentInfo({ alignment: cand }).dominant === "neutral") {
+                solved = cand;
+                break;
+              }
+            }
+          }
+          if (solved) break;
+        } else {
+          const others = ["humane", "dogmatic", "ruthless"].filter((k) => k !== dom);
+          const needed = Math.max(15, minA[dom], minA[others[0]] + 1, minA[others[1]] + 1);
+          if (needed <= maxA[dom]) {
+            solved = { [dom]: needed, [others[0]]: minA[others[0]], [others[1]]: minA[others[1]] };
+            break;
+          }
+        }
+      }
+      if (!solved) return null;
+      alignment = solved;
+    }
 
     const exclWorlds = new Set(cl.excludeWorlds || []);
     const exclHomeWorlds = new Set(cl.excludeHomeWorlds || []);
@@ -993,6 +1181,7 @@ if (DEEP_MODE) {
       corruption,
       wounds,
       maxWounds: Math.max(100, wounds),
+      alignment,
       tags: [...tagSet],
       globalFlags: {
         greatRiftOpened: cl.greatRift !== undefined ? cl.greatRift : year >= 999
@@ -1116,6 +1305,7 @@ let careerOfferTriggers = 0;
 const reachedCareers = new Set();
 const seenEvents = new Set();
 const tierReached = { 4: 0, 5: 0, 6: 0 };
+const alignDist = { humane: 0, dogmatic: 0, ruthless: 0, neutral: 0 };
 const milestones = {
   highLord: 0,
   governor: 0,
@@ -1159,6 +1349,8 @@ for (const foc of focuses) {
       const co = careerById.get(cid);
       if (co && co.tier > maxTier) maxTier = co.tier;
     }
+    const domAlign = Engine.getAlignmentInfo(st).dominant;
+    alignDist[domAlign] = (alignDist[domAlign] || 0) + 1;
     if (DEEP_MODE) {
       if (maxTier >= 4) tierReached[4]++;
       if (maxTier >= 5) tierReached[5]++;
@@ -1222,11 +1414,82 @@ console.log(
 if (DEEP_MODE) {
   console.log(
     `  [Deep Distribution] naturalEvents=${seenEvents.size}/${DATA.EVENTS.length} | ` +
+    `Align(H=${alignDist.humane}, D=${alignDist.dogmatic}, R=${alignDist.ruthless}, N=${alignDist.neutral}) | ` +
     `T4+=${tierReached[4]}, T5+=${tierReached[5]}, T6=${tierReached[6]} | ` +
     `HighLord=${milestones.highLord}, Gov=${milestones.governor}, RT=${milestones.rogueTrader}, ` +
     `Astartes=${milestones.astartes}, Custodes=${milestones.custodes}, GK=${milestones.greyKnight}, ` +
     `Chaos=${milestones.chaos}, DaemonPrince=${milestones.daemonPrince}`
   );
+
+  // Stage 16.5: 3-way comparative alignment roleplay bias check (when biased events exist for all 3 axes)
+  const biasedCounts = {
+    humane: DATA.EVENTS.filter((e) => e.alignBias === "humane").length,
+    dogmatic: DATA.EVENTS.filter((e) => e.alignBias === "dogmatic").length,
+    ruthless: DATA.EVENTS.filter((e) => e.alignBias === "ruthless").length
+  };
+  if (biasedCounts.humane >= 4 && biasedCounts.dogmatic >= 4 && biasedCounts.ruthless >= 4) {
+    const pickAlignedChoice = (st, targetAxis) => {
+      const choices = (st.pendingEvent && st.pendingEvent.choices) || [];
+      const others = ["humane", "dogmatic", "ruthless"].filter((k) => k !== targetAxis);
+      let bestIdx = -1;
+      let bestScore = -9999;
+      for (let idx = 0; idx < choices.length; idx++) {
+        const ch = choices[idx];
+        if (!Engine.checkReq(st, ch.req)) continue;
+        const outs = [ch.effect, ch.outcome, ch.success].filter(Boolean);
+        let netAlign = null;
+        for (const o of outs) {
+          if (o.align) {
+            const gain = o.align[targetAxis] || 0;
+            const rival = Math.max(0, o.align[others[0]] || 0) + Math.max(0, o.align[others[1]] || 0);
+            const cur = gain - rival * 0.5;
+            if (netAlign === null || cur > netAlign) netAlign = cur;
+          }
+        }
+        let sc = netAlign !== null ? netAlign * 20 : 0;
+        if (ch.effect && ch.effect.instantDeath) sc -= 1000;
+        if (netAlign === null) {
+          if (ch.check) sc = ((st.stats[ch.check.stat] || 20) + (ch.check.diff || 0)) * 0.15;
+          else sc = 4;
+        }
+        if (sc > bestScore) {
+          bestScore = sc;
+          bestIdx = idx;
+        }
+      }
+      return bestIdx >= 0 ? bestIdx : choices.findIndex((ch) => !ch.req);
+    };
+    const compSummary = [];
+    for (const targetAxis of ["humane", "dogmatic", "ruthless"]) {
+      const seenBias = { humane: 0, dogmatic: 0, ruthless: 0 };
+      let domMatched = 0;
+      const COMP_LIVES = 45;
+      for (let i = 0; i < COMP_LIVES; i++) {
+        const st = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+        st.focus = targetAxis === "dogmatic" ? "faith" : targetAxis === "ruthless" ? "politics" : "survival";
+        let steps = 0;
+        while (st.alive && steps < 900) {
+          steps++;
+          Engine.advanceQuarter(st);
+          while (st.alive && st.pendingEvent) {
+            const b = st.pendingEvent.alignBias;
+            if (b && seenBias[b] !== undefined) seenBias[b]++;
+            Engine.resolvePendingChoice(st, pickAlignedChoice(st, targetAxis));
+          }
+        }
+        if (Engine.getAlignmentInfo(st).dominant === targetAxis) domMatched++;
+      }
+      compSummary.push(`${targetAxis}(dom=${domMatched}/${COMP_LIVES}, H:${seenBias.humane}/D:${seenBias.dogmatic}/R:${seenBias.ruthless})`);
+      const others = ["humane", "dogmatic", "ruthless"].filter((k) => k !== targetAxis);
+      if (domMatched < Math.floor(COMP_LIVES * 0.35)) {
+        fail(7, `Alignment roleplay "${targetAxis}" reached dominant in only ${domMatched}/${COMP_LIVES} lives`);
+      }
+      if (seenBias[targetAxis] <= seenBias[others[0]] || seenBias[targetAxis] <= seenBias[others[1]]) {
+        fail(7, `Alignment bias weighting failed for "${targetAxis}": ${JSON.stringify(seenBias)}`);
+      }
+    }
+    console.log(`  [Alignment Comparative] ${compSummary.join(" | ")}`);
+  }
 }
 
 if (warnings.length) {

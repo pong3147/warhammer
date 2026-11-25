@@ -78,7 +78,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "철근 콘크리트 벽을 어깨로 뚫고 들어가 적을 전부 날려 버렸다! 커미사르가 특대형 배급과 빛나는 공로 훈장을 가슴에 달아 주었다.",
           stats: { T: 6, WS: 6, Inf: 6 },
-          faith: 10
+          faith: 10, align: { dogmatic: 5 }
         },
         fail: {
           text: "총탄을 수십 발 맞고 쓰러졌지만 튼튼한 가죽 덕분에 며칠 만에 벌떡 일어났다.",
@@ -92,7 +92,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "적탄이 두꺼운 장갑과 어깨를 때렸지만 한 걸음도 물러서지 않았다! 그 사이 소대가 무사히 우회해 적 벙커를 폭파했다.",
           wounds: -10,
           stats: { T: 4, WP: 4 },
-          faith: 6
+          faith: 6, align: { humane: 7 }
         }
       }
     ],
@@ -217,7 +217,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeTags: ["heretic", "chaos_aligned", "daemon_prince", "custodes", "grey_knight", "dreadnought", "high_lord_terra"]
     },
     reqLabel: "이력: 대전역·특수작전 베테랑",
-    weight: 32,
+    weight: 32, alignBias: "humane",
     text: "생사를 넘나들던 과거 대전역에서 등을 맞대고 싸웠던 옛 전우의 유품 상자가 제국 병참국의 지연 우편으로 수년 만에 배달되었다. 녹슨 자물쇠 안에는 손상된 전술 기록 슬레이트와 정교하게 손질된 마스터 크래프트 무기 부속품이 들어 있다.",
     choices: [
       {
@@ -225,11 +225,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: 0 },
         success: {
           text: "전우가 목숨 걸고 기록한 좌표를 복구해 부대의 명예와 누락된 훈장을 되찾아 주었다! 상급 사령부도 그대의 집념을 높이 샀다.",
-          stats: { Int: 6, Inf: 8, WP: 4 }
+          stats: { Int: 6, Inf: 8, WP: 4 }, align: { humane: 7 }
         },
         fail: {
           text: "행정 문서의 절반은 이미 파기되어 공식 정정은 무산되었으나, 진실만은 그대의 기억 속에 온전히 남았다.",
-          stats: { Int: 3, Inf: -2 }
+          stats: { Int: 3, Inf: -2 }, align: { humane: 4 }
         }
       },
       {
@@ -250,7 +250,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "수조 명의 병사가 스쳐 가는 제국에서 누군가를 끝까지 기억해 주는 것 자체가 작은 기적이다.",
           stats: { WP: 5 },
-          faith: 6
+          faith: 6, align: { humane: 4 }
         }
       }
     ],
@@ -297,12 +297,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "간단한 침전 여과법만으로 수십 명의 목숨을 구했다! 이웃들이 감사의 뜻으로 귀한 식량과 약초를 나누어 주었다.",
           stats: { Int: 5, Fel: 4 },
-          wounds: 12
+          wounds: 12, align: { humane: 8 }
         },
         fail: {
           text: "임시 분석 도구가 망가져 소소한 손해를 보았으나, 스스로의 식수만은 안전하게 걸러 냈다.",
           wounds: -6,
-          stats: { Int: 2 }
+          stats: { Int: 2 }, align: { humane: 4 }
         }
       },
       {
@@ -310,7 +310,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "욕심내지 않고 몸을 보전한 덕에 유행병이 휩쓸고 간 뒤에도 멀쩡히 살아남았다.",
           stats: { T: 3 },
-          wounds: 14
+          wounds: 14, align: { ruthless: 4 }
         }
       }
     ],
@@ -399,12 +399,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "동이 틀 무렵 마음속의 안개가 말끔히 걷히고 흔들리지 않는 황금빛 확신이 자리 잡았다! 정신의 오염까지 크게 정화되었다.",
           stats: { WP: 7 },
           faith: 14,
-          corruption: -10
+          corruption: -10, align: { dogmatic: 8 }
         },
         fail: {
           text: "밤샘 고행 끝에 무릎과 몸살로 탈진했으나, 새벽 종소리와 함께 신앙의 불씨만은 지켜 냈다.",
           wounds: -10,
-          faith: 6
+          faith: 6, align: { dogmatic: 5 }
         }
       },
       {
@@ -413,12 +413,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "그대의 진심 어린 기도가 군중의 공포를 용기로 바꾸어 놓았다! 지역 사제가 그대의 신심을 크게 치하했다.",
           stats: { Fel: 6, Inf: 5 },
-          faith: 10
+          faith: 10, align: { humane: 6 }
         },
         fail: {
           text: "목소리가 갈라져 군중의 호응을 얻지 못한 채 설교가 헛돌았다. 주위의 싸늘한 시선에 체면이 깎였으나, 끝까지 남아 기도한 소수와는 조용한 연대를 나누었다.",
           stats: { Inf: -2 },
-          faith: 2
+          faith: 2, align: { humane: 3 }
         }
       },
       {
@@ -427,7 +427,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "거창한 기적은 없었으나, 작은 불꽃을 바라보는 사이 흔들리던 마음이 잔잔히 가라앉았다.",
           stats: { WP: 3 },
           faith: 8,
-          corruption: -4
+          corruption: -4, align: { dogmatic: 4 }
         }
       }
     ],
@@ -516,11 +516,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "노련한 중재 솜씨에 길드장과 고위 행정관 모두가 감탄하며 그대를 핵심 인맥으로 끌어들였다! 출세의 문이 활짝 열렸다.",
-          stats: { Fel: 7, Inf: 9 }
+          stats: { Fel: 7, Inf: 9 }, align: { humane: 5 }
         },
         fail: {
           text: "어느 쪽도 완전히 만족시키지 못해 양쪽의 냉대를 받으며 연회장을 빠져나와야 했다.",
-          stats: { Inf: -4, Fel: 2 }
+          stats: { Inf: -4, Fel: 2 }, align: { humane: 3 }
         }
       },
       {
@@ -528,12 +528,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: 0 },
         success: {
           text: "치명적인 장부 조작 증거를 쥐고 협상 테이블을 주도했다! 그대의 이름 석 자가 상층 사교계에 무게 있게 오르내린다.",
-          stats: { Int: 6, Inf: 8 }
+          stats: { Int: 6, Inf: 8 }, align: { ruthless: 8 }
         },
         fail: {
           text: "함정 서신에 걸려 정적이 보낸 청부업자의 습격을 받고 겨우 빠져나왔다.",
           wounds: -12,
-          stats: { Inf: -4 }
+          stats: { Inf: -4 }, align: { ruthless: 5 }
         }
       },
       {
@@ -573,12 +573,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "불타는 듯한 문자가 뇌리에 각인되며 워프와 현실의 이면에 대한 경이로운 지혜를 얻었다! 단, 영혼에 짙은 그림자가 달라붙었다.",
           stats: { Int: 10, WP: 5 },
-          corruption: 14
+          corruption: 14, align: { ruthless: 9 }
         },
         fail: {
           text: "두루마리에 걸린 정신 저주가 폭발해 코피를 쏟으며 쓰러졌고, 끔찍한 환청이 한동안 사라지지 않았다.",
           wounds: -14,
-          corruption: 18
+          corruption: 18, align: { ruthless: 6 }
         }
       },
       {
@@ -588,12 +588,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "밀매상을 묶어 심문소 지부에 인계했다! 오히려 철저한 위장 수사로 호평받으며 그간의 의혹을 털어 내고 신임까지 얻었다.",
           stats: { WP: 7, Inf: 8 },
           corruption: -10,
-          addTags: ["inquisition_favor"]
+          addTags: ["inquisition_favor"], align: { dogmatic: 8 }
         },
         fail: {
           text: "밀매상이 숨겨 둔 독단검에 찔려 부상을 입은 사이 어둠 속으로 도망치고 말았다.",
           wounds: -18,
-          corruption: 6
+          corruption: 6, align: { dogmatic: 5 }
         }
       },
       {
@@ -626,12 +626,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WP", diff: -5 },
         success: {
           text: "제3의 눈에서 피눈물이 흐르는 고통을 견뎌 내고 함선 전체를 무사히 실우주로 이끌었다! 선장과 가문 원로가 무릎 꿇고 경의를 표했다.",
-          stats: { WP: 9, Int: 6, Inf: 10 }
+          stats: { WP: 9, Int: 6, Inf: 10 }, align: { humane: 6 }
         },
         fail: {
           text: "워프의 광기가 제3의 눈을 할퀴어 심각한 두통과 돌연변이 징후가 심화되었으나, 함선만은 무사히 빠져나왔다.",
           wounds: -20,
-          corruption: 8
+          corruption: 8, align: { humane: 4 }
         }
       },
       {
@@ -639,12 +639,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "테라 항해사 의회에 증거를 들이밀어 정적 가문을 실각시키고 막대한 영예와 지분을 거머쥐었다!",
-          stats: { Fel: 7, Int: 5, Inf: 10 }
+          stats: { Fel: 7, Int: 5, Inf: 10 }, align: { ruthless: 7 }
         },
         fail: {
           text: "가문 간 암투 도중 호위병을 잃고 부상을 입었으나, 항해사로서의 위신은 지켜 냈다.",
           wounds: -16,
-          stats: { Inf: -4 }
+          stats: { Inf: -4 }, align: { ruthless: 4 }
         }
       },
       {
@@ -682,12 +682,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "사이커가 비명을 지르며 무릎 꿇는 광경에 군중이 경악했다! 혐오받던 저주가 수많은 목숨을 구한 축복으로 증명되었다.",
           stats: { WP: 8, Inf: 7 },
-          corruptionReset: true
+          corruptionReset: true, align: { humane: 8 }
         },
         fail: {
           text: "사이커가 휘두른 쇠파이프에 맞아 다쳤으나, 워프 폭주 자체는 완벽히 무력화했다.",
           wounds: -14,
-          stats: { WP: 4 }
+          stats: { WP: 4 }, align: { humane: 5 }
         }
       },
       {
@@ -696,11 +696,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "황금 갑주의 여전사가 조용히 고개를 끄덕이며 공허의 동족에게 깊은 경의와 보호 인장을 남겼다!",
           stats: { Fel: 6, Inf: 9, WP: 5 },
-          addTags: ["inquisition_favor"]
+          addTags: ["inquisition_favor"], align: { dogmatic: 6 }
         },
         fail: {
           text: "복잡한 침묵의 수화를 오해해 연락관이 고개를 저으며 발길을 돌렸다. 협력 기회는 무산되었으나, 적어도 이 은하에 혼자가 아니라는 사실만은 마음에 남았다.",
-          stats: { Inf: -2, WP: 2 }
+          stats: { Inf: -2, WP: 2 }, align: { dogmatic: 3 }
         }
       },
       {
@@ -896,12 +896,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { WP: 8, Fel: 6, Inf: 7 },
           faith: 15,
           corruption: -10,
-          addTags: ["living_miracle"]
+          addTags: ["living_miracle"], align: { dogmatic: 7 }
         },
         fail: {
           text: "온 힘을 쏟아 기도하다 코피를 흘리며 쓰러졌으나, 어둠이 물러날 때까지 단 한 사람도 광기에 빠지지 않았다.",
           wounds: -16,
-          faith: 6
+          faith: 6, align: { dogmatic: 4 }
         }
       },
       {
@@ -910,12 +910,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "과장된 광신 대신 잔잔한 희망이 퍼져 나가며, 국교와 이웃 모두의 깊은 신뢰를 얻었다.",
           stats: { Fel: 6, WP: 5 },
-          faith: 10
+          faith: 10, align: { humane: 8 }
         },
         fail: {
           text: "일부 주민이 거짓 기적이라 수군대며 소동이 일어 체면을 구겼으나, 어둠이 걷힐 때까지 큰 탈 없이 밤을 넘겼다.",
           stats: { Inf: -2 },
-          faith: 2
+          faith: 2, align: { humane: 4 }
         }
       },
       {
@@ -924,7 +924,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "기적은 오직 옥좌의 주인으로부터 온다. 겸손한 신심이 내면의 오염까지 깨끗이 씻어 냈다.",
           stats: { WP: 4 },
           faith: 8,
-          corruption: -5
+          corruption: -5, align: { dogmatic: 5 }
         }
       }
     ],
@@ -1216,12 +1216,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Ag", diff: -5 },
         success: {
           text: "카타찬 단검이 소리 없이 매복조 전원을 침묵시켰다! 전우들은 그대의 목숨을 건 정찰에 열광했고, 콧대 높던 장교마저 말을 잃었다.",
-          stats: { Ag: 8, WS: 6, Inf: 5 }
+          stats: { Ag: 8, WS: 6, Inf: 5 }, align: { humane: 6 }
         },
         fail: {
           text: "함정에 걸려 다리를 다쳤으나, 신호탄을 쏘아 올려 본대 전체가 학살당하는 참사를 막았다.",
           wounds: -18,
-          stats: { Ag: 4, T: 4 }
+          stats: { Ag: 4, T: 4 }, align: { humane: 4 }
         }
       },
       {
@@ -1229,11 +1229,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "장교가 마지못해 우회로를 허락했고, 직후 원 경로에 쏟아진 적의 포격을 보며 그대에게 정식으로 사과했다.",
-          stats: { Fel: 7, Int: 5, Inf: 6 }
+          stats: { Fel: 7, Int: 5, Inf: 6 }, align: { humane: 8 }
         },
         fail: {
           text: "항명 직전까지 가는 언쟁 끝에 징계 경고를 받았으나, 최소한 선발대만이라도 경계 태세를 갖추게 만들었다.",
-          stats: { Inf: -3, WP: 4 }
+          stats: { Inf: -3, WP: 4 }, align: { humane: 5 }
         }
       },
       {
@@ -1241,7 +1241,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "역시나 매복이 터졌으나 미리 대비한 덕분에 분대 피해는 극소수에 그쳤다.",
           stats: { T: 5, BS: 4 },
-          wounds: -8
+          wounds: -8, align: { dogmatic: 4 }
         }
       }
     ],
@@ -1372,13 +1372,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "그대의 경고 덕분에 방어 함대가 미리 매복해 이단 기습 함대를 전멸시켰다! 누구도 출처를 몰랐으나 수많은 생명을 구했다.",
           stats: { WP: 8, Int: 6, Inf: 5 },
           faith: 6,
-          corruption: -5
+          corruption: -5, align: { humane: 7 }
         },
         fail: {
           text: "환상 속에 섞인 워프의 속임수 때문에 두통과 오염을 겪었으나, 경계 강화만은 이끌어 냈다.",
           wounds: -12,
           corruption: 8,
-          stats: { WP: 3 }
+          stats: { WP: 3 }, align: { humane: 4 }
         }
       },
       {
@@ -1399,7 +1399,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "금단의 감각에 의지하지 않고 영혼의 순결을 지켰다. 머릿속을 울리던 비명이 한결 잦아들었다.",
           stats: { WP: 6 },
           faith: 8,
-          corruption: -8
+          corruption: -8, align: { dogmatic: 7 }
         }
       }
     ],
@@ -1527,12 +1527,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "약효를 유지하면서 분량을 세 배로 늘려 구역의 치사율을 급감시켰다! 생존의 지혜가 공동체 전체를 구했다.",
-          stats: { Int: 7, T: 5, Inf: 6 }
+          stats: { Int: 7, T: 5, Inf: 6 }, align: { humane: 9 }
         },
         fail: {
           text: "배합 도중 병균에 노출되어 고열을 앓았으나, 끝내 회복하며 강한 면역력을 얻었다.",
           wounds: -14,
-          stats: { T: 5 }
+          stats: { T: 5 }, align: { humane: 5 }
         }
       },
       {
@@ -1541,12 +1541,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "건강한 체력과 단호한 기세에 경비대가 물러났다. 그대의 철저한 준비성이 다시 한번 목숨을 지켰다.",
           stats: { T: 7, WP: 5 },
-          wounds: 8
+          wounds: 8, align: { ruthless: 8 }
         },
         fail: {
           text: "실랑이 끝에 상처를 입고 물자 절반을 빼앗겼으나 남은 약재로 가까스로 버텼다.",
           wounds: -14,
-          stats: { T: 3 }
+          stats: { T: 3 }, align: { ruthless: 5 }
         }
       },
       {
@@ -1554,7 +1554,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "살아남는 것과 인간다움을 지키는 것 사이에서 차분히 균형을 잡았다.",
           stats: { T: 4, WP: 5, Fel: 3 },
-          faith: 4
+          faith: 4, align: { humane: 5 }
         }
       }
     ],
@@ -1640,13 +1640,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "설교자의 품에서 숨겨 둔 환각 향료와 이단 부적이 쏟아져 나왔다! 광신에 빠질 뻔한 순례자들이 그대의 순수한 신앙 앞에 무릎을 꿇었다.",
           stats: { WP: 8, Fel: 5, Inf: 6 },
           faith: 10,
-          corruption: -8
+          corruption: -8, align: { dogmatic: 8 }
         },
         fail: {
           text: "흥분한 광신도들에게 돌팔매를 맞아 다쳤으나, 소동을 보고 출동한 국교 경비대가 사기꾼을 체포했다.",
           wounds: -15,
           faith: 5,
-          stats: { WP: 4 }
+          stats: { WP: 4 }, align: { dogmatic: 5 }
         }
       },
       {
@@ -1656,11 +1656,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "단순 사기꾼이 아니라 지하 이단 교단의 모집책이었음이 밝혀졌다! 이단심문소가 그대의 신중한 공적을 치하했다.",
           stats: { Int: 7, Inf: 6 },
           faith: 6,
-          addTags: ["inquisition_favor"]
+          addTags: ["inquisition_favor"], align: { dogmatic: 6 }
         },
         fail: {
           text: "추적 도중 설교자가 눈치를 채고 도주해 뒷수습 과정에서 질책을 들었으나, 광장의 거짓 집회만은 해산되었다.",
-          stats: { Inf: -2, Int: 2 }
+          stats: { Inf: -2, Int: 2 }, align: { dogmatic: 3 }
         }
       },
       {
@@ -1669,7 +1669,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "남의 거짓을 꾸짖기 전에 스스로의 영혼을 먼저 닦는 것이 참된 경건이다.",
           stats: { WP: 5 },
           faith: 8,
-          corruption: -5
+          corruption: -5, align: { humane: 4 }
         }
       }
     ],
@@ -1700,13 +1700,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -10 },
         success: {
           text: "기계교의 금기를 건드리지 않고도 경이로운 암흑기 열교환 설계도를 복원했다! 학계와 포지 사원 전체가 그대의 이름을 칭송했다.",
-          stats: { Int: 9, Inf: 7, WP: 4 }
+          stats: { Int: 9, Inf: 7, WP: 4 }, align: { ruthless: 5 }
         },
         fail: {
           text: "해독 도중 불경한 기계 음성이 흘러나와 긴급 소각해야 했고, 기술 이단 의심 기록이 남았다.",
           stats: { Int: 4, Inf: -3 },
           corruption: 5,
-          addTags: ["tech_heresy"]
+          addTags: ["tech_heresy"], align: { ruthless: 7 }
         }
       },
       {
@@ -1715,11 +1715,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "금단의 유혹을 이겨 낸 정통 학자의 절제에 기계교가 깊은 경의를 표하며 귀한 학술 열람권을 내렸다.",
           stats: { WP: 7, Int: 4, Inf: 6 },
-          faith: 5
+          faith: 5, align: { dogmatic: 8 }
         },
         fail: {
           text: "인계 과정에서 공적을 상급자에게 가로채이며 학계 입지가 깎였으나, 적어도 기술 이단 혐의만은 깨끗이 피했다.",
-          stats: { Inf: -3, WP: 2 }
+          stats: { Inf: -3, WP: 2 }, align: { dogmatic: 5 }
         }
       },
       {
@@ -1757,12 +1757,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -10 },
         success: {
           text: "피 한 방울 묻히지 않고 양측 파벌을 모두 그대의 손바닥 위에 올려놓았다! 행성 의회가 그대를 새 실권자로 추대했다.",
-          stats: { Fel: 8, Inf: 9, Int: 4 }
+          stats: { Fel: 8, Inf: 9, Int: 4 }, align: { ruthless: 6 }
         },
         fail: {
           text: "양쪽 파벌 모두에게 배신자로 찍혀 자객의 습격을 가까스로 피하며 입지가 크게 흔들렸다.",
           wounds: -16,
-          stats: { Inf: -5, WP: 4 }
+          stats: { Inf: -5, WP: 4 }, align: { ruthless: 4 }
         }
       },
       {
@@ -1770,11 +1770,11 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "반역 음모가 하루아침에 분쇄되었다! 총독 대행이 목숨을 구해 준 은인으로 그대에게 막대한 권한과 포상을 내렸다.",
-          stats: { Int: 7, Inf: 8, WP: 4 }
+          stats: { Int: 7, Inf: 8, WP: 4 }, align: { dogmatic: 8 }
         },
         fail: {
           text: "증거가 불충분하다는 역공을 받아 한동안 정계 변방으로 밀려나야 했다.",
-          stats: { Inf: -4, Int: 3 }
+          stats: { Inf: -4, Int: 3 }, align: { dogmatic: 5 }
         }
       },
       {
@@ -1813,13 +1813,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "얼음장 같은 담력과 완벽한 교리 인용에 내사관이 감탄하며 물러났다! 심지어 적을 알기 위한 귀중한 연구라며 은밀한 협조까지 요청했다.",
           stats: { Fel: 7, Int: 7, Inf: 6 },
-          corruption: 4
+          corruption: 4, align: { ruthless: 8 }
         },
         fail: {
           text: "변명이 간파되어 혹독한 심문과 수배 낙인을 피하기 위해 밤중에 거처를 버리고 도주해야 했다.",
           wounds: -18,
           corruption: 6,
-          addTags: ["wanted_by_inquisition"]
+          addTags: ["wanted_by_inquisition"], align: { ruthless: 6 }
         }
       },
       {
@@ -1827,12 +1827,12 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Ag", diff: -5 },
         success: {
           text: "내사관들이 서재를 뒤집었으나 단 한 조각의 불경한 증거도 찾지 못했다! 심장이 터질 듯한 밤을 넘겼다.",
-          stats: { Ag: 7, WP: 5, Int: 3 }
+          stats: { Ag: 7, WP: 5, Int: 3 }, align: { ruthless: 5 }
         },
         fail: {
           text: "용액이 손등에 튀어 화상을 입고 수상한 재가 발각되어 막대한 벌금과 감시 처분을 받았다.",
           wounds: -14,
-          stats: { Inf: -5 }
+          stats: { Inf: -5 }, align: { ruthless: 4 }
         }
       },
       {
@@ -1842,7 +1842,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           wounds: -12,
           faith: 10,
           corruption: -14,
-          stats: { WP: 5 }
+          stats: { WP: 5 }, align: { dogmatic: 9 }
         }
       }
     ],

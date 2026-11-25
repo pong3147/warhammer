@@ -23,10 +23,13 @@
   let lastStatsSignature = "";
   let lastTagsSignature = "";
   let lastLockedSignature = "";
+  let lastRollSignature = "";
   let lastRecentLogStateId = null;
   let lastRecentTopLog = null;
   let lastRecentLogCount = 0;
   let saveStorageWarned = false;
+  let clearHallArmed = false;
+  let clearHallTimer = null;
   let lastLockedCareers = [];
   let knownUnlockedCareerIds = new Set();
 
@@ -37,6 +40,7 @@
     lastStatsSignature = "";
     lastTagsSignature = "";
     lastLockedSignature = "";
+    lastRollSignature = "";
     lastRecentLogStateId = null;
     lastRecentTopLog = null;
     lastRecentLogCount = 0;
@@ -274,7 +278,8 @@
       metCharacters: charState.metCharacters,
       stats: charState.stats,
       corruption: charState.corruption,
-      faith: charState.faith
+      faith: charState.faith,
+      alignment: Engine.normalizeAlignment(charState)
     });
     if (list.length > 60) list.pop();
     try {
@@ -694,6 +699,20 @@
     $("#val-corruption").textContent = `${state.corruption} / 100`;
     $("#bar-corruption").style.width = `${state.corruption}%`;
 
+    const alignInfo = Engine.getAlignmentInfo(state);
+    $("#val-alignment").textContent = alignInfo.fullLabel;
+    $("#val-alignment-detail").textContent = alignInfo.detail;
+    const alignSum = alignInfo.scores.humane + alignInfo.scores.dogmatic + alignInfo.scores.ruthless;
+    if (alignSum === 0) {
+      $("#bar-align-humane").style.width = "33.3%";
+      $("#bar-align-dogmatic").style.width = "33.3%";
+      $("#bar-align-ruthless").style.width = "33.4%";
+    } else {
+      $("#bar-align-humane").style.width = `${((alignInfo.scores.humane / alignSum) * 100).toFixed(1)}%`;
+      $("#bar-align-dogmatic").style.width = `${((alignInfo.scores.dogmatic / alignSum) * 100).toFixed(1)}%`;
+      $("#bar-align-ruthless").style.width = `${((alignInfo.scores.ruthless / alignSum) * 100).toFixed(1)}%`;
+    }
+
     const statKeys = Object.keys(Engine.STAT_META);
     const statsSig = statKeys.map((k) => state.stats[k]).join(",");
     if (statsSig !== lastStatsSignature) {
@@ -753,10 +772,16 @@
   function renderRollBanner() {
     const el = $("#roll-banner");
     if (!state.lastRoll) {
-      el.style.display = "none";
+      if (lastRollSignature !== "NONE") {
+        lastRollSignature = "NONE";
+        el.style.display = "none";
+      }
       return;
     }
     const r = state.lastRoll;
+    const rollSig = `${r.statName}|${r.diff || 0}|${r.roll}|${r.target}|${r.success ? 1 : 0}|${r.critSuccess ? 1 : 0}|${r.critFail ? 1 : 0}`;
+    if (rollSig === lastRollSignature) return;
+    lastRollSignature = rollSig;
     el.style.display = "flex";
     el.className = `roll-banner ${r.success ? "" : "fail"}`;
     const tag = r.critSuccess ? "치명적 대성공!" : r.critFail ? "치명적 대실패!" : (r.success ? "성공" : "실패");
@@ -810,6 +835,11 @@
       ? `<span class="ev-badge">조건: ${escapeHtml(ev.reqLabel)}</span>`
       : (ev.scope ? `<span class="ev-badge">범위: ${escapeHtml(ev.scope)}</span>` : "");
 
+    const alignMeta = ev.alignBias && Engine.ALIGNMENT_META ? Engine.ALIGNMENT_META[ev.alignBias] : null;
+    const alignBadge = alignMeta
+      ? `<span class="ev-badge align-${ev.alignBias}">${escapeHtml(alignMeta.biasLabel)}</span>`
+      : "";
+
     const choicesHtml = ev.choices.map((ch, idx) => {
       const unlocked = Engine.checkReq(state, ch.req);
       let oddsHtml = `<span class="choice-odds">확정</span>`;
@@ -832,6 +862,7 @@
       <section class="event-box ${ev.isTimeline ? "timeline-event" : ""}" aria-labelledby="active-event-heading">
         <div class="event-badges">
           <span class="ev-badge ${ev.isTimeline ? "timeline" : ""}">${ev.isTimeline ? "역사 대사건 · " + Engine.formatImperialYear(ev.year) : escapeHtml(ev.category || "분기 사건")}</span>
+          ${alignBadge}
           ${reqBadge}
           ${charBadges}
         </div>
@@ -1031,7 +1062,9 @@
 
       if (focusedCid && !busy) {
         const restored = cWrap.querySelector(`.btn-apply-career[data-cid="${focusedCid}"]:not([disabled])`) ||
-          cWrap.querySelector(".btn-apply-career:not([disabled])");
+          cWrap.querySelector(".btn-apply-career:not([disabled])") ||
+          $("#heading-auto") ||
+          $("#recent-chronicle-heading");
         if (restored) restored.focus();
       }
     }
@@ -1066,7 +1099,9 @@
 
       if (focusedAid && !busy) {
         const restored = aWrap.querySelector(`.btn-auto-action[data-aid="${focusedAid}"]:not([disabled])`) ||
-          aWrap.querySelector(".btn-auto-action:not([disabled])");
+          aWrap.querySelector(".btn-auto-action:not([disabled])") ||
+          $("#heading-auto") ||
+          $("#recent-chronicle-heading");
         if (restored) restored.focus();
       }
     }
@@ -1239,9 +1274,11 @@
     const statLine = Object.values(Engine.STAT_META)
       .map((m) => `${m.name}(${m.key}) ${charState.stats[m.key]}`)
       .join(" | ");
+    const alignInfo = Engine.getAlignmentInfo(charState);
     lines.push("");
     lines.push(`[특성치] ${statLine}`);
     lines.push(`[상태] 생명력 ${charState.wounds}/${charState.maxWounds} | 황제 신앙 ${charState.faith}/100 | 워프 오염 ${charState.corruption}/100`);
+    lines.push(`[도덕 성향] ${alignInfo.fullLabel} (${alignInfo.detail})`);
 
     const visibleTags = (charState.tags || []).filter((t) => !t.startsWith("met_")).map((t) => Engine.TAG_LABELS[t] || t);
     if (visibleTags.length) lines.push(`[보유 이력] ${visibleTags.join(", ")}`);
@@ -1366,6 +1403,7 @@
     }
 
     const grade = state.finalGrade || Engine.evaluateLifeGrade(state);
+    const alignInfo = Engine.getAlignmentInfo(state);
     $("#obit-rank").textContent = grade.rank;
     $("#obit-title").textContent = `${state.name} — ${grade.title}`;
     $("#obit-verdict").textContent = grade.verdict;
@@ -1393,6 +1431,10 @@
       <div class="meta-box" style="margin-bottom:12px;">
         <span class="meta-label">최종 병종 / 직책</span>
         <span class="meta-val">${escapeHtml(Engine.getCareerDisplayTitle(state))}</span>
+      </div>
+      <div class="meta-box" style="margin-bottom:12px;">
+        <span class="meta-label">도덕 성향</span>
+        <span class="meta-val">${escapeHtml(alignInfo.fullLabel)} (${escapeHtml(alignInfo.detail)})</span>
       </div>
       ${careerPath.length > 1 ? `
       <div class="meta-box" style="margin-bottom:12px;">
@@ -1701,6 +1743,7 @@
       const verdictHtml = item.grade && item.grade.verdict
         ? `<p class="hall-verdict">${escapeHtml(item.grade.verdict)}</p>`
         : "";
+      const alignInfo = item.alignment ? Engine.getAlignmentInfo({ alignment: item.alignment }) : null;
 
       return `
         <article class="codex-card">
@@ -1715,6 +1758,7 @@
                 <div class="hall-detail-body">
                   ${verdictHtml}
                   ${statsHtml}
+                  ${alignInfo ? `<div><strong>도덕 성향:</strong> ${escapeHtml(alignInfo.fullLabel)} (${escapeHtml(alignInfo.detail)})</div>` : ""}
                   ${careerPathNames.length > 1 ? `<div><strong>거쳐 간 계급 (${careerPathNames.length}):</strong> ${escapeHtml(careerPathNames.join(" -> "))}</div>` : ""}
                   ${chap ? `<div><strong>소속 챕터:</strong> ${escapeHtml(chap.name)}</div>` : ""}
                   <div><strong>방문 행성 (${visitedNames.length}):</strong> ${escapeHtml(visitedNames.join(", "))}</div>
@@ -1789,6 +1833,8 @@
       $("#play-dashboard").style.display = "none";
       $("#start-screen").style.display = "block";
       renderResumeBanner();
+      const sh = $("#start-heading");
+      if (sh) sh.focus();
     });
 
     // 삶의 초점 선택 (이벤트 위임 — 포커스 유실 방지)
@@ -1998,6 +2044,21 @@
       e.target.value = "";
     });
     $("#btn-clear-hall").addEventListener("click", () => {
+      const btn = $("#btn-clear-hall");
+      if (!clearHallArmed) {
+        clearHallArmed = true;
+        if (btn) btn.textContent = "정말 초기화 (다시 클릭)";
+        clearTimeout(clearHallTimer);
+        clearHallTimer = setTimeout(() => {
+          clearHallArmed = false;
+          if (btn) btn.textContent = "기록 초기화";
+        }, 5000);
+        showToast("영혼의 전당 기록을 모두 삭제하려면 5초 안에 기록 초기화 버튼을 한 번 더 누르라.");
+        return;
+      }
+      clearHallArmed = false;
+      clearTimeout(clearHallTimer);
+      if (btn) btn.textContent = "기록 초기화";
       localStorage.removeItem(STORAGE_KEY);
       renderHall();
       showToast("영혼의 전당 기록을 초기화했다.");
@@ -2025,6 +2086,8 @@
       $("#play-dashboard").style.display = "none";
       $("#start-screen").style.display = "block";
       renderResumeBanner();
+      const sh = $("#start-heading");
+      if (sh) sh.focus();
     });
     $("#btn-obit-close").addEventListener("click", () => {
       closeObituaryModal(true);

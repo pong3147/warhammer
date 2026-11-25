@@ -578,6 +578,31 @@ body {
 .vital-fill.faith { background: linear-gradient(90deg, #9d772c, #f0c969); }
 .vital-fill.corruption { background: linear-gradient(90deg, #6b21a8, #c084fc); }
 
+.align-detail {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-sub);
+  margin-bottom: 4px;
+}
+
+.align-tri-bar {
+  display: flex;
+  height: 9px;
+  background: #0c0a09;
+  border: 1px solid var(--border-dim);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.align-seg {
+  height: 100%;
+  transition: width 0.28s ease;
+}
+
+.align-seg.humane { background: linear-gradient(90deg, #1b6f5c, #49c5a2); }
+.align-seg.dogmatic { background: linear-gradient(90deg, #9d772c, #f0c969); }
+.align-seg.ruthless { background: linear-gradient(90deg, #7f1d3a, #c8447e); }
+
 .stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -797,6 +822,24 @@ body {
   background: rgba(88, 199, 127, 0.16);
   color: #9bf0b8;
   border-color: var(--cogitator);
+}
+
+.ev-badge.align-humane {
+  background: rgba(73, 197, 162, 0.16);
+  color: #9df0d8;
+  border-color: #49c5a2;
+}
+
+.ev-badge.align-dogmatic {
+  background: rgba(240, 201, 105, 0.18);
+  color: #fae3a2;
+  border-color: #d6b15e;
+}
+
+.ev-badge.align-ruthless {
+  background: rgba(200, 68, 126, 0.18);
+  color: #f6b3cf;
+  border-color: #c8447e;
 }
 
 .event-title {

@@ -21,12 +21,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: 0 },
         success: {
           text: "테크프리스트 눈을 피해 라스건 출력을 되살려 냈다! 덕분에 다음 날 기습전에서 분대 전원이 살아남았다.",
-          stats: { Int: 5, BS: 4, Fel: 4 }
+          stats: { Int: 5, BS: 4, Fel: 4 },
+          align: { humane: 6 }
         },
         fail: {
           text: "기계령 무단 개조 혐의로 엔지니어 사제에게 고발당해 징계 노역을 치렀다.",
           wounds: -14,
-          stats: { Inf: -3 }
+          stats: { Inf: -3 },
+          align: { humane: 4 }
         }
       },
       {
@@ -34,12 +36,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Ag", diff: 5 },
         success: {
           text: "아무도 모르게 최상급 탄약과 군화를 확보했다! 병사들이 그대를 전설의 보급 마술사로 떠받든다.",
-          stats: { Ag: 5, Fel: 5, Inf: 3 }
+          stats: { Ag: 5, Fel: 5, Inf: 3 },
+          align: { ruthless: 6 }
         },
         fail: {
           text: "헌병대에게 걸려 일주일간 영창에 갇힌 채 빵과 물만 먹었다.",
           wounds: -12,
-          stats: { Inf: -4 }
+          stats: { Inf: -4 },
+          align: { ruthless: 5 }
         }
       }
     ],
@@ -62,12 +66,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Ag", diff: 0 },
         success: {
           text: "저격탄 두 발이 철모를 스쳤으나 기어이 탄약과 군번줄을 품고 돌아왔다! 분대원들이 그대를 진정한 베테랑으로 대우하기 시작했다.",
-          stats: { Ag: 5, WP: 4, Fel: 5, Inf: 3 }
+          stats: { Ag: 5, WP: 4, Fel: 5, Inf: 3 },
+          align: { humane: 7 }
         },
         fail: {
           text: "종아리에 저격탄을 스치고 간신히 철조망 아래로 굴러 떨어졌다.",
           wounds: -20,
-          stats: { T: 3 }
+          stats: { T: 3 },
+          align: { humane: 5 }
         }
       },
       {
@@ -114,11 +120,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: 0 },
         success: {
           text: "기막힌 수완으로 정수 정제와 따뜻한 리카프, 여분 건조 식량까지 확보했다! 분대원들이 병마를 피하고 그대를 믿음직한 전우로 치켜세웠다.",
-          stats: { Fel: 7, Int: 4, Inf: 4 }
+          stats: { Fel: 7, Int: 4, Inf: 4 },
+          align: { humane: 6 }
         },
         fail: {
           text: "거래를 시도하다 헌병 상사에게 적발되어 징계 경고를 받고 빈손으로 돌아왔다.",
-          stats: { Inf: -2, Fel: -2, WP: 2 }
+          stats: { Inf: -2, Fel: -2, WP: 2 },
+          align: { humane: 4 }
         }
       },
       {
@@ -126,19 +134,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: 0 },
         success: {
           text: "교본에 없는 야전 지혜가 분대 전원의 생명을 지켰다! 야전 메디카에 장교가 위생 관리 수완을 극찬했다.",
-          stats: { Int: 6, T: 5, WP: 3 }
+          stats: { Int: 6, T: 5, WP: 3 },
+          align: { humane: 7 }
         },
         fail: {
           text: "여과가 불완전했던 물 한 모금을 먼저 시음했다가 심한 복통으로 밤새 앓아누웠다.",
           wounds: -10,
-          stats: { Int: 2, T: 2 }
+          stats: { Int: 2, T: 2 },
+          align: { humane: 5 }
         }
       },
       {
         label: "오염된 탱크를 즉시 봉쇄하고 규정대로 최소 수분만 배급하며 야전 메디카에 증원을 기다린다",
         effect: {
           text: "갈증과 허기가 뼈를 깎았지만 단 한 명의 중독자도 내지 않고 전선을 지켰다. 인내심이 한층 깊어졌다.",
-          stats: { T: 5, WP: 5 }
+          stats: { T: 5, WP: 5 },
+          align: { dogmatic: 6 }
         }
       }
     ],
@@ -210,6 +221,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "크리그 출신 아스트라 밀리타룸",
     weight: 34,
+    alignBias: "dogmatic",
     text: "아군 어스쉐이커 공성포의 연속 포격이 적 요새를 짓이기고 있다. 타 연대라면 엄폐호에 숨을 포화 속이지만, 크리그 연대의 교리는 포탄이 떨어지는 바로 그 자리까지 14일 밤낮으로 전진 참호를 파 내려가라고 명한다.",
     choices: [
       {
@@ -218,12 +230,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "유독 가스와 진동 속에서도 단 1분도 삽질을 멈추지 않았다. 새벽이 밝았을 때 크리그의 참호는 적 철조망 코앞까지 닿아 있었다.",
           stats: { T: 7, WP: 6, WS: 4 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "지근탄 폭풍에 토사가 무너져 늑골에 금이 갔으나, 보고 없이 다시 삽을 쥐었다.",
           wounds: -20,
-          stats: { T: 4, WP: 5 }
+          stats: { T: 4, WP: 5 },
+          align: { dogmatic: 7 }
         }
       },
       {
@@ -232,19 +246,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "말 한마디 없이 밀려드는 방독면의 물결에 적 수비대가 공포에 질려 무너졌다! 속죄의 공훈이 연대 기록에 남았다.",
           stats: { WS: 7, WP: 5, Inf: 4 },
-          addTags: ["krieg_grenadier"]
+          addTags: ["krieg_grenadier"],
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "중기관총 사격에 중상을 입었으나 기어이 적 기관총좌에 수류탄을 밀어 넣었다.",
           wounds: -24,
-          stats: { WS: 4, T: 4 }
+          stats: { WS: 4, T: 4 },
+          align: { dogmatic: 6 }
         }
       },
       {
         label: "연대 쿼터마스터의 지시에 따라 전사한 분대원의 장비와 방독면을 빠짐없이 회수한다",
         effect: {
           text: "크리그에서 병사의 생명은 소모되지만 황제의 장비는 낭비되지 않는다. 완벽한 임무 수행이었다.",
-          stats: { Int: 4, WP: 5 }
+          stats: { Int: 4, WP: 5 },
+          align: { dogmatic: 7 }
         }
       }
     ],
@@ -270,12 +287,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "적 매복조의 수급을 장교 발 앞에 던져 놓자 귀족 장교가 얼굴이 하얗게 질린 채 작전권을 베테랑들에게 넘겼다!",
           stats: { Ag: 7, WS: 5, Fel: 4 },
-          addTags: ["catachan_blooded"]
+          addTags: ["catachan_blooded"],
+          align: { ruthless: 6 }
         },
         fail: {
           text: "독가시에 허벅지를 찔리고 겨우 매복을 깨뜨렸으나, 덕분에 중대 전멸은 막았다.",
           wounds: -18,
-          stats: { T: 5, Ag: 3 }
+          stats: { T: 5, Ag: 3 },
+          align: { ruthless: 4 }
         }
       },
       {
@@ -283,11 +302,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "생존 본능이 발동한 장교가 얼른 금빛 견장을 떼고 카타찬식 산개 기동으로 명령을 바꿨다.",
-          stats: { Fel: 6, Int: 5, Inf: 4 }
+          stats: { Fel: 6, Int: 5, Inf: 4 },
+          align: { humane: 6 }
         },
         fail: {
           text: "귀족 장교에게 항명 직전의 질책을 받아 징계 기록이 남았으나, 정찰 선봉으로 빠져나와 스스로 살아남을 길은 확보했다.",
-          stats: { Inf: -3, Fel: -2, Ag: 2 }
+          stats: { Inf: -3, Fel: -2, Ag: 2 },
+          align: { humane: 4 }
         }
       },
       {
@@ -593,7 +614,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "쓰러진 사수를 먼저 안전한 참호로 끌어내고 대전차 수류탄 조에게 표적을 넘긴다",
         effect: {
           text: "전우의 목숨을 구하고 화력 공백도 메웠다. 중대 의무병이 진심 어린 감사를 전했다.",
-          stats: { T: 4, Fel: 5, WP: 3 }
+          stats: { T: 4, Fel: 5, WP: 3 },
+          align: { humane: 8 }
         }
       }
     ],
@@ -617,12 +639,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "총열이 녹아내릴 듯한 사격전 끝에 마침내 아군 발키리 건십의 추력 엔진 굉음이 하늘을 갈랐다! 불굴의 수비대로 훈장을 받았다.",
           stats: { WP: 7, BS: 5, Inf: 6 },
-          faith: 7
+          faith: 7,
+          align: { dogmatic: 7 }
         },
         fail: {
           text: "토치카 입구가 무너져 잔해에 깔렸으나 아군 구원대가 가까스로 그대를 끌어냈다.",
           wounds: -22,
-          stats: { T: 5, WP: 4 }
+          stats: { T: 5, WP: 4 },
+          align: { dogmatic: 5 }
         }
       },
       {
@@ -642,7 +666,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "부상병을 지하 배수로로 먼저 대피시키고 좁은 통로에서 지연전을 펼친다",
         effect: {
           text: "지형을 영리하게 활용해 사상자를 최소화하며 구원 부대가 도착할 때까지 버텼다.",
-          stats: { Int: 5, T: 4, Fel: 3 }
+          stats: { Int: 5, T: 4, Fel: 3 },
+          align: { humane: 7 }
         }
       }
     ],

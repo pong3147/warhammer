@@ -143,7 +143,7 @@ window.IMPERIUM_DATA.CAREERS = [
     req: {
       minAge: 18,
       stats: { WS: 42, Ag: 40, Inf: 30 },
-      or: [{ anyCareers: ["underhive_ganger"] }, { anyTags: ["ganger_baron", "streetwise"] }],
+      or: [{ anyCareers: ["underhive_ganger"] }, { anyTags: ["ganger_baron", "streetwise"] }, { minAlign: { ruthless: 20 } }],
       excludeTags: ["astartes", "custodes", "heretic"]
     },
     selectable: true,
@@ -170,7 +170,7 @@ window.IMPERIUM_DATA.CAREERS = [
     req: {
       minAge: 26,
       stats: { WS: 50, Fel: 48, Inf: 50 },
-      or: [{ anyCareers: ["underhive_boss"] }, { allTags: ["ganger_baron"], stats: { Inf: 46 } }],
+      or: [{ anyCareers: ["underhive_boss"] }, { allTags: ["ganger_baron"], stats: { Inf: 46 } }, { minAlign: { ruthless: 35 } }],
       excludeTags: ["astartes", "custodes", "heretic"]
     },
     selectable: true,
@@ -448,7 +448,7 @@ window.IMPERIUM_DATA.CAREERS = [
       stats: { WP: 38, Fel: 32, WS: 30 },
       minFaith: 42,
       maxCorruption: 15,
-      or: [{ anyTags: ["schola"] }, { anyCareers: ["pdf_trooper", "astra_militarum"] }],
+      or: [{ anyTags: ["schola"] }, { anyCareers: ["pdf_trooper", "astra_militarum"] }, { minAlign: { dogmatic: 20 } }],
       excludeTags: ["abhuman", "psyker", "astartes", "custodes", "heretic"]
     },
     selectable: true,
@@ -477,7 +477,7 @@ window.IMPERIUM_DATA.CAREERS = [
       stats: { WP: 48, Fel: 40, WS: 36 },
       minFaith: 48,
       maxCorruption: 15,
-      or: [{ anyTags: ["schola"] }, { anyCareers: ["commissar_cadet", "astra_militarum", "militarum_sergeant", "militarum_officer", "arbites"] }],
+      or: [{ anyTags: ["schola"] }, { anyCareers: ["commissar_cadet", "astra_militarum", "militarum_sergeant", "militarum_officer", "arbites"] }, { minAlign: { dogmatic: 25 } }],
       excludeTags: ["abhuman", "psyker", "astartes", "custodes", "heretic"]
     },
     selectable: true,
@@ -570,7 +570,7 @@ window.IMPERIUM_DATA.CAREERS = [
       stats: { WP: 38, BS: 30 },
       minFaith: 55,
       maxCorruption: 10,
-      or: [{ anyTags: ["schola", "pious", "saint_spark"] }, { anyWorldTags: ["shrine", "sororitas"] }],
+      or: [{ anyTags: ["schola", "pious", "saint_spark"] }, { anyWorldTags: ["shrine", "sororitas"] }, { minAlign: { dogmatic: 20 } }],
       excludeTags: ["abhuman", "psyker", "heretic"]
     },
     selectable: true,
@@ -600,7 +600,7 @@ window.IMPERIUM_DATA.CAREERS = [
       stats: { WP: 48, BS: 38, T: 36 },
       minFaith: 65,
       maxCorruption: 10,
-      or: [{ anyCareers: ["sororitas_novitiate"] }, { anyTags: ["schola", "pious", "saint_spark"] }, { anyWorldTags: ["shrine", "sororitas"] }],
+      or: [{ anyCareers: ["sororitas_novitiate"] }, { anyTags: ["schola", "pious", "saint_spark"] }, { anyWorldTags: ["shrine", "sororitas"] }, { minAlign: { dogmatic: 25 } }],
       excludeTags: ["abhuman", "psyker", "heretic"]
     },
     selectable: true,
@@ -719,7 +719,7 @@ window.IMPERIUM_DATA.CAREERS = [
     lifeBonus: 12,
     hazardMod: 0.009,
     annualGrowth: { WP: 2.2, Fel: 2, Inf: 1.5 },
-    req: { minAge: 17, stats: { WP: 38, Fel: 35 }, minFaith: 55, maxCorruption: 15, excludeTags: ["astartes", "custodes", "heretic"] },
+    req: { minAge: 17, stats: { WP: 38, Fel: 35 }, or: [{ minFaith: 55 }, { minFaith: 45, minAlign: { humane: 20 } }], maxCorruption: 15, excludeTags: ["astartes", "custodes", "heretic"] },
     selectable: true,
     onJoin: { stats: { WP: 7, Fel: 7, Inf: 8 }, addTags: ["ecclesiarchy", "pious"] },
     desc: "황제 신앙을 전파하고 전장에서 체인소드를 치켜든 채 병사들의 광신을 불태우는 국교 사제.",
@@ -1275,7 +1275,12 @@ window.IMPERIUM_DATA.CAREERS = [
     annualGrowth: { Int: 2.2, WP: 2, Fel: 1.5, BS: 1.2, Inf: 1.8 },
     req: {
       minAge: 18,
-      stats: { Int: 45, WP: 45, Inf: 32 },
+      or: [
+        { stats: { Int: 45, WP: 45, Inf: 32 } },
+        { stats: { Int: 40, WP: 40, Inf: 28 }, minAlign: { humane: 25 } },
+        { stats: { Int: 38, WP: 42, Inf: 28 }, minAlign: { dogmatic: 25 } },
+        { stats: { Int: 42, WP: 38, Inf: 30 }, minAlign: { ruthless: 25 } }
+      ],
       maxCorruption: 25,
       excludeTags: ["astartes", "custodes", "abhuman", "heretic"]
     },
@@ -2160,7 +2165,7 @@ window.IMPERIUM_DATA.CAREERS = [
     annualGrowth: { WP: 1.8, WS: 1.8, Int: 1.5, Fel: 1.5 },
     req: {
       minAge: 16,
-      minCorruption: 50,
+      or: [{ minCorruption: 50 }, { minCorruption: 35, minAlign: { ruthless: 40 } }],
       excludeTags: ["astartes", "custodes", "grey_knight", "chaos_champion", "daemon_prince"]
     },
     selectable: true,
@@ -2219,7 +2224,7 @@ window.IMPERIUM_DATA.CAREERS = [
     req: {
       minAge: 18,
       allTags: ["astartes"],
-      minCorruption: 45,
+      or: [{ minCorruption: 45 }, { minCorruption: 30, minAlign: { ruthless: 40 } }],
       excludeTags: ["custodes", "grey_knight", "renegade_marine", "chaos_lord", "daemon_prince"]
     },
     selectable: true,

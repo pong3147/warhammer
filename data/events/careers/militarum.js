@@ -25,7 +25,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           forceCareer: "astra_militarum",
           stats: { BS: 5, WS: 4, T: 4, WP: 3 },
           faith: 6,
-          addTags: ["militarum", "imperial_military"]
+          addTags: ["militarum", "imperial_military"],
+          align: { dogmatic: 7 }
         }
       },
       {
@@ -34,13 +35,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Inf", diff: 5 },
         success: {
           text: "행정관의 서류철에서 그대의 이름이 감쪽같이 사라졌다. 전쟁터 대신 안전한 후방에 남았다.",
-          stats: { Inf: 2, Int: 2 }
+          stats: { Inf: 2, Int: 2 },
+          align: { ruthless: 8 }
         },
         fail: {
           text: "뇌물이 발각되어 징벌 부대급 최전선 연대로 강제 배속되고 말았다!",
           forceCareer: "astra_militarum",
           stats: { Inf: -8, T: 3 },
-          addTags: ["militarum", "penal_mark"]
+          addTags: ["militarum", "penal_mark"],
+          align: { ruthless: 6 }
         }
       },
       {
@@ -48,14 +51,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Ag", diff: -5 },
         success: {
           text: "아르비테스 검문소를 따돌리고 가까스로 도망쳤다. 당분간 신분을 숨겨야 한다.",
-          stats: { Ag: 4, Inf: -6 }
+          stats: { Ag: 4, Inf: -6 },
+          align: { ruthless: 5 }
         },
         fail: {
           text: "도주 중 체포되어 곤봉 세례를 받은 뒤 최전방 보병으로 끌려갔다.",
           forceCareer: "astra_militarum",
           wounds: -18,
           stats: { Inf: -6 },
-          addTags: ["militarum"]
+          addTags: ["militarum"],
+          align: { ruthless: 4 }
         }
       }
     ],
@@ -80,12 +85,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "병사들이 감동과 경외에 휩싸여 일제히 함성을 지르며 반격했다! 오피시오 프리펙투스 연대기에 남을 명성을 얻었다.",
           stats: { Fel: 6, WP: 5, Inf: 8 },
-          faith: 8
+          faith: 8,
+          align: { humane: 9 }
         },
         fail: {
           text: "선두에 섰다가 적 저격수의 탄환에 어깨를 맞았으나 병사들은 끝내 도망치지 않았다.",
           wounds: -22,
-          stats: { Fel: 4, Inf: 4 }
+          stats: { Fel: 4, Inf: 4 },
+          align: { humane: 7 }
         }
       },
       {
@@ -94,12 +101,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "차가운 총성 한 발에 전선이 즉시 정렬되었다. 병사들은 두려움에 떨면서도 적진으로 돌격했다.",
           stats: { WP: 5, Inf: 5, Fel: -2 },
-          faith: 5
+          faith: 5,
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "분노한 병사들 사이에서 '아군 오사' 사고를 가장한 암살 시도가 벌어져 다쳤다.",
           wounds: -20,
-          stats: { Fel: -5 }
+          stats: { Fel: -5 },
+          align: { dogmatic: 7 }
         }
       }
     ],
@@ -123,12 +132,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -5 },
         success: {
           text: "단 400명의 손실만으로 요새를 함락시켰다! 병사들은 그대를 살아 있는 성자처럼 따르기 시작했다.",
-          stats: { Int: 6, Fel: 8, Inf: 6 }
+          stats: { Int: 6, Fel: 8, Inf: 6 },
+          align: { humane: 9 }
         },
         fail: {
           text: "우회로가 들켜 작전이 지연되자 상부로부터 '우유부단한 지휘'라는 경고를 받았다.",
           stats: { Inf: -6 },
-          wounds: -14
+          wounds: -14,
+          align: { humane: 6 }
         }
       },
       {
@@ -136,7 +147,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "8,000명의 시체 위로 제국 깃발이 꽂혔다. 군 사령부는 '모범적이고 신속한 제국식 승리'라며 훈장과 진급 점수를 내렸다.",
           stats: { Inf: 10, WP: 4, Fel: -6 },
-          faith: -4
+          faith: -4,
+          align: { ruthless: 10 }
         }
       }
     ],
@@ -314,11 +326,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WP", diff: 10 },
         success: {
           text: "차가운 총성 이후 단 한 명의 탈영병도 나오지 않았다. 연대 군기는 강철처럼 단단해졌다.",
-          stats: { WP: 5, Inf: 5, Fel: -2 }
+          stats: { WP: 5, Inf: 5, Fel: -2 },
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "병사들의 원망 섞인 눈초리가 등 뒤에 꽂히며 사기가 오히려 흔들렸다.",
-          stats: { Fel: -5 }
+          stats: { Fel: -5 },
+          align: { dogmatic: 7 }
         }
       },
       {
@@ -326,11 +340,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: 0 },
         success: {
           text: "두 신병은 눈물을 닦고 필사적으로 싸워 다음 전투에서 훈장을 받았다! 병사들의 존경이 깊어졌다.",
-          stats: { Fel: 6, Inf: 5, WP: 3 }
+          stats: { Fel: 6, Inf: 5, WP: 3 },
+          align: { humane: 8 }
         },
         fail: {
           text: "상급 커미사르에게 '규율 해이' 경고를 받았다.",
-          stats: { Inf: -5 }
+          stats: { Inf: -5 },
+          align: { humane: 6 }
         }
       }
     ],
@@ -355,19 +371,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "BS", diff: 0 },
         success: {
           text: "열병식 폭탄 테러를 미연에 막아 냈다! 아스트라 밀리타룸 징병관이 그대의 실전 감각을 극찬하며 추천장을 써 주었다.",
-          stats: { BS: 5, WP: 4, Inf: 6 }
+          stats: { BS: 5, WP: 4, Inf: 6 },
+          align: { humane: 7 }
         },
         fail: {
           text: "화력 부족으로 부상을 입고 후퇴했다. 상부에서는 '열병식 무단 이탈'로 영창 처분까지 내렸다!",
           wounds: -18,
-          stats: { Inf: -4, T: 3 }
+          stats: { Inf: -4, T: 3 },
+          align: { humane: 5 }
         }
       },
       {
         label: "상관의 명령대로 군화를 광내고 열병식 사열대에 완벽하게 선다",
         effect: {
           text: "총독의 호평을 받아 포상 휴가를 받았지만, 며칠 뒤 외곽 발전소가 괴한의 습격으로 불타올랐다.",
-          stats: { Fel: 4, Inf: 3 }
+          stats: { Fel: 4, Inf: 3 },
+          align: { ruthless: 7 }
         }
       }
     ],
@@ -391,11 +410,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "합리적인 커미사르가 그대의 야간 우회 포격안에 서명했다! 4,000명의 목숨을 구하고 적 고지까지 완벽히 점령했다!",
-          stats: { Fel: 7, Int: 6, Inf: 8 }
+          stats: { Fel: 7, Int: 6, Inf: 8 },
+          align: { humane: 9 }
         },
         fail: {
           text: "귀족 사단장의 노여움을 사 징계 기록이 남았으나, 그래도 최소한의 연막탄 지원만은 받아 냈다.",
-          stats: { Inf: -5, WP: 4 }
+          stats: { Inf: -5, WP: 4 },
+          align: { humane: 6 }
         }
       },
       {
@@ -404,12 +425,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "처참한 피해 속에서도 장교가 선두에서 쓰러지지 않자 병사들이 악귀처럼 돌격해 기어이 참호를 탈환했다!",
           stats: { WP: 7, WS: 5, Inf: 6 },
-          wounds: -22
+          wounds: -22,
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "지뢰 파편을 맞고 야전 병원으로 실려 갔다. 부대는 절반을 잃고 후퇴했다.",
           wounds: -30,
-          stats: { T: 3 }
+          stats: { T: 3 },
+          align: { dogmatic: 7 }
         }
       }
     ],
@@ -433,12 +456,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: 0 },
         success: {
           text: "공포 대신 신뢰와 실력으로 접근한 방식이 통했다! 부패한 병참 장교를 즉결 처분하자 병사들이 환호하며 그대를 '우리 커미사르'로 인정했다.",
-          stats: { Fel: 7, WP: 5, Inf: 6 }
+          stats: { Fel: 7, WP: 5, Inf: 6 },
+          align: { humane: 8 }
         },
         fail: {
           text: "유약한 커미사르로 오해받아 군기가 흔들렸고, 야간 전투에서 몸소 앞장서 적을 베느라 부상을 입고서야 겨우 신뢰를 되찾았다.",
           wounds: -12,
-          stats: { Inf: -3, WS: 3 }
+          stats: { Inf: -3, WS: 3 },
+          align: { humane: 5 }
         }
       },
       {
@@ -446,12 +471,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WP", diff: 0 },
         success: {
           text: "단 한 발의 처형도 없이 압도적인 위엄과 실력으로 연대 전체의 존경과 복종을 끌어냈다!",
-          stats: { WP: 7, WS: 5, Inf: 6 }
+          stats: { WP: 7, WS: 5, Inf: 6 },
+          align: { dogmatic: 7 }
         },
         fail: {
           text: "다음 날 야간 순찰 중 어둠 속에서 날아온 '유탄'에 팔을 스쳤다. 이 연대에서는 등을 절대 보이지 말아야 한다.",
           wounds: -18,
-          stats: { Ag: 4 }
+          stats: { Ag: 4 },
+          align: { dogmatic: 5 }
         }
       }
     ],
@@ -965,11 +992,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: 5 },
         success: {
           text: "생도가 부끄러워하며 권총을 집어넣었고, 베테랑 분대가 그대를 향해 진심 어린 경례를 올렸다! 연대 사기가 크게 올랐다.",
-          stats: { Fel: 7, Inf: 6, WP: 4 }
+          stats: { Fel: 7, Inf: 6, WP: 4 },
+          align: { humane: 8 }
         },
         fail: {
           text: "생도가 '군기 해이'라며 상부에 투서를 올려 감찰관의 질의를 받아야 했으나, 끝내 그대의 권위로 무마했다.",
-          stats: { Inf: -3, WP: 2 }
+          stats: { Inf: -3, WP: 2 },
+          align: { humane: 6 }
         }
       },
       {
@@ -977,11 +1006,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WP", diff: 0 },
         success: {
           text: "규율의 엄정함과 현장 지휘관의 지혜를 모두 보여 주었다! 생도는 그대를 평생의 스승으로 따르게 되었다.",
-          stats: { WP: 6, Int: 5, Inf: 6 }
+          stats: { WP: 6, Int: 5, Inf: 6 },
+          align: { dogmatic: 6 }
         },
         fail: {
           text: "어수선한 분위기 속에 연대 군기가 잠시 흔들려 병사들의 불평을 샀으나, 불필요한 유혈 사태는 막았다.",
-          stats: { Fel: -2, Inf: -2, WP: 2 }
+          stats: { Fel: -2, Inf: -2, WP: 2 },
+          align: { dogmatic: 4 }
         }
       },
       {
@@ -1012,12 +1043,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "천둥 같은 연설이 패주 물결을 멈춰 세웠다! 울부짖던 병사들이 하나둘 라스건을 다시 쥐고 그대의 뒤를 따라 역공에 나섰다.",
           stats: { Fel: 9, WP: 6, Inf: 10 },
-          faith: 8
+          faith: 8,
+          align: { humane: 9 }
         },
         fail: {
           text: "성난 폭도 일부가 돌과 탄환을 날렸으나 끝까지 바리케이드를 버티며 결국 주력을 진정시켰다.",
           wounds: -18,
-          stats: { WP: 6, Inf: 5 }
+          stats: { WP: 6, Inf: 5 },
+          align: { humane: 6 }
         }
       },
       {
@@ -1025,19 +1058,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WP", diff: 0 },
         success: {
           text: "압도적인 서슬과 공포 앞에 수만 명의 병사가 일제히 부동자세로 굳었다! 무너진 전선이 기적처럼 복구되었다.",
-          stats: { WP: 8, BS: 5, Inf: 9 }
+          stats: { WP: 8, BS: 5, Inf: 9 },
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "일부 병사들이 총격을 주고받으며 혼란이 커졌으나 충성파 장교들의 지원으로 항명을 진압했다.",
           wounds: -20,
-          stats: { WP: 5, Inf: 4 }
+          stats: { WP: 5, Inf: 4 },
+          align: { dogmatic: 7 }
         }
       },
       {
         label: "패주병들을 무작정 몰아붙이지 않고 항구 외곽에 2차 저지선을 선포해 질서 있는 재편성부터 지휘한다",
         effect: {
           text: "현실적인 재편성 명령에 탈진한 연대들이 안도하며 다시 지휘 통제 안으로 들어왔다.",
-          stats: { Int: 6, Fel: 5, Inf: 5 }
+          stats: { Int: 6, Fel: 5, Inf: 5 },
+          align: { humane: 6 }
         }
       }
     ],

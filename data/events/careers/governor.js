@@ -32,12 +32,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Inf", diff: -5 },
         success: {
           text: "총독 직속 근위대가 귀족 영지 창고의 봉인을 뜯어내자 토착 가문들이 이를 갈았지만, 제국 십일조 선적은 기한 전에 105퍼센트로 완납되었다. 감사관은 만족스러운 도장을 찍고 떠났고 행성 안에서는 그대의 철권이 각인되었다.",
-          stats: { Inf: 9, WP: 5, Fel: -2 }
+          stats: { Inf: 9, WP: 5, Fel: -2 },
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "강제 징발에 격분한 대귀족 가문이 사병대를 동원해 수송로를 방해하고 암살자까지 보냈다. 간신히 납부는 마쳤으나 부상과 정치적 균열이 남았다.",
           wounds: -14,
-          stats: { Inf: -4, WP: 3 }
+          stats: { Inf: -4, WP: 3 },
+          align: { dogmatic: 6 }
         }
       },
       {
@@ -47,12 +49,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "밀실의 촛불 아래 고급 아마섹 잔이 부딪힌 뒤, 결손 장부는 '워프 폭풍으로 인한 공해상 수송선 유실'로 매끄럽게 처리되었다. 행성의 곳간은 지켰으나 양심과 장부에는 검은 얼룩이 남았다.",
           stats: { Fel: 7, Inf: 6 },
           corruption: 5,
-          faith: -4
+          faith: -4,
+          align: { ruthless: 9 }
         },
         fail: {
           text: "강직한 감사관이 뇌물 시도를 즉각 기록 슬레이트에 녹취하며 아르비테스 고발을 경고했다. 거액의 추가 공탁금을 바치고서야 간신히 무마했다.",
           stats: { Inf: -8, Fel: -2 },
-          corruption: 4
+          corruption: 4,
+          align: { ruthless: 7 }
         }
       },
       {
@@ -60,7 +64,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "하층 시민들의 원성과 과로사가 속출했지만 제국 십일조 수송선은 정시에 궤도를 떠났다. 행성 총독의 옥좌는 애초에 자비로 유지되는 자리가 아니다.",
           stats: { Int: 3, Inf: 5, Fel: -3 },
-          faith: -3
+          faith: -3,
+          align: { ruthless: 7 }
         }
       }
     ],
@@ -82,12 +87,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "총독의 목소리가 하이브 전역의 확성기로 울려 퍼지자 화물 승강기에서 쏟아져 내린 비상 식량 앞에 폭동이 기적처럼 잦아들었다. 귀족들은 투덜거렸으나 수십억 시민의 충성과 질서를 유혈 없이 지켜 냈다.",
           stats: { Fel: 8, Inf: 7, WP: 4 },
-          faith: 4
+          faith: 4,
+          align: { humane: 10 }
         },
         fail: {
           text: "비축 곡물 방출을 막으려던 귀족들의 훼방으로 배급이 늦어졌고, 격앙된 폭동군 일부가 시찰 차량을 습격해 부상을 입었다.",
           wounds: -14,
-          stats: { Inf: -4, Fel: 2 }
+          stats: { Inf: -4, Fel: 2 },
+          align: { humane: 7 }
         }
       },
       {
@@ -107,7 +114,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         label: "아뎁투스 아르비테스에 공동 계엄 진압을 공식 요청해 제국법의 철퇴로 폭동을 단숨에 짓밟는다",
         effect: {
           text: "검은 갑주의 아르비테스 장갑차와 샷건 화망이 반나절 만에 하층 광장을 침묵시켰다. 질서는 완벽히 복구되었으나, 그 대가로 당분간 치안대의 매서운 감시 시선이 총독궁을 맴돌게 되었다.",
-          stats: { Inf: 4, WP: 5, Fel: -4 }
+          stats: { Inf: 4, WP: 5, Fel: -4 },
+          align: { dogmatic: 9 }
         }
       }
     ],
@@ -196,11 +204,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "기계교 기술 사제들조차 감탄한 우회 배관 도면 덕분에 송유관 공사는 단 하루도 지연되지 않았고, 옛 하층 거주 블록 수만 명도 삶의 터전을 지켰다. 하층 작업장 전역에 그대의 이름이 전설처럼 퍼져 나갔다.",
           stats: { Int: 7, Fel: 6, Inf: 7 },
-          faith: 4
+          faith: 4,
+          align: { humane: 9 }
         },
         fail: {
           text: "우회 설계에 기계교의 추가 감리 비용이 붙어 자금을 꽤 들였으나, 끝내 옛 거주 구역의 철거만은 막아 냈다.",
-          stats: { Inf: -3, Fel: 4, Int: 3 }
+          stats: { Inf: -3, Fel: 4, Int: 3 },
+          align: { humane: 6 }
         }
       },
       {
@@ -209,12 +219,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: 5 },
         success: {
           text: "상층 귀족들은 공사가 순조롭게 끝났다고 여겼지만, 하층 구역의 옛 동료들은 한 사람도 다치지 않고 더 안전한 돔으로 옮겨 갔다. 지하 세계가 그대의 의리에 깊은 경의를 표했다.",
-          stats: { Fel: 7, Ag: 4, Inf: 7 }
+          stats: { Fel: 7, Ag: 4, Inf: 7 },
+          align: { humane: 9 }
         },
         fail: {
           text: "이주 과정에서 구역을 노리던 경쟁 갱단과 충돌이 벌어져 사설 경호대와 함께 직접 수습하느라 상처를 입었다.",
           wounds: -12,
-          stats: { Fel: 4, WS: 3 }
+          stats: { Fel: 4, WS: 3 },
+          align: { humane: 6 }
         }
       },
       {
@@ -222,11 +234,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Inf", diff: -5 },
         success: {
           text: "연회장의 웅성거림이 순식간에 가라앉았다. 과거를 부끄러워하지 않고 당당히 권력을 행사하는 지배자의 위엄 앞에 투자자들도 고개를 숙이고 수정안을 받아들였다.",
-          stats: { Inf: 8, WP: 6, Fel: 5 }
+          stats: { Inf: 8, WP: 6, Fel: 5 },
+          align: { humane: 9 }
         },
         fail: {
           text: "막대한 손실을 입게 된 귀족 의회의 반발이 거세어 정치적 타협안을 내놓느라 상당한 권위를 소모했다.",
-          stats: { Inf: -4, WP: 4 }
+          stats: { Inf: -4, WP: 4 },
+          align: { humane: 6 }
         }
       },
       {
@@ -234,7 +248,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "옛 이름에 흔들리는 순간 이 첨탑의 권좌는 무너진다. 황동 조각이 붉은 숯불 속에서 천천히 검게 변해 갔고, 다음 날 새벽 하층에서 울려 퍼진 철거 경적은 이 높은 첨탑까지 들리지 않았다.",
           stats: { Inf: 6, WP: 4, Fel: -4 },
-          faith: -3
+          faith: -3,
+          align: { ruthless: 10 }
         }
       }
     ],
@@ -256,12 +271,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "아슬아슬한 도약 계산이 기적을 만들었다! 주력함대가 오크 기함을 박살 낸 직후 보조 항로로 우회해 드루카리 약탈선까지 격퇴하자, 성역 전역이 그대의 전략안을 찬양했다.",
           stats: { Int: 8, Inf: 10, BS: 5 },
-          addTags: ["hero_of_imperium"]
+          addTags: ["hero_of_imperium"],
+          align: { humane: 9 }
         },
         fail: {
           text: "전력 분산이 독이 되어 두 성계 모두 궤도 방어선이 뚫리는 참사를 겪었다. 가까스로 본성을 지켜 냈으나 성역 국방력이 크게 흔들렸다.",
           wounds: -14,
-          stats: { Inf: -5, Int: 3 }
+          stats: { Inf: -5, Int: 3 },
+          align: { humane: 6 }
         }
       },
       {
@@ -269,11 +286,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Inf", diff: -5 },
         success: {
           text: "섹터 로드의 비상 서약 요청에 인접 행성 총독들의 방위선과 우방 챕터 타격 순양함이 즉각 호응했다! 아그리 월드 궤도에서 드루카리 약탈선을 몰아내고 공업 행성까지 온전히 사수했다.",
-          stats: { Inf: 10, Fel: 7, WP: 5 }
+          stats: { Inf: 10, Fel: 7, WP: 5 },
+          align: { humane: 8 }
         },
         fail: {
           text: "차출에 늑장을 부린 인접 총독들 탓에 아그리 월드 남반구가 크게 약탈당했고, 성역 의회의 책임 추궁이 길어졌다.",
-          stats: { Inf: -4, Fel: 3 }
+          stats: { Inf: -4, Fel: 3 },
+          align: { humane: 5 }
         }
       },
       {
@@ -281,7 +300,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "공업 행성의 용광로는 멈추지 않았으나, 아그리 월드에서 송신된 마지막 아스트로패스 비명이 사흘 밤낮 성역 통신실을 울렸다. 성역 통치자의 어깨에는 언제나 계산된 희생의 잿더미가 쌓인다.",
           stats: { Inf: 6, WP: 6, Int: 4 },
-          faith: -4
+          faith: -4,
+          align: { ruthless: 8 }
         }
       }
     ],
@@ -415,13 +435,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "대담한 배짱과 두둑한 쓰론 겔트 앞에 밀정이 침묵을 택했다. 남은 유물을 상류층 비밀 수집가에게 넘겨 막대한 이윤과 암시장 인맥을 동시에 거머쥐었다.",
           stats: { Fel: 8, Inf: 9, Int: 4 },
           corruption: 4,
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact"],
+          align: { ruthless: 9 }
         },
         fail: {
           text: "밀정은 함정을 판 이중 첩자였다! 정거장을 빠져나가던 순간 오르도 제노스 쾌속 순찰선이 경고사격을 퍼부어 선체와 명성에 치명타를 입었다.",
           wounds: -18,
           stats: { Inf: -6, Ag: 3 },
-          addTags: ["wanted_by_inquisition"]
+          addTags: ["wanted_by_inquisition"],
+          align: { ruthless: 7 }
         }
       },
       {
@@ -431,12 +453,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "위기를 단숨에 충성의 증표로 뒤집었다! 이단심문소가 배후 밀수 조직을 일망타진한 뒤 그대의 왕조에 공식 면세 통행장과 감사의 인장을 보내왔다.",
           stats: { Int: 7, Inf: 8, WP: 5 },
           faith: 4,
-          addTags: ["inquisition_favor"]
+          addTags: ["inquisition_favor"],
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "배신을 알아챈 암흑 상단이 기함 화물 갑판에 시한폭탄을 터뜨려 큰 피해를 입었으나, 심문소와의 관계는 무사히 지켜 냈다.",
           wounds: -16,
-          stats: { Int: 3, WP: 3 }
+          stats: { Int: 3, WP: 3 },
+          align: { dogmatic: 6 }
         }
       },
       {
@@ -444,7 +468,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "이단심문소와 얽히면 왕조의 자유가 끝난다. 수억 쓰론 겔트의 가치가 항성의 불길 속으로 증발했지만, 기함의 장부와 무역 영장에는 단 하나의 흠집도 남지 않았다.",
           stats: { WP: 5, Ag: 4, Inf: 3 },
-          faith: 3
+          faith: 3,
+          align: { dogmatic: 6 }
         }
       }
     ],
@@ -593,12 +618,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: 5 },
         success: {
           text: "서류만 보던 감독관들은 절대 모를 기계의 숨소리를 꿰뚫은 덕분이었다! 배관 압력을 절묘하게 분산시켜 단 한 명의 사상자도 없이 열흘 만에 할당량을 초과 달성하자 길드 평의회와 노동자 모두가 경탄했다.",
-          stats: { Int: 8, Fel: 7, Inf: 8, T: 3 }
+          stats: { Int: 8, Fel: 7, Inf: 8, T: 3 },
+          align: { humane: 8 }
         },
         fail: {
           text: "밤샘 공정 조정 도중 새어 나온 고온 증기에 팔을 데었으나, 끝내 용광로 폭발은 막아 내고 할당량도 간신히 채웠다.",
           wounds: -12,
-          stats: { Int: 4, Inf: 4 }
+          stats: { Int: 4, Inf: 4 },
+          align: { humane: 6 }
         }
       },
       {
@@ -606,11 +633,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: 0 },
         success: {
           text: "정성스러운 기계령 찬가와 합리적 정비 계획에 기계교 사제가 협조를 허락했다. 작업장은 안전하게 최대 출력을 유지했고 상공 길드 내 그대의 명성이 치솟았다.",
-          stats: { Fel: 7, Int: 6, Inf: 7 }
+          stats: { Fel: 7, Int: 6, Inf: 7 },
+          align: { humane: 7 }
         },
         fail: {
           text: "예비 코일 개조가 기계령 교리 위반 시비에 휘말려 길드 감사 벌금을 물었으나, 인명 사고만큼은 막았다.",
-          stats: { Inf: -4, Fel: 3 }
+          stats: { Inf: -4, Fel: 3 },
+          align: { humane: 5 }
         }
       },
       {
@@ -618,12 +647,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "T", diff: 0 },
         success: {
           text: "감독관이 직접 불길 앞에서 밸브를 잡는 모습에 지친 노동자들이 다시 힘을 냈다! 땀과 그을음으로 범벅이 된 끝에 무사히 출하 목표를 완수했다.",
-          stats: { T: 7, WP: 6, Inf: 6, Fel: 4 }
+          stats: { T: 7, WP: 6, Inf: 6, Fel: 4 },
+          align: { humane: 8 }
         },
         fail: {
           text: "극심한 열사병과 화상으로 작업장 바닥에 쓰러져 의무실로 실려 갔으나, 분발한 조장들이 남은 할당량을 마무리했다.",
           wounds: -18,
-          stats: { T: 3, WP: 2 }
+          stats: { T: 3, WP: 2 },
+          align: { humane: 6 }
         }
       },
       {
@@ -631,7 +662,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "제국의 전쟁 기계는 멈출 수 없다. 열흘 동안 과열 사고로 노동자 십여 명이 쓰러졌지만 데파르트멘토 무니토룸의 수송선은 단 하나의 결품도 없이 출항했다. 상급 길드는 그대의 냉혹한 실적에 승진 가산점을 적었다.",
           stats: { Inf: 7, Int: 3, Fel: -5 },
-          faith: -3
+          faith: -3,
+          align: { ruthless: 9 }
         }
       }
     ],
@@ -765,6 +797,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { anyCareers: ["hive_crime_lord"], allTags: ["crime_lord"] },
     reqLabel: "직군: 하이브 암흑가 거두",
     weight: 36,
+    alignBias: "ruthless",
     text: "스모그 구름 위 상층 첨탑의 야심 찬 귀족 후계자가 비밀 거래를 제의해 왔다. 가문 전용 우주항을 통해 불법 리주버냇 혈청과 콜드 트레이드 밀수품을 세탁해 주는 대가로, 자신의 정적을 조용히 제거해 달라는 조건이었다. 그러나 자정 무렵 지하 금고에서 화물을 확인하던 순간, 망보기의 통신기에서 다급한 경고가 터져 나왔다. 아뎁투스 아르비테스 장갑차 세 대가 상부 승강기 통로를 완전히 봉쇄했다는 것이다. 내부 배신자의 밀고인지, 빚을 지우려는 귀족의 함정인지 따질 시간조차 몇 분 남지 않았다.",
     choices: [
       {
@@ -773,12 +806,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Ag", diff: 5 },
         success: {
           text: "치안대가 빈 미끼 차량을 에워싸는 사이, 그대는 금고의 현금과 밀수품을 모두 챙겨 지하 수로로 유유히 빠져나왔다. 귀환 즉시 밀고자까지 처단하자 하이브 암흑가 전체가 그대의 신출귀몰함에 전율했다.",
-          stats: { Ag: 8, Inf: 10, Int: 5 }
+          stats: { Ag: 8, Inf: 10, Int: 5 },
+          align: { ruthless: 7 }
         },
         fail: {
           text: "폐수 터널 출구에서 매복한 치안대 척후와 부딪혀 쇼크 마울 파편에 부상을 입었으나, 핵심 밀수 화물만큼은 끝내 지켜 냈다.",
           wounds: -16,
-          stats: { Ag: 4, Inf: 4 }
+          stats: { Ag: 4, Inf: 4 },
+          align: { ruthless: 5 }
         }
       },
       {
@@ -787,13 +822,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "자신의 목줄이 쥐여 있음을 깨달은 귀족이 얼굴을 일그러뜨리며 사병대 출동과 외교 면책 통로 개방을 지시했다. 치안대의 검문을 유유히 돌파하고 귀족 가문을 영구적 꼭두각시로 만들었다.",
           stats: { Fel: 8, Inf: 10, Int: 6 },
-          corruption: 3
+          corruption: 3,
+          align: { ruthless: 9 }
         },
         fail: {
           text: "공황에 빠진 귀족이 호신용 피스톨을 난사하며 금고 안이 아수라장이 되었고, 혼전 속에 부상을 입고 간신히 탈출했다.",
           wounds: -18,
           stats: { Inf: -4, Fel: 2 },
-          corruption: 3
+          corruption: 3,
+          align: { ruthless: 7 }
         }
       },
       {
@@ -801,19 +838,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "BS", diff: -5 },
         success: {
           text: "플라즈마 탄과 연막이 지하 회랑을 뒤덮는 사이 완벽한 엄호 사격으로 치안대 봉쇄선을 찢고 빠져나왔다! 암흑가 거두를 건드리면 어떤 대가를 치르는지 똑똑히 보여 주었다.",
-          stats: { BS: 7, WS: 5, Inf: 7 }
+          stats: { BS: 7, WS: 5, Inf: 7 },
+          align: { ruthless: 6 }
         },
         fail: {
           text: "아르비테스 진압대의 익스큐셔너 탄환을 장전한 컴뱃 샷건 화망에 중상을 입고 경호대의 부축을 받으며 겨우 지하 은신처로 퇴각했다.",
           wounds: -24,
-          stats: { T: 4, BS: 3 }
+          stats: { T: 4, BS: 3 },
+          align: { ruthless: 4 }
         }
       },
       {
         label: "귀족과의 밀수 화물을 미끼로 금고에 남겨 두고, 비상 탈출용 화물 승강기로 핵심 현금과 장부만 챙겨 조용히 철수한다",
         effect: {
           text: "물건은 잃었지만 신디케이트의 조직망과 장부는 온전히 살렸다. 다음 날 첨탑 복스 방송망에는 이름 없는 귀족 후계자의 체포 소식만 조용히 흘러나왔다.",
-          stats: { Int: 5, Ag: 4, Inf: 4 }
+          stats: { Int: 5, Ag: 4, Inf: 4 },
+          align: { ruthless: 8 }
         }
       }
     ],

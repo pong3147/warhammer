@@ -50,7 +50,7 @@
           <circle cx="32" cy="32" r="20" stroke="#6b542b" stroke-width="1.5" stroke-dasharray="4 3"/>
           <path d="M14 25 L27 29 L32 15 L37 29 L50 25 L41 37 L44 49 L32 41 L20 49 L23 37 Z" fill="#d6b15e"/>
         </svg>
-        <h2 id="start-heading" class="hero-h2">새로운 영혼 탄생</h2>
+        <h2 id="start-heading" class="hero-h2" tabindex="-1">새로운 영혼 탄생</h2>
         <p class="hero-quote">
           41번째 천년기의 암흑 속에는 오직 전쟁뿐이다. 인류제국 100만 행성, 수천조 영혼 가운데 단 하나로 태어나
           흐르는 연대기와 선택 속에서 그대만의 운명을 개척하라.
@@ -68,7 +68,7 @@
             <ul class="feature-list">
               <li>1년 = 30초 (1년 3분기 · 10초마다 새 기록이나 사건 전개)</li>
               <li>17개 세력 78종 풀 계급도(하이 로드·총독·챕터 마스터·데몬 프린스) 및 발탁·평행 횡단 이벤트</li>
-              <li>22개 행성·직군·챕터·시기별 673종+ 연대기 및 600종+ 분기·역사 사건</li>
+              <li>22개 행성·직군·챕터·시기·3대 도덕 성향(자비·교조·암흑) 700종+ 연대기 및 630종+ 분기·역사 사건</li>
               <li>9대 아스타르테스 챕터 서약 · 20인 네임드 조우 · 8대 특성치(d100 판정)</li>
             </ul>
           </div>
@@ -173,6 +173,19 @@
           <div class="vital-bar" aria-hidden="true"><div id="bar-corruption" class="vital-fill corruption" style="width:0%"></div></div>
         </div>
 
+        <div class="vital-block align-block">
+          <div class="vital-row">
+            <span>도덕 성향</span>
+            <strong id="val-alignment">실리적 중립</strong>
+          </div>
+          <div id="val-alignment-detail" class="align-detail">자비 0 · 교조 0 · 암흑 0</div>
+          <div class="align-tri-bar" aria-hidden="true">
+            <div id="bar-align-humane" class="align-seg humane" style="width:33.3%"></div>
+            <div id="bar-align-dogmatic" class="align-seg dogmatic" style="width:33.3%"></div>
+            <div id="bar-align-ruthless" class="align-seg ruthless" style="width:33.4%"></div>
+          </div>
+        </div>
+
         <h3 class="sub-panel-title">8대 특성치</h3>
         <dl id="stats-grid" class="stats-grid"></dl>
 
@@ -247,7 +260,7 @@
       <!-- 우측: 통합 자율 선택 패널 -->
       <aside class="panel right-panel" aria-labelledby="heading-auto">
         <div class="panel-header">
-          <h2 id="heading-auto" class="panel-title">자율 선택</h2>
+          <h2 id="heading-auto" class="panel-title" tabindex="-1">자율 선택</h2>
           <span class="hint-inline">현재 가능한 선택지만 표시</span>
         </div>
 
@@ -398,6 +411,7 @@
   <script src="./data/events/worlds/solar.js"></script>
   <script src="./data/events/worlds/terra.js"></script>
   <script src="./data/events/worlds/ultima.js"></script>
+  <script src="./data/events/themes/alignment.js"></script>
   <script src="./data/events/themes/arcs_focus.js"></script>
   <script src="./data/events/themes/chaos_warp.js"></script>
   <script src="./data/events/themes/crises.js"></script>
@@ -408,6 +422,7 @@
   <script src="./data/events/themes/xenos.js"></script>
   <!-- DATA-EVENTS:END -->
   <!-- DATA-CHRONICLES:START -->
+  <script src="./data/chronicles/alignment.js"></script>
   <script src="./data/chronicles/arcs_named.js"></script>
   <script src="./data/chronicles/careers_ranks.js"></script>
   <script src="./data/chronicles/careers_specialists.js"></script>

@@ -1,11 +1,99 @@
 (function (global) {
   const DATA = global.IMPERIUM_DATA;
-  const SAVE_VERSION = 2;
+  const SAVE_VERSION = 3;
 
   function warnUnknownId(kind, id) {
     if (typeof console !== "undefined" && typeof console.warn === "function") {
       console.warn(`[Imperialis Vita] Unknown ${kind} ID "${id}" — falling back to default.`);
     }
+  }
+
+  const ALIGNMENT_KEYS = ["humane", "dogmatic", "ruthless"];
+  const ALIGNMENT_META = {
+    humane: {
+      key: "humane",
+      name: "자비",
+      fullName: "자비 · 인본",
+      biasLabel: "자비 성향 우대",
+      tiers: ["실리적 중립", "자비의 실천가", "자비의 수호자", "자비의 성자"]
+    },
+    dogmatic: {
+      key: "dogmatic",
+      name: "교조",
+      fullName: "교조 · 광신",
+      biasLabel: "교조 성향 우대",
+      tiers: ["실리적 중립", "교조의 준수자", "철혈의 교조주의자", "광신의 화신"]
+    },
+    ruthless: {
+      key: "ruthless",
+      name: "암흑",
+      fullName: "암흑 · 탐욕",
+      biasLabel: "암흑 성향 우대",
+      tiers: ["실리적 중립", "암흑의 기회주의자", "냉혹한 암흑의 지배자", "무자비한 암흑 군주"]
+    }
+  };
+
+  function normalizeAlignment(state) {
+    const src = state && state.alignment && typeof state.alignment === "object" ? state.alignment : {};
+    return {
+      humane: clamp(Math.round(Number(src.humane) || 0), 0, 100),
+      dogmatic: clamp(Math.round(Number(src.dogmatic) || 0), 0, 100),
+      ruthless: clamp(Math.round(Number(src.ruthless) || 0), 0, 100)
+    };
+  }
+
+  function applyAlignDelta(state, deltaObj) {
+    if (!state || !deltaObj || typeof deltaObj !== "object") return;
+    const cur = normalizeAlignment(state);
+    for (let i = 0; i < ALIGNMENT_KEYS.length; i++) {
+      const k = ALIGNMENT_KEYS[i];
+      const d = deltaObj[k];
+      if (d) cur[k] = clamp(Math.round(cur[k] + d), 0, 100);
+    }
+    state.alignment = cur;
+  }
+
+  function getAlignmentInfo(state) {
+    const scores = normalizeAlignment(state);
+    const ranked = ALIGNMENT_KEYS
+      .map((k) => ({ key: k, val: scores[k] }))
+      .sort((a, b) => b.val - a.val);
+    const top = ranked[0];
+    const second = ranked[1];
+    if (top.val < 15) {
+      return {
+        scores,
+        dominant: "neutral",
+        tier: 0,
+        label: "실리적 중립",
+        fullLabel: "실리적 중립",
+        detail: `자비 ${scores.humane} · 교조 ${scores.dogmatic} · 암흑 ${scores.ruthless}`,
+        tied: false
+      };
+    }
+    if (top.val === second.val) {
+      return {
+        scores,
+        dominant: "neutral",
+        tier: top.val >= 60 ? 3 : top.val >= 35 ? 2 : 1,
+        label: "갈등하는 신념",
+        fullLabel: "갈등하는 신념",
+        detail: `자비 ${scores.humane} · 교조 ${scores.dogmatic} · 암흑 ${scores.ruthless}`,
+        tied: true
+      };
+    }
+    const tier = top.val >= 60 ? 3 : top.val >= 35 ? 2 : 1;
+    const meta = ALIGNMENT_META[top.key];
+    const label = meta.tiers[tier];
+    return {
+      scores,
+      dominant: top.key,
+      tier,
+      label,
+      fullLabel: `${label} (${tier}단계)`,
+      detail: `자비 ${scores.humane} · 교조 ${scores.dogmatic} · 암흑 ${scores.ruthless}`,
+      tied: false
+    };
   }
 
   const STAT_META = {
@@ -373,6 +461,24 @@
       }
     }
 
+    if (req.minAlign || req.maxAlign || req.anyDominantAlign) {
+      const al = normalizeAlignment(state);
+      if (req.minAlign) {
+        for (const k in req.minAlign) {
+          if ((al[k] || 0) < req.minAlign[k]) return false;
+        }
+      }
+      if (req.maxAlign) {
+        for (const k in req.maxAlign) {
+          if ((al[k] || 0) > req.maxAlign[k]) return false;
+        }
+      }
+      if (req.anyDominantAlign) {
+        const info = getAlignmentInfo(state);
+        if (!req.anyDominantAlign.includes(info.dominant)) return false;
+      }
+    }
+
     if (req.or && Array.isArray(req.or)) {
       let ok = false;
       for (let i = 0; i < req.or.length; i++) {
@@ -434,6 +540,22 @@
     if (req.maxCorruption !== undefined) parts.push(`오염 ${req.maxCorruption} 이하`);
     if (req.minWounds !== undefined) parts.push(`생명력 ${req.minWounds}+`);
     if (req.maxWounds !== undefined) parts.push(`생명력 ${req.maxWounds} 이하`);
+    if (req.minAlign) {
+      for (const [k, v] of Object.entries(req.minAlign)) {
+        const am = ALIGNMENT_META[k];
+        parts.push(`${am ? am.name : k} 성향 ${v}+`);
+      }
+    }
+    if (req.maxAlign) {
+      for (const [k, v] of Object.entries(req.maxAlign)) {
+        const am = ALIGNMENT_META[k];
+        parts.push(`${am ? am.name : k} 성향 ${v} 이하`);
+      }
+    }
+    if (req.anyDominantAlign && req.anyDominantAlign.length) {
+      const names = req.anyDominantAlign.map((k) => (k === "neutral" ? "중립" : ((ALIGNMENT_META[k] && ALIGNMENT_META[k].name) || k)));
+      parts.push(`주성향: ${names.join("/")}`);
+    }
     if (req.allTags && req.allTags.length) {
       parts.push(req.allTags.map((t) => TAG_LABELS[t] || t).join(" & "));
     }
@@ -652,6 +774,7 @@
       maxWounds,
       faith,
       corruption,
+      alignment: { humane: 0, dogmatic: 0, ruthless: 0 },
       extraLifeBonus: 0,
       rejuvenatCount: 0,
       augmeticsCount: 0,
@@ -730,6 +853,7 @@
     st.wounds = clamp(Number.isFinite(st.wounds) ? st.wounds : st.maxWounds, 0, st.maxWounds);
     st.faith = clamp(Number.isFinite(st.faith) ? st.faith : 50, 0, 100);
     st.corruption = clamp(Number.isFinite(st.corruption) ? st.corruption : 0, 0, 100);
+    st.alignment = normalizeAlignment(st);
 
     for (const key of Object.keys(STAT_META)) {
       if (!Number.isFinite(st.stats[key])) st.stats[key] = 25;
@@ -805,6 +929,13 @@
     if (eff.wounds) parts.push(`생명력 ${eff.wounds > 0 ? "+" + eff.wounds : eff.wounds}`);
     if (eff.faith) parts.push(`신앙 ${eff.faith > 0 ? "+" + eff.faith : eff.faith}`);
     if (eff.corruption) parts.push(`오염 ${eff.corruption > 0 ? "+" + eff.corruption : eff.corruption}`);
+    if (eff.align) {
+      for (const [k, d] of Object.entries(eff.align)) {
+        if (!d) continue;
+        const am = ALIGNMENT_META[k];
+        parts.push(`${am ? am.name : k} ${d > 0 ? "+" + d : d}`);
+      }
+    }
     if (eff.warpYearShift) parts.push(`워프 시간 왜곡 +${eff.warpYearShift}년`);
     return parts.join(" · ");
   }
@@ -892,6 +1023,9 @@
     }
     if (outcome.corruptionReset) {
       state.corruption = 0;
+    }
+    if (outcome.align) {
+      applyAlignDelta(state, outcome.align);
     }
     if (outcome.lifeBonusExtra || outcome.extraLifeBonus) {
       state.extraLifeBonus += (outcome.lifeBonusExtra || outcome.extraLifeBonus);
@@ -1092,12 +1226,17 @@
     }
     const candidates = fresh.length > 0 ? fresh : (notRecentShort.length > 0 ? notRecentShort : pool);
 
-    // priority 가중치: 현재 행성/직업 초고유(3)=9, 특화(2)=3, 일반 부조리(1)=1.2
+    // priority 가중치: 현재 행성/직업 초고유(3)=9, 특화(2)=3, 일반 부조리(1)=1.2 + 성향 alignBias
+    const alignInfo = getAlignmentInfo(state);
     const weighted = candidates.map((ch) => {
       let w = ch.priority === 3 ? 9 : ch.priority === 2 ? 3 : 1.2;
       if (ch.req && ch.req.anyWorlds && ch.req.anyWorlds.includes(state.worldId)) w *= 1.35;
       if (ch.req && ch.req.anyChapters && state.chapterId && ch.req.anyChapters.includes(state.chapterId)) w *= 1.5;
       if (ch.req && (ch.req.minYear !== undefined || ch.req.maxYear !== undefined)) w *= 1.35;
+      if (ch.alignBias && alignInfo.dominant !== "neutral") {
+        if (ch.alignBias === alignInfo.dominant) w *= 2.0;
+        else w *= 0.45;
+      }
       return { item: ch, w };
     });
     const picked = pickWeighted(weighted, "w").item;
@@ -1120,7 +1259,13 @@
       state.faith = clamp(state.faith + eff.faith, 0, 100);
     }
     if (eff.corruption) {
-      state.corruption = clamp(state.corruption + eff.corruption, 0, 99);
+      const incorruptible = state.tags.includes("custodes") || state.tags.includes("grey_knight");
+      if (!(incorruptible && eff.corruption > 0)) {
+        state.corruption = clamp(state.corruption + eff.corruption, 0, 99);
+      }
+    }
+    if (eff.align) {
+      applyAlignDelta(state, eff.align);
     }
 
     const deltaText = formatDeltaText(eff);
@@ -1250,13 +1395,16 @@
       state.wounds = clamp(state.wounds + baseNaturalHeal + focusHeal, 0, state.maxWounds);
       state.faith = clamp(state.faith + (focus.faithDelta || 0), 0, 100);
       const rawCorrDelta = focus.corruptionDelta || 0;
+      const incorruptible = state.tags.includes("custodes") || state.tags.includes("grey_knight");
       if (rawCorrDelta > 0) {
-        let effCorrDelta = state.age < 12 ? Math.min(rawCorrDelta, 2) : rawCorrDelta;
-        if (state.tags.includes("heretic") || state.tags.includes("chaos_aligned")) {
-          if (state.corruption >= 92) effCorrDelta = 0;
-          else if (state.corruption >= 80) effCorrDelta = Math.min(effCorrDelta, 2);
+        if (!incorruptible) {
+          let effCorrDelta = state.age < 12 ? Math.min(rawCorrDelta, 2) : rawCorrDelta;
+          if (state.tags.includes("heretic") || state.tags.includes("chaos_aligned")) {
+            if (state.corruption >= 92) effCorrDelta = 0;
+            else if (state.corruption >= 80) effCorrDelta = Math.min(effCorrDelta, 2);
+          }
+          state.corruption = clamp(state.corruption + effCorrDelta, 0, 100);
         }
-        state.corruption = clamp(state.corruption + effCorrDelta, 0, 100);
       } else if (rawCorrDelta < 0) {
         state.corruption = clamp(state.corruption + rawCorrDelta, 0, 100);
       }
@@ -1308,6 +1456,9 @@
     }
     if (state.tags.includes("daemon_prince") && state.corruption >= 100) {
       state.corruption = 99;
+    }
+    if ((state.tags.includes("custodes") || state.tags.includes("grey_knight")) && state.corruption >= 100) {
+      state.corruption = 0;
     }
     if (state.corruption >= 100 && !state.tags.includes("daemon_prince")) {
       finalizeDeath(state, "워프 오염이 한계를 넘어 육신이 카오스 스폰으로 붕괴됨");
@@ -1395,6 +1546,8 @@
           reqCtx.tagSet.has("mark_nurgle") ||
           reqCtx.tagSet.has("mark_slaanesh");
         const needsChaosMark = reqCtx.tagSet.has("heretic") && !hasChaosMark;
+        const alignInfo = getAlignmentInfo(state);
+        const alignBoost = alignInfo.tier >= 3 ? 2.6 : alignInfo.tier === 2 ? 2.1 : 1.7;
         const weightedPool = eventPool.map((ev) => {
           let w = ev.weight || 15;
           const isWorldSpecific = ev.req && ev.req.anyWorlds && ev.req.anyWorlds.includes(state.worldId);
@@ -1407,6 +1560,10 @@
           else if (isChapterSpecific || isNamedEncounter) w *= 3.0;
           else if (isPastContrast) w *= 2.8;
           else if (isWorldSpecific || isCareerSpecific || isEraSpecific) w *= 2.6;
+          if (ev.alignBias && alignInfo.dominant !== "neutral") {
+            if (ev.alignBias === alignInfo.dominant) w *= alignBoost;
+            else w *= 0.4;
+          }
           return { item: ev, w };
         });
         const picked = pickWeighted(weightedPool, "w").item;
@@ -1465,6 +1622,7 @@
     const history = state.careerHistory || [state.careerId];
     const declined = state.declinedCareers || {};
     const curIsTranshuman = Boolean(cur.isTranshuman) || state.tags.includes("astartes") || state.tags.includes("custodes") || state.tags.includes("grey_knight") || state.tags.includes("daemon_prince");
+    const alignInfo = getAlignmentInfo(state);
 
     const candidates = [];
     for (let i = 0; i < DATA.CAREERS.length; i++) {
@@ -1473,6 +1631,10 @@
       if (history.includes(c.id)) continue;
       if (!options.ignoreCooldown && declined[c.id] !== undefined && state.year - declined[c.id] < 8) continue;
       if (c.id === "chaos_cultist" && cur.tier >= 4) continue;
+      if (
+        (c.id === "hive_crime_lord" || c.id === "underhive_boss") &&
+        (alignInfo.dominant === "humane" || alignInfo.dominant === "dogmatic")
+      ) continue;
       if (!checkReq(state, c.req, ctx)) continue;
 
       if (cur.id === "child") {
@@ -1516,6 +1678,13 @@
       } else if (c.entryMode === "event") {
         w = cur.tier >= 5 ? 8 : 14;
         prob = cur.tier >= 5 ? 0.022 : 0.032;
+      }
+      if (alignInfo.dominant === "dogmatic" && ["commissariat", "sororitas", "arbites", "inquisition"].includes(c.tree)) {
+        w = Math.round(w * 1.35);
+      } else if (alignInfo.dominant === "humane" && c.tree === "ecclesiarchy") {
+        w = Math.round(w * 1.3);
+      } else if (alignInfo.dominant === "ruthless" && (c.id === "hive_crime_lord" || c.id === "underhive_boss" || c.tree === "chaos" || c.tree === "rogue_trader")) {
+        w = Math.round(w * 1.45);
       }
       candidates.push({ item: c, w, prob });
     }
@@ -1835,22 +2004,22 @@
       return {
         id: "career_action",
         name: "연대 군기 감찰 · 사기 훈시",
-        desc: "의지 +3, 교섭 +3, 권위 +2, 신앙 +4 (재사용 4년)",
+        desc: "의지 +3, 교섭 +3, 권위 +2, 신앙 +4, 교조 +2 (재사용 4년)",
         btnLabel: "연대 감찰 실시",
         toastMsg: "연대 군기 감찰을 마쳤다.",
         logText: "검은 대제복 차림으로 최전선 참호를 순시하며 병사들의 나태를 일깨우고 사기를 다졌다.",
-        effects: { stats: { WP: 3, Fel: 3, Inf: 2 }, faith: 4 }
+        effects: { stats: { WP: 3, Fel: 3, Inf: 2 }, faith: 4, align: { dogmatic: 2 } }
       };
     }
     if (ag === "sororitas") {
       return {
         id: "career_action",
         name: "성녀 철야 기도 · 볼터 축성식",
-        desc: "의지 +3, 사격 +2, 신앙 +9, 오염 -8 (재사용 4년)",
+        desc: "의지 +3, 사격 +2, 신앙 +9, 오염 -8, 교조 +2 (재사용 4년)",
         btnLabel: "철야 축성식 집전",
         toastMsg: "성녀 철야 기도와 축성식을 마쳤다.",
         logText: "성유와 향불 속에서 볼터에 순결의 인장을 봉인하며 흔들림 없는 신앙을 다졌다.",
-        effects: { stats: { WP: 3, BS: 2 }, faith: 9, corruption: -8 }
+        effects: { stats: { WP: 3, BS: 2 }, faith: 9, corruption: -8, align: { dogmatic: 2 } }
       };
     }
     if (ag === "inquisition") {
@@ -1890,11 +2059,11 @@
       return {
         id: "career_action",
         name: "하층 구역 제국법 일제 검문",
-        desc: "백병 +2, 사격 +2, 권위 +3, 생명력 -4 (재사용 4년)",
+        desc: "백병 +2, 사격 +2, 권위 +3, 생명력 -4, 교조 +2 (재사용 4년)",
         btnLabel: "일제 검문 출동",
         toastMsg: "제국법 일제 검문 작전을 마쳤다.",
         logText: "아르비테스 장갑차를 몰고 무법 구역을 급습해 불법 무기상과 탈세범을 대거 체포했다.",
-        effects: { stats: { WS: 2, BS: 2, Inf: 3 }, wounds: -4 }
+        effects: { stats: { WS: 2, BS: 2, Inf: 3 }, wounds: -4, align: { dogmatic: 2 } }
       };
     }
     if (ag === "administratum") {
@@ -1956,44 +2125,44 @@
       return {
         id: "career_action",
         name: "워프 폭풍 소환 · 악마 군세 사열",
-        desc: "백병 +4, 의지 +4, 권위 +3, 신앙 -10 (재사용 4년)",
+        desc: "백병 +4, 의지 +4, 권위 +3, 신앙 -10, 암흑 +4 (재사용 4년)",
         btnLabel: "워프 권능 행사",
         toastMsg: "불멸의 워프 권능으로 악마 군세를 사열했다.",
         logText: "현실의 막을 찢고 암흑 신의 축복을 끌어내려 필멸자 성계에 공포의 징조를 새겼다.",
-        effects: { stats: { WS: 4, WP: 4, Inf: 3 }, faith: -10 }
+        effects: { stats: { WS: 4, WP: 4, Inf: 3 }, faith: -10, align: { ruthless: 4 } }
       };
     }
     if (ag === "chaos_csm") {
       return {
         id: "career_action",
         name: "배신자 워밴드 약탈 · 투기장 결투",
-        desc: "백병 +4, 강인 +2, 권위 +2, 오염 +5 (재사용 4년)",
+        desc: "백병 +4, 강인 +2, 권위 +2, 오염 +5, 암흑 +4 (재사용 4년)",
         btnLabel: "워밴드 약탈 출격",
         toastMsg: "배신자 워밴드 투기장 결투와 약탈을 마쳤다.",
         logText: "전함 투기장에서 도전자들을 제압하고 제국 보급 수송선을 습격해 탄약과 노예를 확보했다.",
-        effects: { stats: { WS: 4, T: 2, Inf: 2 }, corruption: 5, faith: -5 }
+        effects: { stats: { WS: 4, T: 2, Inf: 2 }, corruption: 5, faith: -5, align: { ruthless: 4 } }
       };
     }
     if (ag === "chaos_cult") {
       return {
         id: "career_action",
         name: "지하 암흑 제단 비밀 의식",
-        desc: "의지 +3, 백병 +2, 오염 +7, 신앙 -6 (재사용 4년)",
+        desc: "의지 +3, 백병 +2, 오염 +7, 신앙 -6, 암흑 +3 (재사용 4년)",
         btnLabel: "암흑 의식 집전",
         toastMsg: "지하 제단의 비밀 의식을 마쳤다.",
         logText: "아르비테스의 눈을 피해 지하 폐허에서 금단의 주문을 읊으며 워프의 불경한 기운을 끌어당겼다.",
-        effects: { stats: { WP: 3, WS: 2 }, corruption: 7, faith: -6 }
+        effects: { stats: { WP: 3, WS: 2 }, corruption: 7, faith: -6, align: { ruthless: 3 } }
       };
     }
     if (ag === "ganger") {
       return {
         id: "career_action",
         name: "언더하이브 밀수 · 구역 순찰",
-        desc: "민첩 +3, 백병 +2, 권위 +2, 생명력 -4 (재사용 4년)",
+        desc: "민첩 +3, 백병 +2, 권위 +2, 생명력 -4, 암흑 +3 (재사용 4년)",
         btnLabel: "밀수 순찰 출동",
         toastMsg: "언더하이브 밀수 거래를 마쳤다.",
         logText: "하층 배수관 암시장에서 탄약과 정제수를 빼돌려 구역 내 입지를 넓혔다.",
-        effects: { stats: { Ag: 3, WS: 2, Inf: 2 }, wounds: -4 }
+        effects: { stats: { Ag: 3, WS: 2, Inf: 2 }, wounds: -4, align: { ruthless: 3 } }
       };
     }
     return {
@@ -2026,6 +2195,7 @@
       }
       if (eff.faith) state.faith = clamp(state.faith + eff.faith, 0, 100);
       if (eff.corruption) state.corruption = clamp(state.corruption + eff.corruption, 0, 99);
+      if (eff.align) applyAlignDelta(state, eff.align);
       addLog(state, act.logText, "success", null, {
         badge: "직군 고유 행동",
         deltaText: formatDeltaText(eff)
@@ -2082,9 +2252,14 @@
       state.corruption = clamp(state.corruption - 14, 0, 100);
       state.faith = clamp(state.faith + 7, 0, 100);
       state.wounds = clamp(state.wounds - 7, 5, state.maxWounds);
+      let deltaText = "오염 -14 · 신앙 +7 · 생명력 -7";
+      if (normalizeAlignment(state).ruthless > 0) {
+        applyAlignDelta(state, { ruthless: -3, dogmatic: 1 });
+        deltaText += " · 암흑 -3 · 교조 +1";
+      }
       addLog(state, "성당에서 혹독한 고행과 참회 기도를 올려 워프 오염을 정화했다.", "event", null, {
         badge: "정화 고행",
-        deltaText: "오염 -14 · 신앙 +7 · 생명력 -7"
+        deltaText
       });
       return { ok: true };
     }
@@ -2307,10 +2482,12 @@
     const focus = FOCUSES[state.focus] || FOCUSES.survival;
     const careerTitle = getCareerDisplayTitle(state);
     const lifeExp = computeLifeExpectancy(state);
+    const alignInfo = getAlignmentInfo(state);
     const parts = [
       `${state.name}, ${state.age}세, ${formatImperialDate(state.year, state.quarter)}.`,
       `직책 ${careerTitle}, 현재 행성 ${world.name}.`,
       `생명력 ${state.wounds}/${state.maxWounds}, 기대수명 약 ${lifeExp}세, 황제 신앙 ${state.faith}, 워프 오염 ${state.corruption}.`,
+      `도덕 성향 ${alignInfo.fullLabel}, ${alignInfo.detail}.`,
       `삶의 초점: ${focus.name}.`
     ];
     if (!state.alive) {
@@ -2338,6 +2515,7 @@
   function buildObituaryEpilogue(state, mode) {
     const tags = state.tags || [];
     const met = state.metCharacters || [];
+    const alignInfo = getAlignmentInfo(state);
     const hasAnyBond =
       tags.includes("bond_heir") ||
       tags.includes("bond_family") ||
@@ -2346,15 +2524,29 @@
       tags.includes("bond_rival");
 
     if (mode === "spawn") {
-      return hasAnyBond
-        ? "과거 맺었던 인연들마저 이단심문소의 기억 소거 속에 흔적 없이 지워졌다."
-        : "";
+      const spawnLines = [];
+      if (hasAnyBond) {
+        spawnLines.push("과거 맺었던 인연들마저 이단심문소의 기억 소거 속에 흔적 없이 지워졌다.");
+      }
+      if (alignInfo.dominant === "ruthless") {
+        spawnLines.push("끝없는 탐욕과 무자비한 야망이 부른 참혹한 귀결이었다.");
+      }
+      return spawnLines.join(" ");
     }
 
     if (mode === "heretic") {
-      return hasAnyBond
-        ? "남겨진 인연들 또한 그대의 배교 기록 앞에서 침묵하거나 뿔뿔이 흩어졌다."
-        : "";
+      const hereticLines = [];
+      if (hasAnyBond) {
+        hereticLines.push("남겨진 인연들 또한 그대의 배교 기록 앞에서 침묵하거나 뿔뿔이 흩어졌다.");
+      }
+      if (alignInfo.dominant === "ruthless") {
+        hereticLines.push("권력과 약탈을 위해서라면 무엇이든 팔아넘겼던 냉혹한 삶은 결국 심연의 법칙으로 귀결되었다.");
+      } else if (alignInfo.dominant === "humane") {
+        hereticLines.push("제국의 폭정에 맞서 약자를 지키려던 연민마저 암흑의 속삭임에 뒤틀려 반역의 낙인으로 남았다.");
+      } else if (alignInfo.dominant === "dogmatic") {
+        hereticLines.push("끝없는 광신과 규율에 대한 집착이 도리어 오만과 배교의 낭떠러지로 그대를 밀어 넣었다.");
+      }
+      return hereticLines.join(" ");
     }
 
     const lines = [];
@@ -2371,6 +2563,29 @@
       lines.push("옛 스승의 낡은 수첩 여백에 그대의 마지막 발자취가 경건한 추모 문장으로 남았다.");
     } else if (tags.includes("bond_rival")) {
       lines.push("평생을 겨루었던 숙명의 정적만이 그대의 부고 앞에서 말없이 모자를 벗고 잔을 기울였다.");
+    }
+
+    const isSecretGuardian = tags.includes("grey_knight") || tags.includes("custodes") || tags.includes("sister_of_silence");
+    if (alignInfo.dominant === "humane") {
+      if (isSecretGuardian) {
+        lines.push("이름조차 세상에 남길 수 없는 비밀의 사명 속에서도, 필멸의 생명을 아끼던 그대의 조용한 절제는 동료 형제들의 기억 속에 남았다.");
+      } else if (state.faith >= 60) {
+        lines.push("황제의 자비로운 손길을 몸소 증명한 그대의 선행은 하층 구역의 등불 같은 전설로 구전되었다.");
+      } else {
+        lines.push("냉혹한 제국의 톱니바퀴 속에서도 끝내 인간적 양심을 버리지 않은 드문 영혼으로 조용히 기억되었다.");
+      }
+    } else if (alignInfo.dominant === "dogmatic") {
+      if (state.faith >= 60) {
+        lines.push("일말의 타협도 허용하지 않았던 철혈의 신앙과 교조는 이단자들에게 영원한 공포의 본보기로 남았다.");
+      } else {
+        lines.push("오직 제국법과 규율만을 잣대로 삼았던 서릿발 같은 생애는 두려움 섞인 경외 속에 기록되었다.");
+      }
+    } else if (alignInfo.dominant === "ruthless") {
+      if (state.corruption < 35) {
+        lines.push("워프의 유혹에 빠지지 않고도 순수한 탐욕과 냉혹한 수완만으로 제국의 정글을 지배했던 세속적 악인의 표본이었다.");
+      } else {
+        lines.push("수단과 방법을 가리지 않았던 암흑의 행적은 이단심문소 비밀 문서고의 짙은 의혹 속에 봉인되었다.");
+      }
     }
 
     if (met.length > 0) {
@@ -3359,10 +3574,13 @@
       });
     }
     if (canUsePenance(state).ok) {
+      const hasRuthless = normalizeAlignment(state).ruthless > 0;
       actions.push({
         id: "penance",
         name: "성당 고해와 정화 의식",
-        desc: "오염 -14, 신앙 +7 (생명력 -7, 재사용 3년)",
+        desc: hasRuthless
+          ? "오염 -14, 신앙 +7, 암흑 -3, 교조 +1 (생명력 -7, 재사용 3년)"
+          : "오염 -14, 신앙 +7 (생명력 -7, 재사용 3년)",
         btnLabel: "정화 고행 수행"
       });
     }
@@ -3407,11 +3625,16 @@
 
   const Engine = {
     SAVE_VERSION,
+    ALIGNMENT_KEYS,
+    ALIGNMENT_META,
     STAT_META,
     FOCUSES,
     ERA_PRESETS,
     TAG_LABELS,
     clamp,
+    normalizeAlignment,
+    applyAlignDelta,
+    getAlignmentInfo,
     formatImperialYear,
     formatImperialDate,
     getWorld,

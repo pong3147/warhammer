@@ -132,12 +132,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "막대한 부와 희귀 무구, 그리고 다가올 재앙에 대한 아엘다리의 예언을 손에 넣었다!",
           stats: { Inf: 12, Int: 6, Fel: 5 },
           corruption: 6,
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact"],
+          align: { ruthless: 8 }
         },
         fail: {
           text: "오만한 외계인들에게 기만당해 매복 공격을 당하고 간신히 탈출했다.",
           wounds: -22,
-          stats: { Inf: -5 }
+          stats: { Inf: -5 },
+          align: { ruthless: 5 }
         }
       },
       {
@@ -146,11 +148,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "배신감에 찬 외계 해적선을 격침시키고 제국 순수파의 뜨거운 찬사를 받았다!",
           stats: { BS: 5, Inf: 8, WP: 4 },
-          faith: 12
+          faith: 12,
+          align: { dogmatic: 9 }
         },
         fail: {
           text: "민첩한 아엘다리 함선의 반격에 큰 피해를 입고 물러났다.",
-          wounds: -20
+          wounds: -20,
+          align: { dogmatic: 5 }
         }
       }
     ],
@@ -229,7 +233,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "황제에 대한 흔들림 없는 충성을 증명해 포상과 신앙의 가호를 얻었다.",
           stats: { WP: 4, Inf: 5 },
           faith: 10,
-          corruption: -4
+          corruption: -4,
+          align: { dogmatic: 8 }
         }
       },
       {
@@ -259,7 +264,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 5 },
           faith: -14,
           corruption: 8,
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact"],
+          align: { humane: 5 }
         }
       }
     ],
@@ -289,7 +295,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "외계인의 더러운 도구를 단호히 거부한 태도가 상급자의 칭찬을 샀다.",
           stats: { WP: 4, Inf: 4 },
-          faith: 8
+          faith: 8,
+          align: { dogmatic: 7 }
         }
       },
       {
@@ -299,12 +306,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "아무도 모르게 외계 화력을 활용해 전투에서 대활약을 펼치고 전과를 가로챘다!",
           stats: { BS: 6, Inf: 5 },
           corruption: 6,
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact"],
+          align: { ruthless: 7 }
         },
         fail: {
           text: "소지품 검문에서 적발되어 혹독한 징계와 심문을 당하고 무기를 압수당했다.",
           wounds: -20,
-          stats: { Inf: -6 }
+          stats: { Inf: -6 },
+          align: { ruthless: 4 }
         }
       }
     ],
@@ -380,12 +389,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "적의 약점을 꿰뚫은 귀중한 외계 분석 자료에 심문소가 감탄했다! 과거의 의심은 씻기고 오히려 든든한 신임을 얻었다.",
           stats: { Int: 6, Inf: 7 },
-          addTags: ["inquisition_favor"]
+          addTags: ["inquisition_favor"],
+          align: { dogmatic: 7 }
         },
         fail: {
           text: "보고서의 출처를 추궁받다 구금되어 며칠간 혹독한 심문을 겪은 뒤에야 풀려났다.",
           wounds: -14,
-          stats: { Inf: -6 }
+          stats: { Inf: -6 },
+          align: { dogmatic: 4 }
         }
       },
       {
@@ -394,13 +405,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "치명적인 위험을 뚫고 거래를 성사시켜 평생 쓸 재물과 지하 인맥을 거머쥐었다. 물론 정통파 심문관에게 들키면 즉시 처형감이다.",
           stats: { Fel: 7, Inf: 8 },
-          corruption: 6
+          corruption: 6,
+          align: { ruthless: 10 }
         },
         fail: {
           text: "거래 현장이 아르비테스 급습을 받아 난장판이 되었다. 물건을 버리고 피투성이로 도망쳤다.",
           wounds: -16,
           stats: { Inf: -5 },
-          corruption: 8
+          corruption: 8,
+          align: { ruthless: 7 }
         }
       },
       {
@@ -409,7 +422,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "미지의 유혹을 끊어 내고 인류의 길로 돌아섰다. 밤잠을 설치게 하던 불길한 감시도 차츰 잦아들었다.",
           stats: { WP: 5 },
           faith: 5,
-          corruption: -5
+          corruption: -5,
+          align: { dogmatic: 6 }
         }
       }
     ],
@@ -444,12 +458,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "달콤한 유혹에 흔들리지 않은 충성심과 날카로운 첩보 덕분에 변절 공작망 전체가 뿌리 뽑혔다!",
           stats: { WP: 7, Int: 5, Inf: 6 },
-          faith: 8
+          faith: 8,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "사절단의 크루트 호위병들과 실랑이를 벌이며 부상을 입었으나, 제국에 대한 충성만은 지켜 냈다.",
           wounds: -14,
-          stats: { WP: 4 }
+          stats: { WP: 4 },
+          align: { dogmatic: 5 }
         }
       },
       {
@@ -458,12 +474,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "위험한 줄타기 끝에 변경 정착지 수만 명을 살릴 실용 기술을 손에 넣었다. 다만 외계인과의 접촉 기록이 남았다.",
           stats: { Fel: 7, Int: 6, Inf: 4 },
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact"],
+          align: { humane: 8 }
         },
         fail: {
           text: "교섭 현장이 오르도 제노스 감시망에 포착되어 한동안 엄중한 신원 조사를 받아야 했다.",
           stats: { Inf: -4, WP: 3 },
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact"],
+          align: { humane: 5 }
         }
       },
       {
@@ -471,7 +489,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "외계인의 미소 뒤에는 언제나 지배의 사슬이 숨어 있다. 혐오와 경계심을 더욱 단단히 했다.",
           stats: { WP: 5 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 6 }
         }
       }
     ],
@@ -550,6 +569,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "16세 이상 · 제국 변경 · 테라·화성·크리그 제외",
     weight: 28,
+    alignBias: "humane",
     text: "행성 우주항의 전력망이 일순간 암전되더니, 궤도에서 강하한 칠흑의 드루카리 카발 강습정들이 정박장을 포위했다! 차가운 그림자 속에서 쇠사슬을 끌고 걸어 나온 카발 전사들이 격납고 노동자들을 통째로 노예선에 싣기 위해 학살극을 벌인다. 공포에 질린 군중 사이로 암흑 광선 포화가 탐조등을 하나씩 지워 나간다.",
     choices: [
       {
@@ -557,12 +577,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "BS", diff: -5 },
         success: {
           text: "거대한 강습정이 불길에 휩싸여 기울어지자 사슬에 묶여 있던 수백 명의 주민이 풀려났다! 카발 약탈단은 손실이 커지자 서둘러 차원문 너머로 철수했다.",
-          stats: { BS: 8, WP: 5, Inf: 7 }
+          stats: { BS: 8, WP: 5, Inf: 7 },
+          align: { humane: 8 }
         },
         fail: {
           text: "독침 스플린터 파편탄에 스쳐 극심한 고통에 시달렸으나 끝내 항구 방어선은 지켜 냈다.",
           wounds: -20,
-          stats: { T: 4, WP: 4 }
+          stats: { T: 4, WP: 4 },
+          align: { humane: 5 }
         }
       },
       {
@@ -570,12 +592,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Ag", diff: -5 },
         success: {
           text: "눈 깜짝할 새에 피난민들을 두꺼운 방폭문 뒤로 대피시켰다! 코모라로 산 채로 끌려가는 지옥보다 나은 길을 열어 주었다.",
-          stats: { Ag: 8, Fel: 5, Inf: 5 }
+          stats: { Ag: 8, Fel: 5, Inf: 5 },
+          align: { humane: 9 }
         },
         fail: {
           text: "후미를 지키다 갈고리 채찍에 깊은 상처를 입었으나, 방공호 빗장은 끝내 잠갔다.",
           wounds: -18,
-          stats: { Ag: 4, WP: 4 }
+          stats: { Ag: 4, WP: 4 },
+          align: { humane: 6 }
         }
       },
       {
@@ -614,12 +638,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "불길 속에서 포로들을 구출하고 괴물 같은 외계 외과의를 퇴각시켰다! 오르도 제노스가 그대의 단호한 정화를 높이 샀다.",
           stats: { WP: 8, BS: 4, Inf: 6 },
-          faith: 8
+          faith: 8,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "기괴한 육체 개조 괴물 그로테스크의 반격에 중상을 입었으나, 실험실 폭파에는 성공했다.",
           wounds: -22,
-          stats: { T: 4, WP: 4 }
+          stats: { T: 4, WP: 4 },
+          align: { dogmatic: 5 }
         }
       },
       {
@@ -627,12 +653,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Int", diff: -10 },
         success: {
           text: "오만한 외계 외과의의 허를 완벽히 찔렀다! 풀려난 포로들과 합세해 적의 기지를 뒤엎고 무사히 탈출했다.",
-          stats: { Int: 8, Ag: 5, Inf: 6 }
+          stats: { Int: 8, Ag: 5, Inf: 6 },
+          align: { humane: 8 }
         },
         fail: {
           text: "신경 마비 독가스에 중독되어 간신히 기어 나왔으나, 포로 몇 명만은 구해 냈다.",
           wounds: -18,
-          stats: { Int: 4 }
+          stats: { Int: 4 },
+          align: { humane: 5 }
         }
       },
       {
@@ -781,7 +809,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "과연 발전소 지하에 카오스 교단의 소환진이 숨겨져 있었다! 아엘다리의 의도는 불명하나 어쨌든 대참사를 미연에 막아 냈다.",
           stats: { Int: 8, WP: 5, Inf: 6 },
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact"],
+          align: { humane: 6 }
         },
         fail: {
           text: "조사 도중 아엘다리 측의 진짜 목표였던 고대 영혼석만 빼앗긴 채 헛탕을 쳤다.",
@@ -794,12 +823,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "아엘다리 척후대를 격퇴하고 외계인의 접근을 원천 봉쇄했다! 제국 지휘부가 그대의 확고한 배타 정신을 칭찬했다.",
           stats: { BS: 7, WP: 5, Inf: 6 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "인간의 눈으로 쫓기 힘든 아엘다리의 기동과 수리검 사격에 상처를 입고 놓치고 말았다.",
           wounds: -18,
-          stats: { BS: 3, Ag: 3 }
+          stats: { BS: 3, Ag: 3 },
+          align: { dogmatic: 5 }
         }
       },
       {

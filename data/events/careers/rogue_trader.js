@@ -54,12 +54,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "미지의 보물 성계 항로를 손에 넣었다! 가문의 국고가 넘쳐나고 외계 항법 지식까지 얻었다.",
           stats: { Fel: 6, Inf: 10, Int: 4 },
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact"],
+          align: { ruthless: 7 }
         },
         fail: {
           text: "오만한 외계인이 함정을 파 두었다! 정거장 총격전 끝에 화물 절반을 잃고 겨우 기함으로 탈출했다.",
           wounds: -18,
-          stats: { Inf: -4, Ag: 3 }
+          stats: { Inf: -4, Ag: 3 },
+          align: { ruthless: 5 }
         }
       },
       {
@@ -68,12 +70,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "선내 국교 사제와 제국 해군 모두 환호했다! 부서진 외계선 잔해에서 귀한 전리품까지 건졌다.",
           stats: { BS: 6, Inf: 7, WP: 4 },
-          faith: 8
+          faith: 8,
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "아엘다리 함선의 믿기 힘든 기동력에 역습당해 선체 방어막이 크게 손상되었다.",
           wounds: -16,
-          stats: { Ag: 3 }
+          stats: { Ag: 3 },
+          align: { dogmatic: 6 }
         }
       }
     ],
@@ -151,12 +155,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "심문소 밀정의 눈을 완벽히 속이고 귀한 유물을 손에 넣었다! 상류층 암시장에서 어마어마한 이윤을 남겼다.",
           stats: { Fel: 7, Inf: 10, Int: 4 },
           corruption: 5,
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact"],
+          align: { ruthless: 9 }
         },
         fail: {
           text: "오르도 제노스 감시망에 꼬리가 밟혀 거액의 입막음 뇌물과 벌금을 치렀다.",
           stats: { Inf: -8, WP: 3 },
-          corruption: 4
+          corruption: 4,
+          align: { ruthless: 7 }
         }
       },
       {
@@ -166,19 +172,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "이단심문소가 경매장을 일망타진했고, 그대에게는 심문소의 공식 신임장과 합법적 노획품 지분이 돌아왔다!",
           stats: { Int: 6, Inf: 8, WP: 4 },
           faith: 5,
-          addTags: ["inquisition_favor"]
+          addTags: ["inquisition_favor"],
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "밀수 조직의 암살자가 귀환 길에 기습해 부상을 입었으나 기함 경호대가 격퇴했다.",
           wounds: -18,
-          stats: { WS: 3 }
+          stats: { WS: 3 },
+          align: { dogmatic: 6 }
         }
       },
       {
         label: "위험한 콜드 트레이드에는 손을 대지 않고 합법적인 향신료와 광석 교역만 마치고 출항한다",
         effect: {
           text: "무역 영장에도 지켜야 할 선이 있다. 깨끗한 장부를 유지하며 가문의 명성을 지켰다.",
-          stats: { WP: 4, Inf: 4 }
+          stats: { WP: 4, Inf: 4 },
+          align: { humane: 6 }
         }
       }
     ],
@@ -298,11 +307,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Inf", diff: 0 },
         success: {
           text: "황금 인장이 찍힌 고대 양피지 앞에서 감사관이 무릎을 꿇고 물러났다! 가문의 위신이 하늘을 찌른다.",
-          stats: { Inf: 10, WP: 5, Fel: 5 }
+          stats: { Inf: 10, WP: 5, Fel: 5 },
+          align: { dogmatic: 7 }
         },
         fail: {
           text: "감사관이 영장 단서 조항의 세금 예외 누락을 물고 늘어져 거액의 항만 공탁금을 떼였다.",
-          stats: { Inf: -6, Int: 3 }
+          stats: { Inf: -6, Int: 3 },
+          align: { dogmatic: 5 }
         }
       },
       {
@@ -310,18 +321,21 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: 5 },
         success: {
           text: "감사관이 만족스러운 미소와 함께 '모범적 충성 가문' 도장을 찍고 하선했다. 새로운 관료 인맥까지 생겼다.",
-          stats: { Fel: 7, Inf: 6 }
+          stats: { Fel: 7, Inf: 6 },
+          align: { ruthless: 7 }
         },
         fail: {
           text: "강직한 감사관이 뇌물 시도로 간주해 정밀 세무 조사를 한 달간 이어 갔다.",
-          stats: { Inf: -5, Fel: -2 }
+          stats: { Inf: -5, Fel: -2 },
+          align: { ruthless: 5 }
         }
       },
       {
         label: "선내 회계 서기관들을 총동원해 며칠 밤을 새워 장부를 투명하게 소명한다",
         effect: {
           text: "시간은 걸렸지만 단 한 점의 결격도 없이 감사를 통과했다. 정공법이 통했다.",
-          stats: { Int: 5, WP: 4, Inf: 3 }
+          stats: { Int: 5, WP: 4, Inf: 3 },
+          align: { humane: 6 }
         }
       }
     ],
@@ -344,12 +358,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "Fel", diff: 0 },
         success: {
           text: "선장이 직접 내려온 담대함과 공정한 배당 계약에 조합원들이 환호하며 일터로 복귀했다! 선단의 사기가 최고조에 달했다.",
-          stats: { Fel: 8, WP: 5, Inf: 6 }
+          stats: { Fel: 8, WP: 5, Inf: 6 },
+          align: { humane: 9 }
         },
         fail: {
           text: "흥분한 강경파 사보타주범이 총을 쏘아 팔을 스쳤으나, 경호대가 즉시 제압하며 파업이 가라앉았다.",
           wounds: -16,
-          stats: { WP: 4, Fel: -2 }
+          stats: { WP: 4, Fel: -2 },
+          align: { humane: 6 }
         }
       },
       {
@@ -357,19 +373,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         check: { stat: "WS", diff: 0 },
         success: {
           text: "공포와 경외 속에 점거 대열이 순식간에 무릎을 꿇었다. 무역 영장의 주인에게 감히 토를 다는 자는 더 이상 없었다.",
-          stats: { WS: 7, Inf: 7, WP: 4 }
+          stats: { WS: 7, Inf: 7, WP: 4 },
+          align: { ruthless: 7 }
         },
         fail: {
           text: "난전 속에 늑골을 강타당했으나 끝내 동력 제어실 통제권을 되찾았다.",
           wounds: -20,
-          stats: { WS: 3, T: 3 }
+          stats: { WS: 3, T: 3 },
+          align: { ruthless: 5 }
         }
       },
       {
         label: "항해사 길드와 기계교 파견 사제를 중재인으로 세워 귀항 시 보너스 지급 각서를 걸고 피를 흘리지 않고 점거를 푼다",
         effect: {
           text: "상업 왕조의 주인답게 계약과 중재로 위기를 넘겼다. 이틀 뒤 주동자들이 스스로 무기를 반납하고 항해가 재개되었다.",
-          stats: { Int: 5, Inf: 4 }
+          stats: { Int: 5, Inf: 4 },
+          align: { humane: 7 }
         }
       }
     ],

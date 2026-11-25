@@ -184,7 +184,12 @@ window.IMPERIUM_DATA.TAG_LABELS = Object.assign(window.IMPERIUM_DATA.TAG_LABELS 
   bond_mentor: "인생의 스승",
   bond_rival: "숙명의 정적",
   bond_family: "가정과 배우자",
-  bond_heir: "후계자·자녀"
+  bond_heir: "후계자·자녀",
+
+  // 3대 도덕 성향 정점 이력 태그 (16.5단계)
+  align_beacon_mercy: "자비의 등불",
+  align_iron_dogma: "교조의 심판자",
+  align_shadow_broker: "암흑가의 밀거래자"
 });
 
 // 행성 유형 태그 한글 라벨 사전 (describeReq 표시용)

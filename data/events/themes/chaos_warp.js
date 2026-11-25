@@ -32,14 +32,16 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { WP: 10, Int: 6, Inf: 8 },
           faith: 15,
           corruption: -8,
-          addTags: ["sanctioned_psyker"]
+          addTags: ["sanctioned_psyker"],
+          align: { dogmatic: 8 }
         },
         fail: {
           text: "영혼 결속 도중 황제의 광휘에 시신경이 타 들어가 시력을 완전히 잃었으나, 사이킥 감각에 눈떠 간신히 옥좌 제물 행은 면하고 하급 아스트로패스로 살아남았다.",
           forceCareer: "sanctioned_psyker",
           wounds: -30,
           stats: { WP: 6, Int: 3 },
-          addTags: ["sanctioned_psyker"]
+          addTags: ["sanctioned_psyker"],
+          align: { dogmatic: 5 }
         }
       },
       {
@@ -49,7 +51,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "수색대를 따돌리고 무등록 사이커로 숨어 지내는 데 성공했다. 하지만 워프의 속삭임은 날로 거세진다.",
           stats: { Ag: 5, Int: 4 },
           corruption: 14,
-          addTags: ["rogue_psyker"]
+          addTags: ["rogue_psyker"],
+          align: { ruthless: 6 }
         },
         fail: {
           text: "침묵의 자매들에게 포박되어 검은 함선 선창에 갇혔다. 테라로 향하는 항해 도중 정신이 무너져 황금 옥좌의 불꽃을 지피는 천 명의 제물 중 하나가 되었다.",
@@ -96,12 +99,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "흔들림 없는 황제 신앙의 빛이 서리를 태워 버렸다! 악마의 속삭임은 재가 되어 흩어졌고 영혼은 더욱 순결해졌다.",
           stats: { WP: 6 },
           faith: 8,
-          corruption: -8
+          corruption: -8,
+          align: { dogmatic: 7 }
         },
         fail: {
           text: "잠시 정신이 흔들려 코피를 흘렸으나, 신앙의 방패 덕분에 오염은 크게 번지지 않았다.",
           wounds: -14,
-          corruption: 4
+          corruption: 4,
+          align: { dogmatic: 4 }
         }
       },
       {
@@ -110,7 +115,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "악마의 속삭임을 몰아내고 사이킥 통제력이 한층 정교해졌다!",
           stats: { WP: 6, Int: 3 },
-          faith: 6
+          faith: 6,
+          align: { dogmatic: 5 }
         },
         fail: {
           text: "사이킥 역류로 피를 토하며 쓰러졌고, 영혼에 지워지지 않는 워프의 균열이 남았다.",
@@ -124,7 +130,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "순간적으로 엄청난 지혜와 워프의 힘이 뇌리를 스쳤지만, 신앙의 빛이 급격히 식어 갔다.",
           stats: { Int: 8, WP: 4 },
           faith: -18,
-          corruption: 22
+          corruption: 22,
+          align: { ruthless: 10 }
         }
       }
     ],
@@ -211,7 +218,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "불경한 속삭임은 단단한 신념과 훈련 앞에서 아무 힘도 쓰지 못했다. 이단 유물을 완벽히 처리했다.",
           stats: { WP: 5, Inf: 6 },
           faith: 10,
-          corruption: -10
+          corruption: -10,
+          align: { dogmatic: 8 }
         }
       },
       {
@@ -221,7 +229,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { WP: 4, Inf: 5 },
           faith: 12,
           corruption: -8,
-          addTags: ["inquisition_favor"]
+          addTags: ["inquisition_favor"],
+          align: { dogmatic: 8 }
         }
       },
       {
@@ -231,13 +240,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "우주의 숨겨진 법칙과 끔찍한 진실의 단편을 깨우쳤다! 지성은 크게 늘었으나 영혼에 어둠이 깃들었다.",
           stats: { Int: 9, WP: 4 },
           faith: -18,
-          corruption: 22
+          corruption: 22,
+          align: { ruthless: 10 }
         },
         fail: {
           text: "글자들이 눈앞에서 살아 움직이며 정신을 물어뜯었다!",
           wounds: -18,
           faith: -15,
-          corruption: 26
+          corruption: 26,
+          align: { ruthless: 8 }
         }
       }
     ],
@@ -266,7 +277,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { WS: 12, T: 10, Int: -6 },
           faith: -25,
           corruption: 12,
-          addTags: ["mark_khorne", "heretic"]
+          addTags: ["mark_khorne", "heretic"],
+          align: { ruthless: 12 }
         }
       },
       {
@@ -276,7 +288,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Int: 12, WP: 8, Fel: 6 },
           faith: -25,
           corruption: 12,
-          addTags: ["mark_tzeentch", "heretic", "psyker"]
+          addTags: ["mark_tzeentch", "heretic", "psyker"],
+          align: { ruthless: 12 }
         }
       },
       {
@@ -287,7 +300,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           wounds: 35,
           faith: -25,
           corruption: 12,
-          addTags: ["mark_nurgle", "heretic"]
+          addTags: ["mark_nurgle", "heretic"],
+          align: { ruthless: 12 }
         }
       },
       {
@@ -297,7 +311,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { Ag: 12, Fel: 10, WS: 6, WP: -6 },
           faith: -25,
           corruption: 12,
-          addTags: ["mark_slaanesh", "heretic"]
+          addTags: ["mark_slaanesh", "heretic"],
+          align: { ruthless: 12 }
         }
       },
       {
@@ -308,12 +323,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "피를 토하는 고통 끝에 속삭임을 끊어 냈다! 오염이 크게 정화되고 황제의 빛이 다시 돌아왔다.",
           stats: { WP: 10 },
           faith: 20,
-          corruption: -25
+          corruption: -25,
+          align: { dogmatic: 12 }
         },
         fail: {
           text: "저항했지만 정신이 크게 손상되고 말았다.",
           wounds: -20,
-          corruption: 10
+          corruption: 10,
+          align: { dogmatic: 6 }
         }
       }
     ],
@@ -330,6 +347,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "직군: 카오스 컬티스트 · 카오스 챔피언",
     weight: 24,
+    alignBias: "ruthless",
     text: "제국 군수 창고와 성당을 습격할 비밀 의식이 준비되었다. 성공하면 워프의 축복이 쏟아지지만, 제국 치안대와 소로리타스가 이미 낌새를 챘다.",
     choices: [
       {
@@ -338,11 +356,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "워프의 축복이 쏟아지며 초자연적 힘이 깃들었다! 다만 오염이 깊어져 육신이 조금씩 변이하기 시작한다.",
           stats: { WS: 8, WP: 6, T: 5 },
-          corruption: 15
+          corruption: 15,
+          align: { ruthless: 10 }
         },
         fail: {
           text: "급파된 아뎁타 소로리타스의 볼터 화력에 큰 중상을 입고 겨우 도망쳤다!",
-          wounds: -34
+          wounds: -34,
+          align: { ruthless: 6 }
         }
       },
       {
@@ -351,11 +371,13 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "수백 명의 추종자가 그대의 깃발 아래 모였다. 행성 반란의 불씨가 커진다.",
           stats: { Fel: 6, Int: 4, Inf: 8 },
-          corruption: 10
+          corruption: 10,
+          align: { ruthless: 8 }
         },
         fail: {
           text: "밀고자 때문에 은신처가 발각되어 부상을 입었다.",
-          wounds: -22
+          wounds: -22,
+          align: { ruthless: 5 }
         }
       }
     ],
@@ -380,20 +402,23 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "코피를 쏟으며 끝내 워프의 균열을 닫았다! 합창단 수십 명의 목숨과 기밀 전문을 모두 지켜 내고 최고위 아스트로패스로 추대되었다.",
           stats: { WP: 8, Int: 5, Inf: 6 },
           wounds: -8,
-          corruption: -5
+          corruption: -5,
+          align: { humane: 10 }
         },
         fail: {
           text: "워프의 비명이 머릿속을 찢고 지나가며 정신적 상처와 오염을 남겼다. 그래도 차원문만은 가까스로 막았다.",
           wounds: -20,
           corruption: 12,
-          stats: { WP: 3 }
+          stats: { WP: 3 },
+          align: { humane: 6 }
         }
       },
       {
         label: "규정대로 합창실 비상 차단기를 내려 폭주한 단원들을 즉각 처분하고 송신을 중단한다",
         effect: {
           text: "참혹하지만 제국 규정상 가장 정확한 조치였다. 호위 커미사르가 권총을 집어넣으며 냉정히 고개를 끄덕였다.",
-          stats: { Int: 4, WP: 3, Inf: 4 }
+          stats: { Int: 4, WP: 3, Inf: 4 },
+          align: { dogmatic: 9 }
         }
       }
     ],
@@ -419,13 +444,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "'피의 신에게 피를!' 압도적인 일격으로 강적의 목을 베자 끓어오르던 갈증이 잔혹한 환희로 변하며 육신이 더욱 강인해졌다.",
           stats: { WS: 10, T: 6 },
           wounds: -8,
-          corruption: 12
+          corruption: 12,
+          align: { ruthless: 10 }
         },
         fail: {
           text: "무모한 돌격 끝에 깊은 자상을 입었으나, 분노의 힘으로 기어이 상대를 쓰러뜨리고 살아남았다.",
           wounds: -24,
           stats: { WS: 4 },
-          corruption: 8
+          corruption: 8,
+          align: { ruthless: 7 }
         }
       },
       {
@@ -449,7 +476,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "피로 바닥을 붉게 적신 뒤에야 손의 떨림이 멎었다. 인간성은 한 겹 더 벗겨져 나갔다.",
           stats: { WS: 5, Fel: -4 },
           wounds: -6,
-          corruption: 10
+          corruption: 10,
+          align: { ruthless: 8 }
         }
       }
     ],
@@ -532,13 +560,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           stats: { T: 10, Fel: -6 },
           wounds: 25,
           woundsBonus: 10,
-          corruption: 14
+          corruption: 14,
+          align: { ruthless: 12 }
         },
         fail: {
           text: "포자 배양 도중 독기가 역류해 피부가 심하게 짓물렀으나 고통만은 이상할 정도로 느껴지지 않았다.",
           wounds: -14,
           stats: { Fel: -8 },
-          corruption: 12
+          corruption: 12,
+          align: { ruthless: 8 }
         }
       },
       {
@@ -547,12 +577,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "끔찍한 오한을 견뎌 내며 정수조를 오염시키지 않았다. 육신은 쇠약해졌으나 마지막 양심의 조각을 지켜 냈다.",
           stats: { WP: 7, T: 4 },
-          corruption: -6
+          corruption: -6,
+          align: { humane: 10 }
         },
         fail: {
           text: "버텨 내는 동안 관절이 굳어 움직임이 둔해졌고, 역병의 아버지 너글의 웃음소리가 더욱 짙어졌다.",
           stats: { Ag: -5 },
-          corruption: 12
+          corruption: 12,
+          align: { humane: 6 }
         }
       },
       {
@@ -561,7 +593,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "어떤 피로도 슬픔도 느껴지지 않는 나른한 부패가 온몸에 자리 잡았다.",
           stats: { T: 6, Ag: -4 },
           wounds: 15,
-          corruption: 10
+          corruption: 10,
+          align: { ruthless: 4 }
         }
       }
     ],
@@ -700,6 +733,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "직군: 카오스 컬티스트 · 카오스 챔피언",
     weight: 34,
+    alignBias: "ruthless",
     text: "18시간 교대 노동과 시체 전분 배급에 지친 하층 하이브 공장 인부들 사이에 절망이 짙게 깔려 있다. 어둠의 교단을 키울 절호의 토양이지만, 아르비테스 밀정이 섞여 있을 위험도 크다.",
     choices: [
       {
@@ -708,12 +742,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "절망한 인부들이 팔각별 아래 무릎 꿇고 비밀 서약을 맺었다! 교단의 영향력이 구역 전체로 번져 나간다.",
           stats: { Fel: 7, Inf: 8 },
-          corruption: 8
+          corruption: 8,
+          align: { ruthless: 9 }
         },
         fail: {
           text: "인부 중 한 명이 아르비테스에 밀고해 집회소가 급습당했다. 피를 흘리며 겨우 탈출했다.",
           wounds: -16,
-          corruption: 5
+          corruption: 5,
+          align: { ruthless: 5 }
         }
       },
       {
@@ -722,12 +758,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "합법적인 구호 단체로 위장한 비밀 예배당이 완성되었다! 이단 감찰의 눈을 완벽히 따돌렸다.",
           stats: { Int: 7, Ag: 4, Inf: 6 },
-          corruption: 6
+          corruption: 6,
+          align: { ruthless: 8 }
         },
         fail: {
           text: "서기관이 겁을 먹고 자수하는 바람에 거점을 버리고 하수구로 급히 옮겨야 했다.",
           wounds: -14,
-          stats: { Inf: -4 }
+          stats: { Inf: -4 },
+          align: { ruthless: 5 }
         }
       },
       {
@@ -735,7 +773,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "작지만 들키지 않는 불씨가 어둠 속에서 서서히 행성의 기반을 갉아먹기 시작했다.",
           stats: { WP: 4, Ag: 3 },
-          corruption: 8
+          corruption: 8,
+          align: { ruthless: 6 }
         }
       }
     ],
@@ -753,6 +792,7 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     reqLabel: "직군: 카오스 컬티스트 · 카오스 챔피언 · 18세+",
     weight: 34,
+    alignBias: "ruthless",
     text: "교단의 소환 신호에 응답해 궤도에서 가시 돋친 강습정이 내려왔다! 1만 년 증오에 절은 반역자 카오스 스페이스 마린 워밴드 군주가 필멸자 교단원들을 소모품 보듯 내려다보며 방어 포대 좌표를 요구한다.",
     choices: [
       {
@@ -761,13 +801,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "반역자 군주가 거칠게 웃으며 그대의 담력을 인정했다! 카오스 무기와 막대한 배교자 지휘권을 하사받았다.",
           stats: { Inf: 10, WS: 5, BS: 5 },
-          corruption: 10
+          corruption: 10,
+          align: { ruthless: 11 }
         },
         fail: {
           text: "'벌레 주제에 흥정을 거는가!' 반역자 마린의 파워 피스트에 내동댕이쳐져 갈비뼈가 부러진 채 명령을 받들어야 했다.",
           wounds: -24,
           stats: { Inf: -4 },
-          corruption: 8
+          corruption: 8,
+          align: { ruthless: 7 }
         }
       },
       {
@@ -776,12 +818,14 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "예상대로 선봉에 선 필멸자 부대가 몰살당하는 사이, 그대는 무사히 약탈 물자를 챙겨 살아남았다!",
           stats: { Ag: 7, Int: 6 },
-          corruption: 6
+          corruption: 6,
+          align: { ruthless: 9 }
         },
         fail: {
           text: "탈출 도중 반역자 척후병의 볼터 사격에 중상을 입고 간신히 잔해 속으로 숨어들었다.",
           wounds: -22,
-          corruption: 8
+          corruption: 8,
+          align: { ruthless: 6 }
         }
       },
       {
@@ -790,7 +834,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
           text: "악마의 전사들 발밑에서 살아남는 유일한 길은 쓸모를 증명하는 것뿐이다. 상처투성이로 목숨을 부지했다.",
           stats: { T: 5, WS: 4 },
           wounds: -12,
-          corruption: 10
+          corruption: 10,
+          align: { ruthless: 5 }
         }
       }
     ],
@@ -1212,13 +1257,15 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "피 묻은 환영 속에서 정확한 성계 좌표를 해독해 냈다! 구조 함대가 출항해 3만 명의 제국 장병을 살려 냈다.",
           stats: { WP: 7, Int: 5, Inf: 7 },
-          faith: 6
+          faith: 6,
+          align: { humane: 10 }
         },
         fail: {
           text: "환영 뒤에 숨어 있던 워프 포식자가 정신을 할퀴고 지나가며 심한 고통과 오염을 남겼다.",
           wounds: -18,
           corruption: 7,
-          stats: { WP: 4 }
+          stats: { WP: 4 },
+          align: { humane: 6 }
         }
       },
       {
@@ -1238,7 +1285,8 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         effect: {
           text: "성가대 동료들을 워프 감염에서 지켜 냈다. 냉혹하지만 필수적인 보안 절차였다.",
           stats: { WP: 5, Int: 3 },
-          corruption: -4
+          corruption: -4,
+          align: { dogmatic: 8 }
         }
       }
     ],
