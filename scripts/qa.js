@@ -262,8 +262,7 @@ const producedTags = new Set([
   ...DATA.ORIGINS.flatMap((o) => o.tags || []),
   ...DATA.TRAITS.flatMap((t) => t.tags || []),
   ...DATA.CAREERS.flatMap((c) => (c.onJoin && c.onJoin.addTags) || []),
-  ...DATA.CHAPTERS.map((ch) => `chapter_${ch.id}`),
-  ...DATA.CHARACTERS.map((c) => `met_${c.id}`)
+  ...DATA.CHAPTERS.map((ch) => `chapter_${ch.id}`)
 ]);
 
 function collectOutcomeTags(out) {
@@ -760,10 +759,68 @@ for (const ch of DATA.CHRONICLES) {
     if (!travFromTerra.some((w) => w.id === "generic_knight")) {
       fail(4, `generic_knight missing from getTravelCandidateWorlds`);
     }
+
+    // Stage 18: 100% named character encounter, real met_* production & chronicle coverage + live preset->war simulation + obituary priority
+    const allEvAndTl = [...DATA.EVENTS, ...DATA.TIMELINE];
+    for (const ch of DATA.CHARACTERS) {
+      const appeared = allEvAndTl.some((ev) => Array.isArray(ev.characters) && ev.characters.includes(ch.id));
+      if (!appeared) fail(4, `Named character "${ch.id}" (${ch.name}) has 0 event/timeline appearances`);
+      const metTag = `met_${ch.id}`;
+      if (!producedTags.has(metTag)) fail(4, `Named character "${ch.id}" (${ch.name}) has 0 choice outcomes producing ${metTag}`);
+      const hasMetChron = DATA.CHRONICLES.some((c) => {
+        const r = c.req || {};
+        return (Array.isArray(r.allTags) && r.allTags.includes(metTag)) ||
+               (Array.isArray(r.anyTags) && r.anyTags.includes(metTag));
+      });
+      if (!hasMetChron) fail(4, `Named character "${ch.id}" (${ch.name}) has 0 ${metTag} chronicle follow-ups`);
+    }
+    const eraWarChecks = [
+      { eraId: "gothic_war", tlId: "tl_gothic_war", worldId: "cadia" },
+      { eraId: "first_armageddon", tlId: "tl_first_armageddon_shame", worldId: "armageddon" }
+    ];
+    for (const check of eraWarChecks) {
+      const preset = (Engine.ERA_PRESETS || []).find((p) => p.id === check.eraId);
+      const tl = DATA.TIMELINE.find((t) => t.id === check.tlId);
+      if (!preset) fail(4, `Missing Stage 18 era preset "${check.eraId}"`);
+      if (!tl) fail(4, `Missing Stage 18 timeline war "${check.tlId}"`);
+      if (preset && tl) {
+        const minReach = preset.maxYear + 14;
+        const maxReach = preset.minYear + 45;
+        if (tl.year < minReach || tl.year > maxReach) {
+          fail(4, `Era preset "${check.eraId}" (${preset.minYear}~${preset.maxYear}) cannot naturally reach ${check.tlId} (${tl.year}; expected ${minReach}~${maxReach})`);
+        }
+        // Live runtime simulation confirming the preset actually fires the target war
+        let fired = false;
+        for (let trial = 0; trial < 10 && !fired; trial++) {
+          const st = Engine.createCharacter({ mode: "custom", worldId: check.worldId, originId: "imperial_citizen", traitId: "none", eraId: check.eraId, gender: "male" });
+          let q = 0;
+          while (st.alive && st.year <= (tl.endYear || tl.year) + 1 && q < 180) {
+            Engine.advanceQuarter(st, { fastChildhood: true });
+            while (st.alive && st.pendingEvent) {
+              if (st.pendingEvent.id === check.tlId) fired = true;
+              const opts = st.pendingEvent.choices || [];
+              const safeIdx = opts.findIndex((c) => !c.req);
+              Engine.resolvePendingChoice(st, safeIdx >= 0 ? safeIdx : 0);
+            }
+            q++;
+          }
+          if (st.triggeredTimeline && st.triggeredTimeline.includes(check.tlId)) fired = true;
+        }
+        if (!fired) fail(4, `Era preset "${check.eraId}" failed to fire ${check.tlId} across 10 live simulation trials`);
+      }
+    }
+    // Direct met_<id> tag must beat global dispatch metCharacters in obituary epilogue
+    const epiTest = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "imperial_citizen", traitId: "none", eraId: "cadia_rift", gender: "male" });
+    epiTest.metCharacters = ["abaddon", "guilliman", "trazyn"];
+    epiTest.tags.push("met_trazyn");
+    const epiText = Engine.evaluateLifeGrade(epiTest).verdict || "";
+    if (!epiText.includes("솔렘나스")) {
+      fail(4, `Direct met_trazyn epilogue was masked by global metCharacters: "${epiText}"`);
+    }
   }
 }
 
-console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17 guards verified.`);
+console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-18 guards verified.`);
 
 // ============================================================================
 // Gate 5: 소프트락 · 유년기 풀(22행성 각 4+) · fastChildhood · 2400로그 보존 · 중복률

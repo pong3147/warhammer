@@ -312,7 +312,7 @@ function runBehavioralUiA11yTests() {
 
   function parseHtmlFragment(rawHtml, parentEl) {
     const nodes = [];
-    const tagRe = /<(button|li|select|h2|h3|div|option)\b([^>]*)>/gi;
+    const tagRe = /<(button|li|select|h2|h3|div|option|summary)\b([^>]*)>/gi;
     let m;
     while ((m = tagRe.exec(rawHtml)) !== null) {
       const tag = m[1].toLowerCase();
@@ -325,7 +325,7 @@ function runBehavioralUiA11yTests() {
       const focMatch = attrs.match(/\bdata-focus="([^"]+)"/);
       const disabled = /\bdisabled\b/.test(attrs);
       // Only materialize interactive/semantic children relevant to focus, clicks, and list identity
-      if (!idMatch && !cidMatch && !aidMatch && !chMatch && !focMatch && tag !== "li") continue;
+      if (!idMatch && !cidMatch && !aidMatch && !chMatch && !focMatch && tag !== "li" && tag !== "summary") continue;
       const el = new MockElement(tag, idMatch ? idMatch[1] : "");
       if (clsMatch) el.className = clsMatch[1];
       if (cidMatch) el.dataset.cid = cidMatch[1];

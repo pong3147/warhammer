@@ -240,5 +240,101 @@ window.IMPERIUM_DATA.CHARACTERS = [
     quote: "비밀을 지키는 자만이 용서받지 못한 자들의 명예를 감당할 수 있다.",
     desc: "사자의 투구와 비밀의 검을 계승해 이동 요새 '더 락'과 다크 엔젤 챕터를 이끄는 최고 사령관. 루비콘 프라이머리스 시술까지 통과하며 제1군단의 긍지를 수호한다.",
     source: "Lexicanum: Azrael / Codex: Dark Angels"
+  },
+  {
+    id: "ravensburg",
+    name: "코르넬리우스 폰 레이븐스버그",
+    en: "Lord Admiral Cornelius von Ravensburg",
+    title: "배틀플리트 고딕 총사령관 · 고딕 전쟁의 영웅",
+    faction: "임페리얼 네이비",
+    era: "139.M41 ~ 151.M41",
+    worlds: ["voidborn", "cadia"],
+    quote: "함대의 포화가 멈추는 날은 고딕 섹터가 자유를 되찾거나, 우리 모두가 공허에 잠기는 날뿐이다.",
+    desc: "제12차 블랙 크루세이드 고딕 전쟁에서 열세의 제국 해군을 지휘해 게스세마네 대승으로 판세를 뒤집고 신델가이스트 결전에서 아바돈의 침공을 꺾은 불굴의 로드 애드미럴.",
+    source: "Lexicanum: Cornelius von Ravensburg / Battlefleet Gothic"
+  },
+  {
+    id: "macharius",
+    name: "로드 솔라 마카리우스",
+    en: "Lord Solar Macharius",
+    title: "세그멘툼 솔라 최고 사령관 · 마카리우스 대성전 정복자",
+    faction: "아스트라 밀리타룸",
+    era: "392.M41 ~ 400.M41",
+    worlds: ["terra", "generic_civilised"],
+    quote: "저 별빛 너머 아직 황제의 빛을 보지 못한 모든 땅이 곧 인류의 영토다.",
+    desc: "불과 7년 만에 은하 서부 변경의 천 개 행성을 정복해 대성전 이후 최대의 영토 확장을 이룩한 필멸자 최고의 군사 천재이자 사후 시성된 성인.",
+    source: "Lexicanum: Macharius / The Macharian Crusade Trilogy"
+  },
+  {
+    id: "kaldor_draigo",
+    name: "칼도르 드라이고",
+    en: "Supreme Grand Master Kaldor Draigo",
+    title: "그레이 나이트 슈프림 그랜드 마스터 · 은빛 방랑자",
+    faction: "그레이 나이트",
+    era: "901.M41 ~ M42",
+    worlds: ["terra", "voidborn"],
+    quote: "우리는 망치이며, 악마의 심장에 박히는 은빛 쐐기다.",
+    desc: "코르노빈 전투에서 데몬 프라이마크 모타리온을 추방하고 슈프림 그랜드 마스터에 오른 뒤, 아크랄렘에서 악마 군주 엠카르의 최후 저주로 워프 심연에 묶이고도 절체절명의 전장마다 은빛 균열을 뚫고 나타나 형제들을 구원한다.",
+    source: "Lexicanum: Kaldor Draigo / Codex: Grey Knights"
+  },
+  {
+    id: "morvenn_vahl",
+    name: "모르벤 발",
+    en: "Abbess Sanctorum Morvenn Vahl",
+    title: "아뎁타 소로리타스 아베스 상크토룸 · 테라의 하이 로드",
+    faction: "아뎁타 소로리타스 / 테라의 하이 로드",
+    era: "001.M42 ~ 현재",
+    worlds: ["terra", "ophelia7"],
+    quote: "황궁 의회의 책상이 아니라 피와 화염이 튀는 최전선에서 황제의 뜻을 증명하겠다.",
+    desc: "유물 파라곤 워슈트 '연옥'과 성물 '성광의 창'을 다루며, 정치적 꼭두각시로 추대되리란 상원의 기대를 깨고 직접 최전선을 누비는 불굴의 소로리타스 총원장.",
+    source: "Lexicanum: Morvenn Vahl / Codex: Adepta Sororitas"
+  },
+  {
+    id: "kryptman",
+    name: "피두스 크립트만",
+    en: "Inquisitor Fidus Kryptman",
+    title: "오르도 제노스 이단심문관 · 타이라니드 최초 경고자",
+    faction: "이단심문소",
+    era: "745.M41 ~ M42 초",
+    worlds: ["macragge", "generic_hive"],
+    quote: "수천억을 살리기 위해 수십 개 행성의 재를 밟아야 한다면, 그 저주는 내가 짊어지겠다.",
+    desc: "하이브 함대 베헤모스의 위협을 제국에 최초로 경고하고, 레비아탄의 진격을 늦추기 위해 사상 최대의 익스터미나투스 방화선과 옥타리우스 유인 작전을 감행한 냉혹한 이단심문관.",
+    source: "Lexicanum: Fidus Kryptman / Codex: Tyranids"
+  },
+  {
+    id: "canis_rex",
+    name: "서 헤크투르 세르베란 (카니스 렉스)",
+    en: "Sir Hekhtur Cerberan — Canis Rex",
+    title: "사슬을 끊은 자 · 전설의 프리블레이드 임페리얼 나이트",
+    faction: "임페리얼 나이트 (프리블레이드)",
+    era: "980.M41 ~ M42",
+    worlds: ["generic_knight", "cadia"],
+    quote: "폭군의 사슬은 강철이 아니라 공포로 엮여 있다. 내가 그 사슬을 끊으러 왔다.",
+    desc: "아이언 워리어의 포로 수용소에서 퀘스토리스 나이트 '카니스 렉스'와 함께 탈출한 뒤, 압제와 카오스의 노예가 된 행성마다 홀로 강림해 해방의 철퇴를 내리는 전설적 프리블레이드.",
+    source: "Lexicanum: Canis Rex / Codex: Imperial Knights"
+  },
+  {
+    id: "mortarion",
+    name: "모타리온",
+    en: "Mortarion, Daemon Primarch of Nurgle",
+    title: "데스 가드 데몬 프라이마크 · 창백한 왕 · 역병의 군주",
+    faction: "데스 가드 (적대 세력)",
+    era: "M31 ~ M42",
+    worlds: ["macragge", "generic_hive"],
+    quote: "부패를 거부하는 오만은 고통만 연장할 뿐이다. 필멸의 모든 제국은 결국 썩어 내려앉으리라.",
+    desc: "부패의 신 너글의 선택을 받은 제14군단 데스 가드의 타락한 프라이마크. 거대한 대낫 '침묵'과 역병 군단을 이끌고 울트라마 역병 전쟁을 일으켜 길리먼과 정면 격돌했다.",
+    source: "Lexicanum: Mortarion / Dark Imperium Trilogy"
+  },
+  {
+    id: "trazyn",
+    name: "무한의 트라진",
+    en: "Trazyn the Infinite",
+    title: "니힐라크 왕조 솔렘나스의 고고학 대군주 · 무한의 수집가",
+    faction: "네크론 (외계 세력)",
+    era: "897.M41 ~ M42",
+    worlds: ["cadia", "generic_civilised"],
+    quote: "필멸자들은 역사를 흘려보내지만, 나는 그것을 가장 완벽한 순간 그대로 보존할 뿐이지.",
+    desc: "은하 전역의 영웅·유물·전투 장면 전체를 테서랙트 미궁에 담아 솔렘나스 박물관에 전시하는 괴짜 네크론 오버로드. 카디아 붕괴 당시 직접 나타나 벨리사리우스 카울과 기묘한 공조를 벌이기도 했다.",
+    source: "Lexicanum: Trazyn the Infinite / Fall of Cadia / The Infinite and the Divine"
   }
 ];

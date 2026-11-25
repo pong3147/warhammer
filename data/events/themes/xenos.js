@@ -740,25 +740,27 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
-        "custodes", "grey_knight", "dreadnought", "high_lord_terra"
+        "custodes", "grey_knight", "living_saint", "dreadnought", "high_lord_terra", "met_trazyn"
       ]
     },
     reqLabel: "897.M41 이후 · 22세 이상 · 테라·화성·야만 행성 제외",
+    characters: ["trazyn"],
     weight: 22,
-    text: "전투가 멎은 고대 폐허 한가운데, 시간이 멈춘 듯한 테서랙트 미궁의 불빛 사이로 은빛 외계 군주 한 명이 우아하게 지팡이를 짚고 나타났다. 스스로를 '무한한 자 트라진'이라 밝힌 네크론 오버로드는 그대의 사소한 유품 하나를 자신의 박물관에 기증하면, 이 성계를 덮칠 치명적인 재앙의 좌표 하나를 알려 주겠다고 흥미롭게 제안한다. 폐허의 먼지조차 공중에 정지한 기괴한 정적 속에 에메랄드빛 안광이 그대를 흥미롭게 훑는다.",
+    text: "전투가 멎은 고대 폐허 한가운데, 시간이 멈춘 듯한 테서랙트 미궁의 불빛 사이로 은빛 외계 군주 한 명이 우아하게 지팡이를 짚고 나타났다. 스스로를 '무한의 트라진'이라 밝힌 네크론 오버로드는 그대의 사소한 유품 하나를 자신의 박물관에 기증하면, 이 성계를 덮칠 치명적인 재앙의 좌표 하나를 알려 주겠다고 능글맞게 제안한다. 폐허의 먼지조차 공중에 정지한 기괴한 정적 속에 에메랄드빛 안광이 그대를 흥미롭게 훑는다.",
     choices: [
       {
-        label: "[교섭 판정] 박물관 전시품으로 갇히지 않도록 교묘한 말솜씨로 낡은 제국 연대 깃발 조각만 건네고 핵심 정보를 챙긴다",
+        label: "[교섭 판정] 말솜씨로 트라진을 구슬려 낡은 연대 깃발 조각만 넘기고 재앙 좌표를 얻는다",
         check: { stat: "Fel", diff: -10 },
         success: {
-          text: "은빛 수집가가 만족스러운 기계 웃음을 흘리며 성계 지하의 진스틸러 소굴 좌표를 남기고 사라졌다! 덕분에 행성이 구원받았다.",
+          text: "은빛 수집가가 만족스러운 기계 웃음을 흘리며 성계 지하의 진스틸러 소굴 좌표를 남기고 사라졌다! 덕분에 행성이 구원받았으나 기묘한 거래의 빚이 남았다.",
           stats: { Fel: 8, Int: 6, Inf: 6 },
-          addTags: ["xenos_contact"]
+          addTags: ["xenos_contact", "met_trazyn", "solemnace_debt"]
         },
         fail: {
           text: "트라진이 흥미를 잃고 정지장 구체로 위협하는 통에 혼비백산하여 겨우 도망쳤다.",
           wounds: -14,
-          stats: { Ag: 4, WP: 3 }
+          stats: { Ag: 4, WP: 3 },
+          addTags: ["met_trazyn"]
         }
       },
       {
@@ -767,19 +769,22 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
         success: {
           text: "트라진은 '인류 특유의 고집도 참 흥미롭군'이라며 감탄하더니 공격하지 않고 녹색 섬광 속으로 물러났다.",
           stats: { WP: 8, Inf: 5 },
-          faith: 8
+          faith: 8,
+          addTags: ["met_trazyn"]
         },
         fail: {
           text: "네크론 호위병의 충격파에 날아가 부상을 입었으나, 끝내 외계인의 수집품이 되지는 않았다.",
           wounds: -18,
-          stats: { WP: 5 }
+          stats: { WP: 5 },
+          addTags: ["met_trazyn"]
         }
       },
       {
         label: "절대 시선을 마주치지 않고 뒷걸음질로 폐허를 빠져나가 기이한 만남을 가슴속에 묻어 둔다",
         effect: {
           text: "수천만 년을 살아온 수집가와 엮여 좋을 일은 없다. 무사히 살아 돌아온 것만으로 천운이다.",
-          stats: { WP: 5, Ag: 4 }
+          stats: { WP: 5, Ag: 4 },
+          addTags: ["met_trazyn"]
         }
       }
     ],

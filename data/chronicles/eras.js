@@ -184,5 +184,113 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     req: { minAge: 14, minYear: 1020, excludeWorldTags: ["feral"] },
     text: "징조의 방주 함대가 은하를 공포에 몰아넣는 와중에도, 안개 속에서 제1군단의 프라이마크가 돌아왔다는 소문이 암흑 속 등불처럼 퍼져 나갔다.",
     effect: { stats: { WP: 1 }, faith: 3 }
+  },
+  {
+    id: "ch_s18_era_gothic_1",
+    badge: "고딕 섹터 암전",
+    priority: 3,
+    req: { minAge: 12, minYear: 139, maxYear: 151, excludeWorldTags: ["feral"] },
+    text: "거대한 워프 폭풍이 고딕 섹터를 삼키고 약탈자 아바돈이 고대 병기 블랙스톤 요새를 탈취해 섹터를 불태우고 있다는 아스트로패스 비보가 퍼지자, 항구마다 성간 항해 경계령이 내려졌다.",
+    effect: { stats: { WP: 1 } },
+    source: "Lexicanum: Gothic War / Battlefleet Gothic Rulebook (139~151.M41)"
+  },
+  {
+    id: "ch_s18_era_gothic_2",
+    badge: "게스세마네 승전보",
+    priority: 3,
+    req: { minAge: 14, minYear: 143, maxYear: 156, excludeWorldTags: ["feral"], excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] },
+    text: "로드 애드미럴 코르넬리우스 폰 레이븐스버그가 게스세마네 성계에서 아바돈의 함대를 꺾었다는 속보가 울리자, 지쳐 있던 제국 해군과 항구의 사기가 크게 치솟았다.",
+    effect: { stats: { WP: 1 }, faith: 2 },
+    source: "Lexicanum: Battle of Gethsemane / Cornelius von Ravensburg (143.M41)"
+  },
+  {
+    id: "ch_s18_era_macharius_echo",
+    badge: "마카리우스 성전의 메아리",
+    priority: 3,
+    req: { minAge: 14, minYear: 398, maxYear: 407, excludeWorldTags: ["feral"] },
+    text: "서부 변경의 천 개 행성을 정복한 로드 솔라 마카리우스의 위업이 연일 찬양받는 한편, 지나치게 넓어진 정복지의 패권을 둘러싼 장군들의 불협화음도 은밀히 흘러나왔다.",
+    effect: { stats: { Int: 1, Inf: 1 } },
+    source: "Lexicanum: Macharian Crusade / Macharian Heresy (398~407.M41)"
+  },
+  {
+    id: "ch_s18_era_first_armageddon_1",
+    badge: "검열된 붉은 소문",
+    priority: 3,
+    req: { minAge: 12, minYear: 444, maxYear: 448, excludeWorldTags: ["feral"] },
+    text: "세그멘툼 솔라의 공업 행성 하나가 붉은 재앙에 휩쓸렸다는 풍문이 채 퍼지기도 전에, 이단심문소의 급박한 아스트로패스 통신 검열령이 성계 전체를 덮었다.",
+    effect: { stats: { WP: 1, Int: 1 } },
+    source: "Lexicanum: First War for Armageddon / The Emperor's Gift (444.M41)"
+  },
+  {
+    id: "ch_s18_era_first_armageddon_2",
+    badge: "차가운 대치의 소문",
+    priority: 3,
+    req: { minAge: 14, minYear: 445, maxYear: 452, excludeWorldTags: ["feral"] },
+    text: "펜리스의 늑대 문장을 단 전함들과 이단심문소 순양함들이 궤도에서 포문을 겨눈 채 대치했다는 극비 풍문이 항법사들 사이로 은밀히 떠돌았다.",
+    effect: { stats: { Int: 1, WP: 1 } },
+    source: "Lexicanum: Months of Shame / The Emperor's Gift (444~445.M41)"
+  },
+  {
+    id: "ch_s18_era_third_tyranic_1",
+    badge: "은하 아래의 거대한 그림자",
+    priority: 3,
+    req: { minAge: 12, minYear: 997, maxYear: 1001, excludeWorldTags: ["feral"] },
+    text: "은하 평면 아래쪽 성좌도마다 붉은 경보등이 연쇄 점멸했다. 하이브 함대 레비아탄의 두 거대한 촉수가 제국의 복부를 향해 치솟고 있다는 비상 전문이 쏟아졌다.",
+    effect: { stats: { WP: 1 } },
+    source: "Lexicanum: Third Tyrannic War / Codex: Tyranids (997.M41)"
+  },
+  {
+    id: "ch_s18_era_third_tyranic_2",
+    badge: "방화선 너머의 피난선",
+    priority: 3,
+    req: { minAge: 14, minYear: 997, maxYear: 1003, excludeWorldTags: ["feral"], excludeWorlds: ["krieg"] },
+    text: "이단심문관 피두스 크립트만의 방화선 봉인이 찍힌 성계들에서 탈출한 피난 수송선이 궤도에 끝없이 몰려들었다. 검역소마다 불타 버린 고향 이야기가 흘러넘쳤다.",
+    effect: { stats: { WP: 1, Fel: 1 } },
+    source: "Lexicanum: Third Tyrannic War / Fidus Kryptman (997.M41)"
+  },
+  {
+    id: "ch_s18_era_octarius_1",
+    badge: "옥타리우스 봉쇄선 보급",
+    priority: 3,
+    req: { minAge: 14, minYear: 1004, maxYear: 1011, excludeWorldTags: ["feral"] },
+    text: "옥타리우스 봉쇄선 순찰 함대가 오크와 타이라니드 돌파 무리를 막아 내느라 탄약을 태우듯 소모한다는 전보가 닿으며, 군수창마다 비상 징발령이 떨어졌다.",
+    effect: { stats: { BS: 1, T: 1 } },
+    source: "Lexicanum: Octarius War / War Zone Octarius"
+  },
+  {
+    id: "ch_s18_era_plague_wars_1",
+    badge: "울트라마 검역과 기도",
+    priority: 3,
+    req: { minAge: 14, minYear: 1013, maxYear: 1017, excludeWorldTags: ["feral"], excludeTags: ["heretic", "chaos_aligned", "imperial_nihilus"] },
+    text: "너글의 역병 안개가 울트라마를 덮쳤다는 소식에 성간 화물 검역 봉인이 강화되었고, 성당마다 병원 행성 이악스의 구원을 비는 기도가 밤늦도록 이어졌다.",
+    effect: { stats: { T: 1 }, faith: 2 },
+    source: "Lexicanum: Plague Wars / Dark Imperium: Plague War"
+  },
+  {
+    id: "ch_s18_era_plague_wars_2",
+    badge: "이악스의 황금 불꽃",
+    priority: 3,
+    req: { minAge: 14, minYear: 1014, maxYear: 1020, excludeWorldTags: ["feral"], excludeTags: ["heretic", "chaos_aligned", "imperial_nihilus"] },
+    text: "제국 섭정 로부테 길리먼이 황금 불꽃으로 모타리온의 역병 가마솥을 부수고 울트라마를 지켜 냈다는 승전보가 아스트로패스 망을 타고 은하 전역으로 퍼져 나갔다.",
+    effect: { stats: { WP: 1 }, faith: 3 },
+    source: "Lexicanum: Plague Wars / Dark Imperium: Godblight"
+  },
+  {
+    id: "ch_s18_era_m42_knights_nav",
+    badge: "성간 항로와 기사 창기병",
+    priority: 3,
+    req: { minAge: 14, minYear: 1001, greatRift: true, excludeWorldTags: ["feral"], excludeTags: ["imperial_nihilus"] },
+    text: "대균열의 거친 워프 폭풍을 뚫고 나비스 노빌리테 등대 호송선과 임페리얼 나이트 기사 가문의 랜스 수송대가 입항하자, 굳게 닫혔던 성계 교역로에 숨통이 트였다.",
+    effect: { stats: { Int: 1, Inf: 1 } },
+    source: "Codex: Imperial Knights / Rogue Trader: The Navis Primer"
+  },
+  {
+    id: "ch_s18_era_m42_vahl_miracles",
+    badge: "총원장의 출정과 성광",
+    priority: 3,
+    req: { minAge: 14, minYear: 1002, greatRift: true, excludeWorldTags: ["feral"], excludeTags: ["heretic", "chaos_aligned", "imperial_nihilus"] },
+    text: "아베스 상크토룸 모르벤 발이 친히 테라를 떠나 최전선 성전에 나섰다는 포고와 함께, 암흑 속 전장마다 살아 있는 성인의 성광을 보았다는 목격담이 잇따랐다.",
+    effect: { stats: { WP: 1 }, faith: 3 },
+    source: "Lexicanum: Morvenn Vahl / Codex: Adepta Sororitas"
   }
 );

@@ -210,7 +210,19 @@ window.IMPERIUM_DATA.TAG_LABELS = Object.assign(window.IMPERIUM_DATA.TAG_LABELS 
   saint_vessel: "기적의 그릇",
   living_saint: "살아 있는 성인",
   saint_mercy_aspect: "자비의 성광",
-  saint_wrath_aspect: "심판의 성광"
+  saint_wrath_aspect: "심판의 성광",
+
+  // M41~M42 핵심 역사 · 거시 파장 · 네임드 크로스오버 태그 (18단계)
+  gothic_war_vet: "고딕 전쟁 참전",
+  kryptman_cordon_vet: "크립트만 방화선 참전",
+  octarius_survivor: "옥타리우스 생존자",
+  plague_war_vet: "역병 전쟁 참전",
+  shame_protector: "수치의 달들 수호자",
+  shame_purger: "수치의 달들 정화 집행자",
+  macro_exterminatus_scar: "익스터미나투스 낙인",
+  macro_mercy_sanctuary: "전선 구호 성역 수호",
+  crossover_oath: "전설들의 교차 서약",
+  solemnace_debt: "솔렘나스의 빚"
 });
 
 // 행성 유형 태그 한글 라벨 사전 (describeReq 표시용)

@@ -1,7 +1,75 @@
 window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
 
-// absYear: 240 = 240.M41, 755 = 755.M41, 999 = 999.M41, 1000 = 000.M42, 1001 = 001.M42
+// absYear: 139 = 139.M41, 240 = 240.M41, 755 = 755.M41, 999 = 999.M41, 1000 = 000.M42, 1001 = 001.M42
 window.IMPERIUM_DATA.TIMELINE = [
+  {
+    id: "tl_gothic_war",
+    year: 139,
+    endYear: 151,
+    title: "고딕 전쟁 — 제12차 블랙 크루세이드와 블랙스톤 요새",
+    en: "The Gothic War (12th Black Crusade)",
+    scope: "세그멘툼 옵스쿠루스 · 임페리얼 네이비 · 보이드본",
+    dispatchScope: "galaxy",
+    dispatchText: "약탈자 아바돈이 제12차 블랙 크루세이드를 일으켜 고딕 섹터를 침공하고 고대 병기 '블랙스톤 요새' 탈취에 나섰다! 배틀플리트 고딕 총사령관 코르넬리우스 폰 레이븐스버그 제독이 고립된 섹터에서 절체절명의 함대 결전을 벌이고 있다는 긴급 속보가 은하를 뒤흔든다.",
+    filter: {
+      minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [
+        { anySegmenta: ["obscurus"] },
+        { anyWorlds: ["voidborn", "cadia"] },
+        { anyTags: ["navy", "voidborn", "navigator", "rogue_trader", "militarum", "astartes"] }
+      ]
+    },
+    characters: ["ravensburg", "abaddon"],
+    summary: "139~151.M41 약탈자 아바돈이 고대 블랙스톤 요새를 노리고 고딕 섹터를 침공하자, 배틀플리트 고딕 총사령관 레이븐스버그 제독이 143.M41 게스세마네 대승으로 판세를 뒤집고 151.M41 신델가이스트 최종 결전에서 침공을 꺾었다.",
+    text: "고딕 섹터를 감싼 사나운 워프 폭풍 속에 제국 본토의 지원이 끊겼다! 약탈자 아바돈의 카오스 함대가 고대 병기 블랙스톤 요새를 탈취해 고딕 섹터를 유린하자, 배틀플리트 고딕 총사령관 코르넬리우스 폰 레이븐스버그 제독이 남은 모든 제국 전함과 상선, 보이드본 승무원들에게 게스세마네에서 신델가이스트까지 이어질 결전의 집결령을 내렸다.",
+    choices: [
+      {
+        label: "[사격 판정] 레이븐스버그 제독의 기함 편대에 합류해 게스세마네와 신델가이스트 함대 결전에 참전한다",
+        req: { minAge: 15 },
+        check: { stat: "BS", diff: -8 },
+        success: {
+          text: "블랙스톤 요새의 파괴 광선과 카오스 순양함들의 포화를 뚫고 치명적 일제 사격을 꽂아 넣었다! 레이븐스버그 제독이 직접 훈장을 수여하며 고딕 전쟁의 불굴 용사로 기록했다.",
+          stats: { BS: 6, WP: 6, Inf: 8 },
+          faith: 8,
+          align: { dogmatic: 6 },
+          addTags: ["gothic_war_vet", "met_ravensburg", "met_abaddon"]
+        },
+        fail: {
+          text: "감압된 선체 갑판에서 포격 파편에 중상을 입었으나, 제국 해군의 결사적 반격 끝에 아바돈의 함대가 워프로 물러나는 장면을 끝내 목격했다.",
+          wounds: -24,
+          stats: { T: 3, WP: 4 },
+          addTags: ["gothic_war_vet", "met_ravensburg"]
+        }
+      },
+      {
+        label: "[교섭 판정] 봉쇄된 행성의 피난 수송선단을 규합해 워프 폭풍 틈새로 민간인 탈출로를 연다",
+        check: { stat: "Fel", diff: -5 },
+        success: {
+          text: "카오스 약탈선의 추격을 따돌리고 수십 척의 민간 피난선을 포트 모 항구로 인도했다! 절망에 빠졌던 고딕 섹터 난민들이 그대의 이름을 구원의 등불로 기렸다.",
+          stats: { Fel: 6, Int: 4, Inf: 6 },
+          align: { humane: 10 },
+          addTags: ["gothic_war_vet", "macro_mercy_sanctuary", "met_ravensburg"]
+        },
+        fail: {
+          text: "후미 수송선 몇 척을 잃는 뼈아픈 손실과 부상을 겪었으나, 끝까지 항로를 포기하지 않아 대다수 난민을 살려 냈다.",
+          wounds: -18,
+          stats: { WP: 4 },
+          align: { humane: 6 },
+          addTags: ["gothic_war_vet"]
+        }
+      },
+      {
+        label: "포트 모 조선소와 궤도 보급 기지에 남아 손상된 전함의 탄약과 장갑판 수복을 끝까지 뒷받침한다",
+        effect: {
+          text: "12년 전쟁 내내 꺼지지 않은 조선소 용접 불꽃 속에서 묵묵히 배틀플리트 고딕의 숨통을 이어 주었다.",
+          stats: { Int: 4, T: 4, Inf: 4 },
+          addTags: ["gothic_war_vet"]
+        }
+      }
+    ],
+    source: "Lexicanum: Gothic War / Battlefleet Gothic Rulebook (139~151.M41)"
+  },
   {
     id: "tl_eisenhorn_xenos",
     year: 240,
@@ -160,7 +228,7 @@ window.IMPERIUM_DATA.TIMELINE = [
         { anyTags: ["militarum", "navy", "commissar", "officer", "astartes", "sororitas"] }
       ]
     },
-    characters: [],
+    characters: ["macharius"],
     summary: "392~399.M41 로드 솔라 마카리우스가 대성전 이후 가장 위대한 정복 전쟁을 이끌며 은하 서부 변방의 천 개 행성을 수복했다.",
     text: "세그멘툼 파시피쿠스의 별빛 끝자락을 향해 거대한 성전 함대가 진격한다! 로드 솔라 마카리우스의 천재적 지휘 아래 인류제국의 깃발이 날마다 새로운 성계에 꽂히며 전 은하의 병력과 물자가 서부로 빨려 들어가고 있다.",
     choices: [
@@ -169,16 +237,17 @@ window.IMPERIUM_DATA.TIMELINE = [
         req: { minAge: 15 },
         check: { stat: "BS", diff: 0 },
         success: {
-          text: "천 개 행성 정복의 역사적 진격에 몸을 실었다! 은하 서부 변방에 제국의 영광을 새긴 전설적 참전용사가 되었다.",
+          text: "천 개 행성 정복의 역사적 진격에 몸을 실었다! 로드 솔라 마카리우스의 진군 사열 앞에서 직접 공훈을 인정받은 전설적 참전용사가 되었다.",
           stats: { BS: 6, WS: 4, WP: 5, Inf: 7 },
           faith: 8,
-          addTags: ["macharian_veteran"]
+          align: { dogmatic: 5 },
+          addTags: ["macharian_veteran", "met_macharius"]
         },
         fail: {
-          text: "끝없이 이어지는 강행군과 변경 행성의 격렬한 저항에 깊은 상처를 입고 후송되었으나, 성전의 위대한 발자취만은 가슴에 남았다.",
+          text: "끝없이 이어지는 강행군과 변경 행성의 격렬한 저항에 깊은 상처를 입고 후송되었으나, 성전의 위대한 발자취와 마카리우스의 연설만은 가슴에 남았다.",
           wounds: -22,
           stats: { T: 3, WP: 3 },
-          addTags: ["macharian_veteran"]
+          addTags: ["macharian_veteran", "met_macharius"]
         }
       },
       {
@@ -191,6 +260,76 @@ window.IMPERIUM_DATA.TIMELINE = [
       }
     ],
     source: "Lexicanum: Macharian Crusade (392~399.M41)"
+  },
+  {
+    id: "tl_first_armageddon_shame",
+    year: 444,
+    endYear: 446,
+    title: "제1차 아마겟돈 전쟁과 수치의 달들 — 앙그론 격퇴와 숙청 갈등",
+    en: "First War for Armageddon & The Months of Shame",
+    scope: "아마겟돈 · 펜리스 · 세그멘툼 솔라 · 그레이 나이트 · 스페이스 울프",
+    dispatchScope: "galaxy",
+    dispatchText: "아마겟돈 행성에 데몬 프라이마크 앙그론과 월드 이터 대군이 강림했으나 그레이 나이트 제1형제단과 스페이스 울프의 사투 끝에 추방되었다! 그러나 직후 생존 시민과 병사들의 강제 불임 및 숙청을 둘러싸고 이단심문소와 로간 그림나르의 스페이스 울프가 무력 충돌 직전까지 치달았다는 극비 풍문이 돈다.",
+    filter: {
+      minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [
+        { anyWorlds: ["armageddon", "fenris"] },
+        { anySegmenta: ["solar"] },
+        { anyTags: ["militarum", "astartes", "grey_knight", "inquisitor", "inquisition_agent", "navy"] }
+      ]
+    },
+    characters: ["grimnar"],
+    summary: "444.M41 아마겟돈에서 데몬 프라이마크 앙그론이 격퇴된 직후, 오염 비밀을 지우려는 이단심문소의 대규모 숙청령과 무고한 생존자를 지키려는 로간 그림나르의 스페이스 울프가 정면 충돌한 '수치의 달들'이 벌어졌다.",
+    text: "잿빛 화산재 아래 앙그론과 코른 악마 군단의 포효가 마침내 멎었다. 그러나 승전의 안도감은 하루도 가지 못했다. 오르도 말레우스 심문관 키스나로스가 아마겟돈 방어군과 수억 시민의 기억을 지우고 강제 수용·불임 처리하라는 숙청령을 내리자, 스페이스 울프의 그레이트 울프 로간 그림나르가 격노하며 늑대 함대로 피난 수송선들을 엄호하고 이단심문소 봉쇄선을 가로막고 나선 것이다!",
+    choices: [
+      {
+        label: "[교섭 판정] 로간 그림나르와 스페이스 울프의 방패 아래 생존 장병과 피난 수송선의 탈출을 돕는다",
+        req: { excludeTags: ["shame_purger"] },
+        check: { stat: "Fel", diff: -8 },
+        success: {
+          text: "이단심문소 봉쇄선의 틈새로 수만 명의 아마겟돈 생존자를 빼돌렸다! 로간 그림나르가 묵직한 전사의 경례로 그대의 인간적 용기를 기렸으나, 심문소의 서늘한 눈초리가 따라붙었다.",
+          stats: { Fel: 6, WP: 6, Inf: 5 },
+          align: { humane: 12, dogmatic: -6 },
+          addTags: ["shame_protector", "macro_mercy_sanctuary", "met_grimnar"]
+        },
+        fail: {
+          text: "궤도 검문선과의 충돌 속에 부상을 입고 탈출선 일부를 잃었으나, 끝내 무고한 생존자들을 외면하지 않은 결단만은 꺾이지 않았다.",
+          wounds: -20,
+          stats: { WP: 4 },
+          align: { humane: 8, dogmatic: -4 },
+          addTags: ["shame_protector", "met_grimnar"]
+        }
+      },
+      {
+        label: "[의지 판정] 악마의 진실이 퍼지면 더 큰 파멸이 온다고 믿고 오르도 말레우스의 격리·숙청 작전을 집행한다",
+        req: { excludeTags: ["shame_protector"] },
+        check: { stat: "WP", diff: -6 },
+        success: {
+          text: "비명과 원망을 뒤로한 채 오염 의심 구역의 봉쇄와 기억 소거를 차갑게 완수했다. 이단심문소는 흔들림 없는 비밀 엄수를 높이 평가했으나, 손에 묻은 잿빛 죄책감은 지워지지 않았다.",
+          stats: { WP: 6, Int: 4, Inf: 7 },
+          faith: 6,
+          align: { dogmatic: 12, humane: -6 },
+          addTags: ["shame_purger", "inquisition_favor"]
+        },
+        fail: {
+          text: "격렬한 반발과 스페이스 울프의 저지 기동 속에 큰 부상을 입고 임무를 마쳤다. 제국의 비밀을 지키는 대가는 참혹했다.",
+          wounds: -18,
+          stats: { WP: 3, Inf: 3 },
+          align: { dogmatic: 8, humane: -4 },
+          addTags: ["shame_purger"]
+        }
+      },
+      {
+        label: "두 거대 기관의 대립에서 한 발 물러서서 앙그론의 혈전으로 무너진 하이브의 생존 물자와 치안을 수습한다",
+        effect: {
+          text: "상공에서 전함들이 포문을 겨누는 살얼음판 같은 몇 달을 침묵 속에 버텨 내며, 폐허가 된 도시의 숨결만은 지켜 냈다.",
+          stats: { WP: 5, T: 4 },
+          faith: 4
+        }
+      }
+    ],
+    source: "Lexicanum: First War for Armageddon / Months of Shame / The Emperor's Gift (444.M41)"
   },
   {
     id: "tl_damocles_crusade",
@@ -646,6 +785,76 @@ window.IMPERIUM_DATA.TIMELINE = [
     source: "Lexicanum: Second Tyrannic War / Battle of Ichar IV (992~993.M41)"
   },
   {
+    id: "tl_third_tyranic",
+    year: 997,
+    endYear: 998,
+    title: "제3차 타이라니드 전쟁 — 레비아탄과 크립트만의 방화선",
+    en: "Third Tyrannic War & Kryptman's Gambit",
+    scope: "은하계 전역 · 템페스투스 · 울티마",
+    dispatchScope: "galaxy",
+    dispatchText: "은하 평면 아래에서 거대한 두 가닥 촉수로 솟구친 하이브 함대 레비아탄이 인류제국의 복부를 찔러 들어왔다! 이단심문관 피두스 크립트만은 외계 포식자를 굶겨 죽이겠다며 아직 살아 있는 수십 개 제국 행성에 초토화 익스터미나투스 방화선을 선포했다.",
+    filter: {
+      minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [
+        { anySegmenta: ["tempestus", "ultima"] },
+        { anyTags: ["militarum", "astartes", "navy", "inquisitor", "inquisition_agent", "sororitas", "navigator", "imperial_knight"] }
+      ]
+    },
+    characters: ["kryptman"],
+    summary: "997.M41 하이브 함대 레비아탄이 은하 평면 아래에서 내습하자, 오르도 제노스 이단심문관 피두스 크립트만이 타이라니드의 생체 질량을 차단하기 위해 수십 개 제국 행성을 스스로 소각하는 은하 방화선을 강행했다.",
+    text: "성계 관측망에 은하 평면 아래에서 솟구치는 거대한 생체 함대의 그림자가 가득 찼다. 오르도 제노스 이단심문관 피두스 크립트만이 차가운 음성으로 통첩을 내린다. 타이라니드 하이브 함대 레비아탄의 진로에 놓인 거주 행성 수십 곳을 아예 궤도에서 소각해 굶겨 죽여야만 수천억의 후방을 살릴 수 있다는 것이다.",
+    choices: [
+      {
+        label: "[의지 판정] 크립트만의 방화선 집행 함대에 합류해 궤도 소각 명령을 완수한다",
+        req: { minAge: 15 },
+        check: { stat: "WP", diff: -5 },
+        success: {
+          text: "불타는 행성들의 비명을 통신 너머로 삼키며 레비아탄의 진군 속도를 늦추는 데 성공했다. 피두스 크립트만은 차가운 시선으로 그대의 냉철함을 기록했고, 지워지지 않는 잿빛 낙인이 가슴에 남았다.",
+          stats: { WP: 6, Int: 4, Inf: 8 },
+          align: { ruthless: 8, dogmatic: 5 },
+          addTags: ["kryptman_cordon_vet", "macro_exterminatus_scar", "met_kryptman"]
+        },
+        fail: {
+          text: "포격 직전 궤도로 치솟은 타이라니드 생체탄과 반란 방어포의 역습에 크게 다쳤다. 잿더미가 된 행성만 눈앞에 남았다.",
+          wounds: -24,
+          stats: { WP: 3 },
+          align: { ruthless: 5, dogmatic: 3 },
+          addTags: ["kryptman_cordon_vet", "macro_exterminatus_scar"]
+        }
+      },
+      {
+        label: "[교섭 판정] 소각 직전까지 수송선단을 밀어 넣어 단 한 척이라도 더 피난민을 구출한다",
+        req: { minAge: 15 },
+        check: { stat: "Fel", diff: -5 },
+        success: {
+          text: "이단심문소의 봉쇄 경고를 무릅쓰고 화염이 대기를 덮기 직전까지 피난선을 띄워 수만 명의 목숨을 건져 냈다! 크립트만의 경고를 샀으나, 살아남은 이들이 그대의 이름을 기억한다.",
+          stats: { Fel: 6, WP: 5, Inf: 6 },
+          faith: 8,
+          align: { humane: 8 },
+          addTags: ["kryptman_cordon_vet", "macro_mercy_sanctuary", "met_kryptman"]
+        },
+        fail: {
+          text: "진스틸러가 섞여 든 피난선과의 충돌과 궤도 포화 속에서 중상을 입었으나 끝내 몇 척의 수송선은 안전 지대로 보냈다.",
+          wounds: -26,
+          stats: { T: 3 },
+          align: { humane: 6 },
+          addTags: ["kryptman_cordon_vet", "macro_mercy_sanctuary"]
+        }
+      },
+      {
+        label: "후방 방화선 외곽의 검역 궤도와 보급 중계 기지를 사수하며 타이라니드 척후대를 차단한다",
+        effect: {
+          text: "불타는 전선 너머로 쏟아지는 포자와 척후 생체함을 요격하며 후방 항로를 지켜 냈다.",
+          stats: { BS: 4, Int: 4, WP: 4 },
+          align: { dogmatic: 4 },
+          addTags: ["kryptman_cordon_vet"]
+        }
+      }
+    ],
+    source: "Lexicanum: Third Tyrannic War / Fidus Kryptman (997.M41)"
+  },
+  {
     id: "tl_armageddon_3",
     year: 998,
     title: "제3차 아마겟돈 전쟁 — 잿빛 행성의 총력전",
@@ -1022,6 +1231,75 @@ window.IMPERIUM_DATA.TIMELINE = [
     source: "Lexicanum: Indomitus Crusade / Dark Imperium"
   },
   {
+    id: "tl_octarius_war",
+    year: 1004,
+    endYear: 1007,
+    title: "옥타리우스 전쟁 — 오크와 타이라니드의 지옥 도가니",
+    en: "The Octarius War",
+    scope: "울티마 · 봉쇄선 · 제국군 · 아스타르테스",
+    dispatchScope: "galaxy",
+    dispatchText: "피두스 크립트만이 타이라니드 하이브 함대 레비아탄을 오크 제국 옥타리우스로 유인한 도박이 끔찍한 부메랑으로 돌아왔다! 두 외계 포식자가 서로를 먹어 치우며 괴물처럼 비대해지자, 제국은 옥타리우스 봉쇄선을 지키기 위해 대군을 급파했다.",
+    filter: {
+      minAge: 14,
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"],
+      or: [
+        { anySegmenta: ["ultima"] },
+        { anyTags: ["militarum", "astartes", "inquisitor", "inquisition_agent", "deathwatch_vet", "navy", "indomitus_crusader", "imperial_knight", "assassin"] }
+      ]
+    },
+    characters: ["kryptman", "ghazghkull"],
+    summary: "피두스 크립트만의 유인 작전으로 하이브 함대 레비아탄과 오크 대제국이 정면 충돌한 옥타리우스 섹터가 갈수록 거대한 외계 생체 도가니로 변질되자, 제국은 붕괴하는 봉쇄선을 막기 위해 혈전을 치렀다.",
+    text: "옥타리우스 봉쇄선의 관측 위성이 핏빛 경보를 토해 낸다. 크립트만이 유인한 타이라니드 촉수와 오크 대군주들, 그리고 한때 이 도가니에서 세력을 불렸던 가즈쿨 스라카의 잔당들이 뒤엉켜 괴물 같은 진화를 거듭하며 제국 방어선으로 넘쳐흐르고 있다!",
+    choices: [
+      {
+        label: "[사격 판정] 옥타리우스 봉쇄선 최전방에서 쏟아지는 오크와 타이라니드 혼성 돌파를 막아 낸다",
+        req: { minAge: 15 },
+        check: { stat: "BS", diff: -10 },
+        success: {
+          text: "초대형 바이오-타이탄과 오크 가간트가 맞붙는 지옥의 화망 속에서 방어 요새를 사수했다! 가즈쿨의 이름을 외치는 오크 무리와 시냅스 지휘체를 동시에 꺾은 생존자로 남았다.",
+          stats: { BS: 7, T: 5, WP: 6, Inf: 8 },
+          align: { dogmatic: 6, ruthless: 4 },
+          addTags: ["octarius_survivor", "met_ghazghkull"]
+        },
+        fail: {
+          text: "오크 폭주 차량과 타이라니드 산성 포자에 협공당해 큰 부상을 입고 봉쇄선 후방으로 실려 갔다.",
+          wounds: -28,
+          stats: { T: 4 },
+          align: { dogmatic: 4 },
+          addTags: ["octarius_survivor"]
+        }
+      },
+      {
+        label: "[지성 판정] 피두스 크립트만의 비밀 첩보팀과 합류해 옥타리우스 붕괴 궤도를 차단한다",
+        req: { minAge: 15 },
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "파문당한 전직 이단심문관 피두스 크립트만과 은밀히 접촉해 두 외계 진영이 정면으로 충돌하도록 궤도 미끼를 재배치했다. 차가운 결단으로 인류 행성계의 시간을 벌었다.",
+          stats: { Int: 7, WP: 5, Inf: 7 },
+          align: { ruthless: 6, humane: 2 },
+          addTags: ["octarius_survivor", "met_kryptman"]
+        },
+        fail: {
+          text: "적진 한복판에 미끼를 설치하다 진스틸러 매복에 휘말려 중상을 입었으나, 귀중한 봉쇄선 좌표는 챙겨 나왔다.",
+          wounds: -22,
+          stats: { Int: 3 },
+          align: { ruthless: 4 },
+          addTags: ["octarius_survivor"]
+        }
+      },
+      {
+        label: "봉쇄선 외곽 항로의 민간 피난선과 보급 호송대를 엄호하며 2차 침투를 경계한다",
+        effect: {
+          text: "외계 포식자들이 휩쓸고 지나간 변방 성계에서 피난선들을 안전 항로로 유도하며 검역선을 지켜 냈다.",
+          stats: { WP: 5, Fel: 4, T: 4 },
+          align: { humane: 5 },
+          addTags: ["octarius_survivor"]
+        }
+      }
+    ],
+    source: "Lexicanum: Octarius War / War Zone Octarius"
+  },
+  {
     id: "tl_vigilus_war",
     year: 1008,
     title: "비질루스 야수 전쟁 — 나흐문드 회랑 사수전",
@@ -1112,6 +1390,96 @@ window.IMPERIUM_DATA.TIMELINE = [
       }
     ],
     source: "Lexicanum: Psychic Awakening"
+  },
+  {
+    id: "tl_plague_wars",
+    year: 1013,
+    endYear: 1015,
+    title: "역병 전쟁 — 울트라마의 정원 행성 이악스와 형제의 결전",
+    en: "The Plague Wars",
+    scope: "울티마 · 마크라그 · 제국군 · 아스타르테스 · 카오스",
+    dispatchScope: "galaxy",
+    dispatchText: "너글의 악마 프라이마크 모타리온이 데스 가드 군단과 부패 함대를 이끌고 500세계 울트라마를 침공했다! 제국 섭정 로부테 길리먼이 인도미투스 성전군을 돌려 형제와 맞섰으며, 병원 행성 이악스에서 역병과 성광이 충돌하는 대결전이 벌어졌다.",
+    filter: {
+      minAge: 14,
+      or: [
+        { anyWorlds: ["macragge"] },
+        { anySegmenta: ["ultima"] },
+        { anyTags: ["militarum", "astartes", "sororitas", "inquisitor", "indomitus_crusader", "imperial_knight", "living_saint", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] }
+      ]
+    },
+    characters: ["guilliman", "mortarion", "calgar"],
+    summary: "013~015.M42 너글의 악마 프라이마크 모타리온이 울트라마를 침공해 병원 행성 이악스를 거대한 역병의 가마솥으로 바꾸려 하자 로부테 길리먼과 마르네우스 칼가가 정면 격돌했다.",
+    text: "울트라마의 옥빛 하늘이 너글의 녹색 역병 구름으로 뒤덮였다! 데스 가드와 역병 함대가 파르메니오와 정원 행성 이악스를 휩쓸고, 거대한 낫을 든 악마 프라이마크 모타리온의 그림자 앞에서 제국 섭정 로부테 길리먼과 마르네우스 칼가가 반격의 검을 뽑아 들었다.",
+    choices: [
+      {
+        label: "[강인 판정] 길리먼과 칼가의 반격 전선에 합류해 데스 가드와 모타리온의 역병 폭풍을 뚫는다",
+        req: { minAge: 15, excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "T", diff: -10 },
+        success: {
+          text: "폐를 태우는 부패 안개를 견디며 파르메니오와 이악스의 반격 돌파구를 열었다! 황제의 성광이 모타리온의 가마솥을 불태우는 순간을 두 눈으로 목격했다.",
+          stats: { T: 7, WP: 7, WS: 5, Inf: 10 },
+          faith: 14,
+          align: { dogmatic: 7 },
+          addTags: ["plague_war_vet", "met_guilliman", "met_mortarion", "met_calgar"]
+        },
+        fail: {
+          text: "역병 해병의 부식탄과 워프 독기에 중독되어 사경을 헤맸으나, 울트라마 의무대의 정화 처치로 가까스로 살아남았다.",
+          wounds: -30,
+          corruption: 8,
+          stats: { T: 4 },
+          align: { dogmatic: 4 },
+          addTags: ["plague_war_vet"]
+        }
+      },
+      {
+        label: "[의지 판정] 병원 행성 이악스의 야전 병동을 사수하며 부상병과 피난민을 끝까지 지켜 낸다",
+        req: { minAge: 14, excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "WP", diff: -5 },
+        success: {
+          text: "너글 악마들이 밀려드는 병동 입구에서 성수와 화염으로 버텨 수만 명의 부상병을 대피선에 태웠다! 부패 속에서도 꺾이지 않은 자비의 증인이 되었다.",
+          stats: { WP: 7, Fel: 5, T: 4, Inf: 7 },
+          faith: 12,
+          align: { humane: 8 },
+          addTags: ["plague_war_vet", "macro_mercy_sanctuary", "met_mortarion"]
+        },
+        fail: {
+          text: "역병 파리의 습격으로 깊은 상처와 열병을 얻었으나, 끝까지 병동 철수선을 무너뜨리지 않았다.",
+          wounds: -24,
+          stats: { WP: 4 },
+          align: { humane: 6 },
+          addTags: ["plague_war_vet", "macro_mercy_sanctuary"]
+        }
+      },
+      {
+        label: "[강인 판정 · 카오스] 모타리온의 데스 가드 전열 뒤에서 울트라마를 삼키는 부패의 의식을 지켜본다",
+        req: { minAge: 14, anyTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "T", diff: 0 },
+        success: {
+          text: "악마 프라이마크 모타리온의 거대한 날개 아래 500세계의 성채들이 녹아내리는 광경을 목도했다! 역병의 축복과 두려운 명성이 따라붙었다.",
+          stats: { T: 6, WP: 5, Inf: 8 },
+          corruption: 12,
+          align: { ruthless: 8 },
+          addTags: ["plague_war_vet", "met_mortarion"]
+        },
+        fail: {
+          text: "황제의 불꽃이 이악스의 가마솥을 태울 때 역류한 성광에 큰 화상을 입고 워프 함대로 퇴각했다.",
+          wounds: -26,
+          corruption: 6,
+          align: { ruthless: 5 },
+          addTags: ["plague_war_vet"]
+        }
+      },
+      {
+        label: "울트라마 외곽 성계로 한 발 물러나 역병 폭풍과 전황의 추이를 주시하며 전력을 보전한다",
+        effect: {
+          text: "부패의 안개와 황금빛 반격이 뒤엉킨 대전쟁의 한복판에서 살아남아 외곽 항로에서 다음 국면을 대비했다.",
+          stats: { Int: 5, T: 4, WP: 4 },
+          addTags: ["plague_war_vet"]
+        }
+      }
+    ],
+    source: "Lexicanum: Plague Wars / Dark Imperium Trilogy (Revised 012~013.M42)"
   },
   {
     id: "tl_pariah_nexus",

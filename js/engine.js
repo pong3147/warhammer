@@ -178,12 +178,14 @@
 
   const ERA_PRESETS = [
     { id: "random", name: "무작위 격동기 (M41 말)", minYear: 930, maxYear: 994, desc: "아마겟돈 전쟁, 카디아 붕괴, 대균열, 인도미투스 성전을 관통하는 핵심 시대." },
+    { id: "gothic_war", name: "고딕 전쟁기 (120.M41 · 제12차 블랙 크루세이드)", minYear: 118, maxYear: 123, desc: "139~151.M41 레이븐스버그 제독과 약탈자 아바돈이 블랙스톤 요새를 두고 격돌하는 제국 해군 대혈전의 시대." },
     { id: "eisenhorn", name: "아이젠혼 시대 (225.M41 · 스카루스)", minYear: 222, maxYear: 228, desc: "240.M41~500.M41 오르도 제노스 이단심문관 그레고르 아이젠혼이 활약하던 M41 초중반 시대." },
+    { id: "first_armageddon", name: "제1차 아마겟돈과 수치의 달들 (424.M41)", minYear: 422, maxYear: 427, desc: "444.M41 앙그론의 침공과 스페이스 울프 대 이단심문소의 비극적 대립 '수치의 달들'을 정면으로 겪는 시대." },
     { id: "sabbat", name: "사바트 성전기 (746.M41)", minYear: 745, maxYear: 749, desc: "755.M41 사바트 월드 성전 선포와 765.M41 타니스 멸망(이브람 건트)을 겪는 시대." },
     { id: "badab", name: "바답 전쟁기 (882.M41)", minYear: 880, maxYear: 885, desc: "901~912.M41 마엘스트롬 반역과 스페이스 마린 내전을 목격하는 시대." },
     { id: "armageddon", name: "제2·3차 아마겟돈 격동기 (915.M41)", minYear: 913, maxYear: 917, desc: "931.M41 케인의 발할라 제597연대와 941.M41 야릭·단테의 제2차 아마겟돈 전쟁을 맞는 시대." },
     { id: "cadia_rift", name: "카디아 붕괴와 대균열 직전 (980.M41)", minYear: 979, maxYear: 981, desc: "19세 무렵 999.M41 카디아 최후, 바알의 파괴, 사자의 문과 인도미투스 성전을 정면 돌파하는 시대." },
-    { id: "indomitus", name: "인도미투스 성전 시대 (998.M41)", minYear: 996, maxYear: 1002, desc: "대균열 이후 프라이머리스, 육두정치 위기, 비질루스 전쟁, 파리아 넥서스, 라이온 귀환, 4차 타이라니드 전쟁의 시대." }
+    { id: "indomitus", name: "인도미투스 성전 시대 (998.M41)", minYear: 996, maxYear: 1002, desc: "대균열 이후 프라이머리스, 옥타리우스, 역병 전쟁, 비질루스, 파리아 넥서스, 라이온 귀환, 4차 타이라니드 전쟁의 시대." }
   ];
 
   const TAG_LABELS = (DATA && DATA.TAG_LABELS) || {};
@@ -2922,22 +2924,34 @@
       }
     }
 
-    if (met.length > 0) {
-      if (met.includes("guilliman") || met.includes("lion")) {
+    const directMet = tags.filter((t) => t.startsWith("met_")).map((t) => t.slice(4));
+    const epilogueMet = directMet.length > 0 ? directMet : met;
+    if (epilogueMet.length > 0) {
+      if (epilogueMet.includes("guilliman") || epilogueMet.includes("lion")) {
         lines.push("살아 돌아온 프라이마크를 두 눈으로 친견했던 목격자의 기록으로 성역 서고에 별도 주석이 달렸다.");
-      } else if (met.includes("abaddon") || met.includes("ghazghkull")) {
+      } else if (epilogueMet.includes("trazyn")) {
+        lines.push("솔렘나스 무한 박물관의 정지장 전시 목록 한 줄에 그대의 흔적이 기묘하게 기록되었다는 소문이 은하 외곽을 떠돌았다.");
+      } else if (epilogueMet.includes("kaldor_draigo")) {
+        lines.push("제국 공식 역사서에서는 지워졌으나, 타이탄의 극비 서고에 그대가 마주한 은빛 방랑자와 금지된 진실의 증언이 봉인되었다.");
+      } else if (epilogueMet.includes("kryptman")) {
+        lines.push("제국 공식 역사서에서는 지워졌으나, 이단심문소 오르도 제노스의 극비 서고에 그대가 마주한 방화선의 진실과 증언이 봉인되었다.");
+      } else if (epilogueMet.includes("abaddon") || epilogueMet.includes("ghazghkull") || epilogueMet.includes("mortarion")) {
         lines.push("은하 최악의 대적자를 마주하고도 끝내 버텨 냈던 생존자의 증언은 후대 전술 교범의 귀중한 사료로 남았다.");
-      } else if (met.includes("cain") || met.includes("amberley_vail")) {
+      } else if (epilogueMet.includes("cain") || epilogueMet.includes("amberley_vail")) {
         lines.push("후일 이단심문소 기록보관소의 비밀 회고록 각주에 그대의 짧은 활약상이 뜻밖의 유머와 함께 수록되었다.");
       } else if (
-        met.includes("gaunt") ||
-        met.includes("yarrick") ||
-        met.includes("creed") ||
-        met.includes("grimaldus")
+        epilogueMet.includes("gaunt") ||
+        epilogueMet.includes("yarrick") ||
+        epilogueMet.includes("creed") ||
+        epilogueMet.includes("grimaldus") ||
+        epilogueMet.includes("macharius") ||
+        epilogueMet.includes("ravensburg") ||
+        epilogueMet.includes("canis_rex") ||
+        epilogueMet.includes("morvenn_vahl")
       ) {
         lines.push("전장의 살아 있는 전설과 어깨를 나란히 했던 참전 이력이 추모비의 가장 높은 줄에 새겨졌다.");
       } else {
-        const ch = getCharacter(met[0]);
+        const ch = getCharacter(epilogueMet[0]);
         if (ch) {
           lines.push(`생전에 ${ch.name}의 그림자를 직접 스쳐 지나갔던 희귀한 증인으로서 그대의 이름이 기록 끝에 병기되었다.`);
         }
@@ -3573,10 +3587,14 @@
 
     // 역사 격전지 임박 시 최우선 파견 후보로 반영!
     const hotIds = [];
+    if (state.year >= 136 && state.year <= 151) hotIds.push("cadia");
+    if (state.year >= 441 && state.year <= 446) hotIds.push("armageddon", "fenris");
     if (state.year >= 938 && state.year <= 941) hotIds.push("armageddon");
+    if (state.year >= 995 && state.year <= 997) hotIds.push("baal", "macragge");
     if (state.year >= 995 && state.year <= 998) hotIds.push("armageddon");
     if (state.year >= 996 && state.year <= 999) hotIds.push("cadia", "baal");
     if (state.year >= 999 && state.year <= 1001) hotIds.push("terra", "macragge");
+    if (state.year >= 1011 && state.year <= 1015) hotIds.push("macragge");
     if (state.year >= 754 && state.year <= 764) hotIds.push("tanith");
 
     const hotWorlds = valid.filter((w) => hotIds.includes(w.id));
