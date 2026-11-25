@@ -182,5 +182,127 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
     },
     text: "전선 너머로 포성이 울릴 때마다 집에 남겨 둔 식구들의 얼굴이 떠올라 두려웠지만, 바로 그 두려움이 그대를 끝까지 살아남게 만들었다.",
     effect: { stats: { T: 1, WP: 1 } }
+  },
+  // === 16단계 심화 초장수기 · 드레드노트 · 초인 고참기 연대기 (10종) ===
+  {
+    id: "ch_s16_long_transhuman_160",
+    badge: "세기의 노병",
+    priority: 3,
+    req: {
+      minAge: 160,
+      anyTags: ["astartes", "custodes", "grey_knight"],
+      excludeTags: ["dreadnought", "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    text: "함교에서 경례를 올린 백발의 제국 해군 제독을 바라보다, 그가 백여 년 전 함께 싸웠던 젊은 위관의 증손자라는 사실을 뒤늦게 깨달았다. 필멸자들은 눈 깜짝할 사이에 태어나고 늙어 흙으로 돌아가지만, 초인의 육신은 전장의 먼지 속에서 여전히 한창때의 기력을 유지하고 있다. 덧없는 세월의 강을 건너는 동안 감정은 차츰 무뎌지고, 오직 완수해야 할 의무만이 강철처럼 단단히 남았다.",
+    effect: { stats: { WP: 1, Int: 1 } }
+  },
+  {
+    id: "ch_s16_long_transhuman_240",
+    badge: "두 세기의 전장",
+    priority: 3,
+    req: {
+      minAge: 240,
+      anyTags: ["astartes", "custodes", "grey_knight"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    text: "두 세기 넘게 온갖 행성의 포화를 막아 낸 갑주의 장갑판에는 수십 차례 보수하고 덧댄 흔적이 나이테처럼 겹쳐 있다. 전술 회의에서 젊은 전사들이 신종 위협이라며 긴장하는 적의 기동을 보며, 이미 백팔십 년 전 다른 성계에서 똑같은 수법을 격파했던 기억을 차분히 꺼내 놓았다. 오래 살아남은 전사의 기억 그 자체가 부대를 살리는 가장 값진 무기고다.",
+    effect: { stats: { Int: 1, Inf: 1 } }
+  },
+  {
+    id: "ch_s16_long_transhuman_320",
+    badge: "살아 있는 역사",
+    priority: 3,
+    req: {
+      minAge: 320,
+      anyTags: ["astartes", "custodes", "grey_knight"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    text: "전투가 멎은 고요한 밤, 문득 삼백 년 전 어린 필멸자 시절의 얼굴을 떠올려 보았으나 기억 속 윤곽은 안개처럼 흐려져 있었다. 그 자리를 채우고 있는 것은 수백 번의 공성전 좌표와 먼저 떠난 전우들의 이름, 그리고 결코 꺾이지 않는 충성의 맹세뿐이다. 인간다움의 마지막 조각마저 전쟁의 제단에 바쳤지만, 그 고독을 후회할 겨를조차 은하는 허락하지 않는다.",
+    effect: { stats: { WP: 1, T: 1 }, faith: 1 }
+  },
+  {
+    id: "ch_s16_long_transhuman_420",
+    badge: "사백 년의 전설",
+    priority: 3,
+    req: {
+      minAge: 420,
+      maxAge: 2500,
+      anyTags: ["astartes", "custodes", "grey_knight"],
+      excludeTags: ["dreadnought", "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    text: "사백 년의 세월을 전선에서 버텨 낸 전사의 이름은 이미 성계 기록관들 사이에서 전설 속 영웅담처럼 읽히고 있다. 함께 첫 출정을 나섰던 동기들은 모두 성소의 묘비명이 되었으나, 그대만은 여전히 숨을 고르며 새로운 세대의 신병들 앞에 선다. 영원한 전쟁이 끝나는 날까지 안식은 허락되지 않는다는 진실을 담담히 받아들이며 다시 무기를 들었다.",
+    effect: { stats: { WP: 1, Inf: 1 }, faith: 2 }
+  },
+  {
+    id: "ch_s16_long_dread_sleep",
+    badge: "강철 석관의 수면",
+    priority: 3,
+    req: {
+      allTags: ["dreadnought"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    text: "전투가 끝난 성소 지하에서 테크마린의 나지막한 찬가와 함께 신경 접속 회로가 차례로 차단되었다. 냉각된 양수액 속으로 의식이 가라앉는 순간, 백 년의 침묵과 하루의 휴식이 구분되지 않는 깊은 어둠이 밀려들었다. 육신은 이미 부서졌으나 황제를 향한 의무가 부르는 날이면 이 강철 거신은 다시 깨어날 것이다.",
+    effect: { stats: { WP: 1 }, wounds: 2 }
+  },
+  {
+    id: "ch_s16_long_dread_wake",
+    badge: "고대인의 각성",
+    priority: 3,
+    req: {
+      allTags: ["dreadnought"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    text: "성유와 전기 불꽃이 석관을 흔들며 동면이 풀리자, 시야창 너머로 한 번도 본 적 없는 젊은 중대장이 경건히 무릎을 꿇고 있었다. 복스 확성기를 통해 쇠를 긁는 듯한 낮고 묵직한 목소리로 현재의 연도와 적의 이름을 물었다. 기억 속 형제들의 이름은 모두 역사가 되었지만, 유압 관절이 굉음을 내며 일어서자 전사의 투지만은 어제처럼 생생히 타올랐다.",
+    effect: { stats: { WS: 1, T: 1 }, faith: 1 }
+  },
+  {
+    id: "ch_s16_long_custodes_180",
+    badge: "황금의 백팔십 년",
+    priority: 3,
+    req: {
+      minAge: 180,
+      allTags: ["custodes"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    text: "백팔십 년 넘는 세월 동안 아우라마이트 흉갑 안쪽에 새긴 개인 명예 칭호가 이제 수십 줄을 넘어섰다. 훈련장에서 모의 침입자를 제압한 뒤 반응 속도가 예전보다 눈 깜짝할 사이만큼 늦어지지 않았는지 스스로 엄격히 계측하며 황궁 방어 논문을 가다듬었다. 세월이 흐를수록 쿠스토데스의 무예는 쇠락하지 않고, 황금 옥좌를 지키는 고요한 완벽함으로 더욱 깊어질 뿐이다.",
+    effect: { stats: { Int: 1, WS: 1 }, faith: 1 }
+  },
+  {
+    id: "ch_s16_long_gk_160",
+    badge: "은빛의 고참",
+    priority: 3,
+    req: {
+      minAge: 160,
+      allTags: ["grey_knight"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"]
+    },
+    text: "타이탄 성채의 지하 납골당을 천천히 거닐며 백육십 년 동안 함께 악마를 베고 먼저 쓰러진 형제들의 이름이 새겨진 검은 석판을 어루만졌다. 수많은 워프 폭풍과 저주의 현장을 통과했지만, 황제의 유전자를 품은 정신에는 단 한 점의 오점도 스며들지 못했다. 666 성가를 낮게 읊조리며 은빛 갑주의 봉인을 새로 점검하자, 고요하고 흔들림 없는 순수한 신념이 칼끝에 모였다.",
+    effect: { stats: { WP: 1, Int: 1 }, faith: 2, corruption: -2 }
+  },
+  {
+    id: "ch_s16_long_mortal_130",
+    badge: "세기를 넘긴 필멸자",
+    priority: 3,
+    req: {
+      minAge: 130,
+      anyTags: ["rejuvenat", "bionic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"],
+      excludeHomeWorlds: ["krieg"]
+    },
+    text: "백삼십 년의 세월을 버텨 낸 육신은 이제 값비싼 리주버냇 혈청과 미세한 기계 보조 장치들이 맞물려 움직이는 정교한 유물에 가깝다. 젊은 서기관들이 쓰는 새 말투가 낯설게 들리고, 백 년 전 유행하던 악곡을 기억하는 이조차 주변에 아무도 남지 않았다. 남들보다 두 배 긴 생애를 허락받은 대가로, 제국의 끝없는 업무 속에서 조용한 이방인이 되어 가고 있음을 실감했다.",
+    effect: { stats: { Int: 1, WP: 1 }, wounds: -1 }
+  },
+  {
+    id: "ch_s16_long_mortal_170",
+    badge: "인간의 경계",
+    priority: 3,
+    req: {
+      minAge: 170,
+      anyTags: ["rejuvenat", "bionic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"],
+      excludeHomeWorlds: ["krieg"]
+    },
+    text: "백칠십 년을 살아 낸 끝에 육신의 고통도, 젊은 날의 격렬한 분노도 이제는 먼 유리 너머의 풍경처럼 아득해졌다. 정기 시술과 의체 점검으로 심장은 여전히 힘차게 뛰고 있으나, 거울 속 창백한 눈동자를 들여다보면 과연 어디까지가 원래의 인간인지 스스로도 가늠하기 어렵다. 그래도 한 세기 반 넘게 축적한 통찰과 인맥 앞에서는 가장 오만한 고위 관료조차 고개를 숙였다.",
+    effect: { stats: { Inf: 1, Int: 1 }, wounds: -1 }
   }
 );
