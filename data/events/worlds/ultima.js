@@ -502,5 +502,1072 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Lexicanum: Salamanders / Nocturne Sanctuary Cities"
+  },
+  {
+    id: "ev_s15_su_macragge_1",
+    title: "마크라그 산악 훈련장 — 외지 파견 장병과 울트라마 보조군 합동 기동",
+    category: "파견 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["macragge"],
+      excludeHomeWorlds: ["macragge"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "마크라그 파견 · 마크라그 외 출신 · 비초인",
+    weight: 32,
+    text: "마크라그 북부 고원 훈련장에서 외지 파견 인원과 울트라마 보조군 정예 중대가 합동 모의 기동훈련에 들어갔다. 《코덱스 아스타르테스》의 분초 단위 교전 시간표에 맞춰 움직이는 마크라그 장병들 사이에서, 험지 즉흥 기동에 익숙한 외지 분대가 연막 지대 돌파 시점을 두고 보조군 지휘관과 신경전을 벌인다.",
+    choices: [
+      {
+        label: "[제국군 지휘관 전용] 울트라마 교범의 화력 축선에 외지 부대의 우회 기동을 결합한 합동 작전안을 현장에서 완성한다",
+        req: { anyTags: ["militarum", "imperial_military", "officer", "commissar", "lord_commissar"] },
+        effect: {
+          text: "원칙과 유연함이 완벽히 맞물린 합동 기동에 울트라마 교관단이 기립해 경례를 보냈다!",
+          stats: { Int: 6, Inf: 6, BS: 4 }
+        }
+      },
+      {
+        label: "[지성 판정] 고원의 지형 고저차와 포격 예정 좌표를 암산해 울트라마 교관조차 인정할 완벽한 기동 경로를 증명한다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "단 한 치의 오차도 없는 기동 계산으로 모의 목표를 조기 탈취했다! 외지 장병의 실력을 마크라그 훈련장에 각인시켰다.",
+          stats: { Int: 7, BS: 4, Inf: 6 }
+        },
+        fail: {
+          text: "모의 포격 판정 구역에 진입해 훈련 실격 기록을 남기고 교관의 혹독한 강평을 들었다.",
+          stats: { Int: 2, Inf: -3 }
+        }
+      },
+      {
+        label: "[강인 판정] 영하의 설원 경사면을 완전 군장으로 선두 돌파해 외지 장병의 끈기를 몸으로 보여 준다",
+        check: { stat: "T", diff: 0 },
+        success: {
+          text: "거친 눈바람을 뚫고 가장 먼저 고지 깃발을 꽂아 울트라마 보조군 장병들의 진심 어린 박수를 받았다!",
+          stats: { T: 6, Ag: 4, Fel: 5 }
+        },
+        fail: {
+          text: "빙판 경사면에서 미끄러져 발목을 접질리고 저체온증으로 의무 천막에 실려 갔다.",
+          wounds: -14,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "울트라마 보조군의 표준 신호 체계와 교범을 겸허히 익히며 합동 대열의 보조 임무를 성실히 수행한다",
+        effect: {
+          text: "자존심보다 협동을 택한 태도 덕분에 마크라그식 정밀 병참과 부대 운용의 기본기를 깊이 배웠다.",
+          stats: { WP: 4, Int: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Ultramar Auxilia / Codex: Space Marines"
+  },
+  {
+    id: "ev_s15_su_macragge_2",
+    title: "마크라그 대도서관 군사 사료실 — 고대 성전 기록 대조",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["macragge"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 마크라그 · 비초인 필멸자",
+    weight: 30,
+    text: "마크라그 시비타스 대도서관의 군사 사료실에서 수천 년 전 대성전과 동부 변방 방어전 당시의 양피지 두루마리와 데이터 판독본을 대조하는 작업이 진행 중이다. 사서장이 훼손된 성계 보급로 사본에서 현재 울트라마 외곽 방위망에도 그대로 적용할 수 있는 잊힌 항로 좌표를 발견했지만, 해독 과정에서 두 기록이 정면으로 모순된다.",
+    choices: [
+      {
+        label: "[학자/관료/기계교/심문관 전용] 고대 하이 고딕 각주와 군수 관청 연표를 교차 대조해 정확한 보급 좌표를 즉시 복원한다",
+        req: { anyTags: ["ultramar_scholar", "administratum", "mechanicus", "inquisitor"] },
+        effect: {
+          text: "후대 필사본의 착오를 단번에 짚어 내어 잃어버린 성계 보급로를 복원했다! 마크라그 원로원 사료실에 그대의 이름이 기록되었다.",
+          stats: { Int: 8, Inf: 6, WP: 3 }
+        }
+      },
+      {
+        label: "[지성 판정] 낡은 양피지의 마모된 항성 기호와 부대 이동 일수를 계산해 진짜 사료와 후대 오기를 가려낸다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "치밀한 교차 검증으로 고대 성전 항로를 완벽히 밝혀 냈다! 사서장이 그대를 울트라마 명예 장학생 명단에 올렸다.",
+          stats: { Int: 7, Inf: 6, Fel: 3 },
+          addTags: ["ultramar_scholar"]
+        },
+        fail: {
+          text: "잘못된 사본을 정본으로 보고해 원로원 사료 위원회의 공식 정정 경고장을 받았다.",
+          stats: { Int: 2, Inf: -3 }
+        }
+      },
+      {
+        label: "[의지 판정] 사흘 밤낮을 등불 아래 틀어박혀 수천 줄의 군수 명부를 한 글자씩 빠짐없이 검증한다",
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "지독한 인내심 끝에 훼손된 구절의 단서를 찾아내어 사료실 학자들의 탄성을 자아냈다!",
+          stats: { WP: 6, Int: 5, Inf: 4 }
+        },
+        fail: {
+          text: "사흘 밤낮의 과로 끝에 집중력이 꺾여 결정적인 오기를 놓치고 사서장의 질책을 받았다.",
+          wounds: -8,
+          stats: { Inf: -2 }
+        }
+      },
+      {
+        label: "모순된 대목에 주석 표시만 달아 두고 정식 사서단의 최종 검증을 기다리며 주변 서고를 정리한다",
+        effect: {
+          text: "섣불리 단정하지 않는 신중함 덕분에 귀중한 고문서의 훼손을 막고 성전사의 흐름을 차분히 익혔다.",
+          stats: { Int: 4, WP: 3 }
+        }
+      }
+    ],
+    source: "Lexicanum: Macragge / Know No Fear"
+  },
+  {
+    id: "ev_s15_su_macragge_3",
+    title: "울트라마 성간 항만 세관 — 위조 울트라마 군수 공납 화물 적발",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["macragge"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 마크라그 · 비초인 필멸자",
+    weight: 30,
+    text: "마크라그 궤도 엘리베이터와 이어진 성간 항만 세관에서 외곽 성계발 상선 한 척이 군수 탄약으로 신고한 화물 상자에 불량 합금과 사치품 밀수 화물을 섞어 둔 정황이 포착되었다. 화주인 거대 상단의 대리인은 마크라그 일부 상업 귀족과의 친분을 과시하며 조용히 통관 도장을 찍어 달라고 압박해 온다.",
+    choices: [
+      {
+        label: "[법집행/관료/심문소 전용] 성전 군수품 사기죄 영장을 즉시 발부해 선박을 압류하고 배후 귀족 계좌까지 동결한다",
+        req: { anyTags: ["arbites", "administratum", "inquisitor", "inquisition_agent", "commissar"] },
+        effect: {
+          text: "추상같은 법 집행 앞에 거대 상단의 허세가 순식간에 무너졌다! 압수된 물자는 즉시 방위군 보급창으로 이관되었다.",
+          stats: { Inf: 8, Int: 5, WP: 4 }
+        }
+      },
+      {
+        label: "[지성 판정] 선하증권의 미세한 무게 오차와 봉인 밀랍의 성분 차이를 낱낱이 밝혀 내어 법정 증거로 굳힌다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "반박할 여지 없는 물증을 제시해 밀수 일당을 전원 체포했다! 울트라마 세관 감찰국에서 포상 서한이 내려왔다.",
+          stats: { Int: 6, Inf: 7, WP: 3 }
+        },
+        fail: {
+          text: "상단 변호인단이 검사 절차의 하자를 물고 늘어져 오히려 세관 감사를 받으며 입지가 좁아졌다.",
+          stats: { Inf: -4, Fel: -2 }
+        }
+      },
+      {
+        label: "[권위 판정] 항만 경비대를 소집해 상단 대리인의 협박을 정면으로 꺾고 즉석 개장 검사를 강행한다",
+        check: { stat: "Inf", diff: -5 },
+        success: {
+          text: "울트라마의 법 앞에 특권은 없다는 일갈에 대리인이 무릎을 꿇었다! 위조 화물이 만천하에 드러났다.",
+          stats: { Inf: 8, Fel: 4, WP: 4 }
+        },
+        fail: {
+          text: "화물창 수색 중 고용된 밀수꾼 경호원들과 난투가 벌어져 부상을 입고 상선 일부를 놓쳤다.",
+          wounds: -12,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "직접 충돌을 피하되 의심 화물의 일련번호를 익명 보고서로 마크라그 항만 감찰국에 넘긴다",
+        effect: {
+          text: "몸을 사리면서도 성전 군수품의 도둑질을 묵과하지 않았다. 며칠 뒤 상선이 외곽 검문소에서 적발되었다는 소식이 들렸다.",
+          stats: { Int: 4, WP: 3 }
+        }
+      }
+    ],
+    source: "Lexicanum: Macragge / Ultramar"
+  },
+  {
+    id: "ev_s15_su_baal_1",
+    title: "바알 방사능 사막 — 외곽 보급 기지 방어와 전갈형 변이 짐승 떼",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 15,
+      anyWorlds: ["baal"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 바알 · 비초인 필멸자",
+    weight: 30,
+    text: "붉은 방사능 모래가 끝없이 펼쳐진 바알 외곽의 물자 중계 기지에 밤이 찾아오자, 모래 언덕 너머에서 거대한 전갈형 변이 포식자 무리가 기지 발전기의 진동을 따라 몰려들었다! 철조망 외벽 일부가 이미 부식되어 뚫렸고, 식수 탱크를 지키지 못하면 기지 전원이 말라 죽는다.",
+    choices: [
+      {
+        label: "[전투 전문가/바알 생존자 전용] 조명탄으로 붉은 사구를 대낮처럼 밝히고 교차 사격 지대를 형성해 변이 짐승 떼를 일소한다",
+        req: { anyTags: ["militarum", "imperial_military", "sororitas", "baal_survivor"] },
+        effect: {
+          text: "빈틈없는 화망에 전갈 괴수 무리가 모래 언덕 너머로 뿔뿔이 흩어졌다! 기지의 식수 탱크와 보급고를 온전히 지켜 냈다.",
+          stats: { BS: 6, WS: 5, Inf: 5 }
+        }
+      },
+      {
+        label: "[사격 판정] 감시탑 방어 화기에 매달려 외벽 틈새로 기어오르는 전갈 괴수의 갑각 약점을 집중 사격한다",
+        check: { stat: "BS", diff: -5 },
+        success: {
+          text: "정확한 관절 조준 사격으로 선두 거수들을 차례로 쓰러뜨려 기지 방어선을 사수했다!",
+          stats: { BS: 7, WP: 4, Inf: 5 }
+        },
+        fail: {
+          text: "부서진 방벽 너머로 튄 거대 독침에 방어구가 뚫려 큰 부상을 입었다.",
+          wounds: -20,
+          stats: { BS: 2 }
+        }
+      },
+      {
+        label: "[백병 판정] 화염 토치와 단창을 들고 뚫린 철조망 앞에 버텨 서서 괴수들이 식수 탱크로 접근하지 못하게 막는다",
+        check: { stat: "WS", diff: 0 },
+        success: {
+          text: "불꽃과 창끝으로 외벽 틈새를 틀어막아 동이 틀 때까지 식수 탱크를 지켜 냈다!",
+          stats: { WS: 7, T: 5, Inf: 5 }
+        },
+        fail: {
+          text: "거대한 집게발에 옆구리를 베여 피투성이가 된 채 동이 틀 때까지 가까스로 버텨 냈다.",
+          wounds: -24,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "외곽 초소를 포기하고 기지 인원과 식수통을 중앙 방공 벙커로 철수시켜 철문을 용접해 봉쇄한다",
+        effect: {
+          text: "외곽 설비 일부는 잃었으나 기지 전원의 목숨과 비상 식수만은 무사히 보존했다.",
+          stats: { T: 4, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Baal / Dante"
+  },
+  {
+    id: "ev_s15_su_baal_2",
+    title: "바알 프라임 위성 — 채굴 정착촌의 정수기 고장과 방사선 차폐 수리",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 15,
+      maxYear: 999,
+      greatRift: false,
+      anyWorlds: ["baal"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 바알 · 바알의 파괴 이전 · 비초인 필멸자",
+    weight: 30,
+    text: "바알의 쌍둥이 위성 중 하나인 바알 프라임의 협곡 채굴 정착촌에서 강렬한 태양풍 직후 핵심 방사능 정수기와 납 차폐막 구동축이 동시에 멈춰 섰다. 오염된 지하수를 마시면 며칠 안에 피폭으로 쓰러지고, 수리실에서는 지금도 치명적인 방사선 수치를 알리는 경보음이 울리고 있다.",
+    choices: [
+      {
+        label: "[기계교 전용] 방사선 내성 의체와 정밀 공구로 고온 정수 코어에 직접 진입해 차폐 구동축을 완벽히 복구한다",
+        req: { anyTags: ["mechanicus", "tech_priest", "magos"] },
+        effect: {
+          text: "기계교의 성스러운 정밀 수리 덕분에 정수기와 차폐막이 다시 힘차게 돌아갔다! 정착촌 주민들이 깊이 고개를 숙였다.",
+          stats: { Int: 7, T: 4, Inf: 6 }
+        }
+      },
+      {
+        label: "[강인 판정] 두꺼운 납 앞치마만 걸친 채 방사선 구역에 뛰어들어 뒤틀린 차폐막 기어를 강제로 맞물린다",
+        check: { stat: "T", diff: -5 },
+        success: {
+          text: "피폭의 공포를 이겨 내고 묵직한 차폐막을 닫아 올려 정착촌 전체를 방사선 폭풍에서 구했다!",
+          stats: { T: 8, WP: 5, Inf: 5 }
+        },
+        fail: {
+          text: "극심한 방사선 화상과 구토 증세로 며칠간 사경을 헤매며 간신히 수리를 마쳤다.",
+          wounds: -22,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "[지성 판정] 광산 환기 팬과 예비 구리 코일을 뜯어 임시 여과 회로를 짜서 방사선 구역 진입 시간을 절반으로 줄인다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "기발한 우회 배선으로 피폭을 최소화하면서 정수기를 되살려 정착촌의 찬사를 받았다!",
+          stats: { Int: 7, Fel: 4, Inf: 5 }
+        },
+        fail: {
+          text: "임시 회로가 과열되어 스파크에 손을 크게 데고 여과 효율도 크게 떨어졌다.",
+          wounds: -14,
+          stats: { Inf: -2 }
+        }
+      },
+      {
+        label: "비상 비축수를 엄격히 계량 배급하며 방사선 폭풍이 잦아들 때까지 정착촌 주민들을 깊은 지하 갱도로 대피시킨다",
+        effect: {
+          text: "갈증은 혹독했으나 무모한 희생 없이 정착촌 주민 전원이 폭풍을 넘겼다.",
+          stats: { WP: 5, Fel: 3 }
+        }
+      }
+    ],
+    source: "Lexicanum: Baal Primus / Codex: Blood Angels"
+  },
+  {
+    id: "ev_s15_su_baal_3",
+    title: "바알의 붉은 천사 추모 성소 — 외지인이 마주한 침묵과 갈증",
+    category: "파견 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["baal"],
+      excludeHomeWorlds: ["baal"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "바알 파견 · 바알 외 출신 · 비초인",
+    weight: 32,
+    text: "외지에서 바알로 파견된 그대가 붉은 사막 협곡에 세워진 생귀니우스 추모 성소 앞에 섰다. 황금빛 날개를 펼친 천사 부조 아래로 뜨거운 열풍이 스쳐 가고, 순례자와 사막 부족민들이 말없이 피 묻은 붕대와 물 한 모금을 제단에 바친다. 극심한 탈수와 열기 속에서 바알 사람들이 왜 이 척박한 땅에서도 숭고함을 잃지 않는지 깨닫게 되는 순간이다.",
+    choices: [
+      {
+        label: "[성직자/전투 수녀/사이커 전용] 날개 달린 프라이마크의 희생을 기리는 장엄한 기도문을 낭송해 성소의 순례자들을 위로한다",
+        req: { anyTags: ["ecclesiarchy", "sororitas", "psyker"] },
+        effect: {
+          text: "협곡을 울리는 경건한 기도에 지친 순례자들과 사막 부족민들이 눈물을 흘리며 다시 일어섰다.",
+          stats: { WP: 7, Fel: 5, Inf: 5 },
+          faith: 10
+        }
+      },
+      {
+        label: "[의지 판정] 타는 듯한 갈증을 참아 내며 남은 정제수의 절반을 지친 순례자들에게 나누고 해 질 녘까지 석상 앞에서 묵념한다",
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "외지인의 숭고한 절제와 자비에 바알 부족민들이 붉은 모래 축복을 올리며 존경을 표했다!",
+          stats: { WP: 7, Fel: 6, T: 3 },
+          faith: 8
+        },
+        fail: {
+          text: "극심한 일사병과 탈수로 성소 돌계단에 쓰러져 바알 원주민들의 부축을 받았다.",
+          wounds: -12,
+          stats: { WP: 2 }
+        }
+      },
+      {
+        label: "[강인 판정] 바람에 파묻힌 성소 외벽의 붉은 모래를 홀로 파내며 바알의 혹독한 시련을 몸소 견뎌 낸다",
+        check: { stat: "T", diff: 0 },
+        success: {
+          text: "해가 저물도록 땀을 쏟으며 성소의 천사 날개 부조를 온전히 드러냈다! 바알의 열기마저 그대의 의지를 꺾지 못했다.",
+          stats: { T: 6, WP: 5, Inf: 4 },
+          faith: 6
+        },
+        fail: {
+          text: "뜨거운 돌가루에 피부가 벗겨지고 기력이 바닥나 작업을 끝마치지 못한 채 쓰러졌다.",
+          wounds: -14,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "성소 그늘에서 잠시 숨을 고르며 천사 석상에 경건히 고개를 숙인 뒤 본래 임무지로 발걸음을 돌린다",
+        effect: {
+          text: "생귀니우스의 고향이 품은 고요한 슬픔과 품격을 가슴 깊이 새겼다.",
+          stats: { WP: 4 },
+          faith: 6
+        }
+      }
+    ],
+    source: "Lexicanum: Baal / Sanguinius"
+  },
+  {
+    id: "ev_s15_su_baal_4",
+    title: "임페리움 니힐루스의 바알 — 대균열 너머 재건 보급선 호송",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      minYear: 1000,
+      greatRift: true,
+      anyWorlds: ["baal"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 바알 · 대균열 이후",
+    weight: 34,
+    text: "시카트릭스 말레딕툼이 은하를 가르고 아스트로노미칸의 빛이 끊긴 암흑의 제국 임페리움 니힐루스. 타이라니드 하이브 함대의 대침공으로 잿더미가 된 바알 궤도에 마침내 재건용 건축 자재와 의약품을 실은 소규모 보급선단이 도착했다. 그러나 궤도 잔해 사이에 숨어 있던 해적선과 잔존 외계 포자 무리가 착륙선 항로를 덮쳐 왔다!",
+    choices: [
+      {
+        label: "[함대/아스타르테스/지휘관 전용] 잔해 지대의 사각 항로를 꿰뚫는 정밀 기동으로 착륙선단을 엄호하며 습격자들을 격파한다",
+        req: { anyTags: ["navy", "rogue_trader", "astartes", "baal_survivor", "officer"] },
+        effect: {
+          text: "암흑 속에서도 흔들리지 않는 항해 지휘로 보급선단 전원을 지표에 안착시켰다! 바알 재건의 귀중한 불씨를 지켰다.",
+          stats: { BS: 6, Ag: 5, Inf: 7 },
+          faith: 5
+        }
+      },
+      {
+        label: "[사격 판정] 보급선 대공 포좌에 올라 암흑 속 잔해 사이로 파고드는 습격정과 외계 포자를 차례로 격추한다",
+        check: { stat: "BS", diff: -5 },
+        success: {
+          text: "불타는 포좌 위에서 습격정을 몰아내고 의약품과 건축 자재를 온전히 지켜 냈다! 바알의 생존자로 이름을 새겼다.",
+          stats: { BS: 7, WP: 5, Inf: 6 },
+          addTags: ["baal_survivor"]
+        },
+        fail: {
+          text: "적의 집중 사격에 포좌 장갑이 뚫려 깊은 파편상을 입고 보급선 한 척을 잃었다.",
+          wounds: -22,
+          stats: { BS: 2 }
+        }
+      },
+      {
+        label: "[지성 판정] 끊긴 워프 등대 대신 바알 위성의 중력 궤도를 계산해 착륙선들이 안전하게 강하할 비상 항로를 지정한다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "위성의 중력 그림자를 이용한 기적의 강하 궤도로 적의 포화를 따돌렸다! 암흑의 제국에서도 인류의 지혜는 꺼지지 않았다.",
+          stats: { Int: 7, Inf: 7, WP: 4 },
+          addTags: ["baal_survivor"]
+        },
+        fail: {
+          text: "항로 계산 오차로 착륙선 착지 지점이 어긋나 충격에 다치고 재건 물자 일부가 손실되었다.",
+          wounds: -14,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "지표 착륙장의 유도 등불을 끝까지 지켜 내어 무사히 내려온 보급 상자들을 벙커 안으로 실어 나른다",
+        effect: {
+          text: "어둠에 잠긴 바알 하늘 아래 마지막 등불을 지키며 재건의 첫 삽을 거들었다.",
+          stats: { T: 4, WP: 5 },
+          faith: 4
+        }
+      }
+    ],
+    source: "Lexicanum: Devastation of Baal / Imperium Nihilus"
+  },
+  {
+    id: "ev_s15_su_catachan_1",
+    title: "카타찬 밀림 행군 — 외지 장교의 제식 고집과 현지 안내인의 경고",
+    category: "파견 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["catachan"],
+      excludeHomeWorlds: ["catachan"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "카타찬 파견 · 카타찬 외 출신 · 비초인",
+    weight: 32,
+    text: "카타찬에 파견된 외지 연대의 신임 중대장이 광택 나는 제복 차림으로 2열 종대 제식 행군을 고집하며 이끼 낀 계곡을 정면 돌파하려 한다. 옆에 선 카타찬 현지 안내인이 침을 뱉으며 앞쪽 늪지대에 짖는 개구리 독포자와 식인 덩굴이 깔려 있으니 즉각 대형을 풀고 능선으로 우회하라고 경고하지만, 장교는 명령 불복종이라며 핏대를 세운다.",
+    choices: [
+      {
+        label: "[지휘관/커미사르/심문관 전용] 전술 판단 오류를 현장에서 즉시 바로잡아 현지 안내인에게 선두 정찰 지휘권을 넘긴다",
+        req: { anyTags: ["officer", "commissar", "lord_commissar", "inquisitor"] },
+        effect: {
+          text: "교범보다 실전을 택한 단호한 명령에 카타찬 안내인이 씨익 웃으며 선두에 섰다! 부대 전원이 무사히 능선을 돌파했다.",
+          stats: { Inf: 7, Int: 5, Fel: 5 }
+        }
+      },
+      {
+        label: "[교섭 판정] 외지 장교의 체면을 살려 주면서 능선 우회가 전술적 고지 점령에 유리하다고 설득해 부대를 구한다",
+        check: { stat: "Fel", diff: -5 },
+        success: {
+          text: "장교의 자존심을 건드리지 않고 행군로를 돌려 전멸 위기를 넘겼다! 현지 안내인도 그대의 눈치를 높이 샀다.",
+          stats: { Fel: 7, Int: 5, Inf: 5 }
+        },
+        fail: {
+          text: "장교가 분노해 강행군을 밀어붙인 탓에 계곡 독포자에 휩쓸려 호흡기를 크게 다쳤다.",
+          wounds: -16,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "[민첩 판정] 대열 선두로 뛰어나가 소형 독개구리가 남긴 맹독 포자 주머니에 돌을 던져 멀리서 터뜨려 위험을 눈앞에서 증명한다",
+        check: { stat: "Ag", diff: 0 },
+        success: {
+          text: "시퍼런 독연기가 솟구치자 안색이 창백해진 장교가 즉각 우회 명령을 내렸다! 대담한 행동으로 중대를 살렸다.",
+          stats: { Ag: 7, T: 4, Fel: 4 }
+        },
+        fail: {
+          text: "돌을 던지던 순간 바람이 바뀌어 독성 포자 연기가 팔뚝에 스쳐 살이 짓무르는 대가를 치르고서야 부대가 발걸음을 멈췄다.",
+          wounds: -20,
+          stats: { Ag: 2 }
+        }
+      },
+      {
+        label: "언쟁에 끼어들지 않고 방독면 끈을 단단히 조인 채 늪지 가장자리의 단단한 나무뿌리만 밟으며 스스로 살아남을 길을 찾는다",
+        effect: {
+          text: "카타찬 밀림에서는 멍청한 명령보다 발밑을 보는 눈이 목숨을 지킨다는 교훈을 뼈저리게 배웠다.",
+          stats: { T: 5, Ag: 3 }
+        }
+      }
+    ],
+    source: "Lexicanum: Catachan Jungle Fighters / Codex: Catachans"
+  },
+  {
+    id: "ev_s15_su_catachan_2",
+    title: "카타찬 밀림 전초기지 — 맹독 식충 식물 군락 침식과 야간 방화선",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 15,
+      anyWorlds: ["catachan"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 카타찬 · 비초인 필멸자",
+    weight: 30,
+    text: "야간 습기가 피어오르는 카타찬 밀림 전초기지의 철조망을 뚫고, 산성 수액을 뿜어내는 거대한 식충 덩굴 군락이 하룻밤 사이에 수 미터나 자라 들어왔다! 발전기 막사와 탄약고가 덩굴에 감기기 일보 직전이며, 프로메튬 연료통은 단 세 통뿐이다.",
+    choices: [
+      {
+        label: "[밀림 전사/제국군 전용] 바람 방향과 수액의 인화점을 계산해 최소한의 프로메튬으로 완벽한 원형 방화선을 그어 낸다",
+        req: { anyTags: ["catachan_blooded", "militarum", "imperial_military"] },
+        effect: {
+          text: "단 한 통의 연료로 덩굴 뿌리 전체를 잿더미로 만들었다! 전초기지 장병들이 그대의 솜씨에 환호했다.",
+          stats: { BS: 5, Int: 5, T: 5, Inf: 4 }
+        }
+      },
+      {
+        label: "[사격 판정] 중형 화염방사기를 메고 철조망 외곽을 따라 정밀하게 불길을 뿌려 덩굴 뿌리 줄기만 태워 낸다",
+        check: { stat: "BS", diff: 0 },
+        success: {
+          text: "탄약고에 불티 하나 튀지 않게 하면서 맹독 식충 군락을 말끔히 소각해 전초기지를 지켜 냈다!",
+          stats: { BS: 6, T: 4, Inf: 5 }
+        },
+        fail: {
+          text: "불길에 놀란 식충 식물이 사방으로 뿜어낸 강산 수액에 방어구와 어깨를 크게 데었다.",
+          wounds: -18,
+          stats: { BS: 2 }
+        }
+      },
+      {
+        label: "[백병 판정] 밀림 정글도로 발전기 막사를 휘감은 주 줄기를 직접 쳐내고 동료들이 불을 놓을 틈을 연다",
+        check: { stat: "WS", diff: -5 },
+        success: {
+          text: "팔뚝만 한 식충 줄기를 단칼에 베어 내고 발전기를 살려 내어 기지 전체의 야간 조명을 지켜 냈다!",
+          stats: { WS: 7, T: 5, Inf: 5 }
+        },
+        fail: {
+          text: "가시 덩굴이 다리를 휘감고 파고들어 큰 출혈을 입고 의무병에게 끌려 나왔다.",
+          wounds: -22,
+          stats: { WS: 2 }
+        }
+      },
+      {
+        label: "탄약고 주변의 마른 풀과 나무만 서둘러 베어 내어 불길이 기지 안쪽으로 번지지 않도록 방화벽을 다진다",
+        effect: {
+          text: "외곽 철조망 일부는 내주었으나 탄약고 폭발이라는 최악의 참사만은 확실히 막아 냈다.",
+          stats: { T: 4, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Catachan Flora / Codex: Astra Militarum"
+  },
+  {
+    id: "ev_s15_su_catachan_3",
+    title: "카타찬 폭우 밀림 강 — 급류 도하와 수중 포식자 습격",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 15,
+      anyWorlds: ["catachan"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 카타찬 · 비초인 필멸자",
+    weight: 28,
+    text: "앞이 보이지 않는 열대 폭우가 쏟아지는 가운데 보급품과 통신 장비를 실은 수송대가 불어난 밀림 강을 도하해야 한다. 강 한가운데 임시 밧줄 다리를 건너던 순간, 흙탕물 아래에서 거대한 비늘 등지느러미가 솟구치며 수중 포식자 무리가 도하 대열을 향해 달려들었다!",
+    choices: [
+      {
+        label: "[밀림 베테랑/제국군/전투 수녀 전용] 수면 아래 움직임을 간파하고 파편 수류탄으로 물길을 뒤흔들어 포식자 떼를 단숨에 흩어 버린다",
+        req: { anyTags: ["catachan_blooded", "militarum", "sororitas"] },
+        effect: {
+          text: "수중 충격파에 포식자 무리가 허옇게 배를 드러내고 떠내려갔다! 수송대 전원이 흠집 없이 강을 건넜다.",
+          stats: { WS: 5, Ag: 6, T: 5 }
+        }
+      },
+      {
+        label: "[민첩 판정] 출렁이는 밧줄 위에서 균형을 잡으며 물 밖으로 솟구친 포식자의 아가리를 피하고 통신 장비를 건너편으로 넘긴다",
+        check: { stat: "Ag", diff: -5 },
+        success: {
+          text: "폭우와 급류 속에서도 고양이처럼 밧줄을 건너 핵심 통신 장비와 보급품을 무사히 안착시켰다!",
+          stats: { Ag: 7, T: 4, Inf: 5 }
+        },
+        fail: {
+          text: "급류에 휩쓸려 바위에 부딪히고 수중 포식자의 이빨에 종아리를 물려 겨우 강둑으로 기어 올라왔다.",
+          wounds: -20,
+          stats: { Ag: 2 }
+        }
+      },
+      {
+        label: "[사격 판정] 강둑 나무 위에 올라 흙탕물 속 파문을 겨냥해 포식자 우두머리의 숨통을 끊어 도하 시간을 번다",
+        check: { stat: "BS", diff: 0 },
+        success: {
+          text: "빗줄기를 가르는 정확한 사격으로 우두머리를 쓰러뜨려 동료들이 안전하게 도하할 틈을 열었다!",
+          stats: { BS: 7, WP: 4, Inf: 4 }
+        },
+        fail: {
+          text: "미끄러운 나뭇가지에서 추락해 갈비뼈에 타박상을 입고 탄약도 잃었다.",
+          wounds: -16,
+          stats: { BS: 2 }
+        }
+      },
+      {
+        label: "강둑 위 안전한 밧줄 고정 말뚝을 끝까지 붙잡고 동요하는 동료들의 도하 줄을 단단히 유지한다",
+        effect: {
+          text: "눈에 띄지 않는 자리에서 밧줄이 풀리지 않게 온몸으로 버텨 내어 수송대의 붕괴를 막았다.",
+          stats: { T: 5, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Catachan Fauna / Jungle Fighters"
+  },
+  {
+    id: "ev_s15_su_valhalla_1",
+    title: "발할라 지하 빙하 도시 — 중앙 열교환소 압력 이상과 동결 위기",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 15,
+      anyWorlds: ["valhalla"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 발할라 · 비초인 필멸자",
+    weight: 30,
+    text: "영구 동토 아래 깊숙이 파인 발할라 지하 하이브의 중앙 지열 열교환소에서 굉음과 함께 증기 압력이 급락했다. 주 배관이 얼어붙어 파열되면 하위 주거 구역 세 개가 불과 몇 시간 만에 영하 70도의 얼음 무덤으로 변한다. 증기와 성에가 뒤섞인 기계실 안에서 비상 수동 전환 작업이 시급하다.",
+    choices: [
+      {
+        label: "[기계교 전용] 지열 펌프의 압력 곡선을 즉시 재조정하고 막힌 응축 밸브를 기계령 의례로 되살린다",
+        req: { anyTags: ["mechanicus", "tech_priest", "magos"] },
+        effect: {
+          text: "성스러운 기계령 진정 절차로 열교환 압력이 단숨에 정상화되었다! 수만 주민이 동사의 위기를 넘겼다.",
+          stats: { Int: 7, Inf: 6, T: 3 }
+        }
+      },
+      {
+        label: "[지성 판정] 열교환 도면을 머릿속으로 복기해 보조 증기관으로 열기를 역순환시켜 얼어붙은 주 배관을 녹여 낸다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "단 한 구역의 난방도 끊지 않고 주 배관의 얼음 마개를 완벽히 녹여 내어 도시 관리국의 표창을 받았다!",
+          stats: { Int: 7, Inf: 6, WP: 4 }
+        },
+        fail: {
+          text: "압력 조절 실수로 고온 증기가 터져 나와 화상을 입고 구역 난방 복구가 지연되었다.",
+          wounds: -16,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "[강인 판정] 얼음 결정이 달라붙은 외벽 냉각통로로 들어가 얼어붙은 수동 차단 레버를 온몸의 힘으로 꺾어 돌린다",
+        check: { stat: "T", diff: 0 },
+        success: {
+          text: "뼈가 시린 혹한을 견디며 수동 전환을 완료해 지하 도시의 생명줄을 다시 이어 놓았다!",
+          stats: { T: 7, WP: 5, Inf: 5 }
+        },
+        fail: {
+          text: "손가락과 뺨에 심한 동상을 입었으나 간신히 레버를 돌려 도시의 동결만은 막아 냈다.",
+          wounds: -20,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "주거 구역의 단열 격벽을 서둘러 닫고 주민들에게 비상 보온 담요와 뜨거운 배급을 나누며 복구를 지원한다",
+        effect: {
+          text: "차분한 대피와 보온 조치 덕분에 수리가 끝날 때까지 단 한 명의 동사자도 나오지 않았다.",
+          stats: { Fel: 4, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Valhalla / Codex: Astra Militarum"
+  },
+  {
+    id: "ev_s15_su_valhalla_2",
+    title: "발할라 영구 동토 지표 — 빙하 관측 초소와 설상 장갑차 보급 호송",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["valhalla"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 발할라 · 비초인 필멸자",
+    weight: 30,
+    text: "지하 도시 바깥의 영구 동토 지표에 세워진 외곽 빙하 관측 초소로 난방 연료와 탄약을 실어 나르는 설상 장갑차 호송대에 합류했다. 가파른 빙하 능선을 넘던 중 굉음과 함께 거대한 눈사태가 쏟아져 앞길을 막았고, 무너진 얼음층 아래로 깊이를 알 수 없는 빙하 크레바스가 입을 벌린 사이 폭설 너머에서 빙원 약탈 짐승 무리가 냄새를 맡고 다가온다!",
+    choices: [
+      {
+        label: "[제국군 전용] 설상 장갑차의 탐조등으로 크레바스 가장자리를 비추며 경계 사격망과 휴대용 빙하 다리 가설을 동시에 지휘한다",
+        req: { anyTags: ["militarum", "imperial_military", "officer", "commissar"] },
+        effect: {
+          text: "혹한 속에서도 흔들리지 않는 현장 지휘로 빙하 틈새를 넘어 관측 초소에 보급품을 무사히 인계했다!",
+          stats: { BS: 5, Int: 5, Inf: 6 }
+        }
+      },
+      {
+        label: "[강인 판정] 시야가 2미터도 안 되는 폭설 속에서 얼음 갈고리를 박아 설상 장갑차가 건널 휴대용 강철 다리를 직접 고정한다",
+        check: { stat: "T", diff: -5 },
+        success: {
+          text: "손이 곱아드는 살인적인 눈보라를 버텨 내고 크레바스 위로 강철 다리를 고정해 호송대를 통과시켰다!",
+          stats: { T: 7, Int: 4, Inf: 5 }
+        },
+        fail: {
+          text: "살을 에는 강풍에 심한 저체온증과 동상을 얻어 장갑차 난방 구획으로 실려 갔다.",
+          wounds: -22,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "[사격 판정] 장갑차 상부 포탑에서 눈보라 속 그림자를 침착하게 겨냥해 크레바스 건너편으로 몰려드는 짐승 무리를 꺾어 놓는다",
+        check: { stat: "BS", diff: 0 },
+        success: {
+          text: "하얀 폭풍을 뚫는 정확한 점사로 가설 작업반의 등을 완벽히 지켜 냈다!",
+          stats: { BS: 7, WP: 5, Inf: 4 }
+        },
+        fail: {
+          text: "강풍에 탄도가 흔들리며 선두 짐승의 돌진 충격으로 포탑 난간에 부딪혀 어깨뼈에 금이 갔다.",
+          wounds: -18,
+          stats: { BS: 2 }
+        }
+      },
+      {
+        label: "설상 장갑차 내부의 난방 연료통과 비상 신호탄을 지키며 눈사태가 가라앉을 때까지 관측 초소와 무선 교신을 유지한다",
+        effect: {
+          text: "호송대의 핵심 연료와 통신망을 지켜 낸 덕분에 단 한 명의 동사자도 없이 초소 구원대와 합류했다.",
+          stats: { WP: 4, T: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Valhalla / Codex: Astra Militarum"
+  },
+  {
+    id: "ev_s15_su_valhalla_3",
+    title: "발할라 동계 참호전 훈련장 — 외지 장병 합동 훈련과 타나 차 한 잔",
+    category: "파견 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["valhalla"],
+      excludeHomeWorlds: ["valhalla", "krieg"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "발할라 파견 · 발할라·크리그 외 출신 · 비초인",
+    weight: 32,
+    text: "발할라에 파견된 그대가 빙원 위 얼음 참호에서 발할라 아이스 워리어 분대와 동계 방어전 합동 훈련에 참가했다. 매서운 칼바람에 외지인의 손가락은 방아쇠도 당기기 어려울 만큼 굳어 가는데, 현지 고참병들은 태연하게 눈 구덩이 안에서 주전자를 끓이며 진하고 쌉쌀한 발할라 전통 타나 차를 건넨다.",
+    choices: [
+      {
+        label: "[제국군/커미사르 전용] 현지 고참병들과 어깨를 맞대고 혹한기 탄약 관리법과 빙벽 사격술을 교류하며 합동 사기를 끌어올린다",
+        req: { anyTags: ["commissar", "lord_commissar", "officer", "militarum"] },
+        effect: {
+          text: "외지 부대와 발할라 연대의 장점을 하나로 엮어 내며 혹한기 훈련을 최우수 성적으로 마쳤다!",
+          stats: { Fel: 5, BS: 4, T: 3, Inf: 4 }
+        }
+      },
+      {
+        label: "[강인 판정] 외지인은 한 시간도 못 버틴다는 발할라 병사들의 농담에 웃으며 눈보라 속 야간 초소 교대를 끝까지 완수한다",
+        check: { stat: "T", diff: 0 },
+        success: {
+          text: "새벽까지 얼음 참호를 지켜 낸 배짱에 발할라 아이스 워리어 분대장이 털모자를 눌러 씌워 주며 전우로 인정했다!",
+          stats: { T: 7, WP: 5, Fel: 5 }
+        },
+        fail: {
+          text: "오기를 부리다 발끝에 동상이 들어 의무실 신세를 졌지만, 발할라 병사들은 그 배짱만은 인정해 주었다.",
+          wounds: -14,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "[교섭 판정] 쌉쌀한 타나 차를 단숨에 비우고 각자가 겪은 전선의 이야기를 나누며 발할라 연대와의 두터운 전우애를 쌓는다",
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "타나 차의 깊은 향을 즐길 줄 아는 외지인이라며 발할라 고참병들이 진심으로 마음을 열었다!",
+          stats: { Fel: 7, Inf: 5, WP: 4 }
+        },
+        fail: {
+          text: "강렬한 타나 차 향에 사레가 들어 기침을 쏟는 바람에 참호 전체의 웃음거리가 되었다.",
+          stats: { Fel: -2, WP: -1 }
+        }
+      },
+      {
+        label: "현지 병사들이 알려 주는 방한포 감는 법과 총기 결빙 방지 요령을 꼼꼼히 익히며 조용히 따뜻한 차로 몸을 녹인다",
+        effect: {
+          text: "실전적인 동계 생존 요령을 몸에 익히며 혹독한 발할라의 추위를 무사히 견뎌 냈다.",
+          stats: { T: 4, Int: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Valhallan Ice Warriors / Ciaphas Cain: For the Emperor"
+  },
+  {
+    id: "ev_s15_su_valhalla_4",
+    title: "발할라 빙하 폐허 창고 — 빙하기 이전 보급품 발굴과 배급 분쟁",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["valhalla"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 발할라 · 비초인 필멸자",
+    weight: 28,
+    text: "발할라가 혜성 충돌로 얼어붙기 전 녹색 대지 시절에 건설되었던 고대 저장고 하나가 빙하 균열 아래서 발견되었다. 완벽히 냉동 보존된 고대 발전 부품과 정밀 공구가 쏟아져 나오자, 전선 보급을 우선하려는 연대 병참관과 지하 도시 난방 설비 교체를 외치는 시민 대표단이 창고 입구에서 험악하게 대치하기 시작했다.",
+    choices: [
+      {
+        label: "[관료/법집행/장교 전용] 제국 전시 징발령과 도시 생존 조항을 함께 적용해 부품은 도시로, 군수품은 연대로 즉시 분할 집행한다",
+        req: { anyTags: ["administratum", "arbites", "officer", "commissar"] },
+        effect: {
+          text: "명확한 법적 근거와 공정한 분할 집행에 양측 모두 승복하며 창고 물자가 지체 없이 필요한 곳으로 옮겨졌다!",
+          stats: { Inf: 7, Int: 5, Fel: 5 }
+        }
+      },
+      {
+        label: "[교섭 판정] 지하 도시가 얼어붙으면 신병도 나오지 못한다는 논리로 양측을 설득해 공평한 공동 분배 합의문을 끌어낸다",
+        check: { stat: "Fel", diff: -5 },
+        success: {
+          text: "전선과 후방이 하나라는 호소가 양쪽의 고집을 꺾었다! 연대와 지하 도시 모두에서 두터운 신망을 얻었다.",
+          stats: { Fel: 7, Inf: 6, Int: 4 }
+        },
+        fail: {
+          text: "양측 모두 양보를 거부해 소란이 커졌고 중재 실패의 책임까지 떠안았다.",
+          stats: { Fel: -2, Inf: -4 }
+        }
+      },
+      {
+        label: "[지성 판정] 고대 물자 목록을 현장에서 재분류해 군용과 민간용으로 겹치지 않는 대체 규격품을 찾아내 갈등을 해소한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "고대 규격표를 정확히 해독해 양측 모두가 만족할 물자 배정안을 도출해 냈다!",
+          stats: { Int: 7, Inf: 5, Fel: 3 }
+        },
+        fail: {
+          text: "빙하 창고 천장에서 떨어진 고드름 파편에 다치고 물자 대장 정리에도 실패했다.",
+          wounds: -12,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "배급 분쟁에서 한발 물러서서 발굴된 창고의 빙벽 붕괴를 막는 지지대 보강 작업에 집중한다",
+        effect: {
+          text: "말다툼 대신 빙벽을 지탱하는 묵묵한 작업 덕분에 귀중한 고대 저장고가 매몰되지 않았다.",
+          stats: { T: 4, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Valhalla / Codex: Astra Militarum"
+  },
+  {
+    id: "ev_s15_su_nocturne_1",
+    title: "녹턴 성소 도시 흑요석 공방 — 외지 파견자의 고중력 적응",
+    category: "파견 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["nocturne"],
+      excludeHomeWorlds: ["nocturne"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "녹턴 파견 · 녹턴 외 출신 · 비초인",
+    weight: 32,
+    text: "화산재가 흩날리는 녹턴의 성소 도시 헤시오드 외곽에 파견된 그대는 발걸음마다 납덩이를 매단 듯 짓누르는 강한 중력과 후끈한 유황 열기에 숨이 턱 막혔다. 장비를 수리하러 들른 흑요석 대장간에서 녹턴의 노장인이 외지인의 헐떡이는 호흡을 보고는, 녹턴에서 버티려면 힘으로 중력과 싸우지 말고 모루 위 쇠처럼 리듬을 타야 한다며 무거운 단조 망치를 건넨다.",
+    choices: [
+      {
+        label: "[기계교/길드 장인 전용] 녹턴의 고열 흑요석 합금 제련법을 세심히 관찰하며 외지 제국 장비의 내열 강화 비법을 익힌다",
+        req: { anyTags: ["mechanicus", "tech_priest", "guild_artisan"] },
+        effect: {
+          text: "노장인과 뜨거운 불꽃 앞에서 기술을 나누며 화산 행성의 가혹한 환경에도 끄떡없는 장비 개조법을 터득했다!",
+          stats: { Int: 6, T: 6, Inf: 4 }
+        }
+      },
+      {
+        label: "[강인 판정] 무거운 중력 속에서 노장인의 박자에 맞춰 땀이 비 오듯 쏟아질 때까지 직접 쇠를 두드려 몸을 길들인다",
+        check: { stat: "T", diff: -5 },
+        success: {
+          text: "팔이 떨어져 나갈 듯한 무게를 견뎌 낸 끝에 호흡과 중심이 하나로 맞물렸다! 녹턴의 고중력이 오히려 근력을 단련시켜 주었다.",
+          stats: { T: 8, WS: 4, Fel: 4 }
+        },
+        fail: {
+          text: "고중력 아래 무리하게 망치를 휘두르다 어깨 근육을 크게 다치고 열기에 탈진했다.",
+          wounds: -14,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "[지성 판정] 녹턴 장인들의 호흡법과 무게 중심 이동을 분석해 고중력 환경에 맞는 보폭과 장비 배분법을 터득한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "체중 이동과 군장 무게 중심을 정밀하게 조절해 고중력 속에서도 체력 소모를 절반으로 줄였다!",
+          stats: { Int: 6, T: 5, Ag: 4 }
+        },
+        fail: {
+          text: "이론만 앞세우다 화로 옆 흑요석 단차에 발이 걸려 넘어지며 무릎을 크게 찧었다.",
+          wounds: -10,
+          stats: { Ag: -2 }
+        }
+      },
+      {
+        label: "노장인의 조언대로 수분을 충분히 섭취하며 장비 보수가 끝날 때까지 녹턴의 중력과 열기에 천천히 몸을 적응시킨다",
+        effect: {
+          text: "조급함을 버리고 녹턴의 묵직한 대지에 순응하자 점차 숨결이 안정되었다.",
+          stats: { T: 5, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Nocturne / Codex Supplement: Salamanders"
+  },
+  {
+    id: "ev_s15_su_nocturne_2",
+    title: "녹턴 용암 협곡 — 흑요석 현수교 붕괴 위기와 피난 물자 호송",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 15,
+      anyWorlds: ["nocturne"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 녹턴 · 비초인 필멸자",
+    weight: 30,
+    text: "녹턴의 성소 도시들을 잇는 깊은 용암 협곡 위, 거대한 흑요석 현수교를 건너던 식량과 의약품 수송 행렬이 갑작스러운 화산 지진에 발이 묶였다! 교각의 강철 주 케이블 한 가닥이 굉음과 함께 끊어지며 다리 상판이 붉은 용암 강 쪽으로 기우는 가운데, 수송대 주민들과 물자 수레가 협곡 한가운데 고립되었다.",
+    choices: [
+      {
+        label: "[전투 요원/전투 수녀/길드 장인 전용] 예비 강철 닻줄로 기운 상판의 하중을 즉시 분산시키고 통제 대열을 세워 주민과 물자를 안전히 대피시킨다",
+        req: { anyTags: ["militarum", "imperial_military", "sororitas", "guild_artisan"] },
+        effect: {
+          text: "침착한 하중 분산과 질서 정연한 대피 지휘 덕분에 단 한 명의 추락자도 없이 수송 행렬 전원을 성소 도시로 이끌었다!",
+          stats: { T: 5, Int: 5, Inf: 6 }
+        }
+      },
+      {
+        label: "[강인 판정] 아래에서 치솟는 용암 열풍을 견디며 보조 강철 케이블을 어깨에 메고 협곡 건너편 흑요석 말뚝에 힘껏 감아 고정한다",
+        check: { stat: "T", diff: -5 },
+        success: {
+          text: "숨이 턱 막히는 열기와 무게를 버텨 내고 현수교의 붕괴를 멈춰 세워 성소 도시 주민들의 뜨거운 감사를 받았다!",
+          stats: { T: 8, WP: 5, Inf: 5 }
+        },
+        fail: {
+          text: "달아오른 쇠사슬에 손과 어깨를 크게 데고 근육이 찢어지는 고통을 겪었으나 끝내 주민들은 건너편으로 보냈다.",
+          wounds: -20,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "[민첩 판정] 요동치는 현수교 난간을 내달려 기울어진 물자 수레의 제동 장치를 풀고 고립된 주민들을 건너편 안전 지대로 먼저 끌어낸다",
+        check: { stat: "Ag", diff: 0 },
+        success: {
+          text: "무너지는 상판 위에서 민첩하게 움직여 주민 전원과 핵심 의약품 상자를 협곡 밖으로 빼냈다!",
+          stats: { Ag: 7, Fel: 4, Inf: 5 }
+        },
+        fail: {
+          text: "여진에 상판이 크게 흔들리며 흑요석 난간에 세게 부딪혀 팔과 옆구리에 깊은 상처를 입었다.",
+          wounds: -18,
+          stats: { Ag: 2 }
+        }
+      },
+      {
+        label: "협곡 입구 초소에서 추가 진입 차량을 통제하고 구난대가 설치할 도르래 밧줄의 고정 지점을 단단히 확보한다",
+        effect: {
+          text: "2차 추락 사고를 막고 구난 작업의 발판을 지켜 내어 현장의 혼란을 최소화했다.",
+          stats: { Int: 4, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Nocturne / Salamanders Omnibus"
+  },
+  {
+    id: "ev_s15_su_nocturne_3",
+    title: "녹턴 지열 제련소 — 마그마 수로 과열과 장인 길드 방호벽 보수",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["nocturne"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 녹턴 · 비초인 필멸자",
+    weight: 30,
+    text: "화산 지각의 열기를 직접 끌어다 쓰는 녹턴 성소 도시의 대형 지열 제련소에서 지하 마그마 수로의 압력이 갑자기 치솟았다! 용광로 방호벽에 붉은 균열이 번지며 뜨거운 용암이 작업장으로 넘쳐흐르기 일보 직전이다. 장인 길드 수장은 도제들과 마을 주거지를 지키기 위해 수동 냉각 수문을 열 지원자를 외치고 있다.",
+    choices: [
+      {
+        label: "[길드 장인/기계교 전용] 내열 합금 판재를 즉석에서 용접하고 지열 압력 배출구를 단계적으로 열어 제련소를 완벽히 살려 낸다",
+        req: { anyTags: ["guild_artisan", "mechanicus", "tech_priest", "magos"] },
+        effect: {
+          text: "장인 정신과 정밀 공학이 결합된 완벽한 복구 작업이었다! 제련소와 성소 마을 모두 단 한 곳의 피해도 입지 않았다.",
+          stats: { Int: 7, T: 5, Inf: 7 }
+        }
+      },
+      {
+        label: "[지성 판정] 마그마 수로의 분기 밸브 순서를 계산해 과열된 용암을 빈 흑요석 냉각조로 안전하게 돌려 보낸다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "열압력을 완벽히 분산시켜 제련소를 지켜 냈다! 장인 길드가 그대에게 명예 장인의 표식을 수여했다.",
+          stats: { Int: 7, T: 4, Inf: 6 }
+        },
+        fail: {
+          text: "밸브 개방 순서가 어긋나 튄 용암 불티에 화상을 입고 제련소 작업대 절반이 소실되었다.",
+          wounds: -16,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "[강인 판정] 내열 방패를 앞세우고 균열 난 방호벽 앞으로 돌진해 흑요석 쐐기와 내화 모르타르를 힘껏 박아 넣는다",
+        check: { stat: "T", diff: -5 },
+        success: {
+          text: "숨이 막히는 복사열 속에서 방호벽 균열을 틀어막아 용암 범람을 저지했다! 장인 길드 전원이 뜨거운 경의를 바쳤다.",
+          stats: { T: 8, WS: 4, Inf: 6 }
+        },
+        fail: {
+          text: "극심한 용암 복사열과 튀어 오른 불티에 방호구 틈새로 피부를 크게 데었으나, 균열 확장은 끝내 막아 냈다.",
+          wounds: -22,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "제련소 하부 작업장의 도제들과 귀중한 공구 상자들을 신속히 상층 대피소로 옮겨 인명 피해를 막는다",
+        effect: {
+          text: "화염보다 사람의 목숨을 우선한 녹턴다운 선택이었다. 도제 전원이 무사히 대피했다.",
+          stats: { Fel: 4, WP: 5 }
+        }
+      }
+    ],
+    source: "Lexicanum: Nocturne / Promethean Cult"
   }
 );

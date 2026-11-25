@@ -1,4 +1,4 @@
-// 분기 사건 — 옵스쿠루스 · 템페스투스 · 파시피쿠스 행성 고유 (카디아 · 펜리스 · 보스트로야 · 크리그 · 오펠리아 VII · 타니스 / 향후 행성별 단독 승격 가능)
+// 분기 사건 — 옵스쿠루스 · 템페스투스 · 파시피쿠스 행성 고유 (펜리스 · 보스트로야 · 타니스 · 오펠리아 VII / 카디아·크리그는 1:1 단독 승격)
 window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
 (window.IMPERIUM_DATA.EVENTS = window.IMPERIUM_DATA.EVENTS || []).push(
   {
@@ -63,104 +63,6 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Lexicanum: Fenris / Codex: Space Wolves"
-  },
-  {
-    id: "ev_krieg_drill",
-    title: "크리그 지하 훈련소의 속죄 서약",
-    category: "행성",
-    once: true,
-    req: {
-      minAge: 13,
-      maxAge: 19,
-      anyWorlds: ["krieg"],
-      anyHomeWorlds: ["krieg"],
-      excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 크리그 · 나이 13~19세",
-    weight: 28,
-    text: "방독면 너머로 차가운 교관의 음성이 울린다. '우리 조상은 황제를 배신했다. 오직 전선에서의 헌신만이 죄를 씻는다.' 실탄이 빗발치는 방사능 폐허 생존 훈련이 시작된다.",
-    choices: [
-      {
-        label: "[의지 판정] 한 치의 주저도 없이 포격 지대를 향해 전진한다",
-        check: { stat: "WP", diff: 5 },
-        success: {
-          text: "우수한 성적으로 훈련을 마치고 데스 코어 오브 크리그 정예 척탄병 후보로 지목되었다.",
-          stats: { WP: 7, T: 5, BS: 5, WS: 4 },
-          faith: 12,
-          addTags: ["krieg_grenadier"]
-        },
-        fail: {
-          text: "파편에 부상을 입었지만 멈추지 않고 완주했다. 크리그에서 부상은 핑계가 되지 못한다.",
-          wounds: -20,
-          stats: { T: 4, WP: 4 }
-        }
-      },
-      {
-        label: "[지성 판정] 공병 참호 설계와 화생방 장비 정비에 두각을 나타낸다",
-        check: { stat: "Int", diff: 0 },
-        success: {
-          text: "지하 요새와 공성 포병대 운용 적성을 인정받아 전문 공병으로 배치되었다.",
-          stats: { Int: 6, BS: 4, T: 3 }
-        },
-        fail: {
-          text: "지뢰 해체 훈련 중 경미한 폭발에 휘말렸다.",
-          wounds: -16
-        }
-      }
-    ],
-    source: "Lexicanum: Death Korps of Krieg"
-  },
-  {
-    id: "ev_world_cadia_kasrkin",
-    title: "카디아 — 카스르킨 정예 선발 사열",
-    category: "행성 고유",
-    once: true,
-    req: {
-      minAge: 14,
-      maxAge: 26,
-      maxYear: 999,
-      anyWorlds: ["cadia"],
-      anyHomeWorlds: ["cadia"],
-      excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 카디아 · 14~26세 · 999.M41 이전",
-    weight: 26,
-    text: "카디아 유년 군사단 화이트실드 가운데 가장 냉철하고 정밀한 사격수를 뽑아 정예 척탄병 카스르킨으로 훈련시키는 실탄 사열이 열렸다. 표적 대신 실제로 움직이는 포획 돌연변이들이 투입된다.",
-    choices: [
-      {
-        label: "[사격 판정] 핫샷 라스건을 받아 들고 한 발의 낭비 없이 표적을 제압한다",
-        check: { stat: "BS", diff: -5 },
-        success: {
-          text: "보랏빛 눈동자가 흔들림 없이 표적을 꿰뚫었다! 카디아 사령부가 그대에게 정예 표창을 수여했다.",
-          stats: { BS: 7, WP: 5, T: 4, Inf: 6 },
-          addTags: ["elite_troop"]
-        },
-        fail: {
-          text: "과열된 전지팩이 손에서 터져 화상을 입었지만, 눈물을 보이지 않고 사격을 마쳤다.",
-          wounds: -18,
-          stats: { BS: 3, WP: 3 }
-        }
-      },
-      {
-        label: "[백병 판정] 총검을 착검하고 근접 제압 시범에 지원한다",
-        check: { stat: "WS", diff: 0 },
-        success: {
-          text: "빈틈없는 총검술로 교관의 찬사를 받았다. '카디아의 아이는 요람에서부터 병사다.'",
-          stats: { WS: 6, T: 4, Inf: 4 }
-        },
-        fail: {
-          text: "어깨를 베여 의무실에 실려 갔다.",
-          wounds: -18
-        }
-      }
-    ],
-    source: "Lexicanum: Kasrkin / Codex: Astra Militarum"
   },
   {
     id: "ev_world_vostroya_firstborn",
@@ -268,109 +170,6 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Lexicanum: Ophelia VII / Ecclesiarchy"
-  },
-  {
-    id: "ev_cadia_pylon_hum",
-    title: "카디아 — 고대 블랙스톤 파일런의 기이한 정적",
-    category: "행성 고유",
-    req: {
-      minAge: 14,
-      maxYear: 999,
-      anyWorlds: ["cadia"],
-      excludeTags: [
-        "custodes", "grey_knight", "dreadnought", "high_lord_terra",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 카디아 · 999.M41 이전",
-    weight: 26,
-    text: "카디아 평원 한복판에 솟은 정체불명의 고대 블랙스톤 파일런 근처를 순찰하던 중, 갑자기 세상의 모든 소리가 기묘하게 먹먹해지고 가슴속에서 알 수 없는 공허감이 차오른다. 공포의 눈을 막아 주는 수수께끼의 유물이다.",
-    choices: [
-      {
-        label: "[사이커 전용 · 의지 판정] 워프 차단 장막의 극심한 두통을 의지로 견뎌 낸다",
-        req: { allTags: ["psyker"] },
-        check: { stat: "WP", diff: -10 },
-        success: {
-          text: "사이킥 능력이 잠시 봉인되는 고통을 이겨 내며 오히려 오염이 씻겨 나가는 기이한 정화를 겪었다!",
-          stats: { WP: 6 },
-          corruption: -12
-        },
-        fail: {
-          text: "극심한 편두통과 구토에 시달리며 의무실로 후송되었다.",
-          wounds: -18
-        }
-      },
-      {
-        label: "[지성 판정] 석주 표면의 기하학적 외계 문양을 유심히 관찰해 기록한다",
-        check: { stat: "Int", diff: 0 },
-        success: {
-          text: "이 석주들이 무너지면 은하계 전체가 워프에 삼켜지리라는 불길한 직감을 얻었다.",
-          stats: { Int: 5, WP: 3 }
-        },
-        fail: {
-          text: "알 수 없는 공허감과 무기력에 빠져 사흘간 앓아누웠다.",
-          wounds: -10
-        }
-      },
-      {
-        label: "기분 나쁜 고대 물건이다. 발걸음을 재촉해 순찰을 마친다",
-        effect: {
-          text: "공포의 눈 코앞에서 중요한 것은 고대 석주의 정체가 아니라 눈앞의 임무와 경계 태세뿐이다.",
-          stats: { WP: 3 }
-        }
-      }
-    ],
-    source: "Lexicanum: Cadian Pylons / Fall of Cadia"
-  },
-  {
-    id: "ev_krieg_surface_march",
-    title: "크리그 — 지상 방사능 황무지의 실전 행군",
-    category: "행성 고유",
-    req: {
-      minAge: 14,
-      anyWorlds: ["krieg"],
-      anyHomeWorlds: ["krieg"],
-      excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
-        "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
-        "inquisitor", "lord_inquisitor", "cardinal", "canoness",
-        "magos", "fabricator_locum", "fabricator_general", "navy_admiral",
-        "arbites_marshal", "departmento_head", "planetary_governor", "sector_lord", "rt_lord_captain",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 크리그",
-    weight: 26,
-    text: "지하 벙커의 육중한 방폭문이 열리고, 잿빛 핵겨울과 방사능 진흙탕이 끝없이 펼쳐진 크리그 지상으로 120킬로미터 강행군이 선포되었다. 방독면 필터 수명은 딱 48시간뿐이다.",
-    choices: [
-      {
-        label: "[강인 판정] 거친 숨을 고르며 단 한 번도 대열에서 이탈하지 않고 완주한다",
-        check: { stat: "T", diff: 0 },
-        success: {
-          text: "방사능 폭풍을 맨몸으로 뚫고 대열 선두로 귀환했다! 진정한 크리그의 강철 육체로 거듭났다.",
-          stats: { T: 6, WP: 5 },
-          faith: 6
-        },
-        fail: {
-          text: "필터 균열로 방사능 먼지를 들이마셔 피를 토했으나 끝까지 기어 돌아왔다.",
-          wounds: -22,
-          stats: { T: 3 }
-        }
-      },
-      {
-        label: "[의지 판정] 쓰러진 동료의 군장과 탄약까지 짊어지고 묵묵히 행진한다",
-        check: { stat: "WP", diff: 5 },
-        success: {
-          text: "장비 손실률 0%! 크리그 장교에게 '가장 효율적인 속죄의 도구'라는 최고의 찬사를 들었다.",
-          stats: { WP: 5, T: 4, Inf: 4 }
-        },
-        fail: {
-          text: "과중한 무게에 무릎 인대가 상해 의무동으로 옮겨졌다.",
-          wounds: -18
-        }
-      }
-    ],
-    source: "Lexicanum: Krieg"
   },
   {
     id: "ev_fenris_kraken",
@@ -588,5 +387,772 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Lexicanum: Ophelia VII / Convent Sanctorum"
+  },
+  // ===== 15단계 확장: 펜리스 · 보스트로야 · 타니스 · 오펠리아 VII 파견 · 행성 고유 12종 =====
+  {
+    id: "ev_s15_fr_fenris_1",
+    title: "펜리스 — 아사이하임 외곽 정박지의 카얼 보조대 검문",
+    category: "파견 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      anyWorlds: ["fenris"],
+      excludeHomeWorlds: ["fenris"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 펜리스 · 외지 파견",
+    weight: 32,
+    text: "스페이스 울프의 모성 펜리스에서 유일하게 사계절 내내 가라앉지 않는 북극 대륙 아사이하임. 얼음 절벽 아래 외곽 정박지에 내리자마자, 늑대 가죽 망토를 두른 펜리스 카얼 보조대가 묵직한 라스건을 겨누며 외지인의 신원과 통행 허가서를 매섭게 추궁했다. 뼈를 에는 냉기 속에서 이들의 경계심을 풀지 못하면 항구 밖으로 한 걸음도 내디딜 수 없다.",
+    choices: [
+      {
+        label: "[심문소·함대·행정·개척상인 전용] 제국 공식 인장과 성역 통행 문서를 내보이며 정박지 규율을 존중하겠다고 천명한다",
+        req: { anyTags: ["inquisitor", "inquisition_agent", "navy", "rogue_trader", "administratum"] },
+        effect: {
+          text: "카얼 보조대 지휘관이 룬 문자가 새겨진 판독기로 인장을 확인한 뒤 고개를 끄덕였다. 아사이하임 외곽 보급 구역 출입과 빙원 안내를 정식으로 허가받았다.",
+          stats: { Inf: 6, Fel: 4, Int: 3 }
+        }
+      },
+      {
+        label: "[교섭 판정] 외지인의 허세를 버리고 솔직한 임무 목적과 챕터에 대한 경의를 밝히며 통행을 청한다",
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "솔직하고 당당한 태도에 카얼 보조대 장교가 껄껄 웃으며 무기를 거두었다. 훈제 고기와 따뜻한 약초차를 대접받으며 펜리스 생존 수칙까지 상세히 전해 들었다.",
+          stats: { Fel: 6, Inf: 4, WP: 3 }
+        },
+        fail: {
+          text: "불필요한 말실수로 카얼 경비병들의 심기를 건드려, 혹한 속 검문소 바깥에 반나절 동안 억류된 채 동상과 굴욕을 겪었다.",
+          wounds: -10,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "[강인 판정] 영하의 바닷바람 속에서도 미동 없이 서서 정밀 신체검사와 장비 대조를 끝까지 버텨 낸다",
+        check: { stat: "T", diff: 5 },
+        success: {
+          text: "외지인답지 않은 끈기와 강인한 체력에 카얼 전사들이 경외의 눈빛을 보냈다. 정박지 보급 창고 이용과 방한 장비 우선 지급을 인정받았다.",
+          stats: { T: 6, WP: 4, Inf: 3 }
+        },
+        fail: {
+          text: "매서운 극지 강풍을 맨몸으로 견디다 저체온증으로 쓰러져 의무 막사로 실려 갔다.",
+          wounds: -16,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "항구 검역 수칙에 따라 모든 무기를 임시 영치하고 지정된 보급 구역 안에서만 차분히 대기한다",
+        effect: {
+          text: "불필요한 마찰 없이 검문을 통과해 아사이하임 외곽의 거친 풍광과 챕터 보조대의 철통 같은 경계 태세를 눈여겨보았다.",
+          stats: { WP: 3, Int: 2 }
+        }
+      }
+    ],
+    source: "Lexicanum: Asaheim / Kaerls / Codex: Space Wolves"
+  },
+  {
+    id: "ev_s15_fr_fenris_2",
+    title: "펜리스 — 해빙기 지각 변동과 빙하 균열 속 보급대 구조",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      anyWorlds: ["fenris"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 펜리스",
+    weight: 31,
+    text: "펜리스의 극단적인 타원 궤도가 별에 가까워지며 대륙 전체를 뒤흔드는 해빙기 지각 변동이 시작되었다. 굉음과 함께 해안 빙하가 두 동강 나며, 식량과 탄약을 싣고 이동하던 보급 수송대가 깊은 얼음 균열 가장자리에 아슬아슬하게 매달린 채 구조 신호를 쏘아 올렸다.",
+    choices: [
+      {
+        label: "[기계교 전용] 빙하 하중과 단층 진동을 즉시 연산해 견인 윈치의 안전 각도를 잡아 수송 차량을 끌어올린다",
+        req: { anyTags: ["mechanicus", "tech_priest", "magos"] },
+        effect: {
+          text: "정밀한 구조 계산과 기계령에 올린 축복 기도 덕분에 수송대와 화물이 단 하나의 손실도 없이 안전한 암반 위로 인양되었다.",
+          stats: { Int: 6, Inf: 5, T: 2 }
+        }
+      },
+      {
+        label: "[민첩 판정] 갈라지는 빙판 위로 밧줄을 던지고 무너지는 눈더미 사이를 누벼 고립된 대원들을 끌어낸다",
+        check: { stat: "Ag", diff: -5 },
+        success: {
+          text: "얼음 절벽이 붕괴하기 직전 마지막 대원까지 안전 지대로 끌어올렸다! 구출된 수송대원들이 그대의 기민한 판단력에 깊이 감사했다.",
+          stats: { Ag: 6, WP: 4, Inf: 5 }
+        },
+        fail: {
+          text: "발밑 얼음이 무너지며 차가운 바닷물과 얼음 파편에 휩쓸려 큰 타박상과 동상을 입었다.",
+          wounds: -18,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "[강인 판정] 허리에 구명줄을 묶고 균열 아래로 내려가 얼어붙은 화물과 부상자를 어깨에 메고 올라온다",
+        check: { stat: "T", diff: 0 },
+        success: {
+          text: "살을 에는 빙하 바람 속에서도 초인적인 근력으로 버텨 내며 부상자와 핵심 보급 상자를 모두 건져 올렸다.",
+          stats: { T: 6, WS: 3, Inf: 4 }
+        },
+        fail: {
+          text: "얼음 벽에서 떨어져 내린 암석 파편에 어깨를 정통으로 맞아 심하게 다쳤다.",
+          wounds: -20,
+          stats: { WP: 2 }
+        }
+      },
+      {
+        label: "안전한 암반 지대에 복스 중계기와 조명탄을 설치해 후속 구조선이 정확한 좌표를 찾도록 유도한다",
+        effect: {
+          text: "침착한 유도 덕분에 본진 구조정이 제때 도착해 생존자 대부분을 수습할 수 있었다.",
+          stats: { Int: 4, WP: 2 }
+        }
+      }
+    ],
+    source: "Lexicanum: Fenris / Codex: Space Wolves"
+  },
+  {
+    id: "ev_s15_fr_fenris_3",
+    title: "펜리스 — 긴 겨울밤 해안 망루의 눈트롤 야수 방어전",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      anyWorlds: ["fenris"],
+      excludeTags: [
+        "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 펜리스",
+    weight: 32,
+    text: "태양이 수평선 너머로 자취를 감춘 긴 겨울밤, 펜리스 해안 망루 바깥 빙판에서 살기를 띤 포효가 울려 퍼졌다. 얼음 갑각을 두른 거대 눈트롤들과 굶주린 빙원 야수 무리가 눈보라를 뚫고 방벽을 향해 쇄도해 온다. 망루가 무너지면 배후의 보급 기지와 피난처까지 통째로 짓밟히고 만다.",
+    choices: [
+      {
+        label: "[아스타르테스 전용] 방벽 너머 빙원으로 뛰어내려 거대 눈트롤 우두머리의 목을 단숨에 끊고 야수 무리를 궤멸시킨다",
+        req: { anyTags: ["astartes"] },
+        effect: {
+          text: "초인의 일격에 산더미 같은 눈트롤 우두머리가 눈보라 속으로 쓰러졌다. 망루 수비대가 환호하며 하늘 전사의 위용을 찬양했다.",
+          stats: { WS: 6, T: 4, Inf: 6 }
+        }
+      },
+      {
+        label: "[백병 판정] 방벽 틈을 뚫고 올라온 눈트롤의 앞길을 가로막고 불붙은 무기로 근접 격퇴전을 벌인다",
+        check: { stat: "WS", diff: -5 },
+        success: {
+          text: "괴수의 육중한 팔을 피해 급소를 정확히 찔러 쓰러뜨렸다! 거대 괴물이 무너지자 뒤따르던 야수 무리도 어둠 속으로 흩어졌다.",
+          stats: { WS: 7, T: 4, WP: 4, Inf: 5 }
+        },
+        fail: {
+          text: "눈트롤의 거대한 주먹에 휩쓸려 성벽 안쪽으로 내동댕이쳐지며 갈비뼈에 심한 부상을 입었다.",
+          wounds: -22,
+          stats: { T: 3 }
+        }
+      },
+      {
+        label: "[사격 판정] 망루 상단 포좌에서 화염탄과 집중 사격을 퍼부어 야수 떼의 돌격을 빙판 위에서 저지한다",
+        check: { stat: "BS", diff: 0 },
+        success: {
+          text: "눈보라 속에서도 불꽃이 솟는 지점을 겨냥해 선두 눈트롤을 정확히 쓰러뜨렸다. 망루는 아침까지 단 한 치도 밀리지 않았다.",
+          stats: { BS: 6, Int: 3, Inf: 4 }
+        },
+        fail: {
+          text: "혹한에 노리쇠가 얼어붙는 순간 파편이 튀어 손과 얼굴에 상처를 입었고, 방벽 외곽 일부가 파손되었다.",
+          wounds: -14,
+          stats: { Inf: -2 }
+        }
+      },
+      {
+        label: "방벽 안쪽 화로와 프로메튬 기름통을 잇달아 점화해 야수 무리가 가까이 접근하지 못하도록 방어선을 지킨다",
+        effect: {
+          text: "거센 불길과 연기 덕분에 눈트롤 무리가 정면 돌파를 포기해, 망루는 밤새 버텨 낼 수 있었다.",
+          stats: { Int: 3, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Fenris / Fenrisian Ice Troll / Codex: Space Wolves"
+  },
+  {
+    id: "ev_s15_fr_vostroya_1",
+    title: "보스트로야 — 대공장 정밀 무기 수령과 장인 길드 검수 갈등",
+    category: "파견 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      anyWorlds: ["vostroya"],
+      excludeHomeWorlds: ["vostroya"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 보스트로야 · 외지 파견",
+    weight: 32,
+    text: "매연과 눈발이 뒤섞인 보스트로야의 거대 고딕 군수 공장에 외지 파견 인원으로 도착해 전선 보급용 정밀 화기 인수를 맡았다. 그러나 자부심 강한 보스트로야 장인 길드의 원로가 외지인은 황동 세공 라스건과 플라즈마 화기의 섬세한 정비법을 모른다며 납품 서명을 완강히 거부한다.",
+    choices: [
+      {
+        label: "[기계교·행정 전용] 공식 군수 규격서와 정비 의례를 완벽히 낭송해 장인 길드의 까다로운 검수 기준을 정면 돌파한다",
+        req: { anyTags: ["mechanicus", "tech_priest", "magos", "administratum"] },
+        effect: {
+          text: "기계 교리와 보급 규정을 빈틈없이 꿰뚫는 모습에 장인 원로가 고개를 숙이며 최상급 검수 도장을 찍어 주었다. 예비 부품까지 넉넉히 배정받았다.",
+          stats: { Int: 6, Inf: 6, Fel: 2 }
+        }
+      },
+      {
+        label: "[지성 판정] 장인들 앞에서 수공예 라스건과 냉각 장치를 직접 분해하고 재조립해 정비 실력을 증명한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "황동 나사 하나 흠집 내지 않고 완벽히 재조립하자 공장 안에 감탄의 탄성이 퍼졌다! 장인 원로가 흡족하게 웃으며 최상급 무기를 인도했다.",
+          stats: { Int: 6, BS: 4, Inf: 5 }
+        },
+        fail: {
+          text: "생소한 보스트로야식 수동 잠금장치를 다루다 부품을 긁어 버려, 길드의 매서운 질책 속에 납품 일정이 며칠이나 지연되었다.",
+          stats: { Inf: -4, Int: 2 }
+        }
+      },
+      {
+        label: "[교섭 판정] 보스트로야 장인들의 만 년 명예를 치켜세우고 전선에서 이 무기들이 얼마나 절실한지 정중히 설득한다",
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "진심 어린 경의에 마음이 누그러진 장인 길드가 서명을 마치고, 전선에서 쓸 수 있는 맞춤형 정비 지침서까지 함께 챙겨 주었다.",
+          stats: { Fel: 6, Inf: 5 }
+        },
+        fail: {
+          text: "설득이 아첨으로 비치며 오히려 장인들의 반발을 샀고, 한참을 눈보라 속 검수장 밖에서 기다린 뒤에야 일반 규격품만 겨우 수령했다.",
+          wounds: -8,
+          stats: { Fel: -2, Inf: -3 }
+        }
+      },
+      {
+        label: "고급 공예 화기 인수 권한을 현지 보급 장교에게 일임하고 표준 규격 탄약과 예비 부품만 절차대로 확인한다",
+        effect: {
+          text: "큰 성과는 없었지만 군수 사고 없이 무사히 보급 인수를 마치고 보스트로야 공업 길드의 까다로운 기풍을 익혔다.",
+          stats: { Int: 3, WP: 2 }
+        }
+      }
+    ],
+    source: "Lexicanum: Vostroya / Codex: Imperial Guard"
+  },
+  {
+    id: "ev_s15_fr_vostroya_2",
+    title: "보스트로야 — 눈보라 속 장갑 증기 철도 탈선 위기와 파괴 공작",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      anyWorlds: ["vostroya"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 보스트로야",
+    weight: 31,
+    text: "얼어붙은 하이브와 외곽 용광로를 잇는 보스트로야의 거대한 장갑 증기 철도. 매서운 눈보라를 가르며 전선용 탄약을 싣고 달리던 열차가 급정거했다. 선로 전환기 아래에 폭약이 설치되어 있고, 설원 능선 너머에서 파괴 공작원들이 불빛을 끄고 접근하는 기척이 포착되었다.",
+    choices: [
+      {
+        label: "[치안·심문·커미사르 전용] 호위 병력을 즉각 산개시켜 공작원들의 퇴로를 차단하고 배후 심문용 생포 작전을 지휘한다",
+        req: { anyTags: ["arbites", "inquisitor", "inquisition_agent", "commissar", "lord_commissar"] },
+        effect: {
+          text: "기민한 포위망에 걸린 공작원들을 산 채로 붙잡아 선로 파괴 음모의 배후까지 캐냈다! 철도청과 행성 수비대의 두터운 신임을 얻었다.",
+          stats: { Int: 5, Inf: 7, WP: 3 }
+        }
+      },
+      {
+        label: "[사격 판정] 장갑 화차 지붕에 올라 눈보라 속 섬광을 추적하며 공작원 저격수와 기폭 요원을 제압한다",
+        check: { stat: "BS", diff: -5 },
+        success: {
+          text: "폭약에 불을 붙이려던 공작원을 정확한 사격으로 쓰러뜨렸다! 나머지 침입자들이 설원 너머로 도주하며 보급 열차가 무사히 살아남았다.",
+          stats: { BS: 6, Ag: 3, Inf: 5 }
+        },
+        fail: {
+          text: "적의 반격 탄환에 어깨를 스치고 눈보라 속에 시야를 잃어 선로 일부가 폭파되고 말았다.",
+          wounds: -18,
+          stats: { Inf: -2 }
+        }
+      },
+      {
+        label: "[지성 판정] 혹한 속에 꽁꽁 언 선로 전환기 밑으로 기어들어 폭발물의 신관 배선을 침착하게 해체한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "손끝이 얼어붙는 악조건에서도 주 도화선과 보조 뇌관을 깔끔하게 끊어 냈다! 열차가 굉음을 내며 다시 출발했다.",
+          stats: { Int: 6, Ag: 4, Inf: 4 }
+        },
+        fail: {
+          text: "보조 뇌관이 먼저 터지며 파편과 화염에 휩쓸려 화상과 타박상을 입었다.",
+          wounds: -20,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "열차 기관실과 연계해 비상 경적과 조명탄을 쏘아 올려 인근 방위 초소에 즉각 증원을 요청한다",
+        effect: {
+          text: "신호를 본 인근 장갑 순찰대가 신속히 출동해 공작원들을 몰아냈고, 열차는 지연 끝에 무사히 보급을 마쳤다.",
+          stats: { WP: 3, Int: 3 }
+        }
+      }
+    ],
+    source: "Lexicanum: Vostroya / Rebel Winter"
+  },
+  {
+    id: "ev_s15_fr_vostroya_3",
+    title: "보스트로야 — 붉은 외투의 퍼스트본 귀환병과 탄약고 화재",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      anyWorlds: ["vostroya"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 보스트로야",
+    weight: 32,
+    text: "변방 전선에서 수많은 전투를 치르고 보충병 인솔차 잠시 돌아온 붉은 외투와 곰털 모자의 보스트로얀 퍼스트본 베테랑들과 함께 보급창 야간 경계에 섰다. 바로 그때, 과열된 난방 보일러가 터지며 불길이 인접한 포탄 및 프로메튬 저장고로 번지기 시작했다!",
+    choices: [
+      {
+        label: "[군·장교 전용] 보스트로얀 퍼스트본 베테랑들과 호흡을 맞춰 구역별 방화벽 폐쇄와 탄약 반출 대열을 일사불란하게 지휘한다",
+        req: { anyTags: ["militarum", "imperial_military", "officer", "commissar", "lord_commissar"] },
+        effect: {
+          text: "숙련된 전선 지휘 솜씨 덕분에 연쇄 폭발을 완벽히 막아 냈다. 베테랑 하사관이 전우의 증표로 황동 문장이 새겨진 아마섹 술병을 건네며 경의를 표했다.",
+          stats: { Fel: 5, Inf: 6, WP: 4 }
+        }
+      },
+      {
+        label: "[강인 판정] 매캐한 연기와 열기를 뚫고 들어가 과열된 프로메튬 통을 눈밭 밖으로 직접 굴려 낸다",
+        check: { stat: "T", diff: -5 },
+        success: {
+          text: "팔뚝에 그을음이 앉도록 버텨 내며 핵심 연료통을 격리했다! 보스트로얀 퍼스트본 병사들이 그대의 담력에 박수를 보냈다.",
+          stats: { T: 6, WS: 3, Inf: 5 }
+        },
+        fail: {
+          text: "터져 나온 고온 증기에 팔과 얼굴을 데었다. 다행히 대폭발은 면했으나 한동안 의무 치료를 받아야 했다.",
+          wounds: -20,
+          stats: { WP: 2 }
+        }
+      },
+      {
+        label: "[의지 판정] 화염 앞에서 동요하는 신병들을 다잡아 소화 포말 분사기와 모래 포대 투입선을 끝까지 유지한다",
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "흔들리지 않는 구령 아래 신병과 베테랑이 하나 되어 불길을 잡았다. 그날 밤 모닥불 곁에서 퍼스트본의 전선 경험담을 값지게 배웠다.",
+          stats: { WP: 6, Fel: 4, Inf: 4 },
+          faith: 4
+        },
+        fail: {
+          text: "소폭발의 충격파에 밀려 넘어지며 연기를 심하게 들이마셨고, 저장고 한쪽 탄약 상자가 소실되었다.",
+          wounds: -14,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "규정에 따라 즉시 대피 경보를 울리고 안전선 바깥으로 장병들과 차량을 신속히 철수시킨다",
+        effect: {
+          text: "저장고 일부는 불탔지만 인명 피해 없이 사태를 수습해 지휘부의 합리적인 평가를 받았다.",
+          stats: { Int: 3, Ag: 2 }
+        }
+      }
+    ],
+    source: "Lexicanum: Vostroyan Firstborn / Codex: Astra Militarum"
+  },
+  {
+    id: "ev_s15_fr_tanith_1",
+    title: "타니스 — 움직이는 날우드 숲에 갇힌 외지 파견대와 정찰병",
+    category: "파견 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      maxYear: 764,
+      anyWorlds: ["tanith"],
+      excludeHomeWorlds: ["tanith"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 타니스 · 외지 파견 · 765.M41 이전",
+    weight: 34,
+    text: "타니스의 전설적인 날우드 거목들이 밤사이 뿌리를 옮기면서 어제 표시해 둔 정찰로가 감쪽같이 사라졌다. 짙은 안개 속에서 나침반마저 시시각각 변하는 지형 탓에 소용없어진 순간, 덤불 뒤에서 위장망토를 두른 타니스 현지 정찰병이 은빛 단검을 손에 쥔 채 소리 없이 모습을 드러냈다.",
+    choices: [
+      {
+        label: "[군·함대·개척상인 전용] 현지 정찰병에게 제국 표준 수송 경로 대조를 요청하며 상호 협력을 정중히 제안한다",
+        req: { anyTags: ["militarum", "imperial_military", "officer", "navy", "rogue_trader"] },
+        effect: {
+          text: "외지인답지 않게 타니스 숲의 법칙을 존중하는 태도에 정찰병이 미소 지으며 앞장섰다. 안전히 외곽 임도로 복귀해 귀중한 삼림 지형도를 얻었다.",
+          stats: { Fel: 5, Int: 4, Ag: 3 }
+        }
+      },
+      {
+        label: "[교섭 판정] 무기를 내리고 솔직히 길을 잃었음을 인정하며, 타니스 정찰병에게 길 안내와 숲의 지혜를 청한다",
+        check: { stat: "Fel", diff: 5 },
+        success: {
+          text: "정찰병이 백파이프 가락을 낮게 흥얼거리며 이동하는 나무들의 바람길을 짚어 주었다. 해 질 녘 무사히 숙영지에 닿아 깊은 우정을 나누었다.",
+          stats: { Fel: 6, Ag: 4, WP: 3 }
+        },
+        fail: {
+          text: "말투가 오만하게 들려 정찰병이 대충 큰 방향만 일러 주고 안개 속으로 사라져 버렸다. 가시덤불을 헤치며 밤새 고생해 몸이 만신창이가 되었다.",
+          wounds: -12,
+          stats: { Fel: -2 }
+        }
+      },
+      {
+        label: "[지성 판정] 햇빛이 스미는 수관 방향과 이끼 분포를 기록해 정찰병의 조언과 대조하며 스스로 탈출 경로를 계산한다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "날우드 숲의 이동 주기를 체계적으로 파악해 정확히 계곡 하류로 빠져나왔다! 타니스 정찰병마저 외지인의 관찰력에 감탄했다.",
+          stats: { Int: 6, Ag: 4, Inf: 4 }
+        },
+        fail: {
+          text: "판독 착오로 늪지대에 발이 빠져 장비를 적시고 심한 탈진과 찰과상을 입은 뒤에야 정찰병의 도움으로 빠져나왔다.",
+          wounds: -14,
+          stats: { Int: 2 }
+        }
+      },
+      {
+        label: "섣불리 숲속을 헤매지 않고 정찰병의 지시대로 제자리에 야영하며 날이 밝고 안개가 걷히기를 기다린다",
+        effect: {
+          text: "안개가 걷힌 아침, 정찰병이 남겨 둔 나무 껍질 표식을 따라 무사히 본대로 귀환할 수 있었다.",
+          stats: { WP: 3, Ag: 2 }
+        }
+      }
+    ],
+    source: "Lexicanum: Tanith / Gaunt's Ghosts: First and Only"
+  },
+  {
+    id: "ev_s15_fr_tanith_2",
+    title: "타니스 — 안개 계곡의 날우드 목재 십일조 호송과 밀수단 습격",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      maxYear: 764,
+      anyWorlds: ["tanith"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 타니스 · 765.M41 이전",
+    weight: 34,
+    text: "타니스의 핵심 제국 십일조인 최고급 날우드 원목을 우주공항으로 운반하는 수송 마차 행렬이 짙은 안개 계곡에 들어섰다. 바로 그 순간, 값비싼 날우드 목재를 노린 무장 밀수업자 무리가 협곡 위 나무 그늘에서 사격을 퍼부으며 호송대를 포위해 왔다!",
+    choices: [
+      {
+        label: "[치안·행정·심문소 전용] 십일조 약탈은 제국 중죄임을 확성기로 선포하고 호송 경비대의 반격과 밀수단 색출을 주도한다",
+        req: { anyTags: ["arbites", "administratum", "inquisition_agent", "inquisitor"] },
+        effect: {
+          text: "제국 권위의 위엄과 정확한 포위 지시에 밀수단의 사기가 꺾여 투항자가 속출했다. 날우드 목재 십일조를 온전히 우주공항까지 지켜 냈다.",
+          stats: { Inf: 7, Int: 4, Fel: 3 }
+        }
+      },
+      {
+        label: "[민첩 판정] 안개와 거목 줄기 사이로 은밀히 우회해 협곡 위 밀수업자들의 측면을 기습한다",
+        check: { stat: "Ag", diff: -5 },
+        success: {
+          text: "소리 없이 등 뒤로 파고들어 지휘관을 제압하자 밀수단이 순식간에 무너졌다! 현지 수송 감독관이 타니스산 은빛 장식 단검을 답례로 전했다.",
+          stats: { Ag: 6, WS: 4, Inf: 5 }
+        },
+        fail: {
+          text: "젖은 낙엽에 미끄러지며 위치를 들켜 산탄 파편에 다리를 다쳤다.",
+          wounds: -18,
+          stats: { Ag: 2 }
+        }
+      },
+      {
+        label: "[사격 판정] 거대한 날우드 통나무 수레 뒤에 몸을 숨기고 안개 속 총구 화염을 겨냥해 정밀 응사한다",
+        check: { stat: "BS", diff: 0 },
+        success: {
+          text: "침착한 저격으로 밀수단 사수들을 차례로 무력화해 호송 행렬의 돌파구를 열었다!",
+          stats: { BS: 6, WP: 4, Inf: 4 }
+        },
+        fail: {
+          text: "빗발치는 총탄에 나무 파편이 튀어 얼굴과 어깨를 다쳤고, 수레 한 대의 목재가 불길에 손상되었다.",
+          wounds: -14,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "수송 마부들을 엄호하며 전속력으로 안개 계곡을 빠져나가 가장 가까운 방위군 검문소로 직행한다",
+        effect: {
+          text: "일부 짐수레가 훼손되었으나 인명 피해 없이 핵심 십일조 목재를 무사히 검문소 안으로 옮겨 놓았다.",
+          stats: { Ag: 3, WP: 2 }
+        }
+      }
+    ],
+    source: "Lexicanum: Tanith / Nalwood / Gaunt's Ghosts"
+  },
+  {
+    id: "ev_s15_fr_tanith_3",
+    title: "타니스 — 타니스 마그나 외곽 민병대 야간 사격과 위장망토 시험",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      maxYear: 764,
+      anyWorlds: ["tanith"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 타니스 · 765.M41 이전",
+    weight: 34,
+    text: "수도 타니스 마그나 시 외곽의 깊은 밤숲 훈련장에서 타니스 민병대와 합동 야간 사격 훈련이 열렸다. 빛과 그림자에 맞춰 무늬가 흐려지는 신형 위장망토를 두른 교관이 어둠 속으로 스며든 뒤, 실전과 다름없는 모의 침투와 야간 사격 시험을 선포했다.",
+    choices: [
+      {
+        label: "[군·장교 전용] 제국 방위 교리와 타니스식 산병 위장 전술을 결합한 합동 기동 계획을 세워 훈련을 완벽히 이끈다",
+        req: { anyTags: ["militarum", "imperial_military", "officer", "commissar", "lord_commissar"] },
+        effect: {
+          text: "타니스 민병대 지휘관들이 제국 정규군의 규율과 숲의 은신술이 절묘하게 어우러졌다며 극찬했다. 사격술과 야전 지휘 감각이 한층 날카로워졌다.",
+          stats: { BS: 5, Ag: 4, Inf: 5 }
+        }
+      },
+      {
+        label: "[사격 판정] 안개와 나뭇잎 흔들림만으로 어둠 속 위장 표적의 위치를 간파해 단발 정밀 사격을 퍼붓는다",
+        check: { stat: "BS", diff: 0 },
+        success: {
+          text: "거의 보이지 않는 야간 표적들을 한 치의 오차도 없이 명중시켰다! 타니스 민병대 사수들이 혀를 내두르며 경의를 표했다.",
+          stats: { BS: 7, Int: 3, Inf: 4 }
+        },
+        fail: {
+          text: "위장망토의 착시에 속아 헛발을 쏘는 사이 모의 침투 조에게 불의의 일격을 맞아 타박상을 입고 자존심을 구겼다.",
+          wounds: -10,
+          stats: { Inf: -2 }
+        }
+      },
+      {
+        label: "[민첩 판정] 직접 위장망토를 둘러쓰고 숨소리까지 죽인 채 민병대 감시망을 뚫고 지휘 천막에 표식을 남긴다",
+        check: { stat: "Ag", diff: -5 },
+        success: {
+          text: "노련한 타니스 정찰병들마저 눈치채지 못할 만큼 완벽히 숲에 녹아들었다! 훈련이 끝난 뒤 백파이프 연주 속에 뜨거운 환대를 받았다.",
+          stats: { Ag: 7, WP: 4, Inf: 4 }
+        },
+        fail: {
+          text: "젖은 나무뿌리에 발이 걸려 덤불 아래로 구르며 발목을 삐고 말았다.",
+          wounds: -12,
+          stats: { Ag: 2 }
+        }
+      },
+      {
+        label: "훈련 교관의 지시에 따라 위장망토 관리법과 야간 방위 표식 판독법을 차근차근 익힌다",
+        effect: {
+          text: "화려한 기록은 남기지 못했으나, 어둠과 숲 속에서 살아남는 타니스 특유의 정찰 기초를 탄탄히 다졌다.",
+          stats: { Ag: 3, BS: 3 }
+        }
+      }
+    ],
+    source: "Lexicanum: Tanith / Tanith Magna / Gaunt's Ghosts: First and Only"
+  },
+  {
+    id: "ev_s15_fr_ophelia7_1",
+    title: "오펠리아 VII — 궤도 순례선 검역과 위조 성유물 단속",
+    category: "파견 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      anyWorlds: ["ophelia7"],
+      excludeHomeWorlds: ["ophelia7"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 오펠리아 VII · 외지 파견",
+    weight: 32,
+    text: "세그멘툼 템페스투스의 대성지 오펠리아 VII 궤도 정거장은 매일 수십만 명의 순례자와 외지 파견선이 몰려드는 관문이다. 상륙 검역을 기다리던 중, 바로 옆 승객 구역에서 가짜 성인 유골함과 불경한 부적을 밀반입하던 위조 성유물 상단이 국교 심문대의 검문에 걸리며 순식간에 구역 전체가 봉쇄되었다.",
+    choices: [
+      {
+        label: "[심문·치안·국교 전용] 검역 당국에 신분을 밝히고 화물 목록을 대조해 위조 성유물 밀수망의 주모자를 즉각 지목한다",
+        req: { anyTags: ["inquisitor", "inquisition_agent", "arbites", "sororitas", "ecclesiarchy"] },
+        effect: {
+          text: "불경한 위조품과 숨겨진 이단 문서를 한꺼번에 압수하는 데 결정적인 공을 세웠다! 오펠리아 VII 성지 입국 우선 통행권과 축복장을 수여받았다.",
+          stats: { Int: 5, Inf: 6, WP: 3 },
+          faith: 10
+        }
+      },
+      {
+        label: "[지성 판정] 궤도 검역관 곁에서 압수된 유골함의 봉랍과 성구 오탈자를 짚어 내 진짜와 위조품을 가려낸다",
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "교묘한 위조 수법을 명쾌히 입증해 억울한 순례자들의 혐의를 벗기고 밀수꾼만 정확히 색출했다! 성지 관료들의 깊은 신뢰를 얻었다.",
+          stats: { Int: 6, Fel: 3, Inf: 5 },
+          faith: 6
+        },
+        fail: {
+          text: "성급한 판별이 빗나가 진품 성유물에 흠집을 낼 뻔했고, 불경 혐의를 벗기 위해 사흘간 격리 심문과 태형 참회를 치러야 했다.",
+          wounds: -12,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "[교섭 판정] 봉쇄 소동에 동요하는 외지 순례자들을 진정시키고 검역 절차가 질서 있게 진행되도록 중재한다",
+        check: { stat: "Fel", diff: 5 },
+        success: {
+          text: "압사 사고와 폭동을 미연에 막아 내어 궤도 검역 사령관의 감사를 받고 빠른 상륙 허가를 얻어 냈다.",
+          stats: { Fel: 6, WP: 3, Inf: 4 },
+          faith: 5
+        },
+        fail: {
+          text: "격앙된 인파와 밀수단 공범들이 일으킨 소동에 떠밀려 넘어지며 큰 타박상을 입었다.",
+          wounds: -14,
+          stats: { Fel: -2 }
+        }
+      },
+      {
+        label: "지정된 검역 대기선에 무릎을 꿇고 묵묵히 아퀼라 성호를 올리며 모든 소지품 검사를 순순히 받는다",
+        effect: {
+          text: "오랜 대기 끝에 결백을 인정받고 황금 대성당이 빛나는 오펠리아 VII 지표면으로 무사히 내려섰다.",
+          stats: { WP: 3 },
+          faith: 6
+        }
+      }
+    ],
+    source: "Lexicanum: Ophelia VII / Ecclesiarchy"
+  },
+  {
+    id: "ev_s15_fr_ophelia7_2",
+    title: "오펠리아 VII — 시노드 미니스트라 재무 서고 감사와 부패 색출",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      anyWorlds: ["ophelia7"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 오펠리아 VII",
+    weight: 31,
+    text: "국교 의회 시노드 미니스트라 산하의 거대한 대리석 재무 서고. 수백 개 성계의 신앙 십일조 장부가 쌓인 이곳에 호위 및 감사 지원 인원으로 배치되었다. 그런데 야간 장부 대조 도중, 전선 보급용 성지 기금을 빼돌려 사치품으로 돌린 고위 부제의 이중 장부와 은밀한 매수 시도가 포착되었다.",
+    choices: [
+      {
+        label: "[행정·치안·심문·귀족 전용] 회계 장부의 누락 항목과 인장 위조 흔적을 완벽히 묶어 시노드 감사관에게 직보한다",
+        req: { anyTags: ["administratum", "arbites", "inquisitor", "inquisition_agent", "noble"] },
+        effect: {
+          text: "꼼짝없는 증거 앞에 부패한 부제와 결탁 상인들이 전원 체포되었다! 시노드 미니스트라 감사단이 정직함과 통찰을 높이 기렸다.",
+          stats: { Int: 6, Inf: 7, WP: 3 },
+          faith: 8
+        }
+      },
+      {
+        label: "[지성 판정] 촛불 아래 양피지 수백 권을 대조해 숨겨진 암호 장부와 자금 유출 경로를 끝까지 추적한다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "십일조 누락액을 한 푼까지 정확히 계산해 내어 부패 조직을 일망타진했다! 추기경단 서기국이 특별 포상을 내렸다.",
+          stats: { Int: 7, Inf: 6 },
+          faith: 6
+        },
+        fail: {
+          text: "증거를 모으던 중 눈치챈 부제의 사병들에게 서고 복도에서 습격당해 깊은 상처를 입고 일부 장부를 빼앗겼다.",
+          wounds: -16,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "[의지 판정] 달콤한 뇌물과 승진 약속을 단호히 물리치고 부패 성직자의 죄상을 대성당 법정에 고발한다",
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "황제의 이름으로 외친 고발에 서고 경비대가 즉각 움직여 부패한 부제를 결박했다! 꺾이지 않는 청렴함이 성지 전역에 회자되었다.",
+          stats: { WP: 6, Inf: 5 },
+          faith: 12
+        },
+        fail: {
+          text: "부패 부제의 교묘한 모함에 휘말려 맞고소를 당했고, 결백이 밝혀지기까지 징벌방에서 채찍질과 고초를 겪었다.",
+          wounds: -14,
+          stats: { Inf: -4 },
+          faith: 4
+        }
+      },
+      {
+        label: "사적인 대립을 피하고 감사 규정대로 이상 징후 기록만 밀봉해 시노드 공식 우편함에 접수한다",
+        effect: {
+          text: "몇 주 뒤 조용히 부제가 경질되었다는 소식이 들려왔고, 그대는 화를 입지 않고 서고 임무를 마쳤다.",
+          stats: { Int: 3, WP: 3 },
+          faith: 4
+        }
+      }
+    ],
+    source: "Lexicanum: Ophelia VII / Synod Ministra / Codex: Adepta Sororitas"
+  },
+  {
+    id: "ev_s15_fr_ophelia7_3",
+    title: "오펠리아 VII — 호스피탈러 야전 치유소의 순례자 역병 봉쇄",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 14,
+      anyWorlds: ["ophelia7"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 오펠리아 VII",
+    weight: 34,
+    text: "콘벤트 상크토룸 외곽의 거대한 순례자 야영지에 아뎁타 소로리타스 호스피탈러 수녀회의 야전 치유소가 급히 세워졌다. 수백만 순례자 인파 사이에서 고열과 검은 반점을 일으키는 정체불명의 역병이 번지기 시작한 것이다. 불경한 워프 역병인지 단순한 항해 풍토병인지 판별하고 확산을 막지 못하면 성지 전체가 마비될 위기다.",
+    choices: [
+      {
+        label: "[소로리타스·국교회 전용] 호스피탈러 치유 수녀들과 함께 격리 성역을 선포하고 성유와 정화 의례로 오염원을 봉쇄한다",
+        req: { anyTags: ["sororitas", "ecclesiarchy"] },
+        effect: {
+          text: "흔들림 없는 신앙과 엄격한 격리 집행으로 역병의 번짐을 조기에 차단했다! 호스피탈러 수녀 원장이 순례자들을 지켜 낸 헌신에 깊은 축복을 내렸다.",
+          stats: { WP: 6, Int: 4, Inf: 7 },
+          faith: 14,
+          corruption: -6
+        }
+      },
+      {
+        label: "[지성 판정] 환자 기록과 식수 공급로를 샅샅이 역학 추적해 최초 감염원과 전파 경로를 밝혀낸다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "오염된 하역장 저수조와 역병 매개 화물을 정확히 찾아내어 대유행을 원천 차단했다! 메디카에 학자들과 수녀회가 그대의 통찰에 찬사를 보냈다.",
+          stats: { Int: 7, WP: 3, Inf: 6 },
+          faith: 8
+        },
+        fail: {
+          text: "표본을 채취하던 도중 오염된 식수 비말을 들이마셔 고열에 시달렸고, 며칠간 격리 병동에서 혹독한 해독 치료를 받아야 했다.",
+          wounds: -16,
+          corruption: 4
+        }
+      },
+      {
+        label: "[강인 판정] 방독면과 향로만 의지한 채 야전 치유소 안으로 들어가 환자 이송과 의약품 보급을 온몸으로 지원한다",
+        check: { stat: "T", diff: 0 },
+        success: {
+          text: "밤낮없는 고된 간호와 방호 지원 끝에도 끝내 쓰러지지 않고 수많은 순례자의 목숨을 건져 냈다. 수녀회가 정화의 인장과 높은 신망을 안겨 주었다.",
+          stats: { T: 6, WP: 4, Inf: 5 },
+          faith: 10
+        },
+        fail: {
+          text: "극심한 과로와 독기 탓에 열병에 감염되어 사경을 헤매다 호스피탈러 수녀들의 응급 시술로 간신히 목숨을 건졌다.",
+          wounds: -20,
+          stats: { T: -2 }
+        }
+      },
+      {
+        label: "치유소 외곽 경계선에 방역 표식을 세우고 격리선 안팎의 출입을 엄격히 통제해 추가 확산을 막는다",
+        effect: {
+          text: "질서 정연한 경계선 봉쇄 덕분에 성지 중심부로 역병이 번지지 않고 무사히 사태가 진정되었다.",
+          stats: { WP: 3, Int: 3 },
+          faith: 6
+        }
+      }
+    ],
+    source: "Lexicanum: Orders Hospitaller / Ophelia VII / Codex: Adepta Sororitas"
   }
 );
+

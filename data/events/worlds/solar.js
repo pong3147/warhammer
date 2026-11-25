@@ -1,49 +1,6 @@
-// 분기 사건 — 세그멘툼 솔라 행성 고유 (신성한 테라 · 화성 · 아마겟돈 · 네크로문다 / 향후 행성별 단독 승격 가능)
+// 분기 사건 — 세그멘툼 솔라 행성 고유 (화성 · 네크로문다 / 테라·아마겟돈은 1:1 단독 승격)
 window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
 (window.IMPERIUM_DATA.EVENTS = window.IMPERIUM_DATA.EVENTS || []).push(
-  {
-    id: "ev_world_terra_pilgrim",
-    title: "신성한 테라 — 순례자의 길과 압사 행렬",
-    category: "행성 고유",
-    once: true,
-    req: {
-      minAge: 14,
-      anyWorlds: ["terra"],
-      excludeTags: [
-        "custodes", "astartes", "grey_knight", "dreadnought", "high_lord_terra",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 신성한 테라 · 비초인 제국인",
-    weight: 24,
-    text: "황궁 영원의 문을 향해 3세대째 줄을 서 온 수백만 순례자 행렬이 갑자기 무너졌다! 성스러운 관문을 보려는 군중이 서로를 짓밟는 가운데, 아드미니스트라툼 서기관은 위층 발코니에서 사망자 수만 차분히 세고 있다.",
-    choices: [
-      {
-        label: "[강인 판정] 짓밟히는 노인과 아이를 일으켜 세우며 행렬을 버텨 낸다",
-        check: { stat: "T", diff: 0 },
-        success: {
-          text: "기적적으로 순례자 대여섯을 구하고 황궁 첨탑의 황금빛을 두 눈으로 마주했다! 가슴 깊이 신앙이 타오른다.",
-          stats: { T: 4, WP: 6, Fel: 4 },
-          faith: 14
-        },
-        fail: {
-          text: "군중에 깔려 늑골이 부러졌으나, 순례 행렬은 멈추지 않고 그대의 등을 밟고 지나갔다.",
-          wounds: -24,
-          faith: 4
-        }
-      },
-      {
-        label: "[권위 40+ 해금] 귀족·관료 전용 우회 회랑 통행증을 제시해 빠져나간다",
-        req: { stats: { Inf: 40 } },
-        effect: {
-          text: "비명 소리를 발밑에 둔 채 대리석 회랑을 우아하게 걸어 황궁 성소에 참배했다.",
-          stats: { Inf: 4, WP: 3 },
-          faith: 8
-        }
-      }
-    ],
-    source: "Lexicanum: Terra / Vaults of Terra"
-  },
   {
     id: "ev_world_mars_archaeotech",
     title: "화성 적색 사막 — 모래 폭풍이 드러낸 기술의 암흑기 주조소",
@@ -92,52 +49,6 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Lexicanum: Mars / Codex: Adeptus Mechanicus"
-  },
-  {
-    id: "ev_world_armageddon_ash",
-    title: "아마겟돈 — 잿빛 황무지 포자 소각전",
-    category: "행성 고유",
-    once: true,
-    req: {
-      minAge: 14,
-      minYear: 942,
-      anyWorlds: ["armageddon"],
-      excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 아마겟돈 · 942.M41 이후",
-    weight: 24,
-    text: "헬스리치 하이브 외곽의 유독성 잿빛 황무지에서 지난 전쟁 때 흩어진 오크 포자가 야생 페럴 오크 무리로 자라났다! 산성 폭풍이 몰려오기 전에 화염방사기로 둥지를 태워야 한다.",
-    choices: [
-      {
-        label: "[강인 판정] 방독면을 고쳐 쓰고 화염방사기를 메어 오크 둥지로 진격한다",
-        check: { stat: "T", diff: 0 },
-        success: {
-          text: "맹렬한 프로메튬 불길로 오크 둥지를 완전히 재로 만들었다! 하이브 방위청이 공로를 인정했다.",
-          stats: { T: 5, BS: 4, Inf: 5 }
-        },
-        fail: {
-          text: "산성 모래바람에 방독면 필터가 녹아내려 폐에 심한 손상을 입었다.",
-          wounds: -24,
-          stats: { T: 2 }
-        }
-      },
-      {
-        label: "[민첩 판정] 키메라 장갑차 정찰대로 우회해 외곽 잔당만 정리한다",
-        check: { stat: "Ag", diff: 5 },
-        success: {
-          text: "기동력을 살려 무사히 정찰과 소탕을 완수했다.",
-          stats: { Ag: 4, BS: 4 }
-        },
-        fail: {
-          text: "황무지 함정에 차량이 전복되어 타박상을 입었다.",
-          wounds: -16
-        }
-      }
-    ],
-    source: "Lexicanum: Armageddon"
   },
   {
     id: "ev_world_necromunda_house",
@@ -192,270 +103,6 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Lexicanum: Necromunda"
-  },
-  {
-    id: "ev_terra_administratum_war",
-    title: "신성한 테라 — 아드미니스트라툼 '양피지 내전'",
-    category: "행성 고유",
-    req: {
-      minAge: 14,
-      anyWorlds: ["terra"],
-      excludeTags: [
-        "custodes", "astartes", "grey_knight", "dreadnought",
-        "high_lord_terra", "warmaster", "sector_lord",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 신성한 테라 · 비초인 제국인",
-    weight: 28,
-    text: "테라 중앙 서고 412구역에서 '고대 세금 장부 보관파'와 '소각 후 재활용파' 서기관 길드가 오토건과 인장 도장을 들고 무장 충돌을 벌였다! 수백 년 된 양피지 산더미에 불이 붙어 복도가 아수라장이 되었다.",
-    choices: [
-      {
-        label: "[이단심문관/아르비테스/커미사르 전용] 제국 공권력을 선포해 양쪽 서기관 길드장을 즉각 체포한다",
-        req: { anyTags: ["inquisitor", "inquisition_agent", "arbites", "commissar", "lord_commissar"] },
-        effect: {
-          text: "제국 법집행의 호령 앞에 무장 서기관들이 깃펜과 총을 내려놓고 엎드렸다! 상급 아뎁트가 감사의 뜻으로 권위를 보증했다.",
-          stats: { Inf: 7, WP: 4 }
-        }
-      },
-      {
-        label: "[지성 판정] 불타는 서고에서 황금 봉인이 찍힌 핵심 칙령 원본만 골라 구출한다",
-        check: { stat: "Int", diff: 0 },
-        success: {
-          text: "800년 된 테라 성계 십일조 원본을 지켜 냈다! 아드미니스트라툼 고위 관료가 두둑한 보상을 내렸다.",
-          stats: { Int: 5, Inf: 7 }
-        },
-        fail: {
-          text: "무너지는 양피지 책장에 깔려 타박상과 연기 흡입으로 고생했다.",
-          wounds: -18
-        }
-      },
-      {
-        label: "[민첩 판정] 미친 관료들의 총격전을 피해 인접 성당 회랑으로 재빨리 대피한다",
-        check: { stat: "Ag", diff: 5 },
-        success: {
-          text: "유탄을 아슬아슬하게 피하고 안전 구역으로 빠져나왔다. 테라에서는 관료 싸움에 끼면 목숨이 열 개라도 모자란다.",
-          stats: { Ag: 4 }
-        },
-        fail: {
-          text: "도망치다 서기관이 던진 청동 도장에 이마를 맞아 찢어졌다.",
-          wounds: -14
-        }
-      }
-    ],
-    source: "Vaults of Terra: The Carrion Throne"
-  },
-  {
-    id: "ev_terra_water_cartel",
-    title: "신성한 테라 — 마른 행성의 물 카르텔 암시장",
-    category: "행성 고유",
-    req: {
-      minAge: 14,
-      anyWorlds: ["terra"],
-      excludeTags: [
-        "custodes", "astartes", "grey_knight", "dreadnought",
-        "high_lord_terra", "warmaster", "sector_lord", "fabricator_general",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 신성한 테라 · 비초인 제국인",
-    weight: 26,
-    text: "바다가 모두 말라 버린 테라에서 정제수 1리터는 금화보다 귀하다. 구역 수압 펌프가 고장 나자 지하 물 카르텔이 '수분 회수 탱크'를 끼고 폭리를 취하며 시민들을 쥐어짜고 있다.",
-    choices: [
-      {
-        label: "[권위 42+ 또는 귀족 전용] 상층 수자원국에 직통 전보를 쳐 카르텔 창고를 몰수·개방한다",
-        req: { or: [{ stats: { Inf: 42 } }, { allTags: ["noble"] }] },
-        effect: {
-          text: "귀족·관료의 위세 앞에 암시장 두목이 꽁지를 빼고 달아났다! 구역 시민들이 그대를 은인으로 기렸다.",
-          stats: { Inf: 6, Fel: 6 },
-          wounds: 6
-        }
-      },
-      {
-        label: "[백병 판정] 카르텔 경비원을 제압하고 갇혀 있던 공용 식수 밸브를 강제로 연다",
-        check: { stat: "WS", diff: 0 },
-        success: {
-          text: "물줄기가 터져 나오자 환호성이 울렸다! 갈증을 해갈하고 하층 구역의 신뢰를 얻었다.",
-          stats: { WS: 4, Fel: 5 },
-          wounds: 8
-        },
-        fail: {
-          text: "카르텔 사병들의 몽둥이 세례에 얻어맞고 물 한 모금 못 얻은 채 쫓겨났다.",
-          wounds: -20
-        }
-      },
-      {
-        label: "비싼 값을 치르고서라도 암시장 물을 사서 버틴다",
-        effect: {
-          text: "재산과 인맥을 좀 잃었지만, 테라의 메마른 열기 속에서 건강만은 지켜 냈다.",
-          stats: { Inf: -3 },
-          wounds: 5
-        }
-      }
-    ],
-    source: "Lexicanum: Terra / Vaults of Terra"
-  },
-  {
-    id: "ev_terra_astronomican_choir",
-    title: "신성한 테라 — 아스트로노미칸 성가대의 행렬",
-    category: "행성 고유",
-    once: true,
-    req: {
-      minAge: 12,
-      anyWorlds: ["terra"],
-      excludeTags: [
-        "high_lord_terra", "dreadnought",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 신성한 테라",
-    weight: 28,
-    text: "히말라지아 산맥 공허의 산에 우뚝 솟은 거대한 아스트로노미칸 성채를 향해, 흰 로브를 걸친 수천 명의 젊은 사이커들이 경건한 찬송을 부르며 걸어간다. 칠흑 같은 워프의 폭풍을 뚫고 인류의 항로를 비추는 황제의 등불을 지피기 위해, 저들은 매일 수백 명씩 영혼을 불태워 소멸할 운명이다.",
-    choices: [
-      {
-        label: "[사이커 전용 · 의지 판정] 그들의 영혼 공명에 정신을 맞추며 황제의 등불을 깊이 느낀다",
-        req: { allTags: ["psyker"] },
-        check: { stat: "WP", diff: 5 },
-        success: {
-          text: "눈부신 황금빛 공명이 영혼의 잡음을 모조리 태워 버렸다! 사이킥 제어력이 비약적으로 상승했다.",
-          stats: { WP: 7, Int: 4 },
-          faith: 12,
-          corruption: -10
-        },
-        fail: {
-          text: "압도적인 황제의 빛에 감각이 과부하되어 코피를 쏟으며 쓰러졌다.",
-          wounds: -16,
-          stats: { WP: 3 }
-        }
-      },
-      {
-        label: "무릎을 꿇고 인류의 항로를 비추는 숭고한 희생자들에게 경의를 표한다",
-        effect: {
-          text: "장엄하고도 처절한 희생의 행렬을 바라보며 제국의 무게와 신앙을 깊이 새겼다.",
-          stats: { WP: 4 },
-          faith: 10,
-          corruption: -6
-        }
-      }
-    ],
-    source: "Lexicanum: Astronomican"
-  },
-  {
-    id: "ev_terra_high_lords",
-    title: "신성한 테라 — 테라의 하이 로드 행차와 도로 정화",
-    category: "행성 고유",
-    req: {
-      minAge: 14,
-      anyWorlds: ["terra"],
-      excludeTags: [
-        "custodes", "grey_knight", "dreadnought", "high_lord_terra",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 신성한 테라",
-    weight: 24,
-    text: "테라의 하이 로드 중 한 명이 황금 반중력 가마를 타고 대로로 행차한다! 선두의 아르비테스와 군악대가 '길바닥에 3초 안에 엎드리지 않는 자는 즉결 처형'이라며 몽둥이를 휘두르고 있다.",
-    choices: [
-      {
-        label: "[권위 50+ 또는 귀족/아스타르테스 전용] 귀빈석 회랑에서 당당히 예의를 갖추어 눈도장을 찍는다",
-        req: { or: [{ stats: { Inf: 50 } }, { anyTags: ["noble", "astartes", "inquisitor", "lord_commissar", "canoness"] }] },
-        effect: {
-          text: "하이 로드의 수행 비서관이 그대의 품격과 신분을 눈여겨보며 황궁 만찬 초대장을 건넸다!",
-          stats: { Inf: 8, Fel: 4 }
-        }
-      },
-      {
-        label: "먼지투성이 돌바닥에 재빨리 이마를 대고 행차가 지나갈 때까지 숨을 죽인다",
-        effect: {
-          text: "황금 가마의 반중력 열풍이 등 위를 스치고 지나갔다. 살아남았으니 그걸로 충분하다.",
-          stats: { Ag: 2, WP: 2 }
-        }
-      }
-    ],
-    source: "Watchers of the Throne: The Emperor's Legion"
-  },
-  {
-    id: "ev_terra_deep_strata",
-    title: "신성한 테라 — 최하층 고대 지층의 1만 년 전 유물",
-    category: "행성 고유",
-    once: true,
-    req: {
-      minAge: 16,
-      anyWorlds: ["terra"],
-      excludeTags: [
-        "custodes", "grey_knight", "dreadnought", "high_lord_terra",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 신성한 테라",
-    weight: 26,
-    text: "테라 지표면 아래 12킬로미터, 고대 통합 전쟁 시대의 시멘트 유적이 하수도 공사 중 드러났다. 벽면에는 황제께서 인류를 통합하던 시기의 낯선 고대 문양과 썬더 워리어의 부러진 갑주 조각이 박혀 있다!",
-    choices: [
-      {
-        label: "[지성 판정] 역사적 가치를 알아보고 비밀리에 탁본과 성분을 기록한다",
-        check: { stat: "Int", diff: -5 },
-        success: {
-          text: "일반 시민은 존재조차 몰라야 할 1만 년 전 인류의 진실을 엿보았다! 깊은 통찰을 얻었다.",
-          stats: { Int: 8, WP: 4 }
-        },
-        fail: {
-          text: "고대 방사능 잔류 물질에 노출되어 한동안 극심한 구토와 탈진에 시달렸다.",
-          wounds: -20
-        }
-      },
-      {
-        label: "금지된 고대 유적이다. 즉시 쿠스토데스나 이단심문소 연락관에게 신고하고 봉쇄한다",
-        effect: {
-          text: "몇 시간 뒤 황금 갑주와 검은 제복이 유적을 통째로 밀봉했다. 충성스러운 신고에 비밀 포상이 떨어졌다.",
-          stats: { Inf: 7, WP: 4 },
-          faith: 6
-        }
-      }
-    ],
-    source: "Lexicanum: Unification Wars / Terra"
-  },
-  {
-    id: "ev_terra_pilgrim_scam",
-    title: "신성한 테라 — 순례자 숙소와 가짜 황궁 통행증",
-    category: "부조리",
-    req: {
-      minAge: 14,
-      anyWorlds: ["terra"],
-      excludeTags: [
-        "custodes", "astartes", "grey_knight", "dreadnought",
-        "inquisitor", "lord_inquisitor", "noble", "high_lord_terra",
-        "warmaster", "sector_lord", "planetary_governor", "cardinal", "canoness",
-        "lord_commissar", "commissar_general", "magos", "fabricator_locum", "fabricator_general",
-        "navy_admiral", "arbites_marshal", "departmento_head", "rt_lord_captain",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
-      ]
-    },
-    reqLabel: "행성: 신성한 테라 · 일반 시민",
-    weight: 24,
-    text: "수십 광년 너머에서 전 재산을 팔아 온 순례자들에게 악덕 브로커가 '황궁 직행 급행 통행증'을 팔아넘기고 있다. 자세히 보니 300년 전 폐기된 하수도 출입증에 금칠만 덧입힌 사기다.",
-    choices: [
-      {
-        label: "[교섭 판정] 사기극을 폭로하고 브로커를 인근 아르비테스 순찰대에 넘긴다",
-        check: { stat: "Fel", diff: 0 },
-        success: {
-          text: "브로커가 즉석에서 체포되었고, 감격한 순례자들이 눈물을 흘리며 축복을 빌어 주었다.",
-          stats: { Fel: 5, Inf: 4 },
-          faith: 8
-        },
-        fail: {
-          text: "브로커와 결탁한 부패 경비원에게 오히려 '공무 방해'로 얻어맞았다.",
-          wounds: -18
-        }
-      },
-      {
-        label: "테라에서 남의 일에 끼어들면 손해다. 조용히 제 갈 길을 간다",
-        effect: {
-          text: "속은 순례자들은 평생 영원의 문 문턱도 못 보고 굶어 죽겠지만, 그것이 테라의 일상이다.",
-          stats: { Int: 2 }
-        }
-      }
-    ],
-    source: "Vaults of Terra"
   },
   {
     id: "ev_mars_titan_march",
@@ -714,5 +361,387 @@ window.IMPERIUM_DATA = window.IMPERIUM_DATA || {};
       }
     ],
     source: "Lexicanum: Collegia Titanica / Codex: Adeptus Mechanicus"
+  },
+  {
+    id: "ev_s15_su_mars_1",
+    title: "화성 철의 고리 — 궤도 조선소 장갑 용접 사고와 출입 인가 분쟁",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["mars"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 화성 · 비초인 필멸자",
+    weight: 30,
+    text: "화성 적도를 둘러싼 거대 궤도 조선소 '철의 고리'의 제4건조 구역에서 순양함 뱃머리 장갑판 용접 중 플라즈마 절단기가 과열되어 폭발했다. 감압 경보가 울리며 외부 파견 정비병과 수송 승무원들이 격벽 안쪽에 갇혔지만, 현장 감독 테크프리스트는 보안 인가가 없는 외지인 구역으로 비상 통로를 여는 것은 기계교 규율 위반이라며 격벽 개방을 막고 있다.",
+    choices: [
+      {
+        label: "[기계교 전용] 누스피어 우선 명령 코드를 전송해 격벽 개방과 대기 안정화를 기계령 의례 절차로 즉시 승인한다",
+        req: { anyTags: ["mechanicus", "tech_priest", "magos"] },
+        effect: {
+          text: "성스러운 고위 명령 코드 앞에 감독 사제가 즉시 물러섰다! 감압 구역의 승무원 전원을 구출하고 선체 손상도 막아 냈다.",
+          stats: { Int: 6, Inf: 7, WP: 4 },
+          faith: 4
+        }
+      },
+      {
+        label: "[제국 함대/지휘관 전용] 제국 해군 조선 인계 규약을 들이밀어 선체 손실 책임을 추궁하며 구조 통로를 강제 개방한다",
+        req: { anyTags: ["navy", "rogue_trader", "officer"] },
+        effect: {
+          text: "순양함 인계 지연 책임이라는 명분 앞에 기계교 현장 감독관이 마지못해 격벽을 열었다! 갇혀 있던 승무원들이 환호했다.",
+          stats: { Inf: 7, Fel: 5, Int: 4 }
+        }
+      },
+      {
+        label: "[지성 판정] 보조 공기 정화 밸브를 우회 조작해 감압을 늦추며 고립된 승무원들을 안전 구역으로 유도한다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "보안 구획을 침범하지 않고도 압력을 안정시켜 전원을 무사히 대피시켰다! 조선소 사제단마저 그대의 정밀한 판단을 인정했다.",
+          stats: { Int: 6, Ag: 4, Inf: 5 }
+        },
+        fail: {
+          text: "플라즈마 역류에 화상을 입고 무단 회로 조작으로 화성 조선소 감독관의 공식 경고를 받았다.",
+          wounds: -18,
+          stats: { Int: 2, Inf: -2 }
+        }
+      },
+      {
+        label: "[교섭 판정] 순양함 건조 지연이 화성 납기 기록에 남길 손실을 논리적으로 설득해 감독 사제의 허가를 받아 낸다",
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "감정이 아닌 생산 효율 수치로 사제를 설득했다! 격벽이 열리며 인명과 공정을 모두 지켜 냈다.",
+          stats: { Fel: 6, Inf: 6, Int: 3 }
+        },
+        fail: {
+          text: "기계교 서기관의 냉담한 거부로 구조가 지체되고 외지인 출입 등급이 한 단계 강등되었다.",
+          stats: { Fel: -2, Inf: -4 }
+        }
+      },
+      {
+        label: "기계교 보안선 바깥에서 예비 냉각수와 의료 장비를 정렬해 격벽이 열리자마자 부상자들을 수용할 태세를 갖춘다",
+        effect: {
+          text: "규율을 어기지 않고 침착하게 후속 구호 태세를 준비해 불필요한 마찰과 추가 피해를 줄였다.",
+          stats: { T: 3, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Ring of Iron / Battlefleet Gothic Rulebook"
+  },
+  {
+    id: "ev_s15_su_mars_2",
+    title: "화성 포지 외곽 — 이탈한 서비터 호송대와 성유 탱크",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 15,
+      anyWorlds: ["mars"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 화성 · 비초인 필멸자",
+    weight: 30,
+    text: "화성 남부 포지 단지 외곽의 고압 송전로에서, 주조소 사이를 오가던 성유 탱크 수송차와 짐꾼 서비터 행렬이 갑작스러운 전자기 방전에 항법 링크를 잃고 방어 구획 바깥으로 이탈했다. 기울어진 탱크의 압력 밸브에서는 타이탄 관절에 쓰일 고순도 성유가 붉은 지표 위로 뿜어져 나오고 있으며, 명령을 잃은 서비터들이 무질서하게 배회하며 고압 케이블을 밟기 직전이다.",
+    choices: [
+      {
+        label: "[기계교 전용] 누스피어 유도 비컨을 직접 동기화해 서비터 행렬을 정렬시키고 성유 탱크 압력을 즉시 안정화한다",
+        req: { anyTags: ["mechanicus", "tech_priest", "magos"] },
+        effect: {
+          text: "정확한 이진법 명령에 서비터들이 일사불란하게 대형을 되찾고 귀중한 성유를 한 방울도 남김없이 회수했다.",
+          stats: { Int: 6, T: 4, Inf: 6 }
+        }
+      },
+      {
+        label: "[지성 판정] 끊어진 송전탑 중계기를 수동 배선해 누스피어 유도 비컨을 되살리고 서비터 행렬을 안전 구역으로 불러들인다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "유도 신호가 복구되자 서비터 행렬이 일제히 안전 통로로 복귀했다! 주조소 사제단이 그대의 기민한 조치를 높이 평가했다.",
+          stats: { Int: 7, Ag: 3, Inf: 6 }
+        },
+        fail: {
+          text: "송전 중계기에서 튄 고압 방전에 손을 크게 데고 서비터 두 기가 망가져 주조소 감독관의 혹독한 문책을 받았다.",
+          wounds: -14,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "[강인 판정] 정전기 불꽃과 고온 성유 증기를 견뎌 내며 기울어진 탱크의 압력 밸브를 힘껏 잠가 폭발을 막는다",
+        check: { stat: "T", diff: 0 },
+        success: {
+          text: "뜨거운 증기와 정전기 충격을 온몸으로 버텨 내고 압력 밸브를 완벽히 안정시켜 귀중한 성유 탱크를 지켜 냈다!",
+          stats: { T: 7, WP: 5, Inf: 5 }
+        },
+        fail: {
+          text: "뿜어져 나온 뜨거운 성유 증기에 팔과 얼굴을 크게 데었으나 간신히 압력 밸브만은 잠갔다.",
+          wounds: -20,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "고압 케이블 차단기만 먼저 내린 뒤 비상 발신기를 세워 주조소 정비 순찰대가 도착할 때까지 구역을 통제한다",
+        effect: {
+          text: "무리하게 접근하지 않고 감전 위험부터 차단한 덕분에 추가 피해 없이 정비 순찰대에 현장을 인계했다.",
+          stats: { WP: 4, Int: 3 }
+        }
+      }
+    ],
+    source: "Lexicanum: Mars / Codex: Adeptus Mechanicus"
+  },
+  {
+    id: "ev_s15_su_mars_3",
+    title: "화성 대서고 외곽 — 데이터 성소의 이진법 감사와 외지 기술 사절",
+    category: "파견 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["mars"],
+      excludeHomeWorlds: ["mars"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "화성 파견 · 화성 외 출신 · 비초인",
+    weight: 32,
+    text: "외지에서 화성으로 파견된 그대가 대서고 외곽 데이터 성소의 출입 심사를 받던 날, 기계교 감찰 사제단이 외지 주조소에서 올라온 정비 사절단의 봉인 데이터 슬레이트를 전수 감사하기 시작했다. 육신 비중이 높은 외지인의 필체와 수동 기록 방식을 기계교 감찰관이 교리 미달로 트집 잡으며 사절단 전체의 화성 체류 자격을 정지하려 든다.",
+    choices: [
+      {
+        label: "[제국 관료/심문소/귀족 전용] 테라와 화성 사이의 올림푸스 조약 문구를 인용해 제국 사절의 면책과 표준 절차 준수를 못 박는다",
+        req: { anyTags: ["administratum", "inquisitor", "inquisition_agent", "noble"] },
+        effect: {
+          text: "올림푸스 조약의 공식 조항이 거론되자 감찰 사제가 전자음을 울리며 감사를 즉시 간소화했다! 외지 사절단이 깊이 감사했다.",
+          stats: { Inf: 7, Int: 5, Fel: 5 }
+        }
+      },
+      {
+        label: "[지성 판정] 사절단의 수동 정비 도표를 화성 표준 이진법 색인 체계로 현장에서 재정렬해 제출한다",
+        check: { stat: "Int", diff: -5 },
+        success: {
+          text: "외지인답지 않은 정교한 색인 정리에 감찰 사제단이 만족을 표하며 대서고 열람 통행증까지 발급해 주었다!",
+          stats: { Int: 7, Inf: 6, WP: 3 }
+        },
+        fail: {
+          text: "데이터 단말기 접속 중 신경 역류를 겪고 감사 불합격 판정을 받아 구금 심사를 치렀다.",
+          wounds: -10,
+          stats: { Inf: -4 }
+        }
+      },
+      {
+        label: "[교섭 판정] 감찰 사제의 자존심을 건드리지 않도록 화성 본산의 권위를 찬미하며 보완 기한을 끌어낸다",
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "예의를 갖춘 격식과 겸손한 화법으로 사흘의 보완 유예를 얻어 내어 사절단의 추방을 막았다!",
+          stats: { Fel: 6, Inf: 5, WP: 3 }
+        },
+        fail: {
+          text: "외지인의 구두 변명이 무례한 잡음으로 치부되어 사절단 전체가 외곽 대기 숙소로 쫓겨났다.",
+          stats: { Fel: -2, Inf: -4 }
+        }
+      },
+      {
+        label: "모든 이의 제기를 접고 기계교 감찰단이 요구하는 정화 서약서와 추가 서류를 말없이 작성해 제출한다",
+        effect: {
+          text: "화성 본산의 까다로운 절차를 묵묵히 감내하며 불필요한 기술 이단 혐의를 피했다.",
+          stats: { WP: 5, Int: 3 }
+        }
+      }
+    ],
+    source: "Lexicanum: Treaty of Mars / Codex: Adeptus Mechanicus"
+  },
+  {
+    id: "ev_s15_su_necromunda_1",
+    title: "네크로문다 하이브 프리무스 — 외지 징병관 호위와 하우스 올록 승강기 봉쇄",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["necromunda"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 네크로문다 · 비초인 필멸자",
+    weight: 30,
+    text: "아스트라 밀리타룸 신병 징발을 위해 하이브 프리무스 중층 환승 갑판에 내려온 외지 징병관 일행을 호위하며 상층과 중층을 잇는 대형 화물 승강기에 올랐다. 승강기가 중간 제련 구획에 멈춰 서는 순간, 임금 삭감과 강제 징병에 반발해 무장 파업에 나선 하우스 올록 광부 조합원들이 강철 셔터를 내리고 산탄총과 용접봉으로 승강기 출구를 포위했다!",
+    choices: [
+      {
+        label: "[제국군/커미사르 전용] 승강기 화물 상자 뒤에 방어 진지를 꾸리고 제국 징병령의 무관용 원칙을 선포해 봉쇄 대열을 압박한다",
+        req: { anyTags: ["militarum", "imperial_military", "officer", "commissar", "lord_commissar"] },
+        effect: {
+          text: "단호한 군법 집행 선언과 빈틈없는 사격 진형 앞에 파업 조합원들이 슬금슬금 물러났다! 외지 징병관이 그대의 위엄에 찬사를 보냈다.",
+          stats: { BS: 5, Inf: 6, WP: 5 }
+        }
+      },
+      {
+        label: "[교섭 판정] 징병 할당에서 올록 조합 숙련 기술자들을 제외하겠다는 협상안을 제시해 파업 대표단에게 통로를 열게 한다",
+        check: { stat: "Fel", diff: -5 },
+        success: {
+          text: "유혈 충돌 없이 숙련공 보호와 징병관 호위를 동시에 이루어 냈다! 하우스 올록 조합 간부가 감사의 인사를 남겼다.",
+          stats: { Fel: 7, Inf: 6, Int: 3 }
+        },
+        fail: {
+          text: "강경파 광부들이 협상 제안을 조롱하며 던진 화염병과 공구에 맞고 승강기 안으로 밀려났다.",
+          wounds: -16,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "[사격 판정] 승강기 상부 난간에서 셔터 구동 장치와 봉쇄 바리케이드를 정밀 제압 사격해 탈출 틈을 연다",
+        check: { stat: "BS", diff: -5 },
+        success: {
+          text: "정확한 제압 사격으로 봉쇄선을 흐트러뜨리고 징병관 일행을 상층 환승 통로까지 무사히 돌파시켰다!",
+          stats: { BS: 7, Ag: 4, Inf: 5 }
+        },
+        fail: {
+          text: "광부들의 산탄 세례에 어깨를 맞고 충격으로 난간 아래 화물 상자 위로 굴러떨어졌다.",
+          wounds: -20,
+          stats: { BS: 2 }
+        }
+      },
+      {
+        label: "승강기 내부 비상 제동 장치를 걸어 두고 방탄 화물 상자 뒤에서 징병관을 엄호하며 하이브 집행대의 봉쇄 해제를 기다린다",
+        effect: {
+          text: "탄환과 쇠파이프가 철문을 두드리는 소음 속에서도 침착히 버텨 내어 인명 피해를 막았다.",
+          stats: { T: 4, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: House Orlock / Necromunda: House of Iron"
+  },
+  {
+    id: "ev_s15_su_necromunda_2",
+    title: "네크로문다 하층 돔 — 길드 통행세 갈등과 하우스 카우도르 광신도 폭동",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 15,
+      anyWorlds: ["necromunda"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 네크로문다 · 비초인 필멸자",
+    weight: 30,
+    text: "상인 길드가 하층 돔 정화 구역의 통행세를 두 배로 올리자, 쓰레기 더미에서 구원을 외치던 하우스 카우도르 광신도들이 횃불과 장대 폭탄을 들고 세관 방벽으로 몰려들었다! 연기와 광신적인 찬송이 뒤섞인 시장 바닥에서 길드 용병들과 광신도들이 정면으로 충돌하기 직전이다.",
+    choices: [
+      {
+        label: "[국교/아르비테스/커미사르 전용] 제국 신앙과 법의 정통 권위로 폭도들의 사적 난동을 꾸짖고 양측의 무장을 강제 해산시킨다",
+        req: { anyTags: ["ecclesiarchy", "sororitas", "arbites", "commissar", "lord_commissar"] },
+        effect: {
+          text: "위엄 있는 일갈에 광신도들이 횃불을 내려놓고 무릎을 꿇었다! 상인 길드 역시 폭리 징수를 거두어들이며 돔의 질서가 회복되었다.",
+          stats: { Inf: 7, WP: 6, Fel: 4 },
+          faith: 6
+        }
+      },
+      {
+        label: "[백병 판정] 세관 방벽을 넘어오는 장대 폭탄 돌격대를 앞장서 막아 내고 혼란을 진압한다",
+        check: { stat: "WS", diff: -5 },
+        success: {
+          text: "불붙은 장대를 쳐내고 선두 폭도들을 제압해 시장 구역의 대화재를 막아 냈다! 상인 길드가 두둑한 사례를 건넸다.",
+          stats: { WS: 7, T: 5, Inf: 5 }
+        },
+        fail: {
+          text: "조잡한 화염 장대에 몸을 크게 데고 성난 군중에게 짓밟혀 중상을 입었다.",
+          wounds: -22,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "[교섭 판정] 황제의 자비를 들먹이며 광신도 지도자에게 빈민 구호 통행 면제안을 제시해 군중의 분노를 가라앉힌다",
+        check: { stat: "Fel", diff: -5 },
+        success: {
+          text: "신앙의 명분과 실리를 절묘하게 엮어 유혈 사태를 멈추었다! 언더하이브 골목마다 그대의 노련한 처세가 회자되었다.",
+          stats: { Fel: 7, Inf: 6, WP: 4 },
+          addTags: ["streetwise"]
+        },
+        fail: {
+          text: "길드와 광신도 양쪽 모두에게 배신자라는 돌팔매질을 당해 피투성이로 물러났다.",
+          wounds: -14,
+          stats: { Inf: -3 }
+        }
+      },
+      {
+        label: "불길이 번지는 시장 광장에서 한발 물러나 상인과 주민들이 빠져나갈 뒷골목 대피로를 확보한다",
+        effect: {
+          text: "광신과 탐욕이 맞부딪힌 아수라장에서 무고한 주민 여럿을 안전 구역으로 빼냈다.",
+          stats: { Ag: 4, Int: 3 }
+        }
+      }
+    ],
+    source: "Lexicanum: House Cawdor / Necromunda: House of Faith"
+  },
+  {
+    id: "ev_s15_su_necromunda_3",
+    title: "네크로문다 잿빛 황무지 — 장거리 화물 열차와 유목 약탈단 매복",
+    category: "행성 고유",
+    once: true,
+    req: {
+      minAge: 16,
+      anyWorlds: ["necromunda"],
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "dreadnought",
+        "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "fabricator_general",
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+      ]
+    },
+    reqLabel: "행성: 네크로문다 · 비초인 필멸자",
+    weight: 28,
+    text: "하이브 첨탑 바깥의 독성 모래바다인 잿빛 황무지를 가로지르는 거대 바퀴 화물 열차에 올랐다. 잿빛 폭풍이 몰아치는 협곡에서 거대한 곤충 탈것과 장갑 버기를 몰고 나타난 잿빛 황무지 유목 약탈단이 동력 연결관을 끊으려 화물차 측면에 갈고리를 걸었다!",
+    choices: [
+      {
+        label: "[언더하이브 생존자/함대·개척상인 전용] 잿빛 황무지의 모래 지뢰 지대로 열차 속력을 끌어올려 추격대의 측면을 함정으로 몰아넣는다",
+        req: { anyTags: ["streetwise", "rogue_trader", "navy"] },
+        effect: {
+          text: "모래 폭풍 속 지형지물을 완벽히 활용해 추격대를 따돌리고 화물 한 상자 잃지 않고 다음 하이브 관문에 도착했다!",
+          stats: { Ag: 6, Int: 5, Inf: 6 }
+        }
+      },
+      {
+        label: "[사격 판정] 흔들리는 화차 난간에서 갈고리 줄과 약탈단 조종수의 시야 창을 정확히 저격한다",
+        check: { stat: "BS", diff: -5 },
+        success: {
+          text: "거센 모래바람을 뚫고 선두 장갑 버기를 전복시켜 약탈단의 추격을 단숨에 꺾어 놓았다!",
+          stats: { BS: 7, Ag: 4, Inf: 5 }
+        },
+        fail: {
+          text: "산성 독침 소총에 스치고 차체 충격에 나가떨어져 크게 다쳤다.",
+          wounds: -20,
+          stats: { BS: 2 }
+        }
+      },
+      {
+        label: "[강인 판정] 유독성 먼지 폭풍 속에서 외부 연결 갑판에 매달려 갈고리 쇠사슬을 도끼로 쳐낸다",
+        check: { stat: "T", diff: 0 },
+        success: {
+          text: "독성 바람을 온몸으로 견디며 모든 갈고리를 끊어 내어 화물 열차의 탈선을 막았다!",
+          stats: { T: 6, WS: 5, Inf: 5 }
+        },
+        fail: {
+          text: "방독면이 깨져 유독성 재를 들이마시며 가까스로 기관실로 기어 돌아왔다.",
+          wounds: -22,
+          stats: { T: 2 }
+        }
+      },
+      {
+        label: "기관실 방탄창 뒤에서 예비 동력을 전방 추진기에 집중시켜 후미 화물칸 하나를 떼어 내고 전속력으로 돌파한다",
+        effect: {
+          text: "적은 손실로 승무원 전원의 목숨과 핵심 화물을 지켜 내는 냉정한 판단이었다.",
+          stats: { Int: 4, WP: 4 }
+        }
+      }
+    ],
+    source: "Lexicanum: Ash Wastes / Necromunda: Ash Wastes"
   }
 );
