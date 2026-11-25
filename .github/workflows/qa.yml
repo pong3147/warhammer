@@ -23,3 +23,6 @@ jobs:
 
       - name: Run 6-Gate QA Suite
         run: node scripts/qa.js
+
+      - name: Run Red-Team Health & Fuzz Check
+        run: node scripts/audit-health.js --lives=100
