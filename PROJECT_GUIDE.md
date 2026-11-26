@@ -760,13 +760,28 @@ warhammer/
 
 ## 10. 차기 정비 · 고도화 계획 (19단계 예정 · 사용자 확정 반영)
 
-5차 인류제국 대확장(12~18단계) 및 Astro + React 아일랜드 전환·후속 고도화(18.5~18.6단계)는 100% 완료되었다. 향후 착수할 차기 정비·고도화 단계(19단계 예정)에서는 아래 3대 과제를 계획 범위로 관리한다.
+5차 인류제국 대확장(12~18단계) 및 Astro + React 아일랜드 전환·후속 고도화(18.5~18.6단계)는 100% 완료되었다. 향후 착수할 19단계는 **① 실플레이 기반 4대 시뮬레이션 몰입감·정합성 대개편(`19-S1` · `19-S2`, 사용자 확정 완료)**과 **② 기존 확정 정비 과제(`19-A` · `19-B` · `19-C`)**로 구성하며, 독립 커밋·검증이 가능하도록 단계별로 순차 수행한다.
+
+### 10.1 시뮬레이션 정합성 · 진로 · 이동 · 스탯 4대 대개편 (`19-S1` / `19-S2` · 사용자 권장안 확정)
+
+> **확정된 3대 핵심 규칙 (사용자 승인):**
+> 1. **14세 귀족 출신 초기 배치:** `planetary_noble` · `rogue_trader_scion` · `terra_high_blood`는 `schola_progenium`과 동일하게 **14~17세 가문 수습 기간(미확정)**을 두어 첫 정규 기관을 직접 선택하게 하고, 18세까지 미선택 시 `administratum`에 자동 편입한다(세습 가문 `knight_blood` -> 종자, `navigator` -> 견습 항법사는 14세 자동 편입 유지).
+> 2. **입단 심사 & 복무 쿨다운:** 일반 기관 입단 심사(비치명적 d100) 탈락 시 **2년 재지원 대기**, 합격 후 타 수동 전직까지 **2년 최소 복무 기간** 적용(동적 발탁·스카우트 이벤트 및 사건 `forceCareer`는 예외).
+> 3. **행성 출입 자격 기준:** 아스타르테스 모성(`baal`, `fenris`, `nocturne`)은 해당 챕터·이단심문소·Tier 5+ 지휘관·전시 구원군으로 격리하고, `terra`·`mars`는 소속 기관·고위직·성직 순례(`faith >= 65`) 및 **귀족 권위 45+** 청원을 허용한다.
+
+| 단계 | 상태 | 목표 범위 및 세부 설계 명세 |
+| --- | --- | --- |
+| **19-S1 (Phase A). 신분·생활권 정합성 개편 & 14종 페르소나 자동 QA** | `[예정]` | **① 선언적 계층 축 도입 (`src/engine/formatters.js`, `createEngine.js`):** `makeReqContext`에서 `socialTier`(`underclass`/`common`/`elite`/`apex`), `lifeRealm`(`civilian`/`cloistered`/`military`/`void`/`mechanicus`/`heretic`), `bodyClass`(`mortal`/`augmetic`/`transhuman`/`dreadnought`/`daemonic`) 자동 산출 및 `checkReq`/`describeReq` 지원(`minSocialTier`, `maxSocialTier`, `anySocialTiers`, `anyRealms`, `excludeRealms`, `anyBodyClasses`, `excludeBodyClasses`, `excludeTrees`, `maxCareerTier`). **② Gate 4P 신설 (`scripts/qa.mjs`):** 대표 페르소나 14종(테라 고위 귀족/하이브 귀족/스콜라/기사/항법사/크리그/보이드본 유아 + 아스타르테스/드레드노트/쿠스토데스/그레이 나이트/하이 로드/리빙 세인트/데몬 프린스)에 대해 전체 사건·연대기 금칙어 충돌 0건 및 유년기/성인기 최소 풀 하한(`>= 8`) 자동 검증. **③ 데이터 정합화 & 유년기 보강:** 배급소 통조림(`ch_s8_kid_univ_1`, `ch_s8_kid_univ_7`), `ch_absurd_corpse_starch`, `ch_grim_deep_1`, `ch_terra_ex_6`, `ev_s165_align_dilemma_01` 등 적발 누수 일괄 교정 + 귀족·테라 황궁·스콜라·항법사·기사 가문·보이드본 전용 유년기 연대기 `+20~24종`(`priority: 3`) 확충. |
+| **19-S2 (Phase B). 진로 서약·스카우트 · 성간 이동 현실화 · 무하락 스탯 인플레 억제** | `[예정]` | **① 정규 기관 소속 고정 & 입단 심사 & 스카우트 초빙 (`createEngine.js`, `AutonomousPanel.tsx`):** `SAVE_VERSION = 4`(`careerRetryAfter`, `lastCareerChangeYear` 자동 마이그레이션). 비구속 초년·민간(`child`, `menial_worker`, `underhive_ganger`, `underhive_boss`, `guild_artisan`, `pdf_trooper`)에서 정규 서약 기관 입단 시 비치명적 입단 심사 d100(목표 40~88%, 탈락 2년 대기, 합격 2년 최소 복무) 적용, 입단 후 수동 목록은 같은 트리 승급·카오스·초인/사이커만 노출해 수평 이직 쇼핑 차단. 단, 고권위(`Inf >= 52`) 또는 성향·스탯 정합성 충족 시 타 기관에서 먼저 찾아오는 **동적 초빙·차출(스카우트) 이벤트** 신설. **② 성간 이동 현실화 (`createEngine.js`, `AutonomousPanel.tsx`):** `canAccessWorld(state, world)` 출입 자격 매트릭스 적용(아스타르테스 모성·화성·크리그/카타찬·테라·기사 행성 격리), 말단 의무 복무자(`forced` T1~2 · `astartes_scout`) 수동 행성 선택 잠금(강제 파견 일관화), 귀족 `Inf < 45` 인접 성역 / `45+` 은하 전역, 이동 쿨다운 4년(`autonomous` 3년), `createDynamicTransitEvent`에 행정청 감사·국교 순례·귀족 알현·전시 비상 동원 등 비군사 강제 소환 확대. **③ 억지 하락 없는 스탯 인플레 억제 (`createEngine.js`, `ActiveEventPanel.tsx`):** 스탯 임의 감소 0건 유지; `applyDiminishedStatGain`으로 패시브 성장 수확 체감(`<55: 1.0x`, `55~71: 전문 0.75x/비전문 0.45x`, `72~84: 전문 0.50x/비전문 0.20x`, `85+: Tier 5+ 전문·초인·기계교 Int 0.35x / 비전문 0x`, 분기 사건 보상은 `<75: 1.0x`, `75~87: 0.75x`, `88+: 0.50x` 최소 +1로 Tier 6 하이 로드 `Inf 94~96` 도달성 100% 보존); `computeCheckPreview` 단일 정본 도입(부상 `-8/-16`, 오염 `-8/-15`, 암흑 제국 `-5`, 고위 난제 `-5/-9` 투명 표시 + 70% 초과 완만 압축 `max 90%`). **④ QA·테스트·감사:** `qa.mjs` Gate 4 단위 테스트 · Gate 7A/7C 1,500생애 밸런스 튜닝(91/91 도달성 및 하이 로드/초인/신규 4세력 분포 검증) · Vitest 행동형 테스트 확장 · 독립 교차 감사 + 2단 레드팀 검수. |
+
+### 10.2 기존 확정 정비 과제 (`19-A` · `19-B` · `19-C`)
 
 | 항목 | 상태 | 확정 방향 및 작업 범위 |
 | --- | --- | --- |
 | **19-A. 네임드 출연 원칙 정돈 (1번 대안 확정)** | `[예정]` | UI 본문 점프 헤딩 추가 대신 **「기본 1사건 = 핵심 네임드 1인 스포트라이트(선택지 1회 집중), 다중 출연은 협동·대면 전용 크로스오버 스토리 한정」** 원칙을 적용([`AGENTS.md`](./AGENTS.md) 2.2장 6항 반영). 일반 분기 사건(664건)과 2인 크로스오버(`named_crossover.js` 6건)는 이미 기준에 부합하며, 기존 `src/data/core/timeline.js`에 3~4인(`tl_armageddon_2`, `tl_armageddon_3`, `tl_fall_of_cadia`, `tl_plague_wars`) 또는 2인(9건)이 일괄 묶여 있는 역사 대사건의 `characters` 스포트라이트를 대표 핵심 1인 중심으로 정돈하고 다중 인물 서사는 협동·대면 전용 이벤트로 분리·보강한다. |
-| **19-B. 코어 파일 크기 감시 확장 및 구조 리팩토링 (2번 확정)** | `[예정]` | `src/data/core/timeline.js`(91.9KB)를 시대별 분할(`src/data/core/timeline/m41_early.js`, `m41_late.js`, `m42_indomitus.js` 등)해 `110KB` 상한 초과를 선제 방지하고 `scripts/qa.mjs`·`audit-health.mjs`의 크기 감시 대상을 코어 데이터(`timeline`/`careers`/`createEngine.js`)까지 확장한다. 아울러 반복되는 `excludeTags`와 명예 마감·부고 세력 분기를 공용 헬퍼(`req.excludeTrees`/`req.maxCareerTier`, `resolveFactionEndingKey(state)`)로 리팩토링해 향후 외계 종족 스타팅 등 대형 확장 기반을 정비한다. |
+| **19-B. 코어 파일 크기 감시 확장 및 구조 리팩토링 (2번 확정)** | `[예정]` | `src/data/core/timeline.js`(91.9KB)를 시대별 분할(`src/data/core/timeline/m41_early.js`, `m41_late.js`, `m42_indomitus.js` 등)해 `110KB` 상한 초과를 선제 방지하고 `scripts/qa.mjs`·`audit-health.mjs`의 크기 감시 대상을 코어 데이터(`timeline`/`careers`/`createEngine.js`)까지 확장한다. 아울러 명예 마감·부고 세력 분기를 공용 헬퍼(`resolveFactionEndingKey(state)`)로 리팩토링해(`req.excludeTrees`/`req.maxCareerTier`는 `19-S1`에서 선행 도입) 향후 외계 종족 스타팅 등 대형 확장 기반을 정비한다. |
 | **19-C. 신규 8인 네임드 후일담 연동 및 청취 텔레메트리 확장 (3번 확정)** | `[예정]` | `src/data/events/themes/named.js`의 4대 네임드 후일담 사건(`ev_s4_met_primarchs_echo`, `ev_s4_met_commanders_echo`, `ev_s4_met_shadows_echo`, `ev_s4_met_nemesis_echo`) `anyTags`에 18단계 신규 8인(`met_ravensburg`, `met_macharius`, `met_kaldor_draigo`, `met_morvenn_vahl`, `met_kryptman`, `met_canis_rex`, `met_mortarion`, `met_trazyn`)을 편입하고 단독 조우 `met_<id>` 중복 가드를 일관화한다. 동시에 `tests/game-a11y.test.tsx`·`scripts/audit-health.mjs`에 네임드 스포트라이트·17~18단계 고위 직군 청취 텔레메트리 시나리오를 확장한다. |
+
 
 
 
