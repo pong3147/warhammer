@@ -693,9 +693,14 @@
 
 ---
 
-### 후속 선택형 개선 후보 (레드팀 P2 트리아지 · 사용자 선택 시 착수)
-5차 인류제국 대확장(12~18단계)은 100% 완료되었다. 아래 17·18단계 레드팀 P2 제안은 차기 확장(외계 종족 스타팅 등) 또는 리팩토링 착수 시 선별 검토할 선택지다.
-1. **멀티 네임드 스포트라이트(`named-spotlight`) 본문 점프 헤딩/앵커 추가 (`js/ui.js`):** 2~4인 동시 조우 시 `<details open>`을 유지하면서 `H` 키 1회로 사건 본문·선택지로 바로 이동.
-2. **코어 데이터·엔진 크기 감시 확장 및 `data/timeline.js`(91.9KB) 시대별 분할:** `audit-health.js`/`qa.js` 크기 감시에 코어 파일 편입 및 `excludeTrees`/`maxCareerTier`·`resolveFactionEndingKey` 공용 헬퍼 리팩토링.
-3. **신규 8인 네임드 `ev_s4_met_*_echo` 후일담 연동 & 청취 리듬 텔레메트리 시나리오 확장:** `named.js` 4대 후일담 편입 및 `audit-health.js` 청취 샘플에 네임드·고위 직군 시나리오 추가.
+## 10. 차기 정비 · 고도화 계획 (19단계 예정 · 사용자 확정 반영)
+
+5차 인류제국 대확장(12~18단계)은 100% 완료되었다. 향후 착수할 차기 정비·고도화 단계(19단계 예정)에서는 아래 3대 과제를 계획 범위로 관리한다.
+
+| 항목 | 상태 | 확정 방향 및 작업 범위 |
+| --- | --- | --- |
+| **19-A. 네임드 출연 원칙 정돈 (1번 대안 확정)** | `[예정]` | UI 본문 점프 헤딩 추가 대신 **「기본 1사건 = 핵심 네임드 1인 스포트라이트(선택지 1회 집중), 다중 출연은 협동·대면 전용 크로스오버 스토리 한정」** 원칙을 적용([`AGENTS.md`](./AGENTS.md) 2.2장 6항 반영). 일반 분기 사건(664건)과 2인 크로스오버(`named_crossover.js` 6건)는 이미 기준에 부합하며, 기존 `data/timeline.js`에 3~4인(`tl_armageddon_2`, `tl_armageddon_3`, `tl_fall_of_cadia`, `tl_plague_wars`) 또는 2인(9건)이 일괄 묶여 있는 역사 대사건의 `characters` 스포트라이트를 대표 핵심 1인 중심으로 정돈하고 다중 인물 서사는 협동·대면 전용 이벤트로 분리·보강한다. |
+| **19-B. 코어 파일 크기 감시 확장 및 구조 리팩토링 (2번 확정)** | `[예정]` | `data/timeline.js`(91.9KB)를 시대별 분할(`data/timeline/m41_early.js`, `m41_late.js`, `m42_indomitus.js` 등)해 `110KB` 상한 초과를 선제 방지하고 `scripts/sync-scripts.js`·`qa.js`·`audit-health.js`의 크기 감시 대상을 코어 데이터(`timeline`/`careers`/`engine`)까지 확장한다. 아울러 반복되는 `excludeTags`와 명예 마감·부고 세력 분기를 공용 헬퍼(`req.excludeTrees`/`req.maxCareerTier`, `resolveFactionEndingKey(state)`)로 리팩토링해 향후 외계 종족 스타팅 등 대형 확장 기반을 정비한다. |
+| **19-C. 신규 8인 네임드 후일담 연동 및 청취 텔레메트리 확장 (3번 확정)** | `[예정]` | `data/events/themes/named.js`의 4대 네임드 후일담 사건(`ev_s4_met_primarchs_echo`, `ev_s4_met_commanders_echo`, `ev_s4_met_shadows_echo`, `ev_s4_met_nemesis_echo`) `anyTags`에 18단계 신규 8인(`met_ravensburg`, `met_macharius`, `met_kaldor_draigo`, `met_morvenn_vahl`, `met_kryptman`, `met_canis_rex`, `met_mortarion`, `met_trazyn`)을 편입하고 단독 조우 `met_<id>` 중복 가드를 일관화한다. 동시에 `scripts/audit-health.js` 청취 리듬 텔레메트리에 네임드 스포트라이트·17~18단계 고위 직군 시나리오 샘플을 추가한다. |
+
 
