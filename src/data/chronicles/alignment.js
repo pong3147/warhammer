@@ -10,9 +10,11 @@ export default [
     alignBias: "humane",
     req: {
       minAge: 14,
+      maxCareerTier: 4,
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"]
+      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"]
     },
     text: "교대 근무가 끝난 어두운 통로에서 열병에 떨던 하층 노동자에게 여분의 정제수와 붕대를 건넸다. 감사 인사조차 감시자의 귀를 두려워하며 속삭임으로만 오갔으나, 꺼져 가던 눈빛에 잠시 온기가 돌아왔다.",
     effect: { stats: { Fel: 1 }, align: { humane: 1 } }
@@ -24,9 +26,11 @@ export default [
     alignBias: "humane",
     req: {
       minAge: 14,
+      maxCareerTier: 4,
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"]
+      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"]
     },
     text: "배급 창고 담벼락에서 상한 식량을 훔치다 들킨 굶주린 부랑자를 보고도 경보를 울리지 않고 지나쳤다. 사소한 온정 한 번이 직무 유기로 고발될 수 있다는 사실을 알기에 등줄기가 서늘했다.",
     effect: { stats: { WP: 1 }, align: { humane: 1 } }
@@ -217,8 +221,10 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      maxCareerTier: 4,
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince"]
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince", "living_saint", "saint_vessel", "high_lord_terra"]
     },
     text: "공식 보급 대장에서 누락된 잉여 물자를 따로 빼돌려 비밀 장부에 기록하고 암시장 중개인에게 넘겼다. 정직한 자들이 굶주리는 동안 빈틈을 파고든 자만이 살아남아 제 몫을 챙긴다.",
     effect: { stats: { Inf: 1, Int: 1 }, faith: -1, align: { ruthless: 1 } }
@@ -230,8 +236,10 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      maxCareerTier: 4,
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince"]
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince", "living_saint", "saint_vessel", "high_lord_terra"]
     },
     text: "임무의 위험을 떠넘길 만한 소모품 인력을 미리 점찍어 두고, 정작 공적 보고서에는 자신의 이름만 선명히 남도록 판을 짰다. 동정심은 약자가 패배를 변명할 때 꺼내는 값싼 구실에 불과하다.",
     effect: { stats: { Int: 1, Inf: 1 }, align: { ruthless: 1 } }
@@ -243,7 +251,9 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
-      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince"]
+      maxCareerTier: 4,
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince", "living_saint", "saint_vessel", "high_lord_terra"]
     },
     text: "잠들기 전 문빗장과 무기 손잡이를 두 번씩 확인하며, 오늘 미소 짓던 동료 가운데 누가 먼저 등을 찌를지 목록을 추렸다. 아무도 믿지 않는 경계심만이 비수를 피해 가는 유일한 갑옷이다.",
     effect: { stats: { Ag: 1, Int: 1 }, wounds: -1, align: { ruthless: 1 } }
@@ -258,7 +268,8 @@ export default [
       minAlign: { ruthless: 15 },
       anyDominantAlign: ["ruthless"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince"]
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince", "living_saint", "saint_vessel"]
     },
     text: "자물쇠가 이중으로 채워진 철제 함을 열어 암거래 통행세와 입막음 뇌물로 불어난 제국 금화를 헤아렸다. 누구도 알지 못하는 검은 장부가 두꺼워질수록 그대를 건드릴 수 있는 자도 줄어들었다.",
     effect: { stats: { Inf: 2, Fel: 1 }, faith: -2, align: { ruthless: 1 } }

@@ -79,8 +79,12 @@ export default [
     req: {
       minAge: 13,
       maxAge: 35,
+      maxCareerTier: 3,
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "noble", "terra_elite", "schola", "navigator", "knight_blood",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel",
         "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
         "canoness", "celestian", "cardinal", "inquisitor", "lord_inquisitor",
         "magos", "fabricator_locum", "fabricator_general", "navy_admiral",
@@ -90,7 +94,7 @@ export default [
       ],
       or: [{ anyWorldTags: ["hive", "underhive"] }, { anyCareers: ["underhive_ganger"] }]
     },
-    reqLabel: "하이브 월드 거주 또는 갱단원 · 필멸자",
+    reqLabel: "하이브 월드 일반/하층 거주자 · 현장 요원 또는 갱단원",
     weight: 14,
     text: "정수 파이프 아래 녹슨 다리 위에서 라이벌 갱단이 오토건과 쇠파이프를 들고 포위해 왔다. 아르비테스는 이 깊은 하층까지 내려오지 않는다.",
     choices: [
@@ -135,6 +139,9 @@ export default [
     title: "하층 하이브의 유독 매연과 역병",
     category: "일상",
     req: {
+      maxSocialTier: "common",
+      excludeRealms: ["cloistered", "heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       anyWorldTags: ["hive", "industrial", "forge"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought",
@@ -147,7 +154,7 @@ export default [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "하이브/포지 월드 일반 거주자",
+    reqLabel: "하이브/포지 월드 일반/하층 거주자",
     weight: 15,
     text: "공기 정화탑 필터가 3개월째 교체되지 않아 구역 전체에 붉은 기침 역병이 번졌다. 메디카에 의무소의 약품은 상층 첨탑에만 우선 공급된다.",
     choices: [

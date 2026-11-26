@@ -64,12 +64,14 @@ export default [
     alignBias: "humane",
     req: {
       minAge: 14,
+      excludeRealms: ["void"],
+      excludeWorlds: ["voidborn"],
       excludeTags: [
         "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "assassin",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "knight_high_king", "nav_novator",
         "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"
       ],
-      excludeWorldTags: ["feral", "krieg"]
+      excludeWorldTags: ["feral", "krieg", "voidborn"]
     },
     reqLabel: "성인 14세+",
     weight: 26,
@@ -202,9 +204,8 @@ export default [
         label: "[권위 개입] 제국의 직위와 권위를 내세워 부패한 치안대원들을 즉각 해산시키고 신분패를 되찾아 준다",
         req: {
           anyTags: [
-            "militarum", "commissar", "arbites", "inquisitor", "sororitas",
-            "ecclesiarchy", "noble", "rogue_trader", "planetary_governor", "sector_lord",
-            "high_lord_terra", "general_rank", "warmaster", "navy_admiral", "cardinal", "magos"
+            "militarum", "commissar", "arbites", "inquisition_agent", "sororitas",
+            "ecclesiarchy", "noble", "rogue_trader", "general_rank", "navy_admiral", "cardinal", "magos"
           ]
         },
         effect: {
@@ -477,8 +478,9 @@ export default [
     alignBias: "dogmatic",
     req: {
       minAge: 14,
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "custodes", "grey_knight", "astartes", "dreadnought",
+        "custodes", "grey_knight", "astartes", "dreadnought", "living_saint", "saint_vessel",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
         "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"
       ],
@@ -696,8 +698,9 @@ export default [
       minAge: 16,
       minAlign: { dogmatic: 20 },
       anyDominantAlign: ["dogmatic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "custodes", "grey_knight", "astartes", "dreadnought",
+        "custodes", "grey_knight", "astartes", "dreadnought", "living_saint", "saint_vessel",
         "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"
       ],
       excludeWorldTags: ["feral", "krieg"]
@@ -754,8 +757,9 @@ export default [
       minAge: 16,
       minAlign: { dogmatic: 20 },
       anyDominantAlign: ["dogmatic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "custodes", "grey_knight", "astartes", "dreadnought",
+        "custodes", "grey_knight", "astartes", "dreadnought", "living_saint", "saint_vessel",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
         "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"
       ],
@@ -820,7 +824,7 @@ export default [
       minAlign: { dogmatic: 35 },
       anyDominantAlign: ["dogmatic"],
       excludeTags: [
-        "align_iron_dogma", "custodes", "grey_knight", "dreadnought",
+        "align_iron_dogma", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel",
         "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
@@ -880,8 +884,9 @@ export default [
     req: {
       minAge: 18,
       allTags: ["align_iron_dogma"],
+      excludeBodyClasses: ["dreadnought", "daemonic"],
       excludeTags: [
-        "custodes", "grey_knight", "dreadnought",
+        "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel",
         "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
@@ -937,8 +942,9 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince",
         "heretic", "chaos_aligned", "high_lord_terra", "warmaster",
         "sector_lord", "planetary_governor", "inquisitor", "lord_inquisitor"
       ],
@@ -990,8 +996,9 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince",
         "heretic", "chaos_aligned", "high_lord_terra", "warmaster",
         "sector_lord", "planetary_governor", "inquisitor", "lord_inquisitor"
       ]
@@ -1040,8 +1047,9 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince",
         "heretic", "chaos_aligned", "high_lord_terra", "warmaster",
         "sector_lord", "planetary_governor", "inquisitor", "lord_inquisitor"
       ]
@@ -1092,8 +1100,9 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince",
         "heretic", "chaos_aligned", "high_lord_terra", "warmaster",
         "sector_lord", "planetary_governor", "inquisitor", "lord_inquisitor"
       ],
@@ -1380,12 +1389,14 @@ export default [
     req: {
       minAge: 8,
       maxAge: 13,
+      maxSocialTier: "common",
+      excludeRealms: ["cloistered", "void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral", "krieg"],
       excludeTags: ["astartes", "custodes", "grey_knight", "transhuman"]
     },
-    reqLabel: "유년기 8~13세 · 크리그 제외",
+    reqLabel: "유년기 8~13세 · 일반/하층 · 크리그 제외",
     weight: 30,
     text: "북적이는 거주구 장터의 좁은 뒷골목에서 그대보다 어린 고아 소년이 낡은 외투 속에 훔친 해조류 배급빵 한 덩이를 급히 쑤셔 넣고 있었다. 저편에서는 화가 난 상인이 치안대원을 부르며 고함을 치고 있었다. 막다른 골목에 몰린 소년이 깡마른 두 손으로 빵을 꼭 끌어안은 채 공포에 질린 눈으로 그대를 올려다보았다.",
     choices: [
@@ -1424,8 +1435,12 @@ export default [
     once: true,
     req: {
       minAge: 18,
+      excludeRealms: ["void"],
+      excludeWorlds: ["voidborn", "krieg"],
+      excludeWorldTags: ["krieg", "voidborn"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
         "heretic", "chaos_aligned", "daemon_prince"
       ]
@@ -1476,8 +1491,9 @@ export default [
     once: true,
     req: {
       minAge: 20,
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "astartes", "dreadnought", "custodes", "grey_knight",
+        "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel",
         "high_lord_terra", "sector_lord", "planetary_governor",
         "heretic", "chaos_aligned", "daemon_prince"
       ],
@@ -1532,7 +1548,7 @@ export default [
     req: {
       minAge: 22,
       minAlign: { ruthless: 20 },
-      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "heretic", "chaos_aligned", "daemon_prince"]
+      excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "heretic", "chaos_aligned", "daemon_prince"]
     },
     reqLabel: "암흑 20+ · 속죄 분기",
     weight: 34,
@@ -1584,10 +1600,10 @@ export default [
     text: "그대의 타격 분대가 무너진 고가도로 너머로 진격해 오는 반역자 기갑 선봉대를 내려다보고 있다. 궤도 상공의 타격 순양함이 살상 구역에 랜스 포격을 조준 완료했으나, 교각 접근로에는 아직 대피하지 못한 제국 필멸자 난민 삼천여 명이 뒤엉켜 있었다. 궤도 포격 승인을 기다리는 함교의 복스 채널 너머로 그대의 전술 판단이 요구되었다.",
     choices: [
       {
-        label: "[강인 판정] 불칸의 후예들처럼 고가도로로 강하해 세라미트 장갑 방벽을 세우고 필멸자들이 탈출할 때까지 적 선봉을 온몸으로 막아 낸다",
+        label: "[강인 판정] 불칸의 후예들처럼 고가도로로 강하해 세라마이트 장갑 방벽을 세우고 필멸자들이 탈출할 때까지 적 선봉을 온몸으로 막아 낸다",
         check: { stat: "T", diff: -5 },
         success: {
-          text: "세라미트 장갑에 포탄이 튀는 가운데 한 걸음도 물러서지 않고 삼천의 필멸자를 사선 밖으로 빼낸 뒤 궤도 포격을 호출했다. 초인의 힘은 인류를 지키기 위해 존재한다는 맹세가 전장을 울렸다.",
+          text: "세라마이트 장갑에 포탄이 튀는 가운데 한 걸음도 물러서지 않고 삼천의 필멸자를 사선 밖으로 빼낸 뒤 궤도 포격을 호출했다. 초인의 힘은 인류를 지키기 위해 존재한다는 맹세가 전장을 울렸다.",
           wounds: -10,
           stats: { WS: 5, T: 6, WP: 6, Inf: 5 },
           faith: 5,

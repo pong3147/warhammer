@@ -499,6 +499,11 @@ for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
 
 const alignKeys = new Set(Engine.ALIGNMENT_KEYS || ["humane", "dogmatic", "ruthless"]);
 const domAlignKeys = new Set(["humane", "dogmatic", "ruthless", "neutral"]);
+const socialTierOrder = Engine.SOCIAL_TIER_ORDER || ["underclass", "common", "elite", "apex"];
+const socialTierSet = new Set(socialTierOrder);
+const lifeRealmSet = new Set(Engine.LIFE_REALM_KEYS || ["civilian", "cloistered", "military", "void", "mechanicus", "heretic"]);
+const bodyClassSet = new Set(Engine.BODY_CLASS_KEYS || ["mortal", "augmetic", "transhuman", "dreadnought", "daemonic"]);
+const careerTreeSet = new Set(DATA.CAREERS.map((c) => c.tree).filter(Boolean));
 
 function validateAlignObj(obj, owner, allowNegative) {
   if (!obj) return;
@@ -527,6 +532,20 @@ function validateReq(req, owner) {
   (req.anyCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown career "${c}" in ${owner}`); });
   (req.anyPastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown pastCareer "${c}" in ${owner}`); });
   (req.excludePastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown excludePastCareer "${c}" in ${owner}`); });
+  (req.excludeTrees || []).forEach((t) => { if (!careerTreeSet.has(t)) fail(4, `Unknown excludeTree "${t}" in ${owner}`); });
+  if (req.maxCareerTier !== undefined && (typeof req.maxCareerTier !== "number" || req.maxCareerTier < 0 || req.maxCareerTier > 6)) {
+    fail(4, `Invalid maxCareerTier "${req.maxCareerTier}" in ${owner}`);
+  }
+  if (req.minSocialTier && !socialTierSet.has(req.minSocialTier)) fail(4, `Unknown minSocialTier "${req.minSocialTier}" in ${owner}`);
+  if (req.maxSocialTier && !socialTierSet.has(req.maxSocialTier)) fail(4, `Unknown maxSocialTier "${req.maxSocialTier}" in ${owner}`);
+  if (req.minSocialTier && req.maxSocialTier && socialTierOrder.indexOf(req.minSocialTier) > socialTierOrder.indexOf(req.maxSocialTier)) {
+    fail(4, `Contradictory minSocialTier "${req.minSocialTier}" > maxSocialTier "${req.maxSocialTier}" in ${owner}`);
+  }
+  (req.anySocialTiers || []).forEach((s) => { if (!socialTierSet.has(s)) fail(4, `Unknown socialTier "${s}" in ${owner}`); });
+  (req.anyRealms || []).forEach((r) => { if (!lifeRealmSet.has(r)) fail(4, `Unknown realm "${r}" in ${owner}`); });
+  (req.excludeRealms || []).forEach((r) => { if (!lifeRealmSet.has(r)) fail(4, `Unknown excludeRealm "${r}" in ${owner}`); });
+  (req.anyBodyClasses || []).forEach((b) => { if (!bodyClassSet.has(b)) fail(4, `Unknown bodyClass "${b}" in ${owner}`); });
+  (req.excludeBodyClasses || []).forEach((b) => { if (!bodyClassSet.has(b)) fail(4, `Unknown excludeBodyClass "${b}" in ${owner}`); });
   (req.anyChapters || []).forEach((c) => { if (!chapterIds.has(c)) fail(4, `Unknown chapter "${c}" in ${owner}`); });
   (req.excludeChapters || []).forEach((c) => { if (!chapterIds.has(c)) fail(4, `Unknown excludeChapter "${c}" in ${owner}`); });
   (req.anySegmenta || []).forEach((s) => { if (!segIds.has(s)) fail(4, `Unknown segmentum "${s}" in ${owner}`); });
@@ -1036,10 +1055,138 @@ for (const ch of DATA.CHRONICLES) {
     if (!epiText.includes("솔렘나스")) {
       fail(4, `Direct met_trazyn epilogue was masked by global metCharacters: "${epiText}"`);
     }
+
+    // Stage 19-S1: Declarative stratification unit tests (socialTier / lifeRealm / bodyClass / excludeTrees / maxCareerTier)
+    const s19Desc = Engine.describeReq({
+      minSocialTier: "common",
+      maxSocialTier: "elite",
+      anyRealms: ["civilian"],
+      anyBodyClasses: ["mortal"],
+      maxCareerTier: 3
+    });
+    if (!s19Desc || !s19Desc.includes("신분 계층") || !s19Desc.includes("생활권") || !s19Desc.includes("신체 분류") || !s19Desc.includes("Tier 3")) {
+      fail(4, `describeReq failed for Stage 19-S1 stratification keys: "${s19Desc}"`);
+    }
+    const s19ExclDesc = Engine.describeReq({ excludeRealms: ["cloistered"], excludeBodyClasses: ["dreadnought"], excludeTrees: ["astartes"] });
+    if (!s19ExclDesc) fail(4, `describeReq returned empty string for exclude-only stratification req`);
+
+    const nobleKid = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "terra_high_blood", traitId: "none", eraId: "armageddon", gender: "male" });
+    nobleKid.age = 7;
+    const nobleStrat = Engine.getStratification(nobleKid);
+    if (nobleStrat.socialTier !== "elite" || nobleStrat.lifeRealm !== "civilian" || nobleStrat.bodyClass !== "mortal") {
+      fail(4, `Terra high-blood kid stratification mismatch: ${JSON.stringify(nobleStrat)}`);
+    }
+    if (Engine.checkReq(nobleKid, { maxSocialTier: "common" })) {
+      fail(4, `Terra high-blood kid should fail maxSocialTier: "common"`);
+    }
+    if (!Engine.checkReq(nobleKid, { minSocialTier: "elite", anyRealms: ["civilian"], anyBodyClasses: ["mortal"] })) {
+      fail(4, `Terra high-blood kid should pass elite/civilian/mortal stratification check`);
+    }
   }
 }
 
-console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-18 guards verified.`);
+console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-19S1 guards verified.`);
+
+// ============================================================================
+// Gate 4P: 14종 대표 페르소나 신분·생활권·신체 정합성 & 최소 풀 하한(>= 8) 검증
+// ============================================================================
+{
+  const makePersonaState = (opts) => {
+    const st = Engine.createCharacter({
+      mode: "custom",
+      worldId: opts.worldId,
+      originId: opts.originId,
+      traitId: opts.traitId || "none",
+      eraId: opts.eraId || "armageddon",
+      gender: opts.gender || "male"
+    });
+    st.age = opts.age;
+    st.year = st.birthYear + st.age;
+    if (opts.careerId) st.careerId = opts.careerId;
+    if (opts.chapterId) {
+      st.chapterId = opts.chapterId;
+      st.chapterName = Engine.getChapter(opts.chapterId)?.name || null;
+    }
+    if (opts.tags) st.tags = [...new Set([...st.tags, ...opts.tags])];
+    if (opts.faith !== undefined) st.faith = opts.faith;
+    if (opts.corruption !== undefined) st.corruption = opts.corruption;
+    if (opts.stats) st.stats = { ...st.stats, ...opts.stats };
+    return st;
+  };
+
+  const NOBLE_KID_BAN = /시체 전분|배급 통조림|배급소에 줄|양철 식기|훔친.*배급빵|장터 골목|장터 구석|구역 광장|동네 광장|구역 메디카에|낡은 주사기|골목을 뛰어|물펌프|심부름을 도맡|돌팔매|새총|하층 하이브의 유독 매연|로우 고딕 낱말/;
+  const SCHOLA_KID_BAN = /어머니|아버지|부모님|엄마|아빠|가족 식탁|가정식|배급 통조림|배급소에 줄|양철 식기|훔친.*배급빵|장터 골목|장터 구석|동네 광장|구역 메디카에|골목을 뛰어|물펌프|심부름을 도맡|돌팔매|새총/;
+  const KRIEG_KID_BAN = /어머니|아버지|부모님|자장가|가족 식탁|가정식|엄마|아빠|장터|숨바꼭질|골목을 뛰어|배급 통조림/;
+  const VOID_KID_BAN = /들판|숲|산성비|비바람|계절이 바뀔|악천후|밤하늘을 가로지르는|돌팔매|새총|동네 광장|구역 광장|구역의 작은 신당|장터 골목|골목을 뛰어/;
+  const ASTARTES_BAN = /시체 전분|배급소|배급표|세입자|강제 징발|증조부|증조할아버지|구걸|결근|노점상|화장실|상관의 취향|아마섹.*상납|울부짖으며|겁에 질려 도망|혼인|결혼|동기들이 하나둘 앓아/;
+  const DREADNOUGHT_BAN = /시체 전분|배급소|배급표|식당|술잔|선술집|침상|침대|구두|장화|손가락|세수|거울 속 내 눈동자|전술 드레드노트 아머|크룩스 테르미나투스|파워 아머 앞에|드롭 포드 안전벨트|볼터의 약실을 직접|동기들이 하나둘 앓아|상관의 취향/;
+  const CUSTODES_BAN = /시체 전분|배급소|배급표|강제 징발|증조부|증조할아버지|구걸|결근|세입자|노점상|화장실|상관의 취향|서보스컬이 골목|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|동기들이 하나둘 앓아|수천 년 전 포도주를 곁들이/;
+  const GK_BAN = /시체 전분|배급소|배급표|강제 징발|증조부|증조할아버지|구걸|결근|세입자|노점상|화장실|상관의 취향|서보스컬이 골목|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|동기들이 하나둘 앓아|순례자 가족을 보았다|순례자들을 청소 서비터/;
+  const HIGH_LORD_BAN = /시체 전분|배급소|배급표|배급된 회색|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|서보스컬이 골목|하층 4개 구역의 식수|전표 4,000장에 붉은 밀랍|전임 하이 로드의 서명|옆 책상에서 50년째|다음 책상으로 넘겼다|암시장 중개인|상관의 취향|사흘을 굶었다/;
+  const SAINT_BAN = /시체 전분|배급소|배급표|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|서보스컬이 골목|상관의 취향|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|암시장 중개인|암시장 자극제|소모품 인력을 미리|동료를 제물로|난민의 마지막 재산|쉰다섯을 넘긴 노구|리주버냇|수명 연장 시술 제안|동기들이 하나둘 앓아|직무 유기로 고발|교대 근무가 끝난/;
+  const DP_BAN = /시체 전분|배급소|배급표|배급된 회색|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|황제께 맹세|아퀼라 성호|성수를 뿌|기도문을 외|아르비테스.*끌려|쥐고기 꼬치|쉰다섯을 넘긴 노구|서툴게 경례|선술집|동기들이 하나둘 앓아|방독면 필터|탐조등 점등|성당 사제가 미사|향불 냄새가 역겹.*고개를 숙였다|교대 시각을 알/;
+
+  const personas = [
+    { id: "terra_high_kid", label: "테라 고위 귀족 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "terra", originId: "terra_high_blood" }, ban: NOBLE_KID_BAN },
+    { id: "hive_noble_kid", label: "하이브 귀족 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "necromunda", originId: "planetary_noble" }, ban: NOBLE_KID_BAN },
+    { id: "schola_kid", label: "스콜라 유아", ages: [2, 5, 8, 11], expected: { socialTier: "common", lifeRealm: "cloistered", bodyClass: "mortal" }, cfg: { worldId: "ophelia7", originId: "schola_progenium" }, ban: SCHOLA_KID_BAN, clean: (t) => t.replace(/순직한 부모/g, "") },
+    { id: "knight_kid", label: "기사 가문 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "generic_knight", originId: "knight_house" }, ban: NOBLE_KID_BAN },
+    { id: "nav_kid", label: "항법사 가문 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "cloistered", bodyClass: "mortal" }, cfg: { worldId: "terra", originId: "navigator_house" }, ban: new RegExp(NOBLE_KID_BAN.source + "|정상 인류' 판정") },
+    { id: "krieg_kid", label: "크리그 유아", ages: [2, 5, 8, 11], expected: { socialTier: "common", lifeRealm: "military", bodyClass: "mortal" }, cfg: { worldId: "krieg", originId: "imperial_citizen" }, ban: KRIEG_KID_BAN, clean: (t) => t.replace(/어머니의 품 대신/g, "") },
+    { id: "void_kid", label: "보이드본 유아", ages: [2, 5, 8, 11], expected: { socialTier: "common", lifeRealm: "void", bodyClass: "mortal" }, cfg: { worldId: "voidborn", originId: "imperial_citizen" }, ban: VOID_KID_BAN },
+    { id: "astartes", label: "아스타르테스", ages: [80], expected: { socialTier: "apex", lifeRealm: "military", bodyClass: "transhuman" }, cfg: { worldId: "macragge", originId: "imperial_citizen", careerId: "astartes_brother", chapterId: "ultramarines", tags: ["astartes", "transhuman", "battle_brother"], stats: { WS: 75, BS: 75, T: 75, WP: 75, Inf: 55 } }, ban: ASTARTES_BAN },
+    { id: "dreadnought", label: "드레드노트", ages: [220], expected: { socialTier: "apex", lifeRealm: "military", bodyClass: "dreadnought" }, cfg: { worldId: "macragge", originId: "imperial_citizen", careerId: "astartes_veteran", chapterId: "ultramarines", tags: ["astartes", "transhuman", "dreadnought", "battle_brother"], stats: { WS: 80, BS: 78, T: 85, WP: 82, Inf: 65 } }, ban: DREADNOUGHT_BAN },
+    { id: "custodes", label: "쿠스토데스", ages: [120], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "terra", originId: "terra_high_blood", careerId: "adeptus_custodes", tags: ["custodes", "transhuman"], stats: { WS: 90, BS: 85, T: 90, WP: 90, Int: 85, Inf: 80 } }, ban: CUSTODES_BAN },
+    { id: "grey_knight", label: "그레이 나이트", ages: [90], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "terra", originId: "imperial_citizen", traitId: "psyker", careerId: "grey_knight", tags: ["astartes", "grey_knight", "transhuman"], faith: 90, stats: { WS: 80, BS: 75, T: 80, WP: 90, Int: 75, Inf: 65 } }, ban: GK_BAN },
+    { id: "high_lord", label: "테라 하이 로드", ages: [62], expected: { socialTier: "apex", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "terra", originId: "planetary_noble", careerId: "master_of_administratum", tags: ["administratum", "high_lord_terra"], stats: { Int: 92, Fel: 88, WP: 84, Inf: 96 } }, ban: HIGH_LORD_BAN },
+    { id: "living_saint", label: "살아 있는 성인", ages: [65], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "ophelia7", originId: "ecclesiarchy_novice", traitId: "emperor_blessed", careerId: "living_saint", gender: "female", faith: 98, tags: ["living_miracle", "saint_vessel", "living_saint", "transhuman"], stats: { WS: 85, WP: 98, Fel: 90, Inf: 88 } }, ban: SAINT_BAN },
+    { id: "daemon_prince", label: "데몬 프린스", ages: [150], expected: { socialTier: "apex", lifeRealm: "heretic", bodyClass: "daemonic" }, cfg: { worldId: "necromunda", originId: "underhive_scum", careerId: "daemon_prince", corruption: 95, faith: 0, tags: ["heretic", "chaos_aligned", "mark_khorne", "daemon_prince", "transhuman"], stats: { WS: 95, T: 92, WP: 88, Inf: 85 } }, ban: DP_BAN }
+  ];
+
+  let totalCollisions = 0;
+  let minPersonaPool = 999;
+  for (const p of personas) {
+    const matchedChronIds = new Set();
+    const matchedEventIds = new Set();
+    for (const age of p.ages) {
+      const st = makePersonaState({ ...p.cfg, age });
+      const strat = Engine.getStratification(st);
+      if (
+        strat.socialTier !== p.expected.socialTier ||
+        strat.lifeRealm !== p.expected.lifeRealm ||
+        strat.bodyClass !== p.expected.bodyClass
+      ) {
+        fail("4P", `Persona ${p.id}(age ${age}) stratification mismatch: got ${JSON.stringify(strat)}, expected ${JSON.stringify(p.expected)}`);
+      }
+      for (const ch of DATA.CHRONICLES) {
+        if (!Engine.checkReq(st, ch.req)) continue;
+        matchedChronIds.add(ch.id);
+        const rawText = p.clean ? p.clean(ch.text || "") : (ch.text || "");
+        const m = rawText.match(p.ban);
+        if (m) {
+          totalCollisions++;
+          fail("4P", `Persona ${p.id}(age ${age}) leaked chronicle ${ch.id} [matched "${m[0]}"]`);
+        }
+      }
+      for (const ev of DATA.EVENTS) {
+        if (!Engine.checkReq(st, ev.req)) continue;
+        matchedEventIds.add(ev.id);
+        const rawText = p.clean ? p.clean(`${ev.title || ""} ${ev.text || ""}`) : `${ev.title || ""} ${ev.text || ""}`;
+        const m = rawText.match(p.ban);
+        if (m) {
+          totalCollisions++;
+          fail("4P", `Persona ${p.id}(age ${age}) leaked event ${ev.id} [matched "${m[0]}"]`);
+        }
+      }
+    }
+    const poolSize = matchedChronIds.size;
+    if (poolSize < minPersonaPool) minPersonaPool = poolSize;
+    if (poolSize < 8) {
+      fail("4P", `Persona ${p.id} (${p.label}) chronicle pool < 8 (got ${poolSize})`);
+    }
+  }
+  console.log(`[Gate 4P] 14-persona stratification & forbidden-leak audit complete (collisions=${totalCollisions}, minChroniclePool=${minPersonaPool} >= 8).`);
+}
 
 // ============================================================================
 // Gate 5: 소프트락 · 유년기 풀(22행성 각 4+) · fastChildhood · 2400로그 보존 · 중복률
@@ -1322,12 +1469,26 @@ if (DEEP_MODE) {
     const out = Object.assign({}, a);
 
     const maxKeys = ["minAge", "minYear", "minFaith", "minCorruption", "minWounds"];
-    const minKeys = ["maxAge", "maxYear", "maxFaith", "maxCorruption", "maxWounds"];
+    const minKeys = ["maxAge", "maxYear", "maxFaith", "maxCorruption", "maxWounds", "maxCareerTier"];
     for (const k of maxKeys) {
       if (b[k] !== undefined) out[k] = out[k] !== undefined ? Math.max(out[k], b[k]) : b[k];
     }
     for (const k of minKeys) {
       if (b[k] !== undefined) out[k] = out[k] !== undefined ? Math.min(out[k], b[k]) : b[k];
+    }
+
+    if (b.minSocialTier) {
+      if (!out.minSocialTier || socialTierOrder.indexOf(b.minSocialTier) > socialTierOrder.indexOf(out.minSocialTier)) {
+        out.minSocialTier = b.minSocialTier;
+      }
+    }
+    if (b.maxSocialTier) {
+      if (!out.maxSocialTier || socialTierOrder.indexOf(b.maxSocialTier) < socialTierOrder.indexOf(out.maxSocialTier)) {
+        out.maxSocialTier = b.maxSocialTier;
+      }
+    }
+    if (out.minSocialTier && out.maxSocialTier && socialTierOrder.indexOf(out.minSocialTier) > socialTierOrder.indexOf(out.maxSocialTier)) {
+      return null;
     }
 
     if (b.gender) {
@@ -1339,7 +1500,7 @@ if (DEEP_MODE) {
       out.greatRift = b.greatRift;
     }
 
-    const intersectKeys = ["anyCareers", "anyChapters", "anyWorlds", "anyHomeWorlds", "anySegmenta", "anyFocus", "anyDominantAlign"];
+    const intersectKeys = ["anyCareers", "anyChapters", "anyWorlds", "anyHomeWorlds", "anySegmenta", "anyFocus", "anyDominantAlign", "anySocialTiers", "anyRealms", "anyBodyClasses"];
     for (const k of intersectKeys) {
       if (b[k]) {
         const merged = intersectArrays(out[k], b[k]);
@@ -1355,7 +1516,7 @@ if (DEEP_MODE) {
     delete out.anyWorldTags;
     delete out.anyPastCareers;
 
-    const unionKeys = ["allTags", "excludeTags", "excludeWorlds", "excludeHomeWorlds", "excludeWorldTags", "excludeChapters", "excludePastCareers"];
+    const unionKeys = ["allTags", "excludeTags", "excludeWorlds", "excludeHomeWorlds", "excludeWorldTags", "excludeChapters", "excludePastCareers", "excludeRealms", "excludeBodyClasses", "excludeTrees"];
     for (const k of unionKeys) {
       if (b[k]) out[k] = [...new Set([...(out[k] || []), ...b[k]])];
     }
@@ -1447,7 +1608,6 @@ if (DEEP_MODE) {
             solved = { humane: minA.humane, dogmatic: minA.dogmatic, ruthless: minA.ruthless };
             break;
           }
-          // Try a tie at topMin between two axes within bounds
           const pairs = [["humane", "dogmatic", "ruthless"], ["humane", "ruthless", "dogmatic"], ["dogmatic", "ruthless", "humane"]];
           for (const [k1, k2, k3] of pairs) {
             const v = Math.max(15, minA[k1], minA[k2], minA[k3]);
@@ -1487,20 +1647,6 @@ if (DEEP_MODE) {
       return true;
     });
     if (worldCandidates.length === 0) return null;
-    const chosenWorld = worldCandidates.find((w) => !exclHomeWorlds.has(w.id)) || worldCandidates[0];
-
-    let homeWorldId;
-    if (cl.anyHomeWorlds && cl.anyHomeWorlds.length > 0) {
-      homeWorldId = cl.anyHomeWorlds.find((id) => worldIds.has(id) && !exclHomeWorlds.has(id));
-      if (!homeWorldId) return null;
-    } else if (!exclHomeWorlds.has(chosenWorld.id)) {
-      homeWorldId = chosenWorld.id;
-    } else {
-      const altHome = DATA.WORLDS.find((w) => !exclHomeWorlds.has(w.id));
-      if (!altHome) return null;
-      homeWorldId = altHome.id;
-    }
-    if (!worldIds.has(homeWorldId)) return null;
 
     const exclChapters = new Set(cl.excludeChapters || []);
     let chapterId = null;
@@ -1511,71 +1657,156 @@ if (DEEP_MODE) {
     }
 
     const exclTags = new Set(cl.excludeTags || []);
-    const tagSet = new Set(cl.allTags || []);
-    for (const t of tagSet) {
+    const baseTagSet = new Set(cl.allTags || []);
+    for (const t of baseTagSet) {
       if (exclTags.has(t)) return null;
     }
     for (const grp of (cl._anyTagGroups || [])) {
       const picked = grp.find((t) => !exclTags.has(t));
       if (!picked) return null;
-      tagSet.add(picked);
+      baseTagSet.add(picked);
     }
 
     const exclPast = new Set(cl.excludePastCareers || []);
-    let careerId = "astra_militarum";
-    if (cl.anyCareers) {
-      const validCur = cl.anyCareers.find((cid) => !exclPast.has(cid));
-      if (!validCur) return null;
-      careerId = validCur;
-    } else if (exclPast.has(careerId)) {
-      const alt = DATA.CAREERS.find((c) => !exclPast.has(c.id));
-      if (!alt) return null;
-      careerId = alt.id;
-    }
+    const exclTrees = new Set(cl.excludeTrees || []);
+    const needsStratSearch = Boolean(
+      cl.minSocialTier || cl.maxSocialTier || cl.anySocialTiers ||
+      cl.anyRealms || cl.excludeRealms ||
+      cl.anyBodyClasses || cl.excludeBodyClasses ||
+      cl.excludeTrees || cl.maxCareerTier !== undefined
+    );
 
-    const pastHistory = [careerId];
-    if (!exclPast.has("child") && careerId !== "child") pastHistory.unshift("child");
-    for (const grp of (cl._anyPastGroups || [])) {
-      const pickedPast = grp.find((p) => {
-        if (exclPast.has(p)) return false;
-        const reach = reachableFrom.get(p);
-        return p === careerId || (reach && reach.has(careerId));
-      });
-      if (!pickedPast) return null;
-      if (!pastHistory.includes(pickedPast)) pastHistory.push(pickedPast);
-    }
+    const buildCareerCandidates = () => {
+      const list = [];
+      if (cl.anyCareers) {
+        for (const cid of cl.anyCareers) {
+          const co = careerById.get(cid);
+          if (!co || exclPast.has(cid)) continue;
+          if (exclTrees.has(co.tree)) continue;
+          if (cl.maxCareerTier !== undefined && (co.tier || 0) > cl.maxCareerTier) continue;
+          list.push(co);
+        }
+        return list;
+      }
+      const preferredIds = age < 14
+        ? ["child"]
+        : ["menial_worker", "astra_militarum", "underhive_ganger", "administratum", "imperial_navy", "tech_priest", "ecclesiarchy_priest", "militarum_officer", "inquisitor", "astartes_brother", "adeptus_custodes", "chaos_cultist", "daemon_prince", "child"];
+      const seen = new Set();
+      for (const pid of preferredIds) {
+        const co = careerById.get(pid);
+        if (co && !exclPast.has(co.id) && !exclTrees.has(co.tree) && (cl.maxCareerTier === undefined || (co.tier || 0) <= cl.maxCareerTier)) {
+          list.push(co);
+          seen.add(co.id);
+        }
+      }
+      if (needsStratSearch || list.length === 0) {
+        for (const co of DATA.CAREERS) {
+          if (seen.has(co.id) || exclPast.has(co.id) || exclTrees.has(co.tree)) continue;
+          if (cl.maxCareerTier !== undefined && (co.tier || 0) > cl.maxCareerTier) continue;
+          list.push(co);
+          seen.add(co.id);
+        }
+      }
+      return list;
+    };
 
-    const gender = cl.gender || (careerById.get(careerId) && careerById.get(careerId).req && careerById.get(careerId).req.gender) || "male";
+    const careerCandidates = buildCareerCandidates();
+    if (careerCandidates.length === 0) return null;
+
+    const extraTagVariants = needsStratSearch
+      ? [[], ["lowborn"], ["noble"], ["bionic"], ["dreadnought"], ["astartes", "transhuman"], ["daemon_prince"], ["schola"], ["voidborn"], ["mechanicus_blood"], ["heretic"]]
+      : [[]];
+
+    const worldTryList = needsStratSearch
+      ? [
+          ...worldCandidates.filter((w) => !exclHomeWorlds.has(w.id)),
+          ...worldCandidates.filter((w) => exclHomeWorlds.has(w.id))
+        ].slice(0, 8)
+      : [worldCandidates.find((w) => !exclHomeWorlds.has(w.id)) || worldCandidates[0]];
+
     const focus = (cl.anyFocus && cl.anyFocus[0]) || "survival";
     const stats = { WS: 50, BS: 50, T: 50, Ag: 50, Int: 50, WP: 50, Fel: 50, Inf: 50 };
     if (cl.stats) {
       for (const sk of Object.keys(cl.stats)) stats[sk] = Math.max(stats[sk] || 50, cl.stats[sk]);
     }
 
-    return {
-      alive: true,
-      age,
-      year,
-      quarter: 1,
-      gender,
-      worldId: chosenWorld.id,
-      homeWorldId,
-      segmentum: chosenWorld.segmentum,
-      careerId,
-      careerHistory: pastHistory,
-      chapterId,
-      focus,
-      stats,
-      faith,
-      corruption,
-      wounds,
-      maxWounds: Math.max(100, wounds),
-      alignment,
-      tags: [...tagSet],
-      globalFlags: {
-        greatRiftOpened: cl.greatRift !== undefined ? cl.greatRift : year >= 999
+    const stratReqOnly = needsStratSearch ? {
+      minSocialTier: cl.minSocialTier,
+      maxSocialTier: cl.maxSocialTier,
+      anySocialTiers: cl.anySocialTiers,
+      anyRealms: cl.anyRealms,
+      excludeRealms: cl.excludeRealms,
+      anyBodyClasses: cl.anyBodyClasses,
+      excludeBodyClasses: cl.excludeBodyClasses,
+      excludeTrees: cl.excludeTrees,
+      maxCareerTier: cl.maxCareerTier
+    } : null;
+
+    for (const co of careerCandidates) {
+      const careerId = co.id;
+      const pastHistory = [careerId];
+      if (!exclPast.has("child") && careerId !== "child") pastHistory.unshift("child");
+      let pastOk = true;
+      for (const grp of (cl._anyPastGroups || [])) {
+        const pickedPast = grp.find((p) => {
+          if (exclPast.has(p)) return false;
+          const reach = reachableFrom.get(p);
+          return p === careerId || (reach && reach.has(careerId));
+        });
+        if (!pickedPast) { pastOk = false; break; }
+        if (!pastHistory.includes(pickedPast)) pastHistory.push(pickedPast);
       }
-    };
+      if (!pastOk) continue;
+
+      const gender = cl.gender || (co.req && co.req.gender) || "male";
+      for (const chosenWorld of worldTryList) {
+        let homeWorldId;
+        if (cl.anyHomeWorlds && cl.anyHomeWorlds.length > 0) {
+          homeWorldId = cl.anyHomeWorlds.find((id) => worldIds.has(id) && !exclHomeWorlds.has(id));
+          if (!homeWorldId) continue;
+        } else if (!exclHomeWorlds.has(chosenWorld.id)) {
+          homeWorldId = chosenWorld.id;
+        } else {
+          const altHome = DATA.WORLDS.find((w) => !exclHomeWorlds.has(w.id));
+          if (!altHome) continue;
+          homeWorldId = altHome.id;
+        }
+        if (!worldIds.has(homeWorldId)) continue;
+
+        for (const extraTags of extraTagVariants) {
+          if (extraTags.some((t) => exclTags.has(t))) continue;
+          const tagArr = [...new Set([...baseTagSet, ...extraTags])];
+          const candidateState = {
+            alive: true,
+            age,
+            year,
+            quarter: 1,
+            gender,
+            worldId: chosenWorld.id,
+            homeWorldId,
+            segmentum: chosenWorld.segmentum,
+            careerId,
+            careerHistory: pastHistory,
+            chapterId,
+            focus,
+            stats,
+            faith,
+            corruption,
+            wounds,
+            maxWounds: Math.max(100, wounds),
+            alignment,
+            tags: tagArr,
+            globalFlags: {
+              greatRiftOpened: cl.greatRift !== undefined ? cl.greatRift : year >= 999
+            }
+          };
+          if (!stratReqOnly || Engine.checkReq(candidateState, stratReqOnly)) {
+            return candidateState;
+          }
+        }
+      }
+    }
+    return null;
   }
 
   function proveReachable(req, owner, origReqForCheck) {

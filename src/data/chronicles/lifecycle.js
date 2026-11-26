@@ -4,7 +4,7 @@ export default [
     id: "ch_s2_elder_mortal_1",
     badge: "노년기 회고",
     priority: 3,
-    req: { minAge: 55, excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "rejuvenat"] },
+    req: { minAge: 55, excludeRealms: ["mechanicus"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "rejuvenat", "living_saint", "saint_vessel", "daemon_prince", "mechanicus", "magos", "fabricator_locum", "fabricator_general"] },
     text: "습한 날이면 수십 년 전 얻은 흉터와 무릎이 묵직하게 쑤신다. 그래도 은하계의 숱한 전란을 버티고 쉰다섯을 넘긴 노구로 오늘도 새벽을 맞았다.",
     effect: { stats: { WP: 1, Int: 1 } }
   },
@@ -12,7 +12,7 @@ export default [
     id: "ch_s2_elder_mortal_2",
     badge: "노년기 회고",
     priority: 3,
-    req: { minAge: 60, excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "rejuvenat"], excludeWorlds: ["krieg"] },
+    req: { minAge: 60, excludeRealms: ["heretic", "mechanicus"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "rejuvenat", "living_saint", "saint_vessel", "daemon_prince", "mechanicus", "magos", "fabricator_locum", "fabricator_general"], excludeWorlds: ["krieg"] },
     text: "서툴게 경례를 올리는 어린 신참들의 얼굴에서 수십 년 전 자신의 젊은 날이 겹쳐 보였다. 말없이 어깨를 두드려 주며 생존의 요령을 일러 주었다.",
     effect: { stats: { Fel: 1, WP: 1 } }
   },
@@ -20,7 +20,7 @@ export default [
     id: "ch_s2_rejuvenat_1",
     badge: "리주버냇 장수",
     priority: 3,
-    req: { minAge: 60, allTags: ["rejuvenat"], excludeTags: ["astartes", "custodes", "grey_knight"] },
+    req: { minAge: 60, allTags: ["rejuvenat"], excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince"] },
     text: "리주버냇 시술로 주름 없이 유지된 얼굴을 거울로 바라보며, 이미 노환으로 세상을 떠난 옛 동료들의 빛바랜 초상화를 서랍 깊숙이 정리했다.",
     effect: { stats: { WP: 1, Inf: 1 } }
   },
@@ -28,7 +28,7 @@ export default [
     id: "ch_s2_rejuvenat_2",
     badge: "리주버냇 장수",
     priority: 3,
-    req: { minAge: 75, allTags: ["rejuvenat"], excludeTags: ["astartes", "custodes", "grey_knight"] },
+    req: { minAge: 75, allTags: ["rejuvenat"], excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince"] },
     text: "정기 세포 재생 혈청을 투여받는 동안 혈관에 서늘한 감각이 번졌다. 제국의 상류층에게 수명은 신의 섭리가 아니라 권위로 사는 자산이다.",
     effect: { stats: { T: 1, Inf: 1 }, wounds: 4 }
   },
@@ -36,7 +36,7 @@ export default [
     id: "ch_s2_bionic_1",
     badge: "기계 의체",
     priority: 3,
-    req: { minAge: 35, allTags: ["bionic"], excludeTags: ["custodes"] },
+    req: { minAge: 35, allTags: ["bionic"], excludeBodyClasses: ["dreadnought", "daemonic"], excludeTags: ["custodes", "dreadnought", "daemon_prince", "living_saint"] },
     text: "차가운 강철 의수로 따뜻한 찻잔을 감싸 쥐었으나 온기가 전해지지 않았다. 육신이 줄어들수록 고통은 옅어지지만 인간의 감각도 함께 멀어진다.",
     effect: { stats: { Int: 1, WP: 1 } }
   },
@@ -44,7 +44,7 @@ export default [
     id: "ch_s2_bionic_2",
     badge: "기계 의체",
     priority: 3,
-    req: { minAge: 45, allTags: ["bionic"], excludeTags: ["custodes"] },
+    req: { minAge: 45, allTags: ["bionic"], excludeBodyClasses: ["dreadnought", "daemonic"], excludeTags: ["custodes", "dreadnought", "daemon_prince", "living_saint"] },
     text: "성유를 바르고 관절 서보의 미세한 유격을 조율했다. 피와 살은 늙어 가지만 축성된 강철만은 묵묵히 제 몫을 다한다.",
     effect: { stats: { T: 1, Int: 1 } }
   },
@@ -54,6 +54,8 @@ export default [
     priority: 3,
     req: {
       minAge: 100,
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["daemonic"],
       or: [
         { allTags: ["astartes"] },
         { allTags: ["custodes"] },
@@ -69,7 +71,7 @@ export default [
     id: "ch_s2_centenarian_2",
     badge: "불멸의 의무",
     priority: 3,
-    req: { minAge: 150, anyTags: ["astartes", "custodes", "grey_knight", "dreadnought"] },
+    req: { minAge: 150, excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"], anyTags: ["astartes", "custodes", "grey_knight", "dreadnought"], excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince"] },
     text: "수 세대의 필멸자 총독과 장교들이 취임하고 흙으로 돌아가는 동안에도, 그대는 여전히 같은 갑주를 입고 변함없이 황제의 적을 향해 총구를 겨누고 있다.",
     effect: { stats: { WP: 2 }, faith: 2 }
   },
@@ -77,7 +79,7 @@ export default [
     id: "ch_s3_bond_comrade",
     badge: "오래된 전우",
     priority: 3,
-    req: { allTags: ["bond_comrade"] },
+    req: { allTags: ["bond_comrade"], excludeRealms: ["heretic"], excludeBodyClasses: ["dreadnought", "daemonic"], excludeTags: ["living_saint", "daemon_prince"] },
     text: "다른 구역으로 전출 간 옛 전우에게서 구겨진 엽서 한 장이 넉 달 만에 도착했다. '아직 숨 붙어 있다'는 짧은 한 줄에 비로소 안도했다.",
     effect: { stats: { WP: 1, Fel: 1 } }
   },
@@ -85,7 +87,7 @@ export default [
     id: "ch_s3_bond_mentor",
     badge: "스승의 가르침",
     priority: 3,
-    req: { allTags: ["bond_mentor"] },
+    req: { allTags: ["bond_mentor"], excludeBodyClasses: ["daemonic"], excludeTags: ["daemon_prince"] },
     text: "까다로운 업무 앞에서 망설이던 찰나, 옛 스승이 남긴 낡은 수첩의 한 구절이 떠올라 단숨에 실마리를 풀어 냈다.",
     effect: { stats: { Int: 2 } }
   },
@@ -93,7 +95,7 @@ export default [
     id: "ch_s3_bond_rival",
     badge: "숙명의 정적",
     priority: 3,
-    req: { allTags: ["bond_rival"] },
+    req: { allTags: ["bond_rival"], excludeRealms: ["heretic"], excludeBodyClasses: ["dreadnought", "daemonic"], excludeTags: ["living_saint", "daemon_prince"] },
     text: "승진 명단과 성과표에 나란히 오른 숙명의 정적 이름을 확인하고 이를 악물었다. 저 자보다 먼저 무너질 수는 없다는 오기가 기력을 되살렸다.",
     effect: { stats: { WP: 1, Inf: 1 } }
   },
@@ -104,6 +106,9 @@ export default [
     req: {
       minAge: 14,
       maxAge: 21,
+      maxSocialTier: "common",
+      excludeRealms: ["cloistered", "heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: ["astartes", "custodes", "grey_knight"],
       excludeWorlds: ["krieg"],
       excludeWorldTags: ["feral"]
@@ -154,7 +159,9 @@ export default [
     priority: 3,
     req: {
       allTags: ["bond_family"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince"]
     },
     text: "고된 일과를 마치고 돌아온 저녁, 배우자가 끓여 놓은 따뜻한 합성 수프 한 그릇 앞에서 모처럼 갑옷과 긴장을 내려놓았다.",
     effect: { stats: { WP: 1, Fel: 1 }, wounds: 3 }
@@ -165,7 +172,9 @@ export default [
     priority: 3,
     req: {
       allTags: ["bond_heir"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince"]
     },
     text: "자녀가 보낸 삐뚤빼뚤한 첫 안부 편지를 지갑 깊숙이 접어 넣었다. 어두운 은하에서도 살아야 할 이유가 한 줄 더 늘었다.",
     effect: { stats: { WP: 2 }, faith: 1 }
@@ -177,7 +186,9 @@ export default [
     req: {
       minAge: 35,
       anyTags: ["bond_family", "bond_heir"],
-      excludeTags: ["astartes", "custodes", "grey_knight"]
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince"]
     },
     text: "전선 너머로 포성이 울릴 때마다 집에 남겨 둔 식구들의 얼굴이 떠올라 두려웠지만, 바로 그 두려움이 그대를 끝까지 살아남게 만들었다.",
     effect: { stats: { T: 1, WP: 1 } }
@@ -285,7 +296,8 @@ export default [
     req: {
       minAge: 130,
       anyTags: ["rejuvenat", "bionic"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"],
       excludeHomeWorlds: ["krieg"]
     },
     text: "백삼십 년의 세월을 버텨 낸 육신은 이제 값비싼 리주버냇 혈청과 미세한 기계 보조 장치들이 맞물려 움직이는 정교한 유물에 가깝다. 젊은 서기관들이 쓰는 새 말투가 낯설게 들리고, 백 년 전 유행하던 악곡을 기억하는 이조차 주변에 아무도 남지 않았다. 남들보다 두 배 긴 생애를 허락받은 대가로, 제국의 끝없는 업무 속에서 조용한 이방인이 되어 가고 있음을 실감했다.",
@@ -298,7 +310,8 @@ export default [
     req: {
       minAge: 170,
       anyTags: ["rejuvenat", "bionic"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"],
       excludeHomeWorlds: ["krieg"]
     },
     text: "백칠십 년을 살아 낸 끝에 육신의 고통도, 젊은 날의 격렬한 분노도 이제는 먼 유리 너머의 풍경처럼 아득해졌다. 정기 시술과 의체 점검으로 심장은 여전히 힘차게 뛰고 있으나, 거울 속 창백한 눈동자를 들여다보면 과연 어디까지가 원래의 인간인지 스스로도 가늠하기 어렵다. 그래도 한 세기 반 넘게 축적한 통찰과 인맥 앞에서는 가장 오만한 고위 관료조차 고개를 숙였다.",

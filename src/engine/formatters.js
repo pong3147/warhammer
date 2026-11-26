@@ -30,6 +30,156 @@ export const ALIGNMENT_META = {
   }
 };
 
+export const SOCIAL_TIER_ORDER = ["underclass", "common", "elite", "apex"];
+
+export const SOCIAL_TIER_LABELS = {
+  underclass: "하층민",
+  common: "일반 시민·실무",
+  elite: "귀족·고위 계급",
+  apex: "초인·최고위"
+};
+
+export const LIFE_REALM_KEYS = ["civilian", "cloistered", "military", "void", "mechanicus", "heretic"];
+
+export const LIFE_REALM_LABELS = {
+  civilian: "민간·행성 사회",
+  cloistered: "폐쇄 수도·양성 기관",
+  military: "군사·전선 복무",
+  void: "우주 함대·보이드",
+  mechanicus: "기계교·포지 성소",
+  heretic: "이단·카오스 영역"
+};
+
+export const BODY_CLASS_KEYS = ["mortal", "augmetic", "transhuman", "dreadnought", "daemonic"];
+
+export const BODY_CLASS_LABELS = {
+  mortal: "필멸 인류",
+  augmetic: "기계 의체·개조체",
+  transhuman: "초인 개조체",
+  dreadnought: "드레드노트 석관",
+  daemonic: "악마·워프 승천체"
+};
+
+const APEX_SOCIAL_TAGS = [
+  "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "daemon_prince",
+  "high_lord_terra", "warmaster", "chapter_master", "sector_lord", "planetary_governor",
+  "inquisitor", "lord_inquisitor", "knight_high_king", "nav_novator", "paternoval_envoy",
+  "rt_lord_captain", "canoness", "cardinal", "commissar_general", "arbites_marshal",
+  "departmento_head", "fabricator_locum", "fabricator_general", "navy_admiral",
+  "gk_grand_master", "gk_supreme_master", "shield_captain", "captain_general",
+  "grand_master_assassins", "chaos_lord", "renegade_marine"
+];
+
+const ELITE_SOCIAL_TAGS = [
+  "noble", "wealthy", "terra_elite", "rogue_trader_blood", "navigator", "knight_blood",
+  "officer", "rogue_trader", "imperial_knight", "assassin", "sister_of_silence",
+  "guild_magnate", "crime_lord", "magos", "general_rank",
+  "lord_commissar", "tempestus_prime", "navy_captain", "arbites_judge",
+  "navis_officer", "knight_scion", "knight_freeblade"
+];
+
+export function computeBodyClass(state, career, tagSet) {
+  const tags = tagSet || new Set((state && state.tags) || []);
+  const c = career || null;
+  if ((c && c.id === "daemon_prince") || tags.has("daemon_prince")) return "daemonic";
+  if (tags.has("dreadnought")) return "dreadnought";
+  if (
+    (c && c.isTranshuman) ||
+    tags.has("astartes") ||
+    tags.has("custodes") ||
+    tags.has("grey_knight") ||
+    tags.has("living_saint") ||
+    tags.has("transhuman") ||
+    tags.has("renegade_marine") ||
+    tags.has("chaos_lord")
+  ) {
+    return "transhuman";
+  }
+  if (
+    (c && c.tree === "mechanicus") ||
+    tags.has("bionic") ||
+    tags.has("magos") ||
+    ((state && state.augmeticsCount) || 0) > 0
+  ) {
+    return "augmetic";
+  }
+  return "mortal";
+}
+
+export function computeSocialTier(state, career, tagSet) {
+  const tags = tagSet || new Set((state && state.tags) || []);
+  const c = career || null;
+  if (c && (c.tier >= 5 || c.isTranshuman)) return "apex";
+  for (let i = 0; i < APEX_SOCIAL_TAGS.length; i++) {
+    if (tags.has(APEX_SOCIAL_TAGS[i])) return "apex";
+  }
+  if (c && c.tier >= 3 && c.id !== "chaos_cultist" && c.id !== "sanctioned_psyker") {
+    return "elite";
+  }
+  if (c && ["navis_navigator", "imperial_knight", "rogue_trader", "officio_assassinorum", "governor", "inquisition"].includes(c.tree)) {
+    return "elite";
+  }
+  for (let i = 0; i < ELITE_SOCIAL_TAGS.length; i++) {
+    if (tags.has(ELITE_SOCIAL_TAGS[i])) return "elite";
+  }
+  const cid = (c && c.id) || (state && state.careerId) || "child";
+  if (cid === "underhive_ganger" || cid === "underhive_boss") return "underclass";
+  if ((cid === "child" || cid === "menial_worker" || cid === "chaos_cultist") && tags.has("lowborn")) {
+    return "underclass";
+  }
+  return "common";
+}
+
+export function computeLifeRealm(state, career, world, tagSet) {
+  const tags = tagSet || new Set((state && state.tags) || []);
+  const c = career || null;
+  const w = world || null;
+  const cid = (c && c.id) || (state && state.careerId) || "child";
+  const tree = (c && c.tree) || "civil";
+
+  if (tree === "chaos" || tags.has("heretic") || tags.has("chaos_aligned") || tags.has("daemon_prince") || tags.has("renegade_marine")) {
+    return "heretic";
+  }
+  if (tree === "mechanicus") {
+    return "mechanicus";
+  }
+  if (
+    tree === "custodes" ||
+    tree === "grey_knights" ||
+    tree === "officio_assassinorum" ||
+    tree === "sororitas" ||
+    tree === "living_saint" ||
+    tree === "ecclesiarchy" ||
+    tree === "inquisition" ||
+    cid === "sanctioned_psyker" ||
+    cid === "master_of_astronomicum"
+  ) {
+    return "cloistered";
+  }
+  if (
+    tree === "navy" ||
+    tree === "rogue_trader" ||
+    tree === "navis_navigator" ||
+    (w && w.id === "voidborn")
+  ) {
+    return "void";
+  }
+  if (cid === "child" && tags.has("mechanicus_blood")) return "mechanicus";
+  if (cid === "child" && (tags.has("schola") || tags.has("navigator"))) return "cloistered";
+  if (cid === "child" && tags.has("voidborn")) return "void";
+  if (
+    tree === "militarum" ||
+    tree === "commissariat" ||
+    tree === "astartes" ||
+    tree === "imperial_knight" ||
+    cid === "primaris_psyker" ||
+    (cid === "child" && w && w.id === "krieg")
+  ) {
+    return "military";
+  }
+  return "civilian";
+}
+
 export const STAT_META = {
   WS:  { key: "WS",  name: "백병", en: "Weapon Skill", desc: "근접전·체인소드·도검 전투력" },
   BS:  { key: "BS",  name: "사격", en: "Ballistic Skill", desc: "라스건·볼터·포술 명중률" },
@@ -211,6 +361,12 @@ export function createCoreFormatters(DATA) {
   const CAREER_BY_ID = new Map((DATA.CAREERS || []).map((c) => [c.id, c]));
   const CHAR_BY_ID = new Map((DATA.CHARACTERS || []).map((c) => [c.id, c]));
   const CHAPTER_BY_ID = new Map((DATA.CHAPTERS || []).map((c) => [c.id, c]));
+  const TREE_NAME_BY_ID = new Map();
+  for (const c of DATA.CAREERS || []) {
+    if (c && c.tree && !TREE_NAME_BY_ID.has(c.tree)) {
+      TREE_NAME_BY_ID.set(c.tree, c.treeName || c.tree);
+    }
+  }
 
   function getWorld(id) {
     return WORLD_BY_ID.get(id) || DATA.WORLDS[0];
@@ -285,6 +441,27 @@ export function createCoreFormatters(DATA) {
       );
       parts.push(`주성향: ${names.join("/")}`);
     }
+    if (req.minSocialTier && req.maxSocialTier) {
+      const minLbl = SOCIAL_TIER_LABELS[req.minSocialTier] || req.minSocialTier;
+      const maxLbl = SOCIAL_TIER_LABELS[req.maxSocialTier] || req.maxSocialTier;
+      parts.push(req.minSocialTier === req.maxSocialTier ? `신분 계층: ${minLbl}` : `신분 계층: ${minLbl}~${maxLbl}`);
+    } else if (req.minSocialTier) {
+      parts.push(`신분 계층: ${SOCIAL_TIER_LABELS[req.minSocialTier] || req.minSocialTier} 이상`);
+    } else if (req.maxSocialTier) {
+      parts.push(`신분 계층: ${SOCIAL_TIER_LABELS[req.maxSocialTier] || req.maxSocialTier} 이하`);
+    }
+    if (req.anySocialTiers && req.anySocialTiers.length) {
+      parts.push("신분 계층: " + req.anySocialTiers.map((k) => SOCIAL_TIER_LABELS[k] || k).join("/"));
+    }
+    if (req.anyRealms && req.anyRealms.length) {
+      parts.push("생활권: " + req.anyRealms.map((k) => LIFE_REALM_LABELS[k] || k).join("/"));
+    }
+    if (req.anyBodyClasses && req.anyBodyClasses.length) {
+      parts.push("신체 분류: " + req.anyBodyClasses.map((k) => BODY_CLASS_LABELS[k] || k).join("/"));
+    }
+    if (req.maxCareerTier !== undefined) {
+      parts.push(`진로 Tier ${req.maxCareerTier} 이하`);
+    }
     if (req.allTags && req.allTags.length) {
       parts.push(req.allTags.map((t) => TAG_LABELS[t] || t).join(" & "));
     }
@@ -332,27 +509,39 @@ export function createCoreFormatters(DATA) {
       const orText = req.or.map((sub) => describeReq(sub)).filter(Boolean).join(" 또는 ");
       if (orText) parts.push(`(${orText})`);
     }
-    if (req.excludePastCareers && req.excludePastCareers.length && parts.length === 0) {
-      parts.push(req.excludePastCareers.map((id) => `${getCareerShortName(id)} 경력 제외`).join(" · "));
-    }
-    if (req.excludeChapters && req.excludeChapters.length && parts.length === 0) {
-      parts.push(
-        req.excludeChapters
-          .map((id) => `${(getChapter(id) && getChapter(id).name) || id} 제외`)
-          .join(" · ")
-      );
-    }
-    if (req.excludeWorlds && req.excludeWorlds.length && parts.length === 0) {
-      parts.push(req.excludeWorlds.map((id) => `${getWorld(id).name} 제외`).join(" · "));
-    }
-    if (req.excludeHomeWorlds && req.excludeHomeWorlds.length && parts.length === 0) {
-      parts.push(req.excludeHomeWorlds.map((id) => `${getWorld(id).name} 출신 제외`).join(" · "));
-    }
-    if (req.excludeWorldTags && req.excludeWorldTags.length && parts.length === 0) {
-      parts.push(req.excludeWorldTags.map((wt) => `${WORLD_TAG_LABELS[wt] || wt} 제외`).join(" · "));
-    }
-    if (req.excludeTags && req.excludeTags.length && parts.length === 0) {
-      parts.push(req.excludeTags.map((t) => `${TAG_LABELS[t] || t} 불가`).join(" · "));
+    const hasPositive = parts.length > 0;
+    if (!hasPositive) {
+      if (req.excludeRealms && req.excludeRealms.length) {
+        parts.push(req.excludeRealms.map((k) => `${LIFE_REALM_LABELS[k] || k} 제외`).join(", "));
+      }
+      if (req.excludeBodyClasses && req.excludeBodyClasses.length) {
+        parts.push(req.excludeBodyClasses.map((k) => `${BODY_CLASS_LABELS[k] || k} 제외`).join(", "));
+      }
+      if (req.excludeTrees && req.excludeTrees.length) {
+        parts.push(req.excludeTrees.map((t) => `${TREE_NAME_BY_ID.get(t) || t} 제외`).join(", "));
+      }
+      if (req.excludePastCareers && req.excludePastCareers.length) {
+        parts.push(req.excludePastCareers.map((id) => `${getCareerShortName(id)} 경력 제외`).join(", "));
+      }
+      if (req.excludeChapters && req.excludeChapters.length) {
+        parts.push(
+          req.excludeChapters
+            .map((id) => `${(getChapter(id) && getChapter(id).name) || id} 제외`)
+            .join(", ")
+        );
+      }
+      if (req.excludeWorlds && req.excludeWorlds.length) {
+        parts.push(req.excludeWorlds.map((id) => `${getWorld(id).name} 제외`).join(", "));
+      }
+      if (req.excludeHomeWorlds && req.excludeHomeWorlds.length) {
+        parts.push(req.excludeHomeWorlds.map((id) => `${getWorld(id).name} 출신 제외`).join(", "));
+      }
+      if (req.excludeWorldTags && req.excludeWorldTags.length) {
+        parts.push(req.excludeWorldTags.map((wt) => `${WORLD_TAG_LABELS[wt] || wt} 제외`).join(", "));
+      }
+      if (req.excludeTags && req.excludeTags.length) {
+        parts.push(req.excludeTags.map((t) => `${TAG_LABELS[t] || t} 불가`).join(", "));
+      }
     }
     return parts.join(" · ");
   }
@@ -361,6 +550,12 @@ export function createCoreFormatters(DATA) {
     SAVE_VERSION,
     ALIGNMENT_KEYS,
     ALIGNMENT_META,
+    SOCIAL_TIER_ORDER,
+    SOCIAL_TIER_LABELS,
+    LIFE_REALM_KEYS,
+    LIFE_REALM_LABELS,
+    BODY_CLASS_KEYS,
+    BODY_CLASS_LABELS,
     STAT_META,
     FOCUSES,
     QUARTER_LABELS,
@@ -372,6 +567,7 @@ export function createCoreFormatters(DATA) {
     CAREER_BY_ID,
     CHAR_BY_ID,
     CHAPTER_BY_ID,
+    TREE_NAME_BY_ID,
     getWorld,
     getOrigin,
     getTrait,
@@ -379,6 +575,9 @@ export function createCoreFormatters(DATA) {
     getCharacter,
     getChapter,
     getCareerShortName,
+    computeSocialTier,
+    computeLifeRealm,
+    computeBodyClass,
     formatImperialYear,
     formatImperialDate,
     getWorldShortTag,

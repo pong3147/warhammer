@@ -68,7 +68,7 @@ export default [
     id: "ch_job_officer_1",
     badge: "장교의 산수",
     priority: 3,
-    req: { anyCareers: ["militarum_officer", "militarum_general", "warmaster", "lord_commander_militant"] },
+    req: { maxCareerTier: 4, anyCareers: ["militarum_officer", "militarum_general"] },
     text: "상부 참모부에서 '보병 2개 대대를 소모하면 화력 지원 탄약을 12% 절약할 수 있다'는 공문이 내려왔다. 이 제국에서 포탄은 비싸고 인간의 생명은 공짜다.",
     effect: { stats: { Int: 1, Inf: 1 }, faith: -2 }
   },
@@ -100,7 +100,7 @@ export default [
     id: "ch_job_sororitas_1",
     badge: "전투 수녀회",
     priority: 3,
-    req: { anyCareers: ["sororitas_novitiate", "adepta_sororitas", "sororitas_celestian", "canoness", "abbess_sanctorum"] },
+    req: { anyCareers: ["adepta_sororitas", "sororitas_celestian", "canoness", "abbess_sanctorum"] },
     text: "새벽 철야 기도 후 파워 아머의 성유를 바르며 볼터와 화염방사기를 정비했다. 작은 회의를 고백한 수련 수녀가 자진해 참회 부대 리펜티아로 향하는 뒷모습을 축복했다.",
     effect: { stats: { WP: 1, BS: 1 }, faith: 4 }
   },
@@ -108,7 +108,7 @@ export default [
     id: "ch_job_astartes_1",
     badge: "아스타르테스 수련",
     priority: 3,
-    req: { anyCareers: ["astartes_scout", "astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain", "chapter_master"] },
+    req: { anyCareers: ["astartes_scout", "astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain", "chapter_master"], excludeBodyClasses: ["dreadnought"] },
     text: "하루 18시간의 실탄 전투 훈련과 4시간의 전술 성찰, 단 2시간의 휴식. 평범한 필멸자들이 늙어 죽어 가는 동안 초인의 육신은 오직 전쟁의 도구로 벼려진다.",
     effect: { stats: { WS: 1, BS: 1 } }
   },
@@ -116,7 +116,7 @@ export default [
     id: "ch_job_astartes_2",
     badge: "초인의 괴리",
     priority: 3,
-    req: { anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain", "chapter_master"] },
+    req: { anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain", "chapter_master"], excludeBodyClasses: ["dreadnought"] },
     text: "해방한 행성의 시민들이 눈물을 흘리며 파워 아머 앞에 무릎을 꿇었다. 한때 나 역시 저토록 작고 나약한 인간이었다는 사실이 이제는 아득한 전설처럼 느껴진다.",
     effect: { stats: { WP: 1, Inf: 1 } }
   },
@@ -148,7 +148,7 @@ export default [
     id: "ch_job_inquisition_1",
     badge: "심문소의 그림자",
     priority: 3,
-    req: { anyCareers: ["inquisition_acolyte", "inquisition_interrogator", "inquisitor", "lord_inquisitor", "inquisitor_representative"] },
+    req: { anyCareers: ["inquisition_acolyte", "inquisition_interrogator", "inquisitor", "lord_inquisitor"] },
     text: "이단 첩보 하나를 확인하기 위해 선술집 손님 14명을 전원 연행해 심문했다. 13명은 무고했지만 1명의 품에서 여덟 갈래 별 부적이 나왔다. '무고함은 아무것도 증명하지 못한다.'",
     effect: { stats: { Int: 1, Inf: 1 }, faith: 1 }
   },
@@ -164,7 +164,7 @@ export default [
     id: "ch_job_mechanicus_1",
     badge: "기계교 의례",
     priority: 3,
-    req: { anyCareers: ["skitarii", "skitarii_marshal", "tech_priest", "archmagos", "fabricator_locum", "fabricator_general"] },
+    req: { maxCareerTier: 4, anyCareers: ["skitarii", "skitarii_marshal", "tech_priest", "archmagos"] },
     text: "고장 난 발전기의 스위치를 누르기 전에 3시간 동안 성유를 바르고 이진법 찬가를 낭송했다. 원리를 이해하려는 것은 이단이며, 오직 매뉴얼 의례만이 옴니시아의 뜻이다.",
     effect: { stats: { Int: 1 } }
   },
@@ -172,7 +172,7 @@ export default [
     id: "ch_job_mechanicus_2",
     badge: "살점의 나약함",
     priority: 3,
-    req: { anyCareers: ["tech_priest", "archmagos", "fabricator_locum", "fabricator_general"] },
+    req: { maxCareerTier: 4, anyCareers: ["tech_priest", "archmagos"] },
     text: "노화된 생체 폐를 적출하고 최신형 방사선 여과 펌프로 교체했다. 숨 쉬는 감각은 사라졌지만 작업 효율이 14.7% 상승해 만족스러웠다.",
     effect: { stats: { T: 1, Int: 1 }, wounds: 4 }
   },
@@ -180,7 +180,7 @@ export default [
     id: "ch_job_navy_1",
     badge: "임페리얼 네이비",
     priority: 3,
-    req: { anyCareers: ["imperial_navy", "navy_captain", "navy_admiral", "lord_high_admiral"] },
+    req: { maxCareerTier: 4, anyCareers: ["imperial_navy", "navy_captain"] },
     text: "순양함 하층 포갑판에서 수백 명의 노역자들이 거대 매크로 캐논 포탄을 쇠사슬로 끌어올리다 6명이 압사했다. 함교 항해 일지에는 '3번 포대 재장전 1.4초 지연'이라고만 적혔다.",
     effect: { stats: { BS: 1, Int: 1 } }
   },
@@ -188,7 +188,7 @@ export default [
     id: "ch_job_arbites_1",
     badge: "제국법 집행",
     priority: 3,
-    req: { anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal", "grand_provost_marshal"] },
+    req: { maxCareerTier: 4, anyCareers: ["arbites", "arbites_judge_rank"] },
     text: "십일조 곡물 창고에서 빵 한 덩이를 훔친 굶주린 부랑자에게 제국법 제412조를 적용해 '서비터 전환형'을 선고했다. 법은 자비가 아니라 제국의 생존 기계다.",
     effect: { stats: { WP: 1, Inf: 1 } }
   },
@@ -196,7 +196,7 @@ export default [
     id: "ch_job_admin_1",
     badge: "아드미니스트라툼 부조리",
     priority: 3,
-    req: { anyCareers: ["administratum", "admin_prefect_rank", "admin_departmento_head", "master_of_administratum", "planetary_governor", "sector_lord"] },
+    req: { maxCareerTier: 4, anyCareers: ["administratum", "admin_prefect_rank", "admin_departmento_head", "planetary_governor"], excludeTags: ["high_lord_terra", "sector_lord"] },
     text: "420년 전에 타이라니드에게 먹혀 사라진 행성으로 농기구 5만 대를 보내라는 칙령을 발견했다. 하지만 '전임 하이 로드의 서명은 취소할 수 없다'는 규정에 따라 올해도 수송선을 배정했다.",
     effect: { stats: { Int: 1, Inf: 1 } }
   },
@@ -204,7 +204,7 @@ export default [
     id: "ch_job_admin_2",
     badge: "서기관의 최후",
     priority: 3,
-    req: { anyCareers: ["administratum", "admin_prefect_rank", "admin_departmento_head", "master_of_administratum", "planetary_governor", "sector_lord"] },
+    req: { maxCareerTier: 2, anyCareers: ["administratum"] },
     text: "옆 책상에서 50년째 십일조 영수증을 검수하던 노서기관이 펜을 쥔 채 조용히 숨을 거두었다. 주임 아뎁트는 시신을 치우기도 전에 그의 책상 위 미결 서류부터 나에게 넘겼다.",
     effect: { stats: { Int: 1 }, wounds: -2 }
   },
@@ -212,7 +212,7 @@ export default [
     id: "ch_job_priest_1",
     badge: "에클레시아키 설교",
     priority: 3,
-    req: { anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal", "ecclesiarch"] },
+    req: { maxCareerTier: 5, anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"] },
     text: "광장에서 4시간 동안 '고통은 축복이며 가난은 영혼을 맑게 한다'고 열변을 토했다. 설교가 끝난 뒤 순금 향로와 고급 포도주가 담긴 추기경 마차에 올랐다.",
     effect: { stats: { Fel: 1, Inf: 1 }, faith: 3 }
   },
@@ -220,7 +220,7 @@ export default [
     id: "ch_job_rogue_trader_1",
     badge: "로그 트레이더 항해",
     priority: 3,
-    req: { anyCareers: ["rt_seneschal", "rogue_trader", "rt_lord_captain", "guild_magnate"] },
+    req: { anyCareers: ["rt_seneschal", "rogue_trader", "rt_lord_captain"] },
     text: "제국 성도 밖 미개척 행성에서 희귀 향신료와 고대 문명의 황금을 가득 싣고 귀환했다. 세관원이 의심스러운 눈초리를 보냈으나, 황제의 친필 무역 영장을 들이밀자 즉시 경례했다.",
     effect: { stats: { Inf: 2, Fel: 1 } }
   },
@@ -228,7 +228,7 @@ export default [
     id: "ch_job_psyker_1",
     badge: "공인 사이커의 삶",
     priority: 3,
-    req: { anyCareers: ["sanctioned_psyker", "primaris_psyker", "master_of_astronomicum"] },
+    req: { maxCareerTier: 4, anyCareers: ["sanctioned_psyker", "primaris_psyker"] },
     text: "지휘부 텐트 구석에서 워프의 메아리를 해석하는 동안, 등 뒤에 선 경호병은 내 관자놀이에서 라스건 총구를 한순간도 떼지 않았다. 그것이 제국이 사이커를 대접하는 방식이다.",
     effect: { stats: { WP: 1, Int: 1 }, corruption: 1 }
   },
@@ -316,7 +316,7 @@ export default [
     id: "ch_rank_brother_1",
     badge: "배틀 브라더 강습",
     priority: 3,
-    req: { anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran"] },
+    req: { anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran"], excludeBodyClasses: ["dreadnought"] },
     text: "드롭 포드 안전벨트가 잠기고 대기권 마찰열이 선체를 붉게 달궜다. 형제들과 함께 챕터의 전투 함성을 합창하며 적진 한가운데로 수직 강하했다.",
     effect: { stats: { WS: 1, WP: 1 } }
   },
@@ -404,7 +404,7 @@ export default [
     id: "ch_job_ex_officer",
     badge: "장교의 고뇌",
     priority: 3,
-    req: { anyCareers: ["militarum_officer", "militarum_general", "warmaster", "lord_commander_militant"] },
+    req: { maxCareerTier: 4, anyCareers: ["militarum_officer", "militarum_general"] },
     text: "전사자 통지서 400통에 일일이 서명하다 만년필 촉이 부러졌다. 부관은 '서명 도장 서비터를 쓰시면 10초면 끝납니다'라고 조언했다.",
     effect: { stats: { WP: 1, Inf: 1 } }
   },
@@ -428,7 +428,7 @@ export default [
     id: "ch_job_ex_astartes_3",
     badge: "아스타르테스 무기고",
     priority: 3,
-    req: { anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain", "chapter_master"] },
+    req: { anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain", "chapter_master"], excludeBodyClasses: ["dreadnought"] },
     text: "400년 된 유물 볼터의 약실을 직접 분해해 닦고 기계령 기도문을 읊었다. 이 총은 나를 거쳐 간 세 명의 전임 형제와 함께 14개 성계를 정화해 왔다.",
     effect: { stats: { BS: 1, WP: 1 } }
   },
@@ -492,7 +492,7 @@ export default [
     id: "ch_job_ex_psyker_2",
     badge: "아스트로패스 통신",
     priority: 3,
-    req: { anyCareers: ["sanctioned_psyker", "primaris_psyker", "master_of_astronomicum"] },
+    req: { maxCareerTier: 4, anyCareers: ["sanctioned_psyker", "primaris_psyker"] },
     text: "300광년 너머 성계에서 날아온 꿈과 상징 덩어리의 아스트로패스 전문을 6시간 동안 해독해 '탄약 500상자 지연'이라는 1줄 보고서로 번역했다.",
     effect: { stats: { Int: 2, WP: 1 } }
   },
@@ -540,7 +540,7 @@ export default [
     id: "ch_rank_deep_officer_1",
     badge: "연대 장교",
     priority: 3,
-    req: { anyCareers: ["militarum_officer", "militarum_general", "warmaster", "lord_commander_militant"] },
+    req: { maxCareerTier: 4, anyCareers: ["militarum_officer", "militarum_general"] },
     text: "야전 막사에서 수백 장의 전사자 통지서에 도장을 찍고, 내일 새벽 공세에 투입할 예비 중대의 탄약 배당량을 계산했다.",
     effect: { stats: { Int: 1, WP: 1 } }
   },
@@ -572,7 +572,7 @@ export default [
     id: "ch_rank_deep_sororitas_1",
     badge: "전투 수녀",
     priority: 3,
-    req: { anyCareers: ["sororitas_novitiate", "adepta_sororitas", "sororitas_celestian"] },
+    req: { anyCareers: ["adepta_sororitas", "sororitas_celestian"] },
     text: "수녀원 무기고에서 볼터 탄창 하나하나에 축성 성유를 바르며 성녀의 찬송가를 읊었다. 강철과 신앙은 둘이 아니다.",
     effect: { stats: { BS: 1 }, faith: 3 }
   },
@@ -596,7 +596,7 @@ export default [
     id: "ch_rank_deep_brother_1",
     badge: "배틀 브라더",
     priority: 3,
-    req: { anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran"] },
+    req: { anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran"], excludeBodyClasses: ["dreadnought"] },
     text: "드롭 포드 강하 전 15분간의 전투 기도 동안 심장 두 개가 흔들림 없이 고동쳤다. 황제의 죽음의 천사는 공포를 알지 못한다.",
     effect: { stats: { WS: 1, WP: 1 } }
   },
@@ -684,7 +684,7 @@ export default [
     id: "ch_rank_deep_admin_1",
     badge: "아드미니스트라툼",
     priority: 3,
-    req: { anyCareers: ["administratum", "admin_prefect_rank", "admin_departmento_head", "master_of_administratum", "planetary_governor", "sector_lord"] },
+    req: { maxCareerTier: 3, anyCareers: ["administratum", "admin_prefect_rank", "admin_departmento_head"] },
     text: "서류 산더미 사이에서 240년 전에 접수된 행성 도로 보수 민원서를 발견해 '관할 이관 대기' 도장을 정성스럽게 찍어 다음 책상으로 넘겼다.",
     effect: { stats: { Int: 1, Inf: 1 } }
   },
@@ -700,7 +700,7 @@ export default [
     id: "ch_rank_deep_rt_1",
     badge: "로그 트레이더",
     priority: 3,
-    req: { anyCareers: ["rt_seneschal", "rogue_trader", "rt_lord_captain", "guild_magnate"] },
+    req: { anyCareers: ["rt_seneschal", "rogue_trader", "rt_lord_captain"] },
     text: "황제의 친필 서명이 새겨진 무역 영장 보관함을 열어 본 뒤, 변경 미개척 성계의 희귀 광물 독점 계약서에 서명했다.",
     effect: { stats: { Inf: 2, Fel: 1 } }
   },
@@ -708,7 +708,7 @@ export default [
     id: "ch_rank_deep_psyker_1",
     badge: "생션드 사이커",
     priority: 3,
-    req: { anyCareers: ["sanctioned_psyker", "primaris_psyker", "master_of_astronomicum"] },
+    req: { maxCareerTier: 4, anyCareers: ["sanctioned_psyker", "primaris_psyker"] },
     text: "사이킥 억제 목걸이의 미세한 전류를 견디며 워프 너머에서 날아온 아스트로패스 암호 꿈을 해독해 사령부에 보고했다.",
     effect: { stats: { WP: 2 }, corruption: -2 }
   },
@@ -772,7 +772,7 @@ export default [
     id: "ch_s2_psyker_1",
     badge: "생션드 사이커",
     priority: 3,
-    req: { anyCareers: ["sanctioned_psyker", "primaris_psyker", "master_of_astronomicum"] },
+    req: { maxCareerTier: 4, anyCareers: ["sanctioned_psyker", "primaris_psyker"] },
     text: "목덜미의 사이킥 억제 고리를 점검하며 워프의 속삭임을 차단했다. 아군 병사들이 한 발 떨어져 경계하는 시선은 이미 익숙하다.",
     effect: { stats: { WP: 2 }, corruption: -1 }
   },
@@ -780,7 +780,7 @@ export default [
     id: "ch_s2_priest_1",
     badge: "에클레시아키",
     priority: 3,
-    req: { anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal", "ecclesiarch"] },
+    req: { maxCareerTier: 5, anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"] },
     text: "향 연기가 자욱한 대성당에서 야전 출정 병사들의 라스건에 성유를 바르며 황제의 가호를 우렁차게 선포했다.",
     effect: { stats: { Fel: 1, WP: 1 }, faith: 3 }
   },
@@ -799,7 +799,7 @@ export default [
     req: {
       minAge: 16,
       gender: "female",
-      anyCareers: ["sororitas_novitiate", "adepta_sororitas", "sororitas_celestian", "canoness", "abbess_sanctorum"]
+      anyCareers: ["adepta_sororitas", "sororitas_celestian", "canoness", "abbess_sanctorum"]
     },
     text: "볼터와 화염방사기에 성유를 바르며 자매들과 나란히 성가를 합창했다. 순교자들의 깃발 아래서 두려움은 재로 타 버린다.",
     effect: { stats: { BS: 1, WP: 1 }, faith: 2 }

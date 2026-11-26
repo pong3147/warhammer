@@ -4,7 +4,7 @@ export default [
     id: "ch_world_terra_1",
     badge: "신성한 테라",
     priority: 3,
-    req: { minAge: 12, anyWorlds: ["terra"], excludeTags: ["custodes"] },
+    req: { minAge: 12, anyWorlds: ["terra"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["custodes", "grey_knight"] },
     text: "황궁 외곽 순례 행렬이 40킬로미터나 밀렸다. 줄을 서다 굶주림과 압사로 쓰러진 순례자들을 청소 서비터가 묵묵히 수거해 갔다.",
     effect: { faith: 3, wounds: -2 }
   },
@@ -12,7 +12,7 @@ export default [
     id: "ch_world_terra_2",
     badge: "신성한 테라",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes", "astartes"] },
+    req: { minAge: 14, anyWorlds: ["terra"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["custodes", "astartes", "grey_knight"] },
     text: "테라의 바다는 수만 년 전에 말라 버렸다. 한 모금의 정제수를 얻기 위해 시민들이 3시간씩 줄을 서는 사이, 고위 관료의 정원에는 분수가 솟구쳤다.",
     effect: { stats: { WP: 1 } }
   },
@@ -52,7 +52,7 @@ export default [
     id: "ch_world_necromunda_1",
     badge: "네크로문다 하층",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["necromunda"], excludeTags: ["noble", "astartes", "custodes", "inquisitor", "sororitas"] },
+    req: { minAge: 14, maxSocialTier: "common", anyWorlds: ["necromunda"], excludeRealms: ["cloistered", "heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["noble", "astartes", "custodes", "inquisitor", "sororitas"] },
     text: "하이브 프리무스 하층 구역에서 골리앗 갱단과 에셔 갱단의 총격전이 사흘째 이어졌다. 치안대는 상층 엘리베이터 문만 걸어 잠근 채 관망했다.",
     effect: { stats: { Ag: 1, WS: 1 }, wounds: -3 }
   },
@@ -116,7 +116,7 @@ export default [
     id: "ch_world_tanith_1",
     badge: "타니스 날나무 숲",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["tanith"] },
+    req: { minAge: 14, maxYear: 764, anyWorlds: ["tanith"] },
     text: "밤사이 거대한 날나무 숲이 뿌리를 옮겨 마을 진입로를 바꿔 놓았다. 외지인은 영원히 헤맬 안개 속을 직감 하나로 걸어 나왔다.",
     effect: { stats: { Ag: 1, BS: 1 } }
   },
@@ -148,7 +148,7 @@ export default [
     id: "ch_world_agri_1",
     badge: "아그리 월드",
     priority: 3,
-    req: { minAge: 14, anyWorldTags: ["agri"], excludeTags: ["noble", "astartes", "custodes"] },
+    req: { minAge: 14, maxSocialTier: "common", anyWorldTags: ["agri"], excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["noble", "astartes", "custodes"] },
     text: "화학 촉진 비료가 안개처럼 뿌려지는 평원에서 16시간 수확 노역을 치렀다. 끝없는 밀밭이지만 정작 농부들의 식탁엔 시체 전분이 올라왔다.",
     effect: { stats: { T: 1 }, wounds: -2 }
   },
@@ -156,7 +156,7 @@ export default [
     id: "ch_world_feral_1",
     badge: "변방 야만 행성",
     priority: 3,
-    req: { minAge: 14, anyWorldTags: ["feral"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 14, anyWorldTags: ["feral"], excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes"] },
     text: "하늘에서 불기둥을 뿜으며 내려온 제국의 징세선을 보고 장로들이 엎드려 절했다. 하늘 사신들은 곡물과 가장 건장한 청년들을 싣고 구름 위로 사라졌다.",
     effect: { stats: { WS: 1, WP: 1 } }
   },
@@ -204,7 +204,7 @@ export default [
     id: "ch_world_hive_elevator",
     badge: "하이브 일상",
     priority: 2,
-    req: { minAge: 12, anyWorldTags: ["hive"], excludeTags: ["noble", "astartes", "custodes", "inquisitor", "rogue_trader", "magos", "lord_commissar", "canoness"] },
+    req: { minAge: 12, maxSocialTier: "common", anyWorldTags: ["hive"], excludeRealms: ["cloistered", "heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["noble", "astartes", "custodes", "inquisitor", "rogue_trader", "magos", "lord_commissar", "canoness"] },
     text: "거대 화물 승강기 케이블이 끊어져 노동자 300명이 하층 심연으로 추락했다. 당국은 고장 안내문 대신 '기계령 모독에 대한 징벌'이라는 경고문을 붙였다.",
     effect: { stats: { Ag: 1 }, wounds: -2 }
   },
@@ -212,7 +212,7 @@ export default [
     id: "ch_world_hive_sunlight",
     badge: "하이브 일상",
     priority: 2,
-    req: { minAge: 14, anyWorldTags: ["hive"], excludeTags: ["noble", "astartes", "custodes", "inquisitor", "rogue_trader", "navy", "magos", "lord_commissar", "canoness"] },
+    req: { minAge: 14, maxSocialTier: "common", anyWorldTags: ["hive"], excludeRealms: ["cloistered", "heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["noble", "astartes", "custodes", "inquisitor", "rogue_trader", "navy", "magos", "lord_commissar", "canoness"] },
     text: "평생 인공 황색 형광등 아래서만 살다 보니, 우연히 고장 난 환기창 너머로 스친 진짜 햇빛에 눈이 멀 뻔했다. 구역 주민들은 저 눈부신 불덩이를 불길해했다.",
     effect: { stats: { WP: 1 } }
   },
@@ -220,7 +220,7 @@ export default [
     id: "ch_world_forge_servitor",
     badge: "포지 월드 부조리",
     priority: 3,
-    req: { minAge: 14, anyWorldTags: ["forge"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 14, anyWorldTags: ["forge"], excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes"] },
     text: "성유 탱크에 이물질이 섞이자 테크프리스트가 청소반 10명을 무방비로 투입했다. 그중 4명은 다음 주부터 바퀴 달린 운반 서비터로 개조되어 공장에 복귀했다.",
     effect: { stats: { T: 1, Int: 1 }, wounds: -2 }
   },
@@ -228,7 +228,7 @@ export default [
     id: "ch_world_civilised_curfew",
     badge: "제국 문명 행성",
     priority: 2,
-    req: { minAge: 14, anyWorldTags: ["civilised"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 14, anyWorldTags: ["civilised"], excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes"] },
     text: "행성 총독의 생일을 기념해 전 시민 의무 찬양 행진이 열렸다. 박수 소리가 작았던 구역장은 다음 날 십일조 탄광으로 발령 났다.",
     effect: { stats: { Fel: 1 } }
   },
@@ -236,7 +236,7 @@ export default [
     id: "ch_world_death_predator",
     badge: "데스 월드 생존",
     priority: 2,
-    req: { minAge: 14, anyWorldTags: ["death"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 14, anyWorldTags: ["death"], excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes"] },
     text: "밤새 거처를 에워싼 괴수 무리의 울음소리 속에서 총과 칼을 쥔 채 뜬눈으로 버텼다. 동이 트자 살아남은 이웃들과 말없이 눈인사를 나누었다.",
     effect: { stats: { T: 1, WP: 1 }, wounds: -2 }
   },
@@ -244,7 +244,7 @@ export default [
     id: "ch_terra_ex_1",
     badge: "신성한 테라",
     priority: 3,
-    req: { minAge: 10, anyWorlds: ["terra"], excludeTags: ["custodes"] },
+    req: { minAge: 10, anyWorlds: ["terra"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["custodes", "grey_knight"] },
     text: "황궁 영원의 문 앞 대기 줄에서 5대째 태어나고 늙어 가며 순서를 상속받는 순례자 가족을 보았다. 앞줄로 100미터 전진하는 데 40년이 걸렸다고 했다.",
     effect: { stats: { WP: 1 }, faith: 2 }
   },
@@ -260,7 +260,7 @@ export default [
     id: "ch_terra_ex_3",
     badge: "테라의 부조리",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes", "astartes"] },
+    req: { minAge: 14, anyWorlds: ["terra"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["custodes", "astartes"] },
     text: "상류 구역 박물관에 '고대 테라의 진짜 흙 한 줌과 말린 풀잎'이 무장 경비원 12명의 호위를 받으며 전시되고 있었다. 입장료는 하층민의 평생 임금이었다.",
     effect: { stats: { Int: 1 } }
   },
@@ -268,7 +268,7 @@ export default [
     id: "ch_terra_ex_4",
     badge: "테라의 서고",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes", "astartes"] },
+    req: { minAge: 14, anyWorlds: ["terra"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["custodes", "astartes"] },
     text: "높이 30킬로미터에 달하는 아드미니스트라툼 서류 탑에서 낡은 양피지 수만 장이 눈처럼 쏟아져 내렸다. 청소 서비터들이 '기밀 폐기물'을 밟지 말라며 사이렌을 울렸다.",
     effect: { stats: { Ag: 1 } }
   },
@@ -276,7 +276,7 @@ export default [
     id: "ch_terra_ex_5",
     badge: "테라 성가",
     priority: 3,
-    req: { minAge: 8, anyWorlds: ["terra"] },
+    req: { minAge: 8, anyWorlds: ["terra"], excludeRealms: ["heretic"] },
     text: "히말라야 산맥 방향에서 희미하게 울려 퍼지는 아스트로노미칸의 금빛 공명이 밤공기를 진동시켰다. 온 행성의 백조 인구가 일제히 묵념을 올렸다.",
     effect: { faith: 3, corruption: -2 }
   },
@@ -284,7 +284,7 @@ export default [
     id: "ch_terra_ex_6",
     badge: "테라 치안",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes", "astartes", "inquisitor"] },
+    req: { minAge: 14, maxCareerTier: 4, anyWorlds: ["terra"], excludeRealms: ["heretic", "cloistered"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["custodes", "astartes", "inquisitor", "high_lord_terra"] },
     text: "수천 개의 비행 서보스컬이 골목 하늘을 빽빽이 메운 채 시민들의 기도 횟수와 표정을 실시간 녹화하며 지나갔다.",
     effect: { stats: { WP: 1 } }
   },
@@ -292,7 +292,7 @@ export default [
     id: "ch_terra_ex_7",
     badge: "테라의 퇴역병",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["terra"], excludeTags: ["custodes", "astartes", "noble"] },
+    req: { minAge: 14, maxSocialTier: "common", anyWorlds: ["terra"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["custodes", "astartes", "noble"] },
     text: "1만 년 전 대성전 영웅의 황금 동상 발치에서 팔다리를 잃은 퇴역 가드맨들이 낡은 훈장을 팔아 물 한 컵을 구걸하고 있었다.",
     effect: { stats: { WP: 1 }, faith: -1 }
   },
@@ -300,7 +300,7 @@ export default [
     id: "ch_terra_ex_8",
     badge: "테라의 종소리",
     priority: 3,
-    req: { minAge: 6, anyWorlds: ["terra"] },
+    req: { minAge: 6, anyWorlds: ["terra"], excludeRealms: ["heretic"] },
     text: "황궁 대성당의 '잃어버린 영혼의 종'이 묵직하게 울렸다. 제국 어딘가에서 또 하나의 위대한 영웅이 전사했음을 알리는 소리였다.",
     effect: { faith: 2 }
   },
@@ -308,7 +308,7 @@ export default [
     id: "ch_terra_ex_9",
     badge: "테라 귀족 사교",
     priority: 3,
-    req: { minAge: 16, anyWorlds: ["terra"], anyTags: ["noble", "inquisitor", "rogue_trader", "lord_commissar", "canoness"] },
+    req: { minAge: 16, anyWorlds: ["terra"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"], anyTags: ["noble", "inquisitor", "rogue_trader", "lord_commissar", "canoness"] },
     text: "황궁 외곽 대리석 테라스에서 수천 년 전 포도주를 곁들이며 상원 의회 파벌들의 은밀한 권력 이동을 전해 들었다.",
     effect: { stats: { Inf: 2, Fel: 1 } }
   },
@@ -348,7 +348,7 @@ export default [
     id: "ch_cadia_ex_2",
     badge: "자색 눈동자",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["cadia"] },
+    req: { minAge: 14, anyHomeWorlds: ["cadia"] },
     text: "공포의 눈 빛을 받으며 대대로 살아온 카디아인 특유의 자색 눈동자가 거울에 비쳤다. 타 행성 순례자들은 이를 두려워하지만 카디아인에게는 불굴의 긍지다.",
     effect: { stats: { WP: 1 } }
   },
@@ -412,7 +412,7 @@ export default [
     id: "ch_necro_ex_1",
     badge: "네크로문다 암시장",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["necromunda"], excludeTags: ["noble", "astartes", "custodes", "inquisitor"] },
+    req: { minAge: 14, maxSocialTier: "common", anyWorlds: ["necromunda"], excludeRealms: ["cloistered", "heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["noble", "astartes", "custodes", "inquisitor"] },
     text: "배드존 암시장에서 낡은 라스건 총열을 쥐고기 꼬치 열 개와 교환했다. 냄새는 끔찍했지만 굶어 죽는 것보다는 나았다.",
     effect: { stats: { Ag: 1 }, wounds: 2 }
   },
@@ -420,7 +420,7 @@ export default [
     id: "ch_necro_ex_2",
     badge: "네크로문다 스파이어",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["necromunda"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 14, maxSocialTier: "common", anyWorlds: ["necromunda"], excludeRealms: ["cloistered", "heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes"] },
     text: "하층 돔 천장에서 녹슨 철골이 떨어져 창고 하나가 통째로 뭉개졌다. 길드 상인은 부상자보다 깨진 술통 값부터 계산했다.",
     effect: { stats: { Ag: 1 }, wounds: -2 }
   },
@@ -445,7 +445,7 @@ export default [
     badge: "바알의 두 위성",
     priority: 3,
     req: { minAge: 12, anyWorlds: ["baal"] },
-    text: "밤하늘에 바알 프라임과 바알 세쿤두스 두 위성이 붉게 떠올랐다. 사막 부족민들은 저 위성 너머 천사들의 요새를 향해 기도를 올렸다.",
+    text: "밤하늘에 바알 프리무스와 바알 세쿤두스 두 위성이 붉게 떠올랐다. 사막 부족민들은 저 위성 너머 천사들의 요새를 향해 기도를 올렸다.",
     effect: { stats: { WP: 1 }, faith: 2 }
   },
   {
@@ -508,7 +508,7 @@ export default [
     id: "ch_tanith_ex_1",
     badge: "타니스 백파이프",
     priority: 3,
-    req: { minAge: 12, anyWorlds: ["tanith"] },
+    req: { minAge: 12, maxYear: 764, anyWorlds: ["tanith"] },
     text: "짙은 안개 숲 너머로 타니스 전통 백파이프 선율이 구슬프게 울려 퍼졌다. 나무들이 삐걱이며 뿌리를 옮기는 소리가 화음처럼 섞였다.",
     effect: { stats: { WP: 1, Ag: 1 } }
   },
@@ -556,7 +556,7 @@ export default [
     id: "ch_s3_necromunda_1",
     badge: "네크로문다",
     priority: 3,
-    req: { minAge: 12, anyWorlds: ["necromunda"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 12, maxSocialTier: "common", anyWorlds: ["necromunda"], excludeRealms: ["cloistered", "heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes"] },
     text: "하이브 프리무스 하층 돔의 환기구 아래에서 골리앗과 에셔 갱단의 총성이 멀리 메아리쳤다. 상인들은 태연히 셔터를 반쯤 내린 채 장사를 이어 갔다.",
     effect: { stats: { Ag: 1, Int: 1 } }
   },
@@ -567,6 +567,8 @@ export default [
     req: {
       minAge: 14,
       anyWorldTags: ["agri"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: ["astartes", "custodes", "grey_knight"]
     },
     text: "지평선 끝까지 펼쳐진 유전자 개량 곡물밭 위로 거대한 자동 수확기가 굉음을 내며 지나갔다. 올해 거둔 곡식은 곧 이름 모를 성계의 하이브 수십 곳을 먹여 살릴 것이다.",
@@ -579,6 +581,8 @@ export default [
     req: {
       minAge: 14,
       anyWorldTags: ["paradise"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: ["astartes", "custodes", "grey_knight"]
     },
     text: "외지 귀족들이 샴페인을 기울이는 대리석 테라스 아래, 하인 통로에서는 땀에 젖은 일꾼들이 쉴 새 없이 얼음과 화환을 나르고 있었다.",
@@ -591,6 +595,8 @@ export default [
     req: {
       minAge: 12,
       anyWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: ["astartes", "custodes", "grey_knight"]
     },
     text: "모닥불 연기가 밤하늘로 흩어지는 사이, 별들 사이를 천천히 가로지르는 '하늘의 철선' 불빛을 바라보며 부족 아이들이 경외의 숨을 삼켰다.",
@@ -602,8 +608,11 @@ export default [
     priority: 3,
     req: {
       minAge: 14,
+      maxSocialTier: "common",
       anyWorldTags: ["hive"],
       excludeWorlds: ["terra", "krieg"],
+      excludeRealms: ["cloistered", "heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: ["astartes", "custodes", "grey_knight"]
     },
     text: "수 킬로미터 위 첨탑에서 내려다보이는 하늘은 평생 본 적이 없지만, 중층 환기구에서 떨어지는 노란 산성 이슬 냄새만으로도 오늘 교대 시각을 알 수 있다.",

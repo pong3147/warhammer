@@ -8,11 +8,12 @@ export default [
     req: {
       minAge: 8,
       maxAge: 14,
-      excludeWorlds: ["krieg"],
-      excludeHomeWorlds: ["krieg"],
-      excludeWorldTags: ["feral", "krieg"],
+      excludeWorlds: ["krieg", "voidborn"],
+      excludeHomeWorlds: ["krieg", "voidborn"],
+      excludeWorldTags: ["feral", "krieg", "voidborn"],
       excludeTags: [
-        "schola", "astartes", "grey_knight", "custodes", "dreadnought", "abhuman",
+        "schola", "noble", "rogue_trader_blood", "navigator", "terra_elite", "knight_blood",
+        "astartes", "grey_knight", "custodes", "dreadnought", "abhuman",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ],
       or: [{ stats: { WP: 34 } }, { stats: { Int: 34 } }, { anyTags: ["military_blood", "pious"] }]
@@ -54,8 +55,9 @@ export default [
     req: {
       minAge: 54,
       stats: { Inf: 74 },
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "astartes", "grey_knight", "custodes", "dreadnought",
+        "astartes", "grey_knight", "custodes", "dreadnought", "living_saint", "saint_vessel",
         "mechanicus", "magos", "fabricator_locum", "fabricator_general",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
@@ -260,9 +262,10 @@ export default [
       maxAge: 13,
       anyCareers: ["child"],
       allTags: ["noble"],
-      excludeTags: ["schola"],
-      excludeWorlds: ["krieg"],
-      excludeHomeWorlds: ["krieg"]
+      excludeRealms: ["void"],
+      excludeTags: ["schola", "voidborn"],
+      excludeWorlds: ["krieg", "voidborn"],
+      excludeHomeWorlds: ["krieg", "voidborn"]
     },
     reqLabel: "7~13세 · 귀족 가문 유년기",
     weight: 36,
@@ -520,16 +523,18 @@ export default [
     once: true,
     req: {
       minAge: 55,
+      excludeRealms: ["mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "rejuvenat",
         "living_saint", "saint_vessel", "assassin",
-        "magos", "fabricator_locum", "fabricator_general", "high_lord_terra",
+        "mechanicus", "magos", "fabricator_locum", "fabricator_general", "high_lord_terra",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
     reqLabel: "55세+ · 필멸자 노년기",
     weight: 34,
-    text: "거울 속 머리칼은 어느새 서리처럼 하얗게 세었고, 비가 내리는 날이면 수십 년 전 입은 상처와 굳은 관절이 욱신거린다. 인류제국에서 쉰다섯을 넘겨 살아남았다는 사실 자체가 이미 드문 기적이다.",
+    text: "거울 속 머리칼은 어느새 서리처럼 하얗게 세었고, 날이 궂거나 공기가 차가워질 때면 수십 년 전 입은 상처와 굳은 관절이 욱신거린다. 인류제국에서 쉰다섯을 넘겨 살아남았다는 사실 자체가 이미 드문 기적이다.",
     choices: [
       {
         label: "[의지 판정] 쑤시는 노구를 달래며 젊은 후배들에게 평생 체득한 생존과 실무의 요령을 전수한다",
@@ -582,8 +587,9 @@ export default [
       minAge: 65,
       allTags: ["rejuvenat"],
       excludeHomeWorlds: ["krieg"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "magos", "fabricator_locum", "fabricator_general",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
@@ -639,9 +645,10 @@ export default [
     req: {
       minAge: 45,
       allTags: ["bionic"],
-      excludeHomeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg", "voidborn"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
-        "custodes", "dreadnought",
+        "astartes", "grey_knight", "custodes", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "magos", "fabricator_locum", "fabricator_general", "high_lord_terra",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]

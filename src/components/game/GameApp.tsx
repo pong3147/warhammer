@@ -80,6 +80,15 @@ export default function GameApp({ engineOverride, dataOverride }: GameAppProps =
     [announce]
   );
 
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        window.clearTimeout(toastTimerRef.current);
+        toastTimerRef.current = null;
+      }
+    };
+  }, []);
+
   const persistState = useCallback(
     (charState: any | null, eng: any) => {
       if (!charState || !eng) return;

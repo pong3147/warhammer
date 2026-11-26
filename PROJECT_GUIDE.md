@@ -12,7 +12,7 @@
 * **기술 스택 및 배포:** **Astro 5 (SSG) + React 19 (Islands Architecture) + 표준 ESM + Vitest** · GitHub Actions 자동 검증 후 Public GitHub Pages(`https://pong3147.github.io/warhammer/`, `base: "/warhammer"`) 정적 배포
 * **핵심 영감 및 설계 철학:**
   1. **《80억 분의 1》의 감상 경험 + 워해머 40k TRPG 메커니즘:** 무작위로 인류제국 100만 행성 중 한 곳에 태어나 흘러가는 생애 기록을 감상하되, 일자 진행에 그치지 않고 *Dark Heresy* / *Imperium Maledictum* 기반 **8대 특성치(d100 판정)**와 연간 **삶의 초점(Focus)** 관리로 숨겨진 분기·직군·역사 사건을 해금한다. 기본 1배속 `1년 = 60초`(분기당 20.0초)부터 **16배속(`1년 = 3.75초`)**까지 5단계 배속을 지원한다.
-  2. **선택지 원툴 탈피 — 연대기 중심 몰입:** 선택지 분기 사건(699종, 역사 대사건 29종 포함)뿐 아니라, 인류제국 특유의 인간 경시·관료제 부조리·행성 풍토·계급별·3대 도덕 성향(`자비·교조·암흑`)·28인 네임드·M41~M42 거시 전쟁 일상을 담은 **패시브 연대기 로그(762종)**가 본인 상황에 정확히 맞춰 흘러가며 읽는 재미를 제공한다.
+  2. **선택지 원툴 탈피 — 연대기 중심 몰입:** 선택지 분기 사건(699종, 역사 대사건 29종 포함)뿐 아니라, 인류제국 특유의 인간 경시·관료제 부조리·행성 풍토·계급별·3대 도덕 성향(`자비·교조·암흑`)·28인 네임드·M41~M42 거시 전쟁 일상을 담은 **패시브 연대기 로그(790종)**가 본인 신분·생활권·신체 분류에 정확히 맞춰 흘러가며 읽는 재미를 제공한다.
   3. **워해머 입문자 배려 + 정적 지식 베이스 + 설정 고증 조화:** 8대 카테고리 **48종 워해머 40k 개념 사전(`/glossary/`)**과 **5대 정적 제국 코덱스(`/codex/**`)**를 빌드 타임 SSG로 분리 제공(2MB급 서사 번들 0KB 격리)하며, 21개 세력 **91종 풀 계급도(테라의 하이 로드 12석 완비)** 중 우측 `자율 선택` 패널에는 **지금 즉시 진입 가능한 일반 직군(`entryMode: "open"`)**만 노출하고, 상위 계급·공훈 횡단(행성 총독/로그 트레이더/심문관)·최고위 추대(하이 로드 12석/워마스터/챕터 마스터/살아 있는 성인/데몬 프린스)는 조건 달성 시 **동적 발탁·임명 이벤트**로 자연스럽게 제안한다.
   4. **IP 안전 원칙 (비공식 팬 창작물):** Games Workshop의 공식 아트워크·로고·룰북 원문 복사 없이 자체 작성한 한국어 산문과 순수 CSS/SVG 기하학 그래픽으로만 구성하며, 모든 데이터·개념 사전에 Lexicanum·공식 코덱스·소설 출처 표기를 병기한다.
 
@@ -33,12 +33,12 @@ warhammer/
 │   └── deploy.yml                    # main 브랜치 자동 검증 + GitHub Pages 정적 배포
 ├── scripts/
 │   ├── _loadNodeData.mjs             # Node.js용 ESM 데이터·엔진 공통 로더 (import.meta.glob 대체)
-│   ├── qa.mjs                        # 상설 자동 QA 검증 스위트 (7대 게이트 + Gate 4G 개념 사전 + --deep 1,500생애 감사)
+│   ├── qa.mjs                        # 상설 자동 QA 검증 스위트 (7대 게이트 + Gate 4G 개념 사전 + Gate 4P 14종 페르소나 + --deep 1,500생애 감사)
 │   ├── audit-health.mjs              # 200생애 결정론적 퍼징 · 저장 크기·초인 오염 면역·명예 마감·용량 감시
 │   └── coverage-report.mjs           # 직군·행성·챕터·연령대·성향·네임드·시대 7축 콘텐츠 밀도 매트릭스
 ├── tests/
 │   ├── setup.ts                      # Testing Library jest-dom 셋업
-│   └── game-a11y.test.tsx            # 행동형 스크린 리더 접근성·포커스·1~16배속·개념 사전 Vitest 스위트 (8개 테스트)
+│   └── game-a11y.test.tsx            # 행동형 스크린 리더 접근성·포커스·1~16배속·개념 사전 Vitest 스위트 (10개 테스트)
 └── src/
     ├── layouts/
     │   └── BaseLayout.astro          # 공통 HTML 셸 · 병렬 웹폰트 · 스킵 링크 · 상단 내비게이션(4대 메뉴) · 푸터
@@ -68,11 +68,11 @@ warhammer/
     │   ├── global.css                # 고딕 데이터슬레이트 테마 · 3대 성향 게이지 · 고대비 포커스 링 · 반응형 그리드
     │   └── astro-pages.css           # 정적 페이지(개념 사전 · 코덱스 · 영혼의 전당 · 상단 내비) 전용 스타일
     ├── engine/
-    │   ├── formatters.js             # 경량 공통 포매터 · 메타 상수 · describeReq (SSOT · 코덱스/전당용)
+    │   ├── formatters.js             # 경량 공통 포매터 · 메타 상수 · 3대 계층 축 산출 · describeReq (SSOT · 코덱스/전당용)
     │   └── createEngine.js           # 단일 정본 ESM 시뮬레이션 엔진 팩토리 (createImperiumEngine)
     └── data/
         ├── index.js                  # 전체 데이터 조합 진입점 (CORE_DATA + NARRATIVE_DATA)
-        ├── narrative.js              # import.meta.glob 기반 사건(48파일)·연대기(15파일) 비동기 청크 진입점
+        ├── narrative.js              # import.meta.glob 기반 사건(48파일)·연대기(16파일) 비동기 청크 진입점
         ├── glossary.js               # 워해머 40k 주요 개념 사전 (8대 카테고리 · 48종 핵심 용어)
         ├── core/                     # 코어 메타데이터 ESM 8파일 (index.js + worlds/origins/careers/chapters/characters/timeline/tags)
         ├── events/                   # 분기 사건 670종 — 도메인(세력·챕터·권역·주제)별 48개 ESM 파일
@@ -80,7 +80,7 @@ warhammer/
         │   ├── chapters/             # 9대 챕터 1:1 승격 9파일 + 합동 공조 1파일 = 10파일
         │   ├── worlds/               # 행성 1:1 승격 4파일 + 권역 4파일 = 8파일
         │   └── themes/               # 횡단 주제별 12파일
-        └── chronicles/               # 일상 연대기 762종 — 주제별 15개 ESM 파일
+        └── chronicles/               # 일상 연대기 790종 — 주제별 16개 ESM 파일
 ```
 
 **모듈 로딩 및 번들 분리 구조:**
@@ -104,10 +104,10 @@ warhammer/
   * `ActiveEventPanel.tsx` & `ObituaryModal.tsx`: 사건 발생 시 `#active-event-heading`(`tabindex="-1"`) 포커스 이동, 네임드 스포트라이트 `<details open class="named-spotlight">`, 부고 모달 배경 및 `.skip-link` `inert` 처리 + `Tab`/`Shift+Tab` 트랩 + `Escape` 닫기·포커스 복원.
 * **`src/styles/global.css` (~1,820줄) & `src/styles/astro-pages.css` (~347줄):**
   * 황동·검정·진홍·코지테이터 녹색의 제국 데이터슬레이트 테마, `.sr-only`, 고대비 금색 `:focus-visible` 포커스 링, 3대 도덕 성향 3분할 비율 막대(`.align-tri-bar`)·사건 성향 배지(`.ev-badge.align-*`), `.dossier-glossary` 고정 개념 링크, `.sanctum-hero::before` 빈 대체 텍스트(`/ ""`), 개념 사전·코덱스 카드 및 반응형 그리드.
-* **`src/engine/formatters.js` (~270줄) & `src/engine/createEngine.js` (~3,813줄):**
-  * **경량 공통 포매터(`formatters.js`):** `SAVE_VERSION = 3`, `ALIGNMENT_KEYS`·`ALIGNMENT_META`, `STAT_META`, `FOCUSES`, `QUARTER_LABELS`, `formatImperialYear`/`Date`, `getWorldShortTag`, `normalizeAlignment`/`getAlignmentInfo`, `createCoreFormatters(DATA)`(`describeReq` 및 6종 O(1) 조회) 단일 정본 제공.
-  * **메타 상수 & O(1) 인덱스(`createEngine.js`):** `ERA_PRESETS`(9개 시대: `gothic_war`·`first_armageddon` 포함), `EVENTS`/`CHRONICLES` 무손실 파티션 버킷(`byChapter`/`byWorld`/`byCareer`/`byTag`/`general`) + `makeReqContext` 성향 캐싱, `warnUnknownId`, `migrateState(raw)`.
-  * **조건·전직 격리·판정·부고 엔진:** `checkReq(state, req, ctx)` / `describeReq(req)` / `getAlignmentInfo(state)` / `getLivingSaintAspect(state)` / `isCareerTransitionBlocked(state, target, cur, alignInfo)` / `syncImperialNihilus(state)` / `rollD100(state, check)` / `evaluateLifeGrade(state)`(최상위 맞춤 부고 31종+ 및 인연·직접 조우 `met_<id>` 우선 네임드 28인·3대 도덕 성향 결합 동적 추모 에필로그, 쿠스토데스·그레이 나이트·암살청·침묵의 자매들 비밀 수호자 예외 포함).
+* **`src/engine/formatters.js` (~590줄) & `src/engine/createEngine.js` (~3,875줄):**
+  * **경량 공통 포매터(`formatters.js`):** `SAVE_VERSION = 3`, `ALIGNMENT_KEYS`·`ALIGNMENT_META`, **3대 계층 축(`SOCIAL_TIER_ORDER`, `LIFE_REALM_KEYS`, `BODY_CLASS_KEYS` 및 `computeSocialTier`/`computeLifeRealm`/`computeBodyClass`)**, `STAT_META`, `FOCUSES`, `QUARTER_LABELS`, `formatImperialYear`/`Date`, `getWorldShortTag`, `normalizeAlignment`/`getAlignmentInfo`, `createCoreFormatters(DATA)`(`describeReq` 9개 계층 키 및 다중 제외 축 포함, 6종 O(1) 조회) 단일 정본 제공.
+  * **메타 상수 & O(1) 인덱스(`createEngine.js`):** `ERA_PRESETS`(9개 시대: `gothic_war`·`first_armageddon` 포함), `EVENTS`/`CHRONICLES` 무손실 파티션 버킷(`byChapter`/`byWorld`/`byCareer`/`byTag`/`general`) + `makeReqContext` 성향·계층 축(`socialTier`/`lifeRealm`/`bodyClass`) 캐싱, `warnUnknownId`, `migrateState(raw)`.
+  * **조건·전직 격리·판정·부고 엔진:** `checkReq(state, req, ctx)` / `describeReq(req)` / `getStratification(state)` / `getAlignmentInfo(state)` / `getLivingSaintAspect(state)` / `isCareerTransitionBlocked(state, target, cur, alignInfo)` / `syncImperialNihilus(state)` / `rollD100(state, check)` / `evaluateLifeGrade(state)`(최상위 맞춤 부고 31종+ 및 인연·직접 조우 `met_<id>` 우선 네임드 28인·3대 도덕 성향 결합 동적 추모 에필로그, 쿠스토데스·그레이 나이트·암살청·침묵의 자매들 비밀 수호자 예외 포함).
   * **분기 진행 파이프라인 (`advanceQuarter`):**
     1. 분기 증가(1 -> 2 -> 3 -> 새해 1; 선택형 `fastChildhood` 시 0~12세 연 1분기). 새해 정산 시 14세 자동 직무 편입(`navigator` -> 견습 항법사, `knight_blood` `checkReq` 검증 -> 기사 가문 종자 포함), 18세 `schola` 졸업 자동 배치 폴백, 초점+직군 스탯 성장(쿠스토데스/그레이 나이트/리빙 세인트 양(+) 오염 전면 면역), 하이브리드 체력 회복·비선형 노화, 환경 위험 판정.
     2. 아스타르테스 중상(생명력 38 이하) 시 드레드노트 안치(`EVENT_BY_ID` O(1)) 긴급 발동 및 사망/오염 100 체크(데몬 프린스·쿠스토데스·그레이 나이트·살아 있는 성인 스폰화 사망 면역).
@@ -117,8 +117,8 @@ warhammer/
     6. **2.5순위:** `createDynamicTransitEvent` `transitTier` 기반 강제 파견/배치 선택/순례선 이벤트(고딕·1차 아마겟돈·레비아탄·역병 전쟁 격전지 핫스팟 및 워프 항해 이상 변주 포함).
     7. **3순위:** `applyChronicle` 파티션 버킷 기반 일상·부조리 연대기 로그 출력(`alignBias`·최근 28개 방지, `MAX_LOGS = 2,400`건 스마트 보존).
   * **자율 행동 · 이동 · 접근성 요약:** `getCareerAction(state)`(30종 `actionGroup` 프로필 기반 91개 직군 고유 행동, 4년 재사용), `canUsePenance`/`canUseAugmetics`/`canUseRejuvenat`, `canRetireHonorably`/`createHonorableEndingEvent`, `buildStatusSummary(state)`, `getTravelProfile`/`evaluateTravelAttempt`/`getTravelCandidateWorlds`, `getContextualOptions`.
-* **`scripts/qa.mjs` (~1,904줄) · `scripts/audit-health.mjs` (~254줄) · `scripts/coverage-report.mjs` (~146줄) · `tests/game-a11y.test.tsx` (~480줄) & `.github/workflows/{qa,deploy}.yml`:**
-  * `node scripts/qa.mjs` (`--deep` / `--check-dist` / `--only-dist`): `AGENTS.md` 7대 게이트 + **Gate 4G(개념 사전 48종 · 21세력 상황별 매핑 무결성)** + **Gate 8(`dist/` 번들 격리 · `narrative`/`createEngine`/`glossary` 누수 0건 · SSR 카드 수량 일치)** + Astro/React 소스 정적 접근성 검사 + 91직군·199태그·28인 네임드·Stage 17~18 실전 회귀 테스트 + Gate 7A/7B/7C.
+* **`scripts/qa.mjs` (~2,140줄) · `scripts/audit-health.mjs` (~254줄) · `scripts/coverage-report.mjs` (~146줄) · `tests/game-a11y.test.tsx` (~480줄) & `.github/workflows/{qa,deploy}.yml`:**
+  * `node scripts/qa.mjs` (`--deep` / `--check-dist` / `--only-dist`): `AGENTS.md` 7대 게이트 + **Gate 4G(개념 사전 48종 · 21세력 상황별 매핑 무결성)** + **Gate 4P(대표 페르소나 14종 계층 분류 · 금칙어 충돌 0건 · 최소 풀 하한 `>= 8`)** + **Gate 8(`dist/` 번들 격리 · `narrative`/`createEngine`/`glossary` 누수 0건 · SSR 카드 수량 일치)** + Astro/React 소스 정적 접근성 검사 + 91직군·199태그·28인 네임드·Stage 17~19S1 실전 회귀 테스트 + Gate 7A/7B/7C.
   * `node scripts/audit-health.mjs` (`--lives=N`, `--seed=S`): 결정론적 `mulberry32` 시드 기반 200생애 무작위 플레이(전직·자율행동·성간이동·7분기마다 JSON/`migrateState` 왕복·500세+ 명예 마감 실실행·초인 오염 면역·비초인 필멸자 300세 이상치·저장 2,048KB 상한·용량 근접 경보 검증).
   * `npm test` (`tests/game-a11y.test.tsx`): React Testing Library + jsdom 기반 행동형 스크린 리더 접근성·포커스 보존/복원/폴백·`Shift+Tab`/`Escape` 모달 트랩·1~16배속·개념 사전 필터·**전 5개 코덱스 해시 앵커 포커스**·**좌측 인물 상태 패널 고정 개념 링크 및 사건/직군 카드 내 링크 0건 검증** 10개 테스트 스위트.
   * `node scripts/coverage-report.mjs`: 직군·행성·챕터·연령대·성향/초점·네임드(28인 100%)·시대(9개) 7축 콘텐츠 밀도 매트릭스 출력.
@@ -139,7 +139,7 @@ warhammer/
 | `src/data/events/chapters/*.js` | 10파일 · 60사건 | 9대 챕터 1:1 승격(`ultramarines` 6, `blood_angels` 6, `space_wolves` 6, `dark_angels` 6, `imperial_fists` 6, `salamanders` 6, `black_templars` 6, `raven_guard` 6, `white_scars` 6) + 합동 공조 `chapters_core`(6: 챕터 숙원 4 · 데스워치 복귀 · 퍼스트본/프라이머리스 합동 서약). |
 | `src/data/events/worlds/*.js` | 8파일 · 101사건 | 1:1 승격 4파일(`terra` 10, `cadia` 6, `krieg` 6, `armageddon` 6) + 권역 4파일(`solar` 13: 화성 7·네크로문다 6, `ultima` 27: 마크라그 6·바알 5·카타찬 5·발할라 5·녹턴 6, `frontier` 19: 펜리스 5·보스트로야 5·타니스 4·오펠리아 VII 5, `generic` 14: 무명 6행성·보이드본·행성 유형 공용). |
 | `src/data/events/themes/*.js` | 12파일 · 240사건 | `alignment`(30), `lifecycle`(33), `longevity`(10), `named`(23: 기존 20인 조우 & 후일담), **`named_s18`(8: 신규 8인 단독 조우)**, **`named_crossover`(8: 정사 크로스오버 8종)**, `eras`(20), **`eras_macro`(12: 5대 거시 전쟁/M42 연합 전선 6 + 10대 거시 태그 회수 연작 6)**, `xenos`(16: `trazyn` 연동), `chaos_warp`(22), `arcs_focus`(34), `crises`(24). |
-| `src/data/chronicles/*.js` | 15파일 · 762연대기 | `alignment`(27), `childhood`(111: 23행성 유아·아동), `careers`(105), `careers_factions_s17`(24), `careers_ranks`(61), `careers_specialists`(40), `worlds`(82), `worlds_dispatch`(45), `general`(70), `arcs_named`(56), **`named_s18`(17: 신규 8인 `met_*` 8 + 거시/크로스오버/솔렘나스 9)**, `chapters`(51), `eras`(35: +12 M41~M42 거시 전쟁·신규 세력 시대 일상), `lifecycle`(28), `chaos_endgame`(10) — 전체 762종 상황 맞춤형 일상·부조리 연대기. |
+| `src/data/chronicles/*.js` | 16파일 · 790연대기 | `alignment`(27), `childhood`(111: 23행성 유아·아동), **`childhood_elite`(24: 테라 고위 혈통 5 · 상층 귀족 5 · 스콜라 6 · 항해사 가문 4 · 기사 가문 2 · 보이드본 2 전용 유년기)**, `careers`(105), `careers_factions_s17`(24), `careers_ranks`(61), `careers_specialists`(40), `worlds`(82), `worlds_dispatch`(45), `general`(70), `arcs_named`(56), `named_s18`(17: 신규 8인 `met_*` 8 + 거시/크로스오버/솔렘나스 9), `chapters`(51), `eras`(35: +12 M41~M42 거시 전쟁·신규 세력 시대 일상), `lifecycle`(28), `chaos_endgame`(14: 카오스 4대 신 · 장구한 전쟁 · 데몬 프린스 승천 6) — 전체 790종 상황 맞춤형 일상·부조리 연대기. |
 
 
 ---
@@ -156,7 +156,7 @@ warhammer/
 * **은하·성역 원격 속보:** 타 행성 체류 중에도 제국 전역(`galaxy`) 또는 같은 성역(`sector`)의 대형 역사 사건이 발생하면 아스트로패스 속보(`heardNews`)가 연대기에 수신됨(야만 행성 제외).
 
 ### 4.2 `checkReq(state, req)` 지원 조건 키
-`minAge`, `maxAge`, `minYear`, `maxYear`, `gender` (`"male"`/`"female"`), `stats` (`{ WS, BS, T, Ag, Int, WP, Fel, Inf }`), `minFaith`, `maxFaith`, `minCorruption`, `maxCorruption`, `minWounds`, `maxWounds`, `minAlign` (`{ humane, dogmatic, ruthless }`), `maxAlign`, `anyDominantAlign` (`["humane"|"dogmatic"|"ruthless"|"neutral"]`), `allTags`, `anyTags`, `excludeTags`, `anyCareers`, `anyPastCareers`, `excludePastCareers`, `anyChapters`, `excludeChapters`, `anyWorlds`, `anyHomeWorlds`, `excludeWorlds`, `excludeHomeWorlds`, `anyWorldTags`, `excludeWorldTags`, `anySegmenta`, `anyFocus`, `greatRift` (`true`/`false`), `or` (재귀 배열).
+`minAge`, `maxAge`, `minYear`, `maxYear`, `gender` (`"male"`/`"female"`), `stats` (`{ WS, BS, T, Ag, Int, WP, Fel, Inf }`), `minFaith`, `maxFaith`, `minCorruption`, `maxCorruption`, `minWounds`, `maxWounds`, `minAlign` (`{ humane, dogmatic, ruthless }`), `maxAlign`, `anyDominantAlign` (`["humane"|"dogmatic"|"ruthless"|"neutral"]`), **`minSocialTier`**, **`maxSocialTier`**, **`anySocialTiers`** (`"underclass"|"common"|"elite"|"apex"`), **`anyRealms`**, **`excludeRealms`** (`"civilian"|"cloistered"|"military"|"void"|"mechanicus"|"heretic"`), **`anyBodyClasses`**, **`excludeBodyClasses`** (`"mortal"|"augmetic"|"transhuman"|"dreadnought"|"daemonic"`), **`excludeTrees`**, **`maxCareerTier`**, `allTags`, `anyTags`, `excludeTags`, `anyCareers`, `anyPastCareers`, `excludePastCareers`, `anyChapters`, `excludeChapters`, `anyWorlds`, `anyHomeWorlds`, `excludeWorlds`, `excludeHomeWorlds`, `anyWorldTags`, `excludeWorldTags`, `anySegmenta`, `anyFocus`, `greatRift` (`true`/`false`), `or` (재귀 배열).
 
 ### 4.3 `applyOutcome(state, outcome)` 지원 효과 키
 `text`, `stats`, `wounds`, `woundsBonus`, `faith`, `corruption`, `corruptionReset`, `align` (`{ humane, dogmatic, ruthless }`), `lifeBonusExtra` (또는 `extraLifeBonus`), `incrementRejuvenat`, `addTags` (`met_<charId>` 자동 `metCharacters` 등록), `moveWorld`, `warpYearShift` (생물학적 연령 유지한 워프 시간 도약), `forceCareer`, `acceptCareerOffer`, `declineCareerOffer`, `trialFailFor`, `chooseChapter`, `instantDeath` (사망 사유 문자열).
@@ -771,8 +771,21 @@ warhammer/
 
 | 단계 | 상태 | 목표 범위 및 세부 설계 명세 |
 | --- | --- | --- |
-| **19-S1 (Phase A). 신분·생활권 정합성 개편 & 14종 페르소나 자동 QA** | `[예정]` | **① 선언적 계층 축 도입 (`src/engine/formatters.js`, `createEngine.js`):** `makeReqContext`에서 `socialTier`(`underclass`/`common`/`elite`/`apex`), `lifeRealm`(`civilian`/`cloistered`/`military`/`void`/`mechanicus`/`heretic`), `bodyClass`(`mortal`/`augmetic`/`transhuman`/`dreadnought`/`daemonic`) 자동 산출 및 `checkReq`/`describeReq` 지원(`minSocialTier`, `maxSocialTier`, `anySocialTiers`, `anyRealms`, `excludeRealms`, `anyBodyClasses`, `excludeBodyClasses`, `excludeTrees`, `maxCareerTier`). **② Gate 4P 신설 (`scripts/qa.mjs`):** 대표 페르소나 14종(테라 고위 귀족/하이브 귀족/스콜라/기사/항법사/크리그/보이드본 유아 + 아스타르테스/드레드노트/쿠스토데스/그레이 나이트/하이 로드/리빙 세인트/데몬 프린스)에 대해 전체 사건·연대기 금칙어 충돌 0건 및 유년기/성인기 최소 풀 하한(`>= 8`) 자동 검증. **③ 데이터 정합화 & 유년기 보강:** 배급소 통조림(`ch_s8_kid_univ_1`, `ch_s8_kid_univ_7`), `ch_absurd_corpse_starch`, `ch_grim_deep_1`, `ch_terra_ex_6`, `ev_s165_align_dilemma_01` 등 적발 누수 일괄 교정 + 귀족·테라 황궁·스콜라·항법사·기사 가문·보이드본 전용 유년기 연대기 `+20~24종`(`priority: 3`) 확충. |
-| **19-S2 (Phase B). 진로 서약·스카우트 · 성간 이동 현실화 · 무하락 스탯 인플레 억제** | `[예정]` | **① 정규 기관 소속 고정 & 입단 심사 & 스카우트 초빙 (`createEngine.js`, `AutonomousPanel.tsx`):** `SAVE_VERSION = 4`(`careerRetryAfter`, `lastCareerChangeYear` 자동 마이그레이션). 비구속 초년·민간(`child`, `menial_worker`, `underhive_ganger`, `underhive_boss`, `guild_artisan`, `pdf_trooper`)에서 정규 서약 기관 입단 시 비치명적 입단 심사 d100(목표 40~88%, 탈락 2년 대기, 합격 2년 최소 복무) 적용, 입단 후 수동 목록은 같은 트리 승급·카오스·초인/사이커만 노출해 수평 이직 쇼핑 차단. 단, 고권위(`Inf >= 52`) 또는 성향·스탯 정합성 충족 시 타 기관에서 먼저 찾아오는 **동적 초빙·차출(스카우트) 이벤트** 신설. **② 성간 이동 현실화 (`createEngine.js`, `AutonomousPanel.tsx`):** `canAccessWorld(state, world)` 출입 자격 매트릭스 적용(아스타르테스 모성·화성·크리그/카타찬·테라·기사 행성 격리), 말단 의무 복무자(`forced` T1~2 · `astartes_scout`) 수동 행성 선택 잠금(강제 파견 일관화), 귀족 `Inf < 45` 인접 성역 / `45+` 은하 전역, 이동 쿨다운 4년(`autonomous` 3년), `createDynamicTransitEvent`에 행정청 감사·국교 순례·귀족 알현·전시 비상 동원 등 비군사 강제 소환 확대. **③ 억지 하락 없는 스탯 인플레 억제 (`createEngine.js`, `ActiveEventPanel.tsx`):** 스탯 임의 감소 0건 유지; `applyDiminishedStatGain`으로 패시브 성장 수확 체감(`<55: 1.0x`, `55~71: 전문 0.75x/비전문 0.45x`, `72~84: 전문 0.50x/비전문 0.20x`, `85+: Tier 5+ 전문·초인·기계교 Int 0.35x / 비전문 0x`, 분기 사건 보상은 `<75: 1.0x`, `75~87: 0.75x`, `88+: 0.50x` 최소 +1로 Tier 6 하이 로드 `Inf 94~96` 도달성 100% 보존); `computeCheckPreview` 단일 정본 도입(부상 `-8/-16`, 오염 `-8/-15`, 암흑 제국 `-5`, 고위 난제 `-5/-9` 투명 표시 + 70% 초과 완만 압축 `max 90%`). **④ QA·테스트·감사:** `qa.mjs` Gate 4 단위 테스트 · Gate 7A/7C 1,500생애 밸런스 튜닝(91/91 도달성 및 하이 로드/초인/신규 4세력 분포 검증) · Vitest 행동형 테스트 확장 · 독립 교차 감사 + 2단 레드팀 검수. |
+| **19-S1 (Phase A). 신분·생활권 정합성 개편 & 14종 페르소나 자동 QA** | `[완료]` | **① 선언적 계층 축 도입 (`src/engine/formatters.js`, `createEngine.js`):** `makeReqContext`에서 `socialTier`(`underclass`/`common`/`elite`/`apex`), `lifeRealm`(`civilian`/`cloistered`/`military`/`void`/`mechanicus`/`heretic`), `bodyClass`(`mortal`/`augmetic`/`transhuman`/`dreadnought`/`daemonic`) 자동 산출 및 `checkReq`/`describeReq` 지원(`minSocialTier`, `maxSocialTier`, `anySocialTiers`, `anyRealms`, `excludeRealms`, `anyBodyClasses`, `excludeBodyClasses`, `excludeTrees`, `maxCareerTier`). **② Gate 4P 신설 (`scripts/qa.mjs`):** 대표 페르소나 14종(테라 고위 귀족/하이브 귀족/스콜라/기사/항법사/크리그/보이드본 유아 + 아스타르테스/드레드노트/쿠스토데스/그레이 나이트/하이 로드/리빙 세인트/데몬 프린스)에 대해 전체 사건·연대기 금칙어 충돌 0건 및 유년기/성인기 최소 풀 하한(`>= 8`) 자동 검증. **③ 데이터 정합화 & 유년기 보강:** 배급소 통조림·하층민·생활권·신체 누수 일괄 교정 + [`src/data/chronicles/childhood_elite.js`](./src/data/chronicles/childhood_elite.js) `+24종` 및 `chaos_endgame.js` `+4종`(총 `790건`, 16개 파일) 확충. |
+| **19-S2 (Phase B). 진로 서약·스카우트 · 성간 이동 현실화 · 무하락 스탯 인플레 억제** | `[진행 중]` | **① 정규 기관 소속 고정 & 입단 심사 & 스카우트 초빙 (`createEngine.js`, `AutonomousPanel.tsx`):** `SAVE_VERSION = 4`(`careerRetryAfter`, `lastCareerChangeYear` 자동 마이그레이션). 비구속 초년·민간(`child`, `menial_worker`, `underhive_ganger`, `underhive_boss`, `guild_artisan`, `pdf_trooper`)에서 정규 서약 기관 입단 시 비치명적 입단 심사 d100(목표 40~88%, 탈락 2년 대기, 합격 2년 최소 복무) 적용, 입단 후 수동 목록은 같은 트리 승급·카오스·초인/사이커만 노출해 수평 이직 쇼핑 차단. 단, 고권위(`Inf >= 52`) 또는 성향·스탯 정합성 충족 시 타 기관에서 먼저 찾아오는 **동적 초빙·차출(스카우트) 이벤트** 신설. **② 성간 이동 현실화 (`createEngine.js`, `AutonomousPanel.tsx`):** `canAccessWorld(state, world)` 출입 자격 매트릭스 적용(아스타르테스 모성·화성·크리그/카타찬·테라·기사 행성 격리), 말단 의무 복무자(`forced` · `astartes_scout`) 수동 행성 선택 잠금(강제 파견 일관화), 귀족 `Inf < 45` 인접 성역 / `45+` 은하 전역, 이동 쿨다운 4년(`autonomous` 3년), `createDynamicTransitEvent`에 행정청 감사·국교 순례·귀족 알현·전시 비상 동원 등 비군사 강제 소환 확대. **③ 억지 하락 없는 스탯 인플레 억제 (`createEngine.js`, `ActiveEventPanel.tsx`):** 스탯 임의 감소 0건 유지; `applyDiminishedStatGain`으로 패시브 성장 수확 체감(`<55: 1.0x`, `55~71: 전문 0.75x/비전문 0.45x`, `72~84: 전문 0.50x/비전문 0.20x`, `85+: Tier 5+ 전문·초인·기계교 Int 0.35x / 비전문 0x`, 분기 사건 보상은 `<75: 1.0x`, `75~87: 0.75x`, `88+: 0.50x` 최소 +1로 Tier 6 하이 로드 `Inf 94~96` 도달성 100% 보존); `computeCheckPreview` 단일 정본 도입(부상 `-8/-16`, 오염 `-8/-15`, 암흑 제국 `-5`, 고위 난제 `-5/-9` 투명 표시 + 70% 초과 완만 압축 `max 90%`). **④ QA·테스트·감사:** `qa.mjs` Gate 4 단위 테스트 · Gate 7A/7C 1,500생애 밸런스 튜닝(91/91 도달성 및 하이 로드/초인/신규 4세력 분포 검증) · Vitest 행동형 테스트 확장 · 독립 교차 감사 + 2단 레드팀 검수. |
+
+#### 10.1.1 19-S1 (Phase A) 완료 보고서 (달성도 100% · 19단계 누적 진행률 1/2)
+
+* **구현 및 교차 감사 보완 내역:**
+  1. **선언적 계층 엔진 (`src/engine/formatters.js`, `src/engine/createEngine.js`):** `computeSocialTier` · `computeLifeRealm`(보이드본 모성 우선 판정으로 함선 아동의 행성 야외·날씨 누수 차단) · `computeBodyClass` 및 `getStratification(state)` 추가. `checkReq` · `describeReq`(다중 제외 축 병렬 표기 수정 포함)에 9종 조건 키 전량 지원.
+  2. **신규 전용 연대기 (+28건, 762 -> 790건 / 16개 파일):** [`src/data/chronicles/childhood_elite.js`](./src/data/chronicles/childhood_elite.js) `+24건`(테라 고위 귀족 5 · 하이브 귀족 5 · 스콜라 프로제니움 6 · 나비스 노빌리테 4 · 기사 가문 2 · 보이드본 2, `priority: 3`) + [`src/data/chronicles/chaos_endgame.js`](./src/data/chronicles/chaos_endgame.js) 데몬 프린스 전용 `+4건`(14건).
+  3. **전수 정합성·고증 교정 (12개 데이터 파일 + `GameApp.tsx`):** 유년기·일반·행성·성향·직군·계급·생애 연대기 및 4개 사건 파일의 신분/생활권/신체 누수 일괄 차단, 독립 읽기 전용 감사(`iv_lore_auditor`, `iv_prose_a11y_critic`)에서 지적된 드레드노트·하이 로드·리빙 세인트·데몬 프린스·소로리타스 수련생·길드 거상·타우 다모클레스 연대(`minYear: 745`)·카디아 모성(`anyHomeWorlds`)·`세라마이트`/`바알 프리무스` 표기·`ev_underhive_gang`/`ev_s165_align_humane_04` 도달성·`GameApp` 언마운트 타이머 정리까지 전량 해결.
+  4. **최종 자동 검증 실측 결과:**
+     * **`node scripts/qa.mjs`:** ALL 6 QA GATES + Gate 4G + **Gate 4P** 0오류 (`14종 페르소나 collisions=0, minChroniclePool=9 >= 8`, `EVENTS=670, CHRONICLES=790`, `maxRepeat=2`, `1000q=793.2ms`).
+     * **`node scripts/audit-health.mjs --lives=100` (`seed=3224311827`):** 크래시·소프트락·마이그레이션·오염 누수 0건, 명예 마감 `9/9`, `maxSave=1087.4KB <= 2048KB`.
+     * **`npm test`:** **10 / 10 PASS** (미처리 타이머/오류 0건).
+     * **`npm run build && npm run qa:dist`:** Astro 9페이지 빌드(7.64s, 0오류) + **Gate 8 0오류** (`narrativeLeaks=0, engineLeaks=0, glossaryProseInGame=0`).
+
 
 ### 10.2 기존 확정 정비 과제 (`19-A` · `19-B` · `19-C`)
 

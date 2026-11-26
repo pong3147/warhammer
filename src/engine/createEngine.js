@@ -1,11 +1,20 @@
 import {
   ALIGNMENT_KEYS,
   ALIGNMENT_META,
+  BODY_CLASS_KEYS,
+  BODY_CLASS_LABELS,
   FOCUSES,
+  LIFE_REALM_KEYS,
+  LIFE_REALM_LABELS,
   QUARTER_LABELS,
   SAVE_VERSION,
+  SOCIAL_TIER_LABELS,
+  SOCIAL_TIER_ORDER,
   STAT_META,
   clamp,
+  computeBodyClass,
+  computeLifeRealm,
+  computeSocialTier,
   createCoreFormatters,
   formatImperialDate,
   formatImperialYear,
@@ -154,17 +163,36 @@ export function createImperiumEngine(DATA) {
     return buckets;
   }
 
+  const SOCIAL_TIER_RANK = { underclass: 0, common: 1, elite: 2, apex: 3 };
+
+  function getStratification(state) {
+    const world = getWorld(state.worldId);
+    const career = getCareer(state.careerId);
+    const tagSet = new Set(state.tags || []);
+    return {
+      socialTier: computeSocialTier(state, career, tagSet),
+      lifeRealm: computeLifeRealm(state, career, world, tagSet),
+      bodyClass: computeBodyClass(state, career, tagSet)
+    };
+  }
+
   function makeReqContext(state) {
     const world = getWorld(state.worldId);
+    const career = getCareer(state.careerId);
+    const tagSet = new Set(state.tags || []);
     const align = normalizeAlignment(state);
     const alignInfo = getAlignmentInfo(state);
     return {
       world,
+      career,
       worldTagSet: WORLD_TAG_SET_BY_ID.get(world.id) || new Set(world.tags || []),
-      tagSet: new Set(state.tags || []),
+      tagSet,
       pastCareerSet: new Set(state.careerHistory || [state.careerId]),
       align,
-      alignDominant: alignInfo.dominant
+      alignDominant: alignInfo.dominant,
+      socialTier: computeSocialTier(state, career, tagSet),
+      lifeRealm: computeLifeRealm(state, career, world, tagSet),
+      bodyClass: computeBodyClass(state, career, tagSet)
     };
   }
 
@@ -225,6 +253,32 @@ export function createImperiumEngine(DATA) {
 
     if (req.anyCareers) {
       if (!req.anyCareers.includes(state.careerId)) return false;
+    }
+
+    if (req.excludeTrees || req.maxCareerTier !== undefined) {
+      const careerObj = (ctx && ctx.career) || getCareer(state.careerId);
+      if (req.excludeTrees && req.excludeTrees.includes(careerObj.tree)) return false;
+      if (req.maxCareerTier !== undefined && (careerObj.tier || 0) > req.maxCareerTier) return false;
+    }
+
+    if (req.minSocialTier || req.maxSocialTier || req.anySocialTiers) {
+      const stTier = (ctx && ctx.socialTier) || computeSocialTier(state, (ctx && ctx.career) || getCareer(state.careerId), ctx && ctx.tagSet);
+      const rank = SOCIAL_TIER_RANK[stTier] ?? 1;
+      if (req.minSocialTier && rank < (SOCIAL_TIER_RANK[req.minSocialTier] ?? 0)) return false;
+      if (req.maxSocialTier && rank > (SOCIAL_TIER_RANK[req.maxSocialTier] ?? 3)) return false;
+      if (req.anySocialTiers && !req.anySocialTiers.includes(stTier)) return false;
+    }
+
+    if (req.anyRealms || req.excludeRealms) {
+      const realm = (ctx && ctx.lifeRealm) || computeLifeRealm(state, (ctx && ctx.career) || getCareer(state.careerId), (ctx && ctx.world) || getWorld(state.worldId), ctx && ctx.tagSet);
+      if (req.anyRealms && !req.anyRealms.includes(realm)) return false;
+      if (req.excludeRealms && req.excludeRealms.includes(realm)) return false;
+    }
+
+    if (req.anyBodyClasses || req.excludeBodyClasses) {
+      const body = (ctx && ctx.bodyClass) || computeBodyClass(state, (ctx && ctx.career) || getCareer(state.careerId), ctx && ctx.tagSet);
+      if (req.anyBodyClasses && !req.anyBodyClasses.includes(body)) return false;
+      if (req.excludeBodyClasses && req.excludeBodyClasses.includes(body)) return false;
     }
 
     if (req.anyPastCareers) {
@@ -3765,6 +3819,12 @@ export function createImperiumEngine(DATA) {
     SAVE_VERSION,
     ALIGNMENT_KEYS,
     ALIGNMENT_META,
+    SOCIAL_TIER_ORDER,
+    SOCIAL_TIER_LABELS,
+    LIFE_REALM_KEYS,
+    LIFE_REALM_LABELS,
+    BODY_CLASS_KEYS,
+    BODY_CLASS_LABELS,
     STAT_META,
     FOCUSES,
     ERA_PRESETS,
@@ -3773,6 +3833,7 @@ export function createImperiumEngine(DATA) {
     normalizeAlignment,
     applyAlignDelta,
     getAlignmentInfo,
+    getStratification,
     formatImperialYear,
     formatImperialDate,
     getWorld,

@@ -235,7 +235,7 @@ export default [
     id: "ch_s12_admin_1",
     badge: "아드미니스트라툼 서고",
     priority: 3,
-    req: { anyCareers: ["administratum", "admin_prefect_rank", "admin_departmento_head", "master_of_administratum", "planetary_governor", "sector_lord"] },
+    req: { maxCareerTier: 3, anyCareers: ["administratum", "admin_prefect_rank", "admin_departmento_head"] },
     text: "깃펜 끝이 닳아 없어지도록 12시간 내내 성계 곡물 할당량 전표 4,000장에 붉은 밀랍 인장을 찍었다. 제국은 볼터와 양피지 위에서 돌아간다.",
     effect: { stats: { Int: 1, WP: 1 } }
   },
@@ -275,7 +275,7 @@ export default [
     id: "ch_s12_officer_1",
     badge: "연대 작전실",
     priority: 3,
-    req: { anyCareers: ["militarum_officer", "militarum_general", "warmaster", "lord_commander_militant"] },
+    req: { maxCareerTier: 4, anyCareers: ["militarum_officer", "militarum_general"] },
     text: "야전 천막 지도판 위에 나무 말로 적 기갑 사단의 기동 경로를 짚어 보며 밤새 포병 화력 지원 시간표를 다듬었다.",
     effect: { stats: { Int: 1, Inf: 1 } }
   },
@@ -315,7 +315,7 @@ export default [
     id: "ch_s12_psyker_1",
     badge: "생션드 사이커 명상",
     priority: 3,
-    req: { anyCareers: ["sanctioned_psyker", "primaris_psyker", "master_of_astronomicum"] },
+    req: { maxCareerTier: 4, anyCareers: ["sanctioned_psyker", "primaris_psyker"] },
     text: "신경 억제 고리의 차가운 압박을 견디며 워프의 웅성거림을 잠재우는 호흡 명상을 반복했다. 오늘도 이성을 지켜 낸 것만으로 승리다.",
     effect: { stats: { WP: 1, Int: 1 }, corruption: -1 }
   },
@@ -323,7 +323,7 @@ export default [
     id: "ch_s12_sororitas_1",
     badge: "수녀회 성가 합창",
     priority: 3,
-    req: { anyCareers: ["sororitas_novitiate", "adepta_sororitas", "sororitas_celestian", "canoness", "abbess_sanctorum"] },
+    req: { anyCareers: ["adepta_sororitas", "sororitas_celestian", "canoness", "abbess_sanctorum"] },
     text: "새벽 종소리에 맞춰 자매들과 함께 볼터 총열에 성유를 바르며 순교 성녀의 찬송가를 합창했다. 신앙의 불꽃이 파워 아머 내부까지 따뜻하게 채웠다.",
     effect: { stats: { WP: 1, BS: 1 }, faith: 2 }
   }

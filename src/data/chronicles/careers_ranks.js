@@ -97,7 +97,8 @@ export default [
     priority: 3,
     req: {
       anyPastCareers: ["astartes_scout", "astartes_brother"],
-      anyCareers: ["astartes_veteran", "chapter_master"]
+      anyCareers: ["astartes_veteran", "chapter_master"],
+      excludeBodyClasses: ["dreadnought"]
     },
     text: "야간 정찰 훈련을 마치고 돌아오는 신병 훈련단의 수련병들을 내려다보며 고대 성유물 갑주의 어깨 인장을 쓸어 보았다. 위장 망토를 두르고 숨죽여 적 초소를 정찰하던 소년병과 지금 챕터의 명예를 짊어진 불멸의 전사 사이에는 기나긴 혈전이 가로놓여 있다. 초인의 육신은 강철처럼 굳어졌으나, 첫 서약을 올리던 날의 결의는 여전히 두 개의 심장 속에서 고동친다.",
     effect: { stats: { WP: 1, Inf: 1 } }
@@ -545,7 +546,7 @@ export default [
     id: "ch_s14_rank_36",
     badge: "제1중대 크룩스 테르미나투스",
     priority: 3,
-    req: { anyCareers: ["astartes_veteran"] },
+    req: { anyCareers: ["astartes_veteran"], excludeBodyClasses: ["dreadnought"] },
     text: "챕터 서프들의 경건한 찬송 속에 육중한 전술 드레드노트 아머를 걸치고, 왼팔 어깨갑주에 각인된 석조 크룩스 테르미나투스 문장에 축성 성유를 발랐다. 기나긴 세월의 스페이스 헐크 정화전과 최악의 돌파 작전을 견뎌 낸 성유물 갑주가 두 심장의 박동에 맞춰 우렁차게 깨어났다. 텔레포트 비컨이 켜지는 순간 가장 어두운 지옥의 한복판으로 발을 디딜 준비가 끝났다.",
     effect: { stats: { T: 1, WS: 1, WP: 1 } }
   },
@@ -561,7 +562,7 @@ export default [
     id: "ch_s14_rank_38",
     badge: "팔라딘의 영원한 경계",
     priority: 3,
-    req: { anyCareers: ["gk_paladin"] },
+    req: { anyCareers: ["gk_paladin"], excludeBodyClasses: ["dreadnought"] },
     text: "타이탄 영웅의 전당 은빛 깃발 아래서 네메시스 포스 할버드를 무릎에 가로질러 얹은 채 상급 악마의 추방 진명을 침묵 속에 되뇌었다. 여덟 가지 극한의 시련을 완수하고 팔라딘의 은빛 터미네이터 갑주를 입은 전사에게 공포나 유혹은 티끌조차 닿지 못한다. 그랜드 마스터의 곁에서 은하 최악의 워프 균열을 베어 가를 최후의 은빛 방패가 오늘도 흔들림 없이 빛난다.",
     effect: { stats: { WS: 1, WP: 2 }, corruption: -2 }
   },

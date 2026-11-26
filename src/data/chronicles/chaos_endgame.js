@@ -107,5 +107,49 @@ export default [
     },
     text: "현실 우주의 여러 행성에서 암흑 교단 신도들이 바친 제물과 기도 소리가 워프의 메아리가 되어 옥좌 아래로 흘러들었다. 하급 악마 군세와 경쟁 데몬 프린스들의 영토 경계를 살피며, 암흑 사대신이 영원히 벌이는 위대한 게임 속에서 다음으로 삼킬 판을 냉철히 계산했다. 필멸자의 제국을 무너뜨리는 일조차 이 끝없는 신들의 레지사이드 판에서는 수많은 수 가운데 하나일 뿐이다.",
     effect: { stats: { Inf: 1, Int: 1 } }
+  },
+  {
+    id: "ch_s19_dp_reality_tear",
+    badge: "현실 우주의 균열",
+    priority: 3,
+    req: {
+      anyCareers: ["daemon_prince"]
+    },
+    text: "아광속 항로 변방의 얇아진 현실 장막을 거대한 발톱으로 찢어 열자, 제국 경계 초소의 아스트로패스들이 일제히 피눈물을 쏟으며 쓰러졌다. 불멸의 악마 군주에게 물리적 거리와 방어선은 잠시 흥미를 돋우는 장난감에 지나지 않는다. 워프의 폭풍을 두른 채 강림할 다음 제물 행성의 좌표를 불타는 눈동자에 새겼다.",
+    effect: { stats: { WP: 1, WS: 1 } },
+    source: "Codex: Chaos Daemons / Daemon Prince"
+  },
+  {
+    id: "ch_s19_dp_legion_muster",
+    badge: "악마 군세의 사열",
+    priority: 3,
+    req: {
+      anyCareers: ["daemon_prince"]
+    },
+    text: "유황 연기가 소용돌이치는 공허 평원 위에 수천의 하급 악마와 타락한 필멸자 워밴드가 무릎을 꿇고 불경한 찬가를 합창했다. 한때 피와 살로 숨 쉬던 필멸자가 이제는 악마 군단을 호령하는 불멸의 폭군으로 우뚝 서 있다. 하급 악마들의 진명을 호령하는 낮은 포효 한 번에 워프 폭풍의 번개가 창끝마다 깃들었다.",
+    effect: { stats: { Inf: 1, WS: 1 } },
+    source: "Codex: Chaos Space Marines / Daemon Prince"
+  },
+  {
+    id: "ch_s19_dp_forgotten_age",
+    badge: "망각된 필멸의 세기",
+    priority: 3,
+    req: {
+      anyCareers: ["daemon_prince"]
+    },
+    text: "현실 우주에서는 이미 여러 세대가 흘러갔으나, 시간이 무의미한 워프 속에서는 단 하루의 사색에 불과했다. 한때 제국에 충성을 맹세하거나 덧없는 연명을 갈구하던 필멸자 시절의 기억이 불꽃 속 재처럼 흩어져 사라졌다. 노화도, 질병도, 쇠락도 닿지 않는 영원한 형상 속에서 암흑 신들이 내린 무자비한 권능만이 더욱 선명해졌다.",
+    effect: { stats: { T: 1, WP: 1 } },
+    source: "Codex: Chaos Daemons"
+  },
+  {
+    id: "ch_s19_dp_patron_whisper",
+    badge: "암흑 옥좌의 시선",
+    priority: 3,
+    req: {
+      anyCareers: ["daemon_prince"]
+    },
+    text: "워프 깊숙한 곳에서 후원 신의 거대한 시선이 스쳐 지나가자 성채의 검은 기둥마다 불경한 룬 문자가 붉게 빛났다. 승천은 끝이 아니라 더욱 치열한 영원의 투쟁이 시작되는 관문이며, 게으른 데몬 프린스는 언제든 신의 변덕에 찢겨 나갈 수 있다. 또 다른 제국 성소를 불태울 성전의 서막을 준비하며 거대한 날개를 펼쳤다.",
+    effect: { stats: { Int: 1, Inf: 1 } },
+    source: "Codex: Chaos Daemons / The Great Game"
   }
 ];

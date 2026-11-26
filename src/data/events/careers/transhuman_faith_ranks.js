@@ -7,7 +7,8 @@ export default [
     once: true,
     req: {
       anyCareers: ["astartes_sergeant"],
-      anyPastCareers: ["astartes_scout", "astartes_brother"]
+      anyPastCareers: ["astartes_scout", "astartes_brother"],
+      excludeBodyClasses: ["dreadnought"]
     },
     reqLabel: "직군: 아스타르테스 분대장 · 스카웃/배틀 브라더 경력",
     weight: 34,
@@ -55,7 +56,7 @@ export default [
     title: "제1중대 터미네이터 — 크룩스 테르미나투스와 스페이스 헐크 강습",
     category: "계급 심화",
     once: true,
-    req: { anyCareers: ["astartes_veteran"] },
+    req: { anyCareers: ["astartes_veteran"], excludeBodyClasses: ["dreadnought"] },
     reqLabel: "직군: 아스타르테스 1중대 베테랑 · 터미네이터",
     weight: 36,
     text: "황제의 갑주 조각이 깃든 크룩스 테르미나투스를 어깨에 새기고, 칠흑 같은 스페이스 헐크의 원자로 심장부로 텔레포트 강습을 감행했다. 전술 드레드노트 아머의 육중한 발걸음이 울리자마자, 좁아터진 아다만티움 격벽 너머로 수십 기의 진스틸러 생체 신호가 붉게 번쩍인다. 워프 잡음 때문에 귀환 텔레포트 신호마저 불안정하게 흔들리는 절체절명의 어둠 속에서, 제1중대 정예만이 이 괴물 함선의 심장을 폭파할 수 있다.",
@@ -154,7 +155,8 @@ export default [
     once: true,
     req: {
       anyCareers: ["astartes_brother", "astartes_sergeant", "astartes_veteran", "astartes_captain"],
-      anyPastCareers: ["underhive_ganger"]
+      anyPastCareers: ["underhive_ganger"],
+      excludeBodyClasses: ["dreadnought"]
     },
     reqLabel: "아스타르테스 정식 전사 · 언더하이브 갱단원 경력",
     weight: 36,
@@ -204,7 +206,8 @@ export default [
     once: true,
     req: {
       anyCareers: ["gk_paladin"],
-      maxCorruption: 5
+      maxCorruption: 5,
+      excludeBodyClasses: ["dreadnought"]
     },
     reqLabel: "직군: 그레이 나이트 팔라딘 · 오염 5 이하",
     weight: 36,
