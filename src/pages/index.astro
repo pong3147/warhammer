@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import GameApp from "../components/game/GameApp";
+import { CODEX_COUNTS } from "../lib/codexMeta";
+---
+
+<BaseLayout
+  title="1 / QUADRILLION — 인류제국 생존 시뮬레이터"
+  description={`워해머 40,000 인류제국 100만 행성 중 하나에 태어나 ${CODEX_COUNTS.factions}개 세력 ${CODEX_COUNTS.careers}종 직군·${CODEX_COUNTS.chapters}대 챕터·699종 분기/역사 사건·762종 연대기를 체험하는 무작위 출생 생존 시뮬레이터.`}
+  activeNav="game"
+  showGameStatusPills={true}
+>
+  <GameApp client:load />
+</BaseLayout>

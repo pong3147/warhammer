@@ -1,0 +1,97 @@
+---
+import "../styles/global.css";
+import "../styles/astro-pages.css";
+import { withBase } from "../lib/links";
+
+export interface Props {
+  title: string;
+  description?: string;
+  activeNav: "game" | "glossary" | "codex" | "hall";
+  showGameStatusPills?: boolean;
+}
+
+const {
+  title,
+  description = "워해머 40,000 인류제국 무작위 출생·생애 시뮬레이션 게임, 제국 코덱스, 워해머 주요 개념 사전 (비공식 팬 창작물).",
+  activeNav,
+  showGameStatusPills = false
+} = Astro.props;
+
+const navItems = [
+  { key: "game", label: "생애 시뮬레이션", href: withBase("/") },
+  { key: "glossary", label: "워해머 개념 사전", href: withBase("/glossary/") },
+  { key: "codex", label: "제국 코덱스", href: withBase("/codex/") },
+  { key: "hall", label: "영혼의 전당", href: withBase("/hall/") }
+] as const;
+---
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Noto+Serif+KR:wght@400;600;700&display=swap" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">본문으로 바로가기</a>
+
+  <header class="top-header">
+    <div class="brand-wrap">
+      <a class="brand-link" href={withBase("/")}>
+        <svg class="brand-sigil" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <polygon points="32,3 59,18 59,46 32,61 5,46 5,18" stroke="#d6b15e" stroke-width="2.5" fill="#1b1510"/>
+          <circle cx="32" cy="32" r="15" stroke="#a82323" stroke-width="2"/>
+          <path d="M12 24 L26 28 L32 14 L38 28 L52 24 L42 36 L46 48 L32 40 L18 48 L22 36 Z" fill="#d6b15e" opacity="0.9"/>
+          <circle cx="32" cy="32" r="4.5" fill="#141210" stroke="#f2d488" stroke-width="1.5"/>
+        </svg>
+        <div>
+          <h1 class="brand-title">1 / QUADRILLION <span class="brand-ko">인류제국 생존기</span></h1>
+          <div class="brand-sub" aria-hidden="true">IMPERIUM OF MAN LIFE SIMULATOR · UNOFFICIAL FAN PROJECT</div>
+        </div>
+      </a>
+    </div>
+
+    {showGameStatusPills && (
+      <div class="header-status" id="header-status" role="group" aria-label="현재 시대 상태">
+        <span class="status-pill" id="hdr-year">대기 중 · M41</span>
+        <span class="status-pill" id="hdr-realm">임페리움 상크투스</span>
+      </div>
+    )}
+
+    <nav class="nav-tabs" aria-label="주요 메뉴">
+      {navItems.map((item) => (
+        <a
+          class={`nav-btn${activeNav === item.key ? " active" : ""}`}
+          href={item.href}
+          aria-current={activeNav === item.key ? "page" : undefined}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-shell" tabindex="-1">
+    <slot />
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      비공식 팬 창작물 (Unofficial Fan Project) — Games Workshop Limited와 제휴나 공식 승인 관계가 없으며, 자체 작성한 한국어 산문과 기하학 UI로 구성되었습니다.
+    </div>
+    <div>
+      <a href={withBase("/")}>생애 시뮬레이션</a> ·
+      <a href={withBase("/glossary/")}>워해머 개념 사전</a> ·
+      <a href={withBase("/codex/")}>제국 코덱스</a> ·
+      <a href={withBase("/hall/")}>영혼의 전당</a>
+    </div>
+  </footer>
+</body>
+</html>

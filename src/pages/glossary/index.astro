@@ -1,0 +1,27 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GlossaryExplorer from "../../components/glossary/GlossaryExplorer";
+import { GLOSSARY_CATEGORIES, GLOSSARY_TERMS } from "../../data/glossary.js";
+import { withBase } from "../../lib/links";
+---
+
+<BaseLayout
+  title="워해머 40k 주요 개념 사전 — 1 / QUADRILLION"
+  description="워해머 40,000 입문자와 플레이어를 위한 8대 분야 48종 핵심 세계관·세력·워프·외계 종족·연대기 표기법·게임 시스템 백과사전."
+  activeNav="glossary"
+>
+  <section class="page-hero" aria-labelledby="glossary-page-heading">
+    <h2 id="glossary-page-heading" class="page-hero-title">워해머 40,000 주요 개념 사전</h2>
+    <p class="page-hero-desc">
+      41번째 천년기 인류제국을 처음 접하거나 플레이 중 낯선 설정 용어를 만났을 때 바로 찾아볼 수 있는 입문 백과사전이다.
+      황금 옥좌와 워프, 카오스 4대 신, 아스타르테스, 기계교, 이단심문소, 주요 외계 종족, 제국력 표기법까지
+      8대 분야 {GLOSSARY_TERMS.length}종 핵심 개념을 게임 내 연동 방식 및 공식 출처와 함께 정리했다.
+    </p>
+    <div class="page-hero-actions">
+      <a class="btn-primary" style="text-decoration:none;" href={withBase("/")}>생애 시뮬레이션으로 돌아가기</a>
+      <a class="btn-ghost" style="text-decoration:none;" href={withBase("/codex/")}>제국 코덱스 도감 열기</a>
+    </div>
+  </section>
+
+  <GlossaryExplorer client:load categories={GLOSSARY_CATEGORIES} terms={GLOSSARY_TERMS} />
+</BaseLayout>

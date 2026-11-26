@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CodexSubnav from "../../components/codex/CodexSubnav.astro";
+import CodexExplorer from "../../components/codex/CodexExplorer";
+---
+
+<BaseLayout
+  title="9대 아스타르테스 챕터 도감 — 제국 코덱스"
+  description="울트라마린, 블러드 엔젤, 스페이스 울프, 다크 엔젤, 임페리얼 피스트, 샐러맨더, 블랙 템플러, 레이븐 가드, 화이트 스카 도감."
+  activeNav="codex"
+>
+  <section class="page-hero" aria-labelledby="codex-chapters-heading">
+    <h2 id="codex-chapters-heading" class="page-hero-title">9대 아스타르테스 챕터 도감</h2>
+    <p class="page-hero-desc">
+      스페이스 마린 네오파이트 입단 시 서약할 수 있는 9대 유명 챕터의 프라이마크, 모성, 전투 함성과 능력치 보정을 확인한다.
+    </p>
+  </section>
+  <CodexSubnav active="chapters" />
+  <CodexExplorer client:load section="chapters" />
+</BaseLayout>

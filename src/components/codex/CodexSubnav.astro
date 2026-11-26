@@ -1,0 +1,32 @@
+---
+import { CORE_DATA } from "../../data/core/index.js";
+import { withBase } from "../../lib/links";
+
+export interface Props {
+  active: "overview" | "worlds" | "careers" | "chapters" | "timeline" | "characters";
+}
+
+const { active } = Astro.props;
+const selectableCareerCount = CORE_DATA.CAREERS.filter((c) => c.selectable).length;
+
+const items = [
+  { key: "overview", label: "코덱스 개요", href: withBase("/codex/") },
+  { key: "worlds", label: `행성 (${CORE_DATA.WORLDS.length})`, href: withBase("/codex/worlds/") },
+  { key: "careers", label: `병종·직군 (${selectableCareerCount})`, href: withBase("/codex/careers/") },
+  { key: "chapters", label: `챕터 (${CORE_DATA.CHAPTERS.length})`, href: withBase("/codex/chapters/") },
+  { key: "timeline", label: `역사 연표 (${CORE_DATA.TIMELINE.length})`, href: withBase("/codex/timeline/") },
+  { key: "characters", label: `네임드 인물 (${CORE_DATA.CHARACTERS.length})`, href: withBase("/codex/characters/") }
+] as const;
+---
+
+<nav class="codex-subnav" aria-label="제국 코덱스 분류">
+  {items.map((item) => (
+    <a
+      class={`nav-btn${active === item.key ? " active" : ""}`}
+      href={item.href}
+      aria-current={active === item.key ? "page" : undefined}
+    >
+      {item.label}
+    </a>
+  ))}
+</nav>

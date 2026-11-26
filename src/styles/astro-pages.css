@@ -1,0 +1,347 @@
+/* ===== Astro 멀티페이지 · 워해머 개념 사전 · 정적 코덱스 확장 스타일 ===== */
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: 2000;
+  background: var(--gold-bright);
+  color: #120f0b;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 14px;
+  border-radius: 3px;
+  text-decoration: none;
+  box-shadow: var(--shadow-heavy);
+}
+
+.skip-link:focus {
+  left: 12px;
+}
+
+.nav-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.page-shell {
+  max-width: 1460px;
+  margin: 0 auto;
+  padding: 18px 20px 34px;
+}
+
+.page-hero {
+  background: linear-gradient(180deg, rgba(27, 24, 21, 0.96) 0%, rgba(16, 14, 12, 0.96) 100%);
+  border: 1px solid var(--border-brass);
+  border-radius: 4px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+}
+
+.page-hero-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--gold-bright);
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+
+.page-hero-desc {
+  color: var(--text-sub);
+  font-size: 14px;
+  line-height: 1.65;
+  max-width: 82ch;
+}
+
+.page-hero-actions {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.codex-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.codex-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.codex-overview-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-brass);
+  border-radius: 4px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.codex-overview-card:hover {
+  border-color: var(--gold-bright);
+  background: var(--bg-hover);
+}
+
+.codex-overview-card h2 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  color: var(--gold-bright);
+}
+
+.codex-overview-count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--cogitator);
+}
+
+.codex-overview-desc {
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.55;
+}
+
+/* ===== 워해머 40k 개념 사전 ===== */
+.glossary-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.glossary-search-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.glossary-search-input {
+  flex: 1 1 280px;
+  min-width: 220px;
+  background: #0f0d0b;
+  border: 1px solid var(--border-brass);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 9px 12px;
+  border-radius: 3px;
+}
+
+.glossary-result-count {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--gold);
+}
+
+.glossary-cat-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.glossary-section {
+  margin-bottom: 24px;
+}
+
+.glossary-section-head {
+  border-bottom: 1px solid var(--border-brass);
+  padding-bottom: 8px;
+  margin-bottom: 14px;
+}
+
+.glossary-section-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--gold-bright);
+  letter-spacing: 0.03em;
+}
+
+.glossary-section-desc {
+  font-size: 13px;
+  color: var(--text-sub);
+  margin-top: 4px;
+}
+
+.glossary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 14px;
+}
+
+.glossary-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dim);
+  border-top: 2px solid var(--border-brass);
+  border-radius: 4px;
+  padding: 15px 17px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  scroll-margin-top: 84px;
+}
+
+.glossary-card:target {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 0 2px rgba(242, 212, 136, 0.35);
+}
+
+.glossary-term {
+  font-family: var(--font-display);
+  font-size: 16.5px;
+  color: var(--gold-bright);
+  margin-bottom: 2px;
+}
+
+.glossary-en {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.glossary-summary {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+.glossary-body {
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.65;
+  margin-bottom: 10px;
+}
+
+.glossary-ingame {
+  background: rgba(88, 199, 127, 0.08);
+  border-left: 3px solid var(--cogitator);
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: var(--text-main);
+  line-height: 1.55;
+  border-radius: 2px;
+}
+
+.glossary-ingame strong {
+  color: var(--cogitator);
+}
+
+.glossary-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.glossary-chip {
+  display: inline-block;
+  font-size: 11.5px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--border-brass);
+  background: rgba(214, 177, 94, 0.08);
+  color: var(--gold-bright);
+  text-decoration: none;
+}
+
+.glossary-chip:hover {
+  background: rgba(214, 177, 94, 0.2);
+}
+
+.glossary-chip.codex {
+  border-color: rgba(106, 166, 219, 0.55);
+  background: rgba(106, 166, 219, 0.1);
+  color: var(--sky-blue);
+}
+
+.codex-card:target {
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 0 2px rgba(242, 212, 136, 0.35);
+}
+
+.codex-card {
+  scroll-margin-top: 84px;
+}
+
+.loading-banner {
+  background: rgba(214, 177, 94, 0.1);
+  border: 1px solid var(--border-brass);
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--gold-bright);
+}
+
+.quick-lore-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(20, 18, 16, 0.9);
+  border: 1px solid var(--border-dim);
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  font-size: 12.5px;
+  color: var(--text-sub);
+}
+
+.quick-lore-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.site-footer {
+  max-width: 1460px;
+  margin: 0 auto;
+  padding: 14px 20px 28px;
+  border-top: 1px solid var(--border-dim);
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.6;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.site-footer a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 820px) {
+  .page-shell { padding: 12px 12px 24px; }
+  .glossary-grid { grid-template-columns: 1fr; }
+  .codex-overview-grid { grid-template-columns: 1fr; }
+}

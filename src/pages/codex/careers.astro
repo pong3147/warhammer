@@ -1,0 +1,23 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CodexSubnav from "../../components/codex/CodexSubnav.astro";
+import CodexExplorer from "../../components/codex/CodexExplorer";
+import { CODEX_COUNTS } from "../../lib/codexMeta";
+---
+
+<BaseLayout
+  title={`${CODEX_COUNTS.factions}개 세력 ${CODEX_COUNTS.careers}종 병종·직군 계급도 — 제국 코덱스`}
+  description={`시민·아스트라 밀리타룸·아스타르테스·쿠스토데스·나비스 노빌리테·오피시오 아사시노룸·임페리얼 나이트·리빙 세인트·하이 로드 12석·카오스까지 ${CODEX_COUNTS.careers}종 직군 해금 조건 도감.`}
+  activeNav="codex"
+>
+  <section class="page-hero" aria-labelledby="codex-careers-heading">
+    <h2 id="codex-careers-heading" class="page-hero-title">
+      {CODEX_COUNTS.factions}개 세력 {CODEX_COUNTS.careers}종 병종·직군 계급도
+    </h2>
+    <p class="page-hero-desc">
+      입문 직군(직접 지원)부터 상위 계급·공훈 횡단·테라의 하이 로드 12석·살아 있는 성인·데몬 프린스(발탁 이벤트 전용)까지 전체 해금 조건과 수명 보정을 열람한다.
+    </p>
+  </section>
+  <CodexSubnav active="careers" />
+  <CodexExplorer client:load section="careers" />
+</BaseLayout>

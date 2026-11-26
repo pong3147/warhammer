@@ -1,0 +1,23 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CodexSubnav from "../../components/codex/CodexSubnav.astro";
+import CodexExplorer from "../../components/codex/CodexExplorer";
+import { CODEX_COUNTS } from "../../lib/codexMeta";
+---
+
+<BaseLayout
+  title={`M41~M42 역사 연표 (${CODEX_COUNTS.timeline}대 사건) — 제국 코덱스`}
+  description={`고딕 전쟁과 아이젠혼 스카루스부터 1차 아마겟돈, 카디아 붕괴, 대균열, 사자의 문, 인도미투스 성전, 역병 전쟁, 제4차 타이라니드 전쟁까지 ${CODEX_COUNTS.timeline}대 역사 사건 연표.`}
+  activeNav="codex"
+>
+  <section class="page-hero" aria-labelledby="codex-timeline-heading">
+    <h2 id="codex-timeline-heading" class="page-hero-title">
+      M41~M42 제국 역사 연표 ({CODEX_COUNTS.timeline}대 사건)
+    </h2>
+    <p class="page-hero-desc">
+      해당 시점과 행성에 체류하면 직접 분기 사건으로 체험하고, 타 성계에 있어도 아스트로패스 원격 속보로 수신되는 공식 역사 대사건 목록이다.
+    </p>
+  </section>
+  <CodexSubnav active="timeline" />
+  <CodexExplorer client:load section="timeline" />
+</BaseLayout>

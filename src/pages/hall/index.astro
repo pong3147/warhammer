@@ -1,0 +1,13 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import HallOfSoulsApp from "../../components/hall/HallOfSoulsApp";
+import { CODEX_COUNTS } from "../../lib/codexMeta";
+---
+
+<BaseLayout
+  title="영혼의 전당 및 제국 도감 달성 현황 — 1 / QUADRILLION"
+  description={`지금까지 살아온 역대 인류제국 영혼들의 생애 조서, ${CODEX_COUNTS.careers}종 직군·${CODEX_COUNTS.chapters}대 챕터·${CODEX_COUNTS.characters}인 네임드·${CODEX_COUNTS.timeline}대 역사 수집률과 .json 저장 백업 관리.`}
+  activeNav="hall"
+>
+  <HallOfSoulsApp client:load />
+</BaseLayout>

@@ -1,0 +1,23 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CodexSubnav from "../../components/codex/CodexSubnav.astro";
+import CodexExplorer from "../../components/codex/CodexExplorer";
+import { CODEX_COUNTS } from "../../lib/codexMeta";
+---
+
+<BaseLayout
+  title={`제국 ${CODEX_COUNTS.worlds}개 행성 도감 — 제국 코덱스`}
+  description={`신성한 테라, 화성, 카디아, 크리그, 아마겟돈, 마크라그, 바알, 펜리스, 기사 행성 등 워해머 40k ${CODEX_COUNTS.worlds}개 행성과 ${CODEX_COUNTS.segmenta}대 성역 도감.`}
+  activeNav="codex"
+>
+  <section class="page-hero" aria-labelledby="codex-worlds-heading">
+    <h2 id="codex-worlds-heading" class="page-hero-title">
+      제국 행성 도감 ({CODEX_COUNTS.segmenta}대 성역 · {CODEX_COUNTS.worlds}행성)
+    </h2>
+    <p class="page-hero-desc">
+      네임드 핵심 행성 15곳과 무명 행성 7유형(기사 행성 포함), 보이드본 함선 출신의 인구, 기대수명, 고유 연대 및 징병 챕터를 대조한다.
+    </p>
+  </section>
+  <CodexSubnav active="worlds" />
+  <CodexExplorer client:load section="worlds" />
+</BaseLayout>

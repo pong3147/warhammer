@@ -1,0 +1,23 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CodexSubnav from "../../components/codex/CodexSubnav.astro";
+import CodexExplorer from "../../components/codex/CodexExplorer";
+import { CODEX_COUNTS } from "../../lib/codexMeta";
+---
+
+<BaseLayout
+  title={`${CODEX_COUNTS.characters}인 네임드 인물 도감 — 제국 코덱스`}
+  description={`길리먼, 야릭, 크리드, 건트, 케인, 단테, 카울, 셀레스틴, 아이젠혼, 트라얀 발로리스, 라이온 엘 존슨, 아바돈, 가즈쿨 등 ${CODEX_COUNTS.characters}인 프로필.`}
+  activeNav="codex"
+>
+  <section class="page-hero" aria-labelledby="codex-characters-heading">
+    <h2 id="codex-characters-heading" class="page-hero-title">
+      {CODEX_COUNTS.characters}인 네임드 인물 프로필
+    </h2>
+    <p class="page-hero-desc">
+      플레이 중 조우하면 사건 상단에 스포트라이트 카드로 소개되고 개별 후일담 연대기가 해금되는 워해머 40k 전설적 인물 {CODEX_COUNTS.characters}인의 기록이다.
+    </p>
+  </section>
+  <CodexSubnav active="characters" />
+  <CodexExplorer client:load section="characters" />
+</BaseLayout>

@@ -1,0 +1,79 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CodexSubnav from "../../components/codex/CodexSubnav.astro";
+import { GLOSSARY_TERMS } from "../../data/glossary.js";
+import { CODEX_COUNTS } from "../../lib/codexMeta";
+import { withBase } from "../../lib/links";
+
+const sections = [
+  {
+    title: "제국 행성 도감",
+    count: `${CODEX_COUNTS.worlds}개 행성 · ${CODEX_COUNTS.segmenta}대 성역`,
+    desc: "신성한 테라, 화성, 카디아, 크리그, 아마겟돈, 마크라그 등 네임드 15행성과 무명 8유형(기사 행성·보이드본 포함)의 환경, 인구, 고유 연대 및 출처를 대조한다.",
+    href: withBase("/codex/worlds/")
+  },
+  {
+    title: `${CODEX_COUNTS.factions}개 세력 병종·직군 계급도`,
+    count: `${CODEX_COUNTS.careers}종 직군 · Tier 1~6`,
+    desc: "시민과 아스트라 밀리타룸부터 아스타르테스, 쿠스토데스, 나비스 노빌리테, 오피시오 아사시노룸, 임페리얼 나이트, 리빙 세인트, 테라의 하이 로드 12석, 데몬 프린스까지 전 직군 해금 조건을 열람한다.",
+    href: withBase("/codex/careers/")
+  },
+  {
+    title: `${CODEX_COUNTS.chapters}대 아스타르테스 챕터`,
+    count: `${CODEX_COUNTS.chapters}대 유명 챕터`,
+    desc: "울트라마린, 블러드 엔젤, 스페이스 울프, 다크 엔젤, 임페리얼 피스트, 샐러맨더, 블랙 템플러, 레이븐 가드, 화이트 스카의 전투 함성과 모성·보정치를 정리했다.",
+    href: withBase("/codex/chapters/")
+  },
+  {
+    title: "M41~M42 역사 연표",
+    count: `${CODEX_COUNTS.timeline}대 역사 사건`,
+    desc: "고딕 전쟁과 아이젠혼 스카루스 전역부터 1차 아마겟돈·수치의 달들, 브락스, 바답, 카디아 붕괴와 대균열, 사자의 문, 인도미투스 성전, 역병 전쟁, 제4차 타이라니드 전쟁까지 정리했다.",
+    href: withBase("/codex/timeline/")
+  },
+  {
+    title: `${CODEX_COUNTS.characters}인 네임드 인물 프로필`,
+    count: `${CODEX_COUNTS.characters}인 영웅 · 적수`,
+    desc: "로부테 길리먼, 세바스찬 야릭, 카이아파스 케인, 이브람 건트, 사령관 단테, 트라얀 발로리스, 라이온 엘 존슨, 헬브레히트, 아바돈, 가즈쿨 등 28인 프로필과 명대사.",
+    href: withBase("/codex/characters/")
+  },
+  {
+    title: "워해머 40k 주요 개념 사전",
+    count: `${GLOSSARY_TERMS.length}종 핵심 개념`,
+    desc: "황금 옥좌, 워프, 아스트로노미칸, 진시드, 3대 오르도, 외계 7대 종족, 제국력 표기법 등 세계관 핵심 용어를 입문자 눈높이로 해설한다.",
+    href: withBase("/glossary/")
+  }
+];
+---
+
+<BaseLayout
+  title="제국 코덱스 및 공식 출처 대조관 — 1 / QUADRILLION"
+  description={`워해머 40k 인류제국 ${CODEX_COUNTS.worlds}개 행성, ${CODEX_COUNTS.factions}개 세력 ${CODEX_COUNTS.careers}종 직군 계급도, ${CODEX_COUNTS.chapters}대 챕터, M41~M42 ${CODEX_COUNTS.timeline}대 역사 연표, ${CODEX_COUNTS.characters}인 네임드 인물 정적 도감.`}
+  activeNav="codex"
+>
+  <section class="page-hero" aria-labelledby="codex-overview-heading">
+    <h2 id="codex-overview-heading" class="page-hero-title">제국 코덱스 및 공식 출처 대조관</h2>
+    <p class="page-hero-desc">
+      게임 시뮬레이션 엔진과 동일한 단일 데이터 정본에서 생성된 정적 도감이다.
+      각 항목마다 공식 코덱스 및 Lexicanum 참조 출처가 병기되어 있으며, 낯선 세계관 용어는 워해머 개념 사전에서 바로 확인할 수 있다.
+    </p>
+  </section>
+
+  <CodexSubnav active="overview" />
+
+  <section class="codex-overview-grid" aria-label="코덱스 분류 목록">
+    {sections.map((s) => (
+      <article class="codex-overview-card">
+        <div>
+          <div class="codex-overview-count">{s.count}</div>
+          <h2>{s.title}</h2>
+          <p class="codex-overview-desc">{s.desc}</p>
+        </div>
+        <div>
+          <a class="btn-gold" style="text-decoration:none;display:inline-block;" href={s.href}>
+            {s.title} 열람하기
+          </a>
+        </div>
+      </article>
+    ))}
+  </section>
+</BaseLayout>

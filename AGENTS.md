@@ -21,10 +21,10 @@
 
 향후 모든 수정·확장 시 아래 원칙은 예외 없이 준수한다.
 
-### 2.1 실행 · 배포 구조 (100% 정적 / 무서버)
-* **로컬 즉시 실행:** 서버 호스팅이나 빌드 과정 없이 `index.html`을 브라우저로 직접 열어도(`file://` 프로토콜) 완벽히 동작해야 하며, GitHub Pages에 폴더째 푸시해 즉시 배포할 수 있어야 한다.
-* **기술 제약:** `fetch()`, ES Module(`import`/`export`), 외부 번들러 사용 금지. 모든 데이터 파일은 클래식 `<script>` 태그로 로드해 전역 `window.IMPERIUM_DATA` 객체를 공유한다.
-* **로드 순서 엄수:** `index.html`의 스크립트 로드 순서(`worlds` -> `origins` -> `careers` -> `chapters` -> `characters` -> `timeline` -> `tags` -> `events/**` -> `chronicles/**` -> `js/engine.js` -> `js/ui.js`)를 깨뜨리지 않는다. 신규 데이터 파일 생성 후에는 반드시 `node scripts/sync-scripts.js`로 `index.html`을 동기화한다.
+### 2.1 실행 · 배포 구조 (Astro + React Islands · 정적 SSG / GitHub Pages)
+* **정적 빌드 및 무료 호스팅:** 백엔드 서버 없이 Astro SSG(`npm run build`)로 순수 정적 사이트(`dist/`)를 생성해 Public GitHub 저장소의 **GitHub Pages**(`https://pong3147.github.io/warhammer/`, `base: "/warhammer"`)에 GitHub Actions로 자동 배포한다. 로컬 개발·검증은 `npm run dev` / `npm run preview`를 사용한다.
+* **아일랜드 아키텍처 & 번들 분리:** 워해머 40k 개념 사전(`/glossary/`) 및 제국 코덱스(`/codex/**`) 정적 페이지는 빌드 타임 SSG로 렌더링하며 **대용량 사건·연대기 번들을 로드하지 않는다**. 인터랙티브 생애 시뮬레이션(`/`)은 코어 메타데이터를 우선 로드하고 사건·연대기 번들(`src/data/narrative.js`)을 비동기 청크로 지연 로드한다.
+* **단일 정본 ESM 모듈:** 모든 데이터(`src/data/**`)와 엔진(`src/engine/createEngine.js`)은 표준 ES Module(`export` / `import`)로 작성해 Astro SSG, React 아일랜드, Node.js QA 스위트가 동일한 단일 정본을 공유한다. 신규 사건·연대기 파일은 `src/data/events/**` · `src/data/chronicles/**`에 `export default [...]`로 배치하면 `import.meta.glob`과 QA 스위트가 자동 인식한다.
 
 ### 2.2 시각장애인 스크린 리더 접근성 (최우선 불변 원칙)
 사용자는 시각장애인으로 스크린 리더를 사용해 플레이한다. 무분별한 ARIA 남용이 아니라 **간략하고 효과적인 정보 탐색**이 핵심이다.
@@ -33,10 +33,10 @@
    * 전체 기록 전용 뷰(`전체 인생 기록서`, 나이대별 `<h3>` 장 구분 + 정렬 + 필터)를 유지한다.
    * 사건 발생 시 `<h2 id="active-event-heading" tabindex="-1">진행 중인 사건: ...</h2>`로 헤딩을 출력하고 포커스를 이동시킨다.
 2. **절제된 라이브 영역:** `#sr-live` (`aria-live="polite"`, `aria-atomic="true"`) 단 하나만 운영하며, 사용자가 끌 수 있는 `새 기록 자동 알림` 체크박스(`#chk-sr-announce`)를 유지한다.
-3. **시각 잡음 차단:** 0.1초마다 갱신되는 진행 바, 체력/신앙/오염/스탯 게이지 막대, 영문 특성치 약어, SVG 장식에는 반드시 `aria-hidden="true"`를 부여한다.
+3. **시각 잡음 차단:** 진행 바, 체력/신앙/오염/스탯 게이지 막대, 영문 특성치 약어, SVG 장식에는 반드시 `aria-hidden="true"`를 부여한다.
 4. **장식 기호 금지:** UI·로그·데이터 텍스트에 스크린 리더가 불필요하게 읽어 내리는 장식 기호(`★`, `↗`, `←`, `✓`)를 절대 넣지 않는다.
 5. **단일 문자 단축키 금지:** 스크린 리더 탐색 모드(`H`, `B`, `L`, `K` 등)와 충돌하는 단일 알파벳 단축키를 등록하지 않는다. (`Escape` 모달 닫기만 허용)
-6. **네임드 스포트라이트 접근성 및 출연 원칙:** 네임드 인물 조우 시 `<details open class="named-spotlight">` 시맨틱 요소를 사용해 사건 제목 바로 아래에서 자연스럽게 읽히고 원할 때 접을 수 있게 유지한다. 단, 스크린 리더 청취 피로와 선택지 분산을 막기 위해 일반·역사 사건은 원칙적으로 **1사건당 핵심 네임드 1인**만 스포트라이트에 배치하고, 여러 네임드의 동시 출연은 인물 간 협동·대면을 주제로 한 전용 크로스오버 스토리(`data/events/themes/named_crossover.js` 등)에 한해 적용한다.
+6. **네임드 스포트라이트 접근성 및 출연 원칙:** 네임드 인물 조우 시 `<details open class="named-spotlight">` 시맨틱 요소를 사용해 사건 제목 바로 아래에서 자연스럽게 읽히고 원할 때 접을 수 있게 유지한다. 단, 스크린 리더 청취 피로와 선택지 분산을 막기 위해 일반·역사 사건은 원칙적으로 **1사건당 핵심 네임드 1인**만 스포트라이트에 배치하고, 여러 네임드의 동시 출연은 인물 간 협동·대면을 주제로 한 전용 크로스오버 스토리(`src/data/events/themes/named_crossover.js` 등)에 한해 적용한다.
 
 ### 2.3 소프트락 원천 차단 및 IP 안전 원칙
 * **소프트락 금지:** 모든 분기 사건(`EVENTS`)과 역사 대사건(`TIMELINE`)은 `req` 조건이 없는 **무조건 선택지 최소 1개 이상**을 반드시 포함한다.
@@ -47,8 +47,8 @@
 ## 3. 서사 보강 5대 핵심 작업 방향
 
 1. **단발성 이력 태그의 연작 아크 전환:**
-   * 사건·역사 선택지로 부여되는 이력 태그(`addTags`)는 인물창 장식으로 방치하지 않고, 해당 도메인 분기 사건(`data/events/**`)과 고우선순위 일상 연대기(`data/chronicles/**`, `priority: 3`)로 회수한다.
-   * 신규 이력 태그를 추가할 때는 반드시 `data/tags.js`의 `TAG_LABELS`(행성 유형 태그는 `WORLD_TAG_LABELS`)에 한글 라벨을 등록한다.
+   * 사건·역사 선택지로 부여되는 이력 태그(`addTags`)는 인물창 장식으로 방치하지 않고, 해당 도메인 분기 사건(`src/data/events/**`)과 고우선순위 일상 연대기(`src/data/chronicles/**`, `priority: 3`)로 회수한다.
+   * 신규 이력 태그를 추가할 때는 반드시 `src/data/core/tags.js`의 `TAG_LABELS`(행성 유형 태그는 `WORLD_TAG_LABELS`)에 한글 라벨을 등록한다.
 2. **생애 주기 전체의 서사 곡선 완성:**
    * 유년기(6~13세) 성장 선택지로 14세 직무 배정 이전의 애착과 개성을 형성한다.
    * 노년기(55세 이상) 필멸자의 쇠락·회고, 그리고 `rejuvenat`·`bionic`·초인(`astartes`/`custodes`/`dreadnought`)의 초장수기(100세 이상) 세대 단절과 인간성 상실 서사를 구축한다.
@@ -73,7 +73,7 @@
 * **`forceCareer` 강등 방지:** 특정 선택지에 `forceCareer`를 부여할 때는 상위 직군 강등이나 이종 직군 충돌이 발생하지 않도록 `excludeTags`로 적용 대상을 정밀하게 제한한다.
 
 ### 4.2 진행 페이싱 · 중복 방지 · 가중치 기준
-* **진행 페이싱:** 기본 1배속 기준 `1년 = 30초` (`1년 = 3분기[상반기/중반기/하반기]`, 분기당 10초). 2배속 15초, 4배속 7.5초.
+* **진행 페이싱:** 기본 1배속 기준 `1년 = 60초` (`1년 = 3분기[상반기/중반기/하반기]`, 분기당 20.0초). 2배속 30초(분기 10.0초), 4배속 15초(분기 5.0초), 8배속 7.5초(분기 2.5초), 16배속 3.75초(분기 1.25초).
 * **중복 방지:** `once: true`가 아닌 일반 분기 사건도 `state.eventCounts`로 **한 생애 최대 2회** 상한 + 최근 14개 쿨다운(`recentEvents`)을 강제한다. 일상 연대기는 최근 28개 쿨다운(`recentChronicles`)을 적용한다.
 * **콘텐츠 가중치 기준:**
   * 희귀 이력 태그 후속 사건: `once: true`, `weight: 32~42` (획득 시 생애 내 체감 발동률 확보).
@@ -119,18 +119,19 @@
 
 ## 6. 작업 완료 필수 QA 게이트 (Definition of Done)
 
-모든 콘텐츠·코드 변경은 아래 기준에 맞춰 배치하고, `node scripts/sync-scripts.js`로 `index.html`을 동기화한 뒤 `node scripts/qa.js`의 6대 게이트를 모두 0오류로 통과해야 완료로 인정한다.
+모든 콘텐츠·코드 변경은 아래 기준에 맞춰 배치하고, `npm run verify`(`node scripts/qa.mjs` + `node scripts/audit-health.mjs` + `npm test` + `npm run build`)를 모두 0오류로 통과해야 완료로 인정한다.
 
 * **콘텐츠 배치 및 단독 파일 승격 규칙:**
-  * 모든 분할 파일은 순서 독립적 자기 등록 헤더(`window.IMPERIUM_DATA = window.IMPERIUM_DATA || {}; (window.IMPERIUM_DATA.EVENTS = window.IMPERIUM_DATA.EVENTS || []).push(...);`)를 사용한다.
-  * **분기 사건(`data/events/`):** 도메인에 맞춰 `careers/`(직군 계열), `chapters/`(챕터), `worlds/`(행성 권역), `themes/`(생애·네임드·시대·외계·카오스·초점/태그·위기)에 배치한다. 추후 외계 종족 스타팅 등 신규 대형 축은 `data/events/<신규폴더>/`로 독립 추가할 수 있다.
-  * **일상 연대기(`data/chronicles/`):** 주제별 파일(`childhood.js`, `worlds.js`, `careers.js`, `chapters.js`, `arcs_named.js`, `eras.js`, `lifecycle.js`, `general.js`) 또는 하위 폴더로 확장 배치한다.
+  * 모든 분할 사건·연대기 파일은 ESM `export default [ ... ];` 형식을 사용한다.
+  * **코어 메타데이터(`src/data/core/`):** `worlds.js`, `origins.js`, `careers.js`, `chapters.js`, `characters.js`, `timeline.js`, `tags.js` + 개념 사전 `src/data/glossary.js`.
+  * **분기 사건(`src/data/events/`):** 도메인에 맞춰 `careers/`(직군 계열), `chapters/`(챕터), `worlds/`(행성 권역), `themes/`(생애·네임드·시대·외계·카오스·초점/태그·위기)에 배치한다. 추후 외계 종족 스타팅 등 신규 대형 축은 `src/data/events/<신규폴더>/`로 독립 추가할 수 있다.
+  * **일상 연대기(`src/data/chronicles/`):** 주제별 파일(`childhood.js`, `worlds.js`, `careers.js`, `chapters.js`, `arcs_named.js`, `eras.js`, `lifecycle.js`, `general.js` 등) 또는 하위 폴더로 확장 배치한다.
   * **용량 상한 & 1:1 승격:** 단일 사건 파일이 **110KB / 2,200줄** 또는 특정 직군·행성·챕터가 **15~20건 이상** 커지면(연대기는 **70KB / 1,400줄** 초과 시) 해당 항목을 단독 파일(`careers/guardsman.js`, `worlds/cadia.js`, `chapters/ultramarines.js` 등)로 승격 분할한다.
-  * **신규 태그 등록:** 새 태그 라벨은 반드시 `data/tags.js`에 등록한다.
-* **필수 6대 QA 검증 항목 (`node scripts/qa.js`):**
-  1. `index.html`에 등록된 모든 `<script src>` 파일 실존, 로드 순서 준수, `data/events/`·`data/chronicles/` 미등록 고아 `.js` 0건, `vm.Script` 구문 오류 0건 및 파일 크기 상한 확인.
-  2. `js/ui.js`의 모든 `#id` 셀렉터가 `index.html` 또는 동적 템플릿에 존재하는지 확인(누락 0건).
-  3. 5.1 금지 구표기, 장식 기호(`★`, `↗`, `←`, `✓`), 크리그 비타-움 정합성 오류 및 한국어 조사 불일치 0건.
-  4. 전체 데이터(`WORLDS`, `CAREERS`, `CHAPTERS`, `CHARACTERS`, `TIMELINE`, `EVENTS`, `CHRONICLES`)의 ID 중복 0건(출처 파일 대조), 참조 ID(행성·직군·챕터·인물·성역·초점) 무결성 오류 0건, `TAG_LABELS` 누락 0건.
+  * **신규 태그 등록:** 새 태그 라벨은 반드시 `src/data/core/tags.js`에 등록한다.
+* **필수 QA 검증 항목 (`npm run verify` / `node scripts/qa.mjs --deep`):**
+  1. `src/data/**` 전 파일 ESM 로딩·구문 오류 0건, 파일 크기 상한 확인, CSS `@import` 차단 확인.
+  2. Astro/React 소스 정적 접근성 검사(단일 문자 단축키 0건, `#sr-live` 단일 라이브 영역, 진행 바 `aria-hidden`) + Vitest + React Testing Library 행동형 포커스·접근성 테스트(`npm test`) 전량 통과.
+  3. 5.1 금지 구표기, 장식 기호(`★`, `↗`, `←`, `✓`, `↑`, `↓`), 크리그 비타-움 정합성 오류 및 한국어 조사 불일치 0건 (`src/data/glossary.js` 및 `src/pages/**` · `src/components/**` 포함).
+  4. 전체 데이터(`WORLDS`, `CAREERS`, `CHAPTERS`, `CHARACTERS`, `TIMELINE`, `EVENTS`, `CHRONICLES`, `GLOSSARY`)의 ID 중복 0건(출처 파일 대조), 참조 ID·개념 사전 상호 링크 무결성 오류 0건, `TAG_LABELS` 누락 0건.
   5. 모든 분기·역사 사건의 소프트락 0건(무조건 선택지 최소 1개) 및 신규 사건·연대기 전 항목 조건 도달 가능성 검증.
-  6. 300생애 멀티-초점 `advanceQuarter` 스트레스 시뮬레이션 오류 0건 및 `maxRepeat <= 2` 확인 후 `PROJECT_GUIDE.md` 수치·완료 보고서 최신화.
+  6. 300생애(심층 1,500생애) 멀티-초점 `advanceQuarter` 스트레스 시뮬레이션 및 200생애 시드 퍼징(`scripts/audit-health.mjs`) 오류 0건 + `maxRepeat <= 2` + `npm run build` 정적 빌드 성공 및 정적 페이지 번들 분리 확인 후 `PROJECT_GUIDE.md` 수치·완료 보고서 최신화.
