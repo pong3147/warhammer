@@ -1082,13 +1082,369 @@ for (const ch of DATA.CHRONICLES) {
     if (!Engine.checkReq(nobleKid, { minSocialTier: "elite", anyRealms: ["civilian"], anyBodyClasses: ["mortal"] })) {
       fail(4, `Terra high-blood kid should pass elite/civilian/mortal stratification check`);
     }
+
+    // Stage 19-S2: SAVE_VERSION 4, 14-17 noble apprenticeship, admission exam & cooldowns, sworn lock & scout offer, canAccessWorld & forced travel lock, diminished growth & computeCheckPreview
+    if (Engine.SAVE_VERSION !== 4) {
+      fail(4, `Expected SAVE_VERSION === 4 for Stage 19-S2, got ${Engine.SAVE_VERSION}`);
+    }
+    const legV3 = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+    delete legV3.careerRetryAfter;
+    delete legV3.lastCareerChangeYear;
+    legV3.saveVersion = 3;
+    const migV4 = Engine.migrateState(legV3);
+    if (!migV4 || migV4.saveVersion !== 4 || typeof migV4.careerRetryAfter !== "object" || migV4.lastCareerChangeYear !== -999) {
+      fail(4, `SAVE_VERSION 3 -> 4 migration failed for careerRetryAfter/lastCareerChangeYear`);
+    }
+
+    // Rule 1: planetary_noble stays child during ages 14-18 (allows minAge:18 institutions!), auto-assigns administratum at age 19; navigator still assigns at 14
+    const nob14 = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "planetary_noble", traitId: "none", eraId: "armageddon", gender: "male" });
+    nob14.age = 13;
+    nob14.quarter = 3;
+    nob14.year = nob14.birthYear + 13;
+    Engine.advanceQuarter(nob14);
+    if (nob14.age !== 14 || nob14.careerId !== "child") {
+      fail(4, `Planetary noble should remain child during 14-18 apprenticeship, got careerId=${nob14.careerId}`);
+    }
+    nob14.pendingEvent = null;
+    nob14.age = 17;
+    nob14.quarter = 3;
+    nob14.year = nob14.birthYear + 17;
+    nob14.wounds = 100;
+    Engine.advanceQuarter(nob14);
+    if (nob14.age !== 18 || nob14.careerId !== "child") {
+      fail(4, `Planetary noble at age 18 should still have full age-18 window to choose minAge:18 institutions, got ${nob14.careerId}`);
+    }
+    nob14.pendingEvent = null;
+    nob14.age = 18;
+    nob14.quarter = 3;
+    nob14.year = nob14.birthYear + 18;
+    nob14.wounds = 100;
+    Engine.advanceQuarter(nob14);
+    if (nob14.age !== 19 || nob14.careerId !== "administratum") {
+      fail(4, `Planetary noble still child entering age 19 should auto-assign to administratum, got ${nob14.careerId}`);
+    }
+    const nav14 = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "navigator_house", traitId: "none", eraId: "armageddon", gender: "female" });
+    nav14.age = 13;
+    nav14.quarter = 3;
+    nav14.year = nav14.birthYear + 13;
+    Engine.advanceQuarter(nav14);
+    if (nav14.careerId !== "nav_apprentice") {
+      fail(4, `Navigator origin should auto-assign to nav_apprentice at 14, got ${nav14.careerId}`);
+    }
+
+    // Rule 2: Non-lethal d100 admission exam (40-88%), 2-yr retry cooldown, 2-yr minimum service cooldown, sworn horizontal lock, closed-vow guard, psyker demotion guard & scout offer exemption
+    const appSt = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+    appSt.age = 20;
+    appSt.year = 960;
+    appSt.careerId = "menial_worker";
+    appSt.careerHistory = ["child", "menial_worker"];
+    appSt.stats = { WS: 42, BS: 42, T: 42, Ag: 42, Int: 46, WP: 44, Fel: 42, Inf: 55 };
+    const admPrev = Engine.getAdmissionPreview(appSt, "administratum");
+    if (!admPrev || admPrev.target < 40 || admPrev.target > 88) {
+      fail(4, `getAdmissionPreview target out of [40,88] range: ${JSON.stringify(admPrev)}`);
+    }
+    Math.random = () => 0.99; // force admission failure
+    let admFailRes;
+    try {
+      admFailRes = Engine.attemptCareerChange(appSt, "administratum");
+    } finally {
+      Math.random = origRand;
+    }
+    if (!admFailRes || admFailRes.ok || !admFailRes.denied || !appSt.alive || appSt.careerRetryAfter.administratum !== 962) {
+      fail(4, `Admission failure must be non-lethal and set 2-yr retry cooldown: ${JSON.stringify(admFailRes)}`);
+    }
+    const retryBlocked = Engine.attemptCareerChange(appSt, "administratum");
+    if (retryBlocked.ok || !retryBlocked.cooldown) {
+      fail(4, `Immediate retry after admission failure was not blocked by 2-yr retry cooldown`);
+    }
+    appSt.year = 962;
+    Math.random = () => 0.01; // force admission pass
+    let admPassRes;
+    try {
+      admPassRes = Engine.attemptCareerChange(appSt, "administratum");
+    } finally {
+      Math.random = origRand;
+    }
+    if (!admPassRes || !admPassRes.ok || appSt.careerId !== "administratum" || appSt.lastCareerChangeYear !== 962) {
+      fail(4, `Admission pass failed to join administratum and record lastCareerChangeYear: ${JSON.stringify(admPassRes)}`);
+    }
+    // Sworn institution horizontal shopping must be blocked manually even after cooldown
+    appSt.year = 965;
+    appSt.stats.WP = 55;
+    appSt.stats.WS = 55;
+    appSt.stats.Inf = 58;
+    const horizBlocked = Engine.attemptCareerChange(appSt, "arbites");
+    if (horizBlocked.ok || Engine.isManualCareerAllowed(appSt, Engine.getCareer("arbites"))) {
+      fail(4, `Sworn institution (administratum) was allowed manual horizontal transfer to arbites`);
+    }
+    // Previously held career repeat must be rejected in attemptCareerChange
+    const repeatBlocked = Engine.attemptCareerChange(appSt, "menial_worker");
+    if (repeatBlocked.ok) {
+      fail(4, `attemptCareerChange allowed re-joining previously held career menial_worker`);
+    }
+    // Apex Tier 5/6 latent psyker must NOT be allowed to manually demote into Tier-3 sanctioned_psyker
+    const apexPsy = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "planetary_noble", traitId: "psyker", eraId: "armageddon", gender: "male" });
+    apexPsy.age = 45;
+    apexPsy.careerId = "inquisitor";
+    apexPsy.stats.WP = 70;
+    if (Engine.isManualCareerAllowed(apexPsy, Engine.getCareer("sanctioned_psyker"))) {
+      fail(4, `Tier 5 inquisitor was allowed manual demotion into Tier 3 sanctioned_psyker`);
+    }
+    // Closed-vow order (mechanicus) must NOT be scouted into unrelated mundane careers like arbites
+    const mechSt = Engine.createCharacter({ mode: "custom", worldId: "mars", originId: "mechanicus_menial", traitId: "none", eraId: "armageddon", gender: "male" });
+    mechSt.age = 24;
+    mechSt.year = 960;
+    mechSt.careerId = "skitarii";
+    mechSt.careerHistory = ["child", "skitarii"];
+    mechSt.tags.push("mechanicus", "bionic");
+    mechSt.stats = { WS: 50, BS: 50, T: 50, Ag: 50, Int: 55, WP: 55, Fel: 50, Inf: 60 };
+    const badScout = Engine.createDynamicCareerOfferEvent(mechSt, null, { forceOffer: true, ignoreCooldown: true, targetCareerId: "arbites" });
+    if (badScout && badScout.offeredCareerId === "arbites") {
+      fail(4, `Closed-vow Skitarii was poached into unrelated arbites via Scout Invitation`);
+    }
+    // Same-tree 2-yr minimum service cooldown enforcement
+    appSt.lastCareerChangeYear = 965;
+    appSt.careerId = "astra_militarum";
+    appSt.careerHistory = ["child", "astra_militarum"];
+    appSt.stats = { WS: 50, BS: 50, T: 50, Ag: 50, Int: 50, WP: 50, Fel: 50, Inf: 55 };
+    const servBlocked = Engine.attemptCareerChange(appSt, "militarum_sergeant");
+    if (servBlocked.ok || !servBlocked.cooldown) {
+      fail(4, `Same-tree manual promotion within 2-yr minimum service period was not blocked`);
+    }
+    // Dynamic Scout Invitation bypasses manual horizontal lock & 2-yr service cooldown
+    const scoutEv = Engine.createDynamicCareerOfferEvent(appSt, null, { forceOffer: true, ignoreCooldown: true, targetCareerId: "arbites" });
+    if (!scoutEv || !scoutEv.isScoutOffer || scoutEv.offeredCareerId !== "arbites") {
+      fail(4, `createDynamicCareerOfferEvent failed to generate cross-institution Scout Invitation for arbites`);
+    }
+    appSt.pendingEvent = scoutEv;
+    Engine.resolvePendingChoice(appSt, 0);
+    if (appSt.careerId !== "arbites") {
+      fail(4, `Accepting Scout Invitation did not bypass manual lock and transition to arbites`);
+    }
+
+    // Rule 3: canAccessWorld matrix (Treaty of Mars, Imperial Fists Terra, Chapter homeworlds), forced-duty travel lock, Chaos transit isolation, noble Inf scope, 4yr/3yr cooldown
+    const civTrav = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+    civTrav.age = 24;
+    civTrav.year = 950;
+    civTrav.careerId = "menial_worker";
+    civTrav.faith = 40;
+    civTrav.stats.Inf = 25;
+    for (const restrictedId of ["baal", "fenris", "nocturne", "terra", "mars", "krieg", "catachan"]) {
+      if (Engine.canAccessWorld(civTrav, restrictedId).allowed) {
+        fail(4, `Ordinary civilian (faith 40, Inf 25) should be denied access to ${restrictedId}`);
+      }
+    }
+    if (!Engine.canAccessWorld(civTrav, "armageddon").allowed) {
+      fail(4, `Ordinary civilian should be allowed access to armageddon`);
+    }
+    // Blood Angels chapter match -> Baal allowed, Fenris denied; Imperial Fists scout -> Terra allowed
+    const baSt = Engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+    baSt.age = 60;
+    baSt.year = 950;
+    baSt.careerId = "astartes_brother";
+    baSt.chapterId = "blood_angels";
+    baSt.tags.push("astartes", "transhuman");
+    if (!Engine.canAccessWorld(baSt, "baal").allowed || Engine.canAccessWorld(baSt, "fenris").allowed) {
+      fail(4, `Blood Angels brother access mismatch (baal allowed, fenris denied in peacetime)`);
+    }
+    const ifScout = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "imperial_citizen", traitId: "geneseed_compatible", eraId: "armageddon", gender: "male" });
+    ifScout.age = 17;
+    ifScout.careerId = "astartes_scout";
+    ifScout.chapterId = "imperial_fists";
+    if (!Engine.canAccessWorld(ifScout, "terra").allowed) {
+      fail(4, `Imperial Fists scout should be allowed access to Terra`);
+    }
+    // Noble with Inf >= 45 -> Terra & Mars allowed, galaxy scope; Inf < 45 -> near scope & Terra/Mars denied
+    const nobTrav = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "planetary_noble", traitId: "none", eraId: "armageddon", gender: "female" });
+    nobTrav.age = 22;
+    nobTrav.year = 950;
+    nobTrav.careerId = "menial_worker";
+    nobTrav.faith = 40;
+    nobTrav.stats.Inf = 38;
+    if (Engine.getTravelProfile(nobTrav).scope !== "near" || Engine.canAccessWorld(nobTrav, "terra").allowed || Engine.canAccessWorld(nobTrav, "mars").allowed) {
+      fail(4, `Noble with Inf 38 should have near scope and be denied Terra/Mars petition`);
+    }
+    nobTrav.stats.Inf = 48;
+    if (Engine.getTravelProfile(nobTrav).scope !== "galaxy" || !Engine.canAccessWorld(nobTrav, "terra").allowed || !Engine.canAccessWorld(nobTrav, "mars").allowed) {
+      fail(4, `Noble with Inf 48 should have galaxy scope and pass Terra/Mars petition`);
+    }
+    // Devout pilgrimage (faith >= 65) unlocks Terra, but Treaty of Mars blocks Imperial Cult pilgrimage on Mars
+    civTrav.faith = 68;
+    if (!Engine.canAccessWorld(civTrav, "terra").allowed || Engine.canAccessWorld(civTrav, "mars").allowed) {
+      fail(4, `Devout citizen (faith 68) must be allowed on Terra and denied Imperial Cult pilgrimage on Mars (Treaty of Mars)`);
+    }
+    // Forced-duty soldier travel locked manually
+    const grdLock = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "militarum_family", traitId: "none", eraId: "armageddon", gender: "male" });
+    grdLock.age = 20;
+    grdLock.careerId = "astra_militarum";
+    const grdProf = Engine.getTravelProfile(grdLock);
+    if (grdProf.canAttempt || !grdProf.forcedLock || Engine.getTravelCandidateWorlds(grdLock).length !== 0) {
+      fail(4, `Forced-duty astra_militarum must lock manual travel selection`);
+    }
+    // Cooldown 4yr for mid, 3yr for autonomous
+    const midCd = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+    midCd.age = 25;
+    midCd.year = 963;
+    midCd.lastTravelYear = 960;
+    midCd.careerId = "imperial_navy";
+    if (Engine.getTravelProfile(midCd).canAttempt) {
+      fail(4, `Mid-tier travel cooldown must be 4 years (year 963 after 960 should still be blocked)`);
+    }
+    midCd.careerId = "rogue_trader";
+    if (!Engine.getTravelProfile(midCd).canAttempt) {
+      fail(4, `Autonomous travel cooldown must be 3 years (year 963 after 960 should be open)`);
+    }
+
+    // Pillar 4: Zero-decay diminished stat gain & computeCheckPreview SSOT (90% cap + modifiers + Chaos corruption exemption)
+    const dimSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+    dimSt.careerId = "menial_worker";
+    dimSt.stats.Inf = 86;
+    const passAt86 = Engine.applyDiminishedStatGain(dimSt, "Inf", 2, "passive");
+    if (passAt86 !== 0 || dimSt.stats.Inf !== 86) {
+      fail(4, `Non-specialty mortal passive gain at 86 must be 0 (zero decay), got delta=${passAt86}`);
+    }
+    dimSt.stats.Inf = 92;
+    const evAt92 = Engine.applyDiminishedStatGain(dimSt, "Inf", 1, "event");
+    if (evAt92 < 1 || dimSt.stats.Inf !== 93) {
+      fail(4, `Branching event gain at 92 must still grant at least +1 (Tier 6 reachability), got delta=${evAt92}`);
+    }
+    const chkSt = Engine.createCharacter({ mode: "custom", worldId: "baal", originId: "planetary_noble", traitId: "none", eraId: "indomitus", gender: "male" });
+    chkSt.age = 45;
+    chkSt.careerId = "inquisitor"; // Tier 5 -> 고위 난제 -9
+    chkSt.wounds = 40; // 부상 -8
+    chkSt.corruption = 50; // 워프 오염 -8
+    chkSt.tags.push("inquisitor", "imperial_nihilus"); // 임페리움 니힐루스 -5
+    chkSt.stats.Int = 95;
+    const prevCheck = Engine.computeCheckPreview(chkSt, { stat: "Int", diff: 0 });
+    if (prevCheck.modifiers.length !== 4 || prevCheck.target !== 65) {
+      fail(4, `computeCheckPreview situational modifiers mismatch (Tier 5): ${JSON.stringify(prevCheck)}`);
+    }
+    chkSt.careerId = "inquisition_interrogator"; // Tier 4 -> 고위 난제 -5
+    const prevCheckT4 = Engine.computeCheckPreview(chkSt, { stat: "Int", diff: 0 });
+    if (prevCheckT4.modifiers.length !== 4 || prevCheckT4.target !== 69) {
+      fail(4, `computeCheckPreview situational modifiers mismatch (Tier 4): ${JSON.stringify(prevCheckT4)}`);
+    }
+    // Chaos Lord at high corruption must NOT receive corruption penalty
+    chkSt.careerId = "chaos_lord";
+    chkSt.wounds = 100;
+    chkSt.corruption = 85;
+    chkSt.tags = ["heretic", "chaos_aligned", "chaos_lord"];
+    const chaosPrev = Engine.computeCheckPreview(chkSt, { stat: "WP", diff: 0 });
+    if (chaosPrev.modifiers.some((m) => m.label.includes("오염"))) {
+      fail(4, `Chaos Lord should be exempt from corruption check penalty: ${JSON.stringify(chaosPrev)}`);
+    }
+    chkSt.wounds = 100;
+    chkSt.corruption = 0;
+    chkSt.tags = [];
+    chkSt.careerId = "menial_worker";
+    chkSt.stats.Int = 100;
+    const capPrev = Engine.computeCheckPreview(chkSt, { stat: "Int", diff: 20 });
+    const capRoll = Engine.rollD100(chkSt, { stat: "Int", diff: 20 });
+    if (capPrev.target !== 90 || !capPrev.capped || capRoll.target !== capPrev.target) {
+      fail(4, `computeCheckPreview cap/SSOT sync failed: preview=${capPrev.target}, roll=${capRoll.target}`);
+    }
+
+    // Red-Team P1-1: getContextualOptions must pass real alignInfo (with .dominant) to isCareerTransitionBlocked
+    const humGang = Engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "underhive_scum", traitId: "none", eraId: "armageddon", gender: "male" });
+    humGang.age = 22;
+    humGang.year = 962;
+    humGang.careerId = "underhive_ganger";
+    humGang.careerHistory = ["child", "underhive_ganger"];
+    humGang.stats = { WS: 55, BS: 45, T: 45, Ag: 50, Int: 40, WP: 45, Fel: 50, Inf: 55 };
+    humGang.alignment = { humane: 35, dogmatic: 0, ruthless: 0 };
+    const humOpts = Engine.getContextualOptions(humGang);
+    if (humOpts.unlockedCareers.some((c) => c.id === "underhive_boss")) {
+      fail(4, `Humane underhive_ganger must NOT see underhive_boss in getContextualOptions.unlockedCareers`);
+    }
+    humGang.careerId = "underhive_boss";
+    humGang.age = 30;
+    const humBossOpts = Engine.getContextualOptions(humGang);
+    if (humBossOpts.readyEventCareers.some((c) => c.id === "hive_crime_lord")) {
+      fail(4, `Humane underhive_boss must NOT see hive_crime_lord in getContextualOptions.readyEventCareers`);
+    }
+
+    // Red-Team P1-2: Closed-vow orders blocked from event-mode cross-offers (crime lord/governor/general) and manual rt_seneschal escape
+    const sorTest = Engine.createCharacter({ mode: "custom", worldId: "ophelia7", originId: "planetary_noble", traitId: "none", eraId: "armageddon", gender: "female" });
+    sorTest.age = 30;
+    sorTest.year = 970;
+    sorTest.careerId = "adepta_sororitas";
+    sorTest.careerHistory = ["child", "sororitas_novitiate", "adepta_sororitas"];
+    sorTest.tags.push("sororitas", "rogue_trader_blood");
+    sorTest.stats = { WS: 62, BS: 55, T: 55, Ag: 52, Int: 55, WP: 65, Fel: 62, Inf: 65 };
+    sorTest.alignment = { humane: 0, dogmatic: 0, ruthless: 45 };
+    if (Engine.isManualCareerAllowed(sorTest, Engine.getCareer("rt_seneschal"))) {
+      fail(4, `Closed-vow adepta_sororitas must NOT be allowed manual rt_seneschal transition`);
+    }
+    const sorCrimeOffer = Engine.createDynamicCareerOfferEvent(sorTest, null, { forceOffer: true, ignoreCooldown: true, targetCareerId: "hive_crime_lord" });
+    if (sorCrimeOffer && sorCrimeOffer.offeredCareerId === "hive_crime_lord") {
+      fail(4, `Closed-vow adepta_sororitas must NOT receive hive_crime_lord offer`);
+    }
+    const kngTest = Engine.createCharacter({ mode: "custom", worldId: "generic_knight", originId: "knight_house", traitId: "none", eraId: "armageddon", gender: "male" });
+    kngTest.age = 45;
+    kngTest.year = 975;
+    kngTest.careerId = "knight_scion";
+    kngTest.careerHistory = ["child", "knight_squire", "knight_scion"];
+    kngTest.tags.push("imperial_knight", "imperial_military", "noble");
+    kngTest.stats = { WS: 75, BS: 65, T: 65, Ag: 60, Int: 78, WP: 75, Fel: 80, Inf: 90 };
+    const kngGovOffer = Engine.createDynamicCareerOfferEvent(kngTest, null, { forceOffer: true, ignoreCooldown: true, targetCareerId: "planetary_governor" });
+    if (kngGovOffer && kngGovOffer.offeredCareerId === "planetary_governor") {
+      fail(4, `Closed-vow knight_scion must NOT receive planetary_governor offer`);
+    }
+    const kngGenOffer = Engine.createDynamicCareerOfferEvent(kngTest, null, { forceOffer: true, ignoreCooldown: true, targetCareerId: "militarum_general" });
+    if (kngGenOffer && kngGenOffer.offeredCareerId === "militarum_general") {
+      fail(4, `Closed-vow knight_scion must NOT receive militarum_general offer`);
+    }
+
+    // Red-Team P1-3: Survived dynamic trialFailFor must set 2-yr careerRetryAfter blocking same-quarter manual retry
+    const triSt = Engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+    triSt.age = 16;
+    triSt.year = 956;
+    triSt.careerId = "pdf_trooper";
+    triSt.wounds = 100;
+    triSt.stats = { WS: 60, BS: 55, T: 60, Ag: 55, Int: 45, WP: 55, Fel: 40, Inf: 35 };
+    triSt.pendingEvent = Engine.createDynamicCareerOfferEvent(triSt, null, { forceOffer: true, ignoreCooldown: true, targetCareerId: "astartes_scout" });
+    if (triSt.pendingEvent && triSt.pendingEvent.offeredCareerId === "astartes_scout") {
+      const savedRnd = Math.random;
+      Math.random = () => 0.99; // fail d100 trialCheck AND survive failDeathChance (< 0.25)
+      try {
+        Engine.resolvePendingChoice(triSt, 0);
+      } finally {
+        Math.random = savedRnd;
+      }
+      if (!triSt.alive || triSt.careerRetryAfter.astartes_scout !== 958) {
+        fail(4, `Survived dynamic trialFailFor must set careerRetryAfter to year+2 (958), got alive=${triSt.alive}, retry=${triSt.careerRetryAfter.astartes_scout}`);
+      }
+      const sameQRetry = Engine.attemptCareerChange(triSt, "astartes_scout");
+      if (sameQRetry.ok || !sameQRetry.cooldown) {
+        fail(4, `Same-quarter manual retry after failed dynamic trialCheck must be blocked by cooldown: ${JSON.stringify(sameQRetry)}`);
+      }
+    }
+
+    // Red-Team P2-4: Feral world commoner travel blocked + Tanith pre-destruction warp time-dilation blocked
+    const feralSt = Engine.createCharacter({ mode: "custom", worldId: "generic_feral", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+    feralSt.age = 22;
+    feralSt.careerId = "menial_worker";
+    feralSt.stats.Inf = 35;
+    if (Engine.getTravelProfile(feralSt).canAttempt) {
+      fail(4, `Commoner on generic_feral must not be allowed manual pilgrim ship travel`);
+    }
+    const tanithWorld = Engine.getWorld("tanith");
+    const tanSt = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "militarum_family", traitId: "none", eraId: "sabbat", gender: "male" });
+    tanSt.year = 764;
+    tanSt.age = 24;
+    for (let k = 0; k < 20; k++) {
+      const warpEv = Engine.createWarpAnomalyTransitEvent(tanSt, tanithWorld);
+      if (warpEv && warpEv.id && warpEv.id.includes("dilation")) {
+        fail(4, `Tanith warp anomaly at year 764 must NOT trigger time dilation past destroyedYear 765`);
+      }
+    }
   }
 }
 
-console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-19S1 guards verified.`);
+console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-19S2 guards verified.`);
 
 // ============================================================================
-// Gate 4P: 14종 대표 페르소나 신분·생활권·신체 정합성 & 최소 풀 하한(>= 8) 검증
+// Gate 4P: 15종 대표 페르소나 + 타 행성 방문·성인 귀족 신분·생활권·신체 정합성 & 최소 풀 하한(>= 8) 검증
 // ============================================================================
 {
   const makePersonaState = (opts) => {
@@ -1114,33 +1470,34 @@ console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).leng
     return st;
   };
 
-  const NOBLE_KID_BAN = /시체 전분|배급 통조림|배급소에 줄|양철 식기|훔친.*배급빵|장터 골목|장터 구석|구역 광장|동네 광장|구역 메디카에|낡은 주사기|골목을 뛰어|물펌프|심부름을 도맡|돌팔매|새총|하층 하이브의 유독 매연|로우 고딕 낱말/;
+  const NOBLE_KID_BAN = /시체 전분|배급 통조림|배급소에 줄|양철 식기|훔친.*배급빵|장터 골목|장터 구석|구역 광장|동네 광장|구역 메디카에|낡은 주사기|골목을 뛰어|물펌프|심부름을 도맡|돌팔매|새총|하층 하이브의 유독 매연|로우 고딕 낱말|합성 배급표/;
   const SCHOLA_KID_BAN = /어머니|아버지|부모님|엄마|아빠|가족 식탁|가정식|배급 통조림|배급소에 줄|양철 식기|훔친.*배급빵|장터 골목|장터 구석|동네 광장|구역 메디카에|골목을 뛰어|물펌프|심부름을 도맡|돌팔매|새총/;
   const KRIEG_KID_BAN = /어머니|아버지|부모님|자장가|가족 식탁|가정식|엄마|아빠|장터|숨바꼭질|골목을 뛰어|배급 통조림/;
   const VOID_KID_BAN = /들판|숲|산성비|비바람|계절이 바뀔|악천후|밤하늘을 가로지르는|돌팔매|새총|동네 광장|구역 광장|구역의 작은 신당|장터 골목|골목을 뛰어/;
-  const ASTARTES_BAN = /시체 전분|배급소|배급표|세입자|강제 징발|증조부|증조할아버지|구걸|결근|노점상|화장실|상관의 취향|아마섹.*상납|울부짖으며|겁에 질려 도망|혼인|결혼|동기들이 하나둘 앓아/;
-  const DREADNOUGHT_BAN = /시체 전분|배급소|배급표|식당|술잔|선술집|침상|침대|구두|장화|손가락|세수|거울 속 내 눈동자|전술 드레드노트 아머|크룩스 테르미나투스|파워 아머 앞에|드롭 포드 안전벨트|볼터의 약실을 직접|동기들이 하나둘 앓아|상관의 취향/;
-  const CUSTODES_BAN = /시체 전분|배급소|배급표|강제 징발|증조부|증조할아버지|구걸|결근|세입자|노점상|화장실|상관의 취향|서보스컬이 골목|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|동기들이 하나둘 앓아|수천 년 전 포도주를 곁들이/;
-  const GK_BAN = /시체 전분|배급소|배급표|강제 징발|증조부|증조할아버지|구걸|결근|세입자|노점상|화장실|상관의 취향|서보스컬이 골목|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|동기들이 하나둘 앓아|순례자 가족을 보았다|순례자들을 청소 서비터/;
-  const HIGH_LORD_BAN = /시체 전분|배급소|배급표|배급된 회색|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|서보스컬이 골목|하층 4개 구역의 식수|전표 4,000장에 붉은 밀랍|전임 하이 로드의 서명|옆 책상에서 50년째|다음 책상으로 넘겼다|암시장 중개인|상관의 취향|사흘을 굶었다/;
-  const SAINT_BAN = /시체 전분|배급소|배급표|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|서보스컬이 골목|상관의 취향|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|암시장 중개인|암시장 자극제|소모품 인력을 미리|동료를 제물로|난민의 마지막 재산|쉰다섯을 넘긴 노구|리주버냇|수명 연장 시술 제안|동기들이 하나둘 앓아|직무 유기로 고발|교대 근무가 끝난/;
-  const DP_BAN = /시체 전분|배급소|배급표|배급된 회색|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|황제께 맹세|아퀼라 성호|성수를 뿌|기도문을 외|아르비테스.*끌려|쥐고기 꼬치|쉰다섯을 넘긴 노구|서툴게 경례|선술집|동기들이 하나둘 앓아|방독면 필터|탐조등 점등|성당 사제가 미사|향불 냄새가 역겹.*고개를 숙였다|교대 시각을 알/;
+  const ASTARTES_BAN = /시체 전분|배급소|배급표|세입자|강제 징발|증조부|증조할아버지|구걸|결근|노점상|화장실|상관의 취향|아마섹.*상납|울부짖으며|겁에 질려 도망|혼인|결혼|동기들이 하나둘 앓아|두꺼비가 튀어나와|사막 전갈을 구워|야전삽 하나로 4시간|식당에 2,000명/;
+  const DREADNOUGHT_BAN = /시체 전분|배급소|배급표|식당|술잔|선술집|침상|침대|구두|장화|손가락|세수|거울 속 내 눈동자|전술 드레드노트 아머|크룩스 테르미나투스|파워 아머 앞에|드롭 포드 안전벨트|볼터의 약실을 직접|동기들이 하나둘 앓아|상관의 취향|두꺼비가 튀어나와|사막 전갈을 구워|야전삽 하나로 4시간|생체 폐를 유지/;
+  const CUSTODES_BAN = /시체 전분|배급소|배급표|강제 징발|증조부|증조할아버지|구걸|결근|세입자|노점상|화장실|상관의 취향|서보스컬이 골목|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|동기들이 하나둘 앓아|수천 년 전 포도주를 곁들이|두꺼비가 튀어나와|사막 전갈을 구워|야전삽 하나로 4시간|식당에 2,000명|생체 폐를 유지/;
+  const GK_BAN = /시체 전분|배급소|배급표|강제 징발|증조부|증조할아버지|구걸|결근|세입자|노점상|화장실|상관의 취향|서보스컬이 골목|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|동기들이 하나둘 앓아|순례자 가족을 보았다|순례자들을 청소 서비터|두꺼비가 튀어나와|사막 전갈을 구워|야전삽 하나로 4시간|식당에 2,000명/;
+  const HIGH_LORD_BAN = /시체 전분|배급소|배급표|배급된 회색|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|서보스컬이 골목|하층 4개 구역의 식수|전표 4,000장에 붉은 밀랍|전임 하이 로드의 서명|옆 책상에서 50년째|다음 책상으로 넘겼다|암시장 중개인|상관의 취향|사흘을 굶었다|배급 빵 두 덩이/;
+  const SAINT_BAN = /시체 전분|배급소|배급표|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|서보스컬이 골목|상관의 취향|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|암시장 중개인|암시장 자극제|소모품 인력을 미리|동료를 제물로|난민의 마지막 재산|쉰다섯을 넘긴 노구|리주버냇|수명 연장 시술 제안|동기들이 하나둘 앓아|직무 유기로 고발|교대 근무가 끝난|배급 빵 두 덩이/;
+  const DP_BAN = /시체 전분|배급소|배급표|배급된 회색|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|황제께 맹세|아퀼라 성호|성수를 뿌|기도문을 외|아르비테스.*끌려|쥐고기 꼬치|쉰다섯을 넘긴 노구|서툴게 경례|선술집|동기들이 하나둘 앓아|방독면 필터|탐조등 점등|성당 사제가 미사|향불 냄새가 역겹.*고개를 숙였다|교대 시각을 알|두꺼비가 튀어나와|사막 전갈을 구워|야전삽 하나로 4시간|식당에 2,000명/;
 
   const personas = [
     { id: "terra_high_kid", label: "테라 고위 귀족 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "terra", originId: "terra_high_blood" }, ban: NOBLE_KID_BAN },
     { id: "hive_noble_kid", label: "하이브 귀족 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "necromunda", originId: "planetary_noble" }, ban: NOBLE_KID_BAN },
+    { id: "rt_scion_kid", label: "로그 트레이더 방계 유아 (하이브 출생)", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "void", bodyClass: "mortal" }, cfg: { worldId: "generic_hive", originId: "rogue_trader_scion" }, ban: new RegExp(NOBLE_KID_BAN.source + "|" + VOID_KID_BAN.source) },
     { id: "schola_kid", label: "스콜라 유아", ages: [2, 5, 8, 11], expected: { socialTier: "common", lifeRealm: "cloistered", bodyClass: "mortal" }, cfg: { worldId: "ophelia7", originId: "schola_progenium" }, ban: SCHOLA_KID_BAN, clean: (t) => t.replace(/순직한 부모/g, "") },
     { id: "knight_kid", label: "기사 가문 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "generic_knight", originId: "knight_house" }, ban: NOBLE_KID_BAN },
     { id: "nav_kid", label: "항법사 가문 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "cloistered", bodyClass: "mortal" }, cfg: { worldId: "terra", originId: "navigator_house" }, ban: new RegExp(NOBLE_KID_BAN.source + "|정상 인류' 판정") },
     { id: "krieg_kid", label: "크리그 유아", ages: [2, 5, 8, 11], expected: { socialTier: "common", lifeRealm: "military", bodyClass: "mortal" }, cfg: { worldId: "krieg", originId: "imperial_citizen" }, ban: KRIEG_KID_BAN, clean: (t) => t.replace(/어머니의 품 대신/g, "") },
     { id: "void_kid", label: "보이드본 유아", ages: [2, 5, 8, 11], expected: { socialTier: "common", lifeRealm: "void", bodyClass: "mortal" }, cfg: { worldId: "voidborn", originId: "imperial_citizen" }, ban: VOID_KID_BAN },
-    { id: "astartes", label: "아스타르테스", ages: [80], expected: { socialTier: "apex", lifeRealm: "military", bodyClass: "transhuman" }, cfg: { worldId: "macragge", originId: "imperial_citizen", careerId: "astartes_brother", chapterId: "ultramarines", tags: ["astartes", "transhuman", "battle_brother"], stats: { WS: 75, BS: 75, T: 75, WP: 75, Inf: 55 } }, ban: ASTARTES_BAN },
-    { id: "dreadnought", label: "드레드노트", ages: [220], expected: { socialTier: "apex", lifeRealm: "military", bodyClass: "dreadnought" }, cfg: { worldId: "macragge", originId: "imperial_citizen", careerId: "astartes_veteran", chapterId: "ultramarines", tags: ["astartes", "transhuman", "dreadnought", "battle_brother"], stats: { WS: 80, BS: 78, T: 85, WP: 82, Inf: 65 } }, ban: DREADNOUGHT_BAN },
-    { id: "custodes", label: "쿠스토데스", ages: [120], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "terra", originId: "terra_high_blood", careerId: "adeptus_custodes", tags: ["custodes", "transhuman"], stats: { WS: 90, BS: 85, T: 90, WP: 90, Int: 85, Inf: 80 } }, ban: CUSTODES_BAN },
-    { id: "grey_knight", label: "그레이 나이트", ages: [90], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "terra", originId: "imperial_citizen", traitId: "psyker", careerId: "grey_knight", tags: ["astartes", "grey_knight", "transhuman"], faith: 90, stats: { WS: 80, BS: 75, T: 80, WP: 90, Int: 75, Inf: 65 } }, ban: GK_BAN },
+    { id: "astartes", label: "아스타르테스", ages: [80], expected: { socialTier: "apex", lifeRealm: "military", bodyClass: "transhuman" }, cfg: { worldId: "macragge", originId: "imperial_citizen", careerId: "astartes_brother", chapterId: "ultramarines", tags: ["astartes", "transhuman", "battle_brother"], stats: { WS: 75, BS: 75, T: 75, WP: 75, Inf: 55 } }, ban: ASTARTES_BAN, visitWorlds: ["krieg", "catachan", "baal", "mars"] },
+    { id: "dreadnought", label: "드레드노트", ages: [220], expected: { socialTier: "apex", lifeRealm: "military", bodyClass: "dreadnought" }, cfg: { worldId: "macragge", originId: "imperial_citizen", careerId: "astartes_veteran", chapterId: "ultramarines", tags: ["astartes", "transhuman", "dreadnought", "battle_brother"], stats: { WS: 80, BS: 78, T: 85, WP: 82, Inf: 65 } }, ban: DREADNOUGHT_BAN, visitWorlds: ["krieg", "catachan", "baal", "mars"] },
+    { id: "custodes", label: "쿠스토데스", ages: [120], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "terra", originId: "terra_high_blood", careerId: "adeptus_custodes", tags: ["custodes", "transhuman"], stats: { WS: 90, BS: 85, T: 90, WP: 90, Int: 85, Inf: 80 } }, ban: CUSTODES_BAN, visitWorlds: ["krieg", "catachan", "baal", "mars"] },
+    { id: "grey_knight", label: "그레이 나이트", ages: [90], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "terra", originId: "imperial_citizen", traitId: "psyker", careerId: "grey_knight", tags: ["astartes", "grey_knight", "transhuman"], faith: 90, stats: { WS: 80, BS: 75, T: 80, WP: 90, Int: 75, Inf: 65 } }, ban: GK_BAN, visitWorlds: ["krieg", "catachan", "baal"] },
     { id: "high_lord", label: "테라 하이 로드", ages: [62], expected: { socialTier: "apex", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "terra", originId: "planetary_noble", careerId: "master_of_administratum", tags: ["administratum", "high_lord_terra"], stats: { Int: 92, Fel: 88, WP: 84, Inf: 96 } }, ban: HIGH_LORD_BAN },
     { id: "living_saint", label: "살아 있는 성인", ages: [65], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "ophelia7", originId: "ecclesiarchy_novice", traitId: "emperor_blessed", careerId: "living_saint", gender: "female", faith: 98, tags: ["living_miracle", "saint_vessel", "living_saint", "transhuman"], stats: { WS: 85, WP: 98, Fel: 90, Inf: 88 } }, ban: SAINT_BAN },
-    { id: "daemon_prince", label: "데몬 프린스", ages: [150], expected: { socialTier: "apex", lifeRealm: "heretic", bodyClass: "daemonic" }, cfg: { worldId: "necromunda", originId: "underhive_scum", careerId: "daemon_prince", corruption: 95, faith: 0, tags: ["heretic", "chaos_aligned", "mark_khorne", "daemon_prince", "transhuman"], stats: { WS: 95, T: 92, WP: 88, Inf: 85 } }, ban: DP_BAN }
+    { id: "daemon_prince", label: "데몬 프린스", ages: [150], expected: { socialTier: "apex", lifeRealm: "heretic", bodyClass: "daemonic" }, cfg: { worldId: "necromunda", originId: "underhive_scum", careerId: "daemon_prince", corruption: 95, faith: 0, tags: ["heretic", "chaos_aligned", "mark_khorne", "daemon_prince", "transhuman"], stats: { WS: 95, T: 92, WP: 88, Inf: 85 } }, ban: DP_BAN, visitWorlds: ["krieg", "catachan"] }
   ];
 
   let totalCollisions = 0;
@@ -1178,6 +1535,19 @@ console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).leng
           fail("4P", `Persona ${p.id}(age ${age}) leaked event ${ev.id} [matched "${m[0]}"]`);
         }
       }
+      for (const vw of p.visitWorlds || []) {
+        const vst = makePersonaState({ ...p.cfg, age });
+        vst.worldId = vw;
+        for (const ch of DATA.CHRONICLES) {
+          if (!Engine.checkReq(vst, ch.req)) continue;
+          const rawText = p.clean ? p.clean(ch.text || "") : (ch.text || "");
+          const m = rawText.match(p.ban);
+          if (m) {
+            totalCollisions++;
+            fail("4P", `Persona ${p.id}(visiting ${vw}) leaked chronicle ${ch.id} [matched "${m[0]}"]`);
+          }
+        }
+      }
     }
     const poolSize = matchedChronIds.size;
     if (poolSize < minPersonaPool) minPersonaPool = poolSize;
@@ -1185,7 +1555,22 @@ console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).leng
       fail("4P", `Persona ${p.id} (${p.label}) chronicle pool < 8 (got ${poolSize})`);
     }
   }
-  console.log(`[Gate 4P] 14-persona stratification & forbidden-leak audit complete (collisions=${totalCollisions}, minChroniclePool=${minPersonaPool} >= 8).`);
+  // Adult elite/cloistered snapshot must never trigger common-worker servitor event
+  const servEv = DATA.EVENTS.find((e) => e.id === "ev_absurd_servitor_sentence");
+  if (servEv) {
+    const adultElites = [
+      makePersonaState({ worldId: "necromunda", originId: "planetary_noble", age: 25, careerId: "administratum" }),
+      makePersonaState({ worldId: "ophelia7", originId: "schola_progenium", age: 24, gender: "female", careerId: "adepta_sororitas", tags: ["sororitas"] }),
+      makePersonaState({ worldId: "generic_knight", originId: "knight_house", age: 26, careerId: "knight_scion", tags: ["imperial_knight"] })
+    ];
+    for (const st of adultElites) {
+      if (Engine.checkReq(st, servEv.req)) {
+        totalCollisions++;
+        fail("4P", `Adult elite/cloistered (${st.originId}/${st.careerId}) leaked ev_absurd_servitor_sentence`);
+      }
+    }
+  }
+  console.log(`[Gate 4P] 15-persona + cross-world/adult-elite stratification & forbidden-leak audit complete (collisions=${totalCollisions}, minChroniclePool=${minPersonaPool} >= 8).`);
 }
 
 // ============================================================================
@@ -1213,7 +1598,7 @@ function pickSmartChoice(st) {
     const ch = choices[idx];
     if (!Engine.checkReq(st, ch.req)) continue;
     let sc = 50;
-    if (ch.check) sc = (st.stats[ch.check.stat] || 20) + (ch.check.diff || 0);
+    if (ch.check) sc = Engine.computeCheckPreview(st, ch.check).target;
     else if (ch.effect && ch.effect.instantDeath) sc = -500;
     else if (ch.effect && (ch.effect.wounds || 0) < 0) sc = 45 + ch.effect.wounds;
     if (sc > bestScore) {
@@ -1333,15 +1718,28 @@ if (DEEP_MODE) {
     if (effTags.has("living_saint") && target.tree !== "living_saint") return false;
     if (effTags.has("navigator") && ["astartes", "grey_knights", "custodes", "sororitas"].includes(target.tree)) return false;
 
-    // 1) Manual open transition
+    const closedTrees = ["sororitas", "mechanicus", "navis_navigator", "imperial_knight", "psyker"];
+
+    // 1) Manual open transition (mirrors Stage 19-S2 isManualCareerAllowed)
     if (target.selectable && target.entryMode === "open") {
       if (reqCompatibleWithBase(target.req, curr.id, baseGender, effTags)) {
-        if (!effTranshuman || Boolean(target.isTranshuman) || target.tree === "chaos") return true;
-        if (!target.req || !target.req.excludeTags || !target.req.excludeTags.some((t) => effTags.has(t))) return true;
+        const manualAllowed =
+          Engine.isUnboundCareer(curr.id)
+            ? (curr.id === "child" || target.tier >= curr.tier || target.tree === "chaos")
+            : (
+                (target.tree === curr.tree && target.tier >= curr.tier) ||
+                target.tree === "chaos" ||
+                Boolean(target.isTranshuman) ||
+                (target.tree === "psyker" && target.tier >= curr.tier) ||
+                (target.id === "rt_seneschal" && target.tier >= curr.tier && (curr.tree === "navis_navigator" || !closedTrees.includes(curr.tree)))
+              );
+        if (manualAllowed && (!effTranshuman || Boolean(target.isTranshuman) || target.tree === "chaos")) {
+          return true;
+        }
       }
     }
 
-    // 2) Dynamic career offer transition
+    // 2) Dynamic career offer transition (including Stage 19-S2 cross-institution Scout Invitation & closed-vow guard)
     if (target.selectable && target.tier >= 2 && reqCompatibleWithBase(target.req, curr.id, baseGender, effTags)) {
       if (curr.id === "child") {
         if (Boolean(target.isTranshuman) || target.tier >= 3) return true;
@@ -1350,8 +1748,21 @@ if (DEEP_MODE) {
           if (target.tree === curr.tree) {
             if (target.tier >= curr.tier) return true;
           } else {
+            const closedSrcBlocked =
+              closedTrees.includes(curr.tree) &&
+              target.tree !== "inquisition" &&
+              target.tree !== "living_saint" &&
+              target.tree !== "chaos" &&
+              !Boolean(target.isTranshuman) &&
+              !(curr.tree === "navis_navigator" && target.tree === "rogue_trader");
+            if (closedSrcBlocked) return false;
             const tierOk = target.tier >= curr.tier || target.tree === "chaos";
-            const lateralOk = target.entryMode === "event" || target.tree === "chaos" || Boolean(target.isTranshuman) || Boolean(target.allowLateralOffer);
+            const lateralOk =
+              target.entryMode === "event" ||
+              target.tree === "chaos" ||
+              Boolean(target.isTranshuman) ||
+              Boolean(target.allowLateralOffer) ||
+              (!Engine.isUnboundCareer(target.id) && target.entryMode === "open" && !effTranshuman && (!Engine.isUnboundCareer(curr.id) || curr.id === "pdf_trooper"));
             if (tierOk && lateralOk) return true;
           }
         }
@@ -1405,6 +1816,10 @@ if (DEEP_MODE) {
     ["adeptus_custodes", "daemon_prince", false],
     ["grey_knight", "renegade_marine", false],
     ["adepta_sororitas", "astartes_brother", false],
+    ["adepta_sororitas", "hive_crime_lord", false],
+    ["tech_priest", "hive_crime_lord", false],
+    ["knight_scion", "planetary_governor", false],
+    ["knight_scion", "militarum_general", false],
     ["astartes_brother", "planetary_governor", false],
     ["nav_apprentice", "paternoval_envoy", true],
     ["nav_apprentice", "adeptus_custodes", false],
@@ -1920,6 +2335,7 @@ const totalSimLives = focuses.length * LIVES_PER_FOCUS;
 let maxRepeat = 0;
 let nihilusMismatch = 0;
 let scholaStuck = 0;
+let childStuck = 0;
 let s8Triggers = 0;
 let careerOfferTriggers = 0;
 const reachedCareers = new Set();
@@ -1959,7 +2375,10 @@ for (const foc of focuses) {
         const expected = Boolean(w.nihilusOverride || (seg && seg.nihilusAfterRift));
         if (st.tags.includes("imperial_nihilus") !== expected) nihilusMismatch++;
       }
-      if (st.age >= 19 && st.careerId === "child" && st.tags.includes("schola")) scholaStuck++;
+      if (st.age >= 19 && st.careerId === "child") {
+        childStuck++;
+        if (st.tags.includes("schola")) scholaStuck++;
+      }
       while (st.alive && st.pendingEvent) {
         if ((st.pendingEvent.id || "").startsWith("ev_s8_crisis_")) s8Triggers++;
         if (st.pendingEvent.isCareerOffer) careerOfferTriggers++;
@@ -2017,6 +2436,7 @@ for (const foc of focuses) {
 if (maxRepeat > 2) fail(6, `Event repeat count exceeded 2: ${maxRepeat}`);
 if (nihilusMismatch > 0) fail(6, `imperial_nihilus mismatch detected in ${nihilusMismatch} quarters`);
 if (scholaStuck > 0) fail(6, `schola career remained child past age 18 in ${scholaStuck} quarters`);
+if (childStuck > 0) fail(6, `character remained child past age 18 in ${childStuck} quarters`);
 if (careerOfferTriggers === 0) fail(6, `No dynamic career offers triggered across ${totalSimLives} simulated lives`);
 
 // 1,000-quarter engine CPU benchmark
@@ -2036,7 +2456,7 @@ const benchMs = performance.now() - t0;
 
 console.log(
   `[Gate 6${DEEP_MODE ? "/7C" : ""}] ${totalSimLives} lives complete: maxRepeat=${maxRepeat}, nihilusMismatch=${nihilusMismatch}, ` +
-  `scholaStuck=${scholaStuck}, careerOffers=${careerOfferTriggers}, reachedCareers=${reachedCareers.size}/${selectableCareers.length}, ` +
+  `childStuck=${childStuck}, careerOffers=${careerOfferTriggers}, reachedCareers=${reachedCareers.size}/${selectableCareers.length}, ` +
   `s8Crises=${s8Triggers} (avg ${(s8Triggers / totalSimLives).toFixed(1)}/life), 1000q=${benchMs.toFixed(1)}ms`
 );
 if (DEEP_MODE) {

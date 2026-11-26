@@ -171,25 +171,36 @@ export default function GameApp({ engineOverride, dataOverride }: GameAppProps =
     }
   }, [state, runtime, renderRev]);
 
+  const getActionableUnlockedIds = useCallback((charState: any, eng: any) => {
+    const opts = eng.getContextualOptions(charState);
+    const serviceLeft = opts.manualCareerCooldownLeft || 0;
+    const retryMap = opts.careerRetryAfter || {};
+    return (opts.unlockedCareers || []).filter((c: any) => {
+      const retryLeft = Number.isFinite(retryMap[c.id]) ? Math.max(0, retryMap[c.id] - charState.year) : 0;
+      const blockedByService = !c.isTranshuman && c.tree !== "chaos" && serviceLeft > 0;
+      return retryLeft === 0 && !blockedByService;
+    });
+  }, []);
+
   const syncKnownUnlocked = useCallback((charState: any, eng: any) => {
     if (!charState || !charState.alive) {
       knownUnlockedRef.current = new Set();
       return;
     }
-    const opts = eng.getContextualOptions(charState);
-    knownUnlockedRef.current = new Set((opts.unlockedCareers || []).map((c: any) => c.id));
-  }, []);
+    const actionable = getActionableUnlockedIds(charState, eng);
+    knownUnlockedRef.current = new Set(actionable.map((c: any) => c.id));
+  }, [getActionableUnlockedIds]);
 
   const detectNewCareerUnlocks = useCallback((charState: any, eng: any) => {
     if (!charState || !charState.alive) return [];
-    const opts = eng.getContextualOptions(charState);
+    const actionable = getActionableUnlockedIds(charState, eng);
     const newly: any[] = [];
-    for (const c of opts.unlockedCareers || []) {
+    for (const c of actionable) {
       if (!knownUnlockedRef.current.has(c.id)) newly.push(c);
     }
-    knownUnlockedRef.current = new Set((opts.unlockedCareers || []).map((c: any) => c.id));
+    knownUnlockedRef.current = new Set(actionable.map((c: any) => c.id));
     return newly;
-  }, []);
+  }, [getActionableUnlockedIds]);
 
   const handleSetSpeed = useCallback(
     (nextSpeed: number) => {

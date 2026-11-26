@@ -169,7 +169,7 @@ export const CAREERS = [
       minAge: 26,
       stats: { WS: 50, Fel: 48, Inf: 50 },
       or: [{ anyCareers: ["underhive_boss"] }, { allTags: ["ganger_baron"], stats: { Inf: 46 } }, { minAlign: { ruthless: 35 } }],
-      excludeTags: ["astartes", "custodes", "heretic"]
+      excludeTags: ["astartes", "custodes", "grey_knight", "heretic", "sororitas", "mechanicus", "navigator", "imperial_knight", "knight_blood", "psyker", "assassin", "living_saint", "saint_vessel"]
     },
     selectable: true,
     onJoin: { stats: { Fel: 6, Inf: 14, Ag: 4 }, addTags: ["crime_lord", "wealthy"] },
@@ -355,7 +355,7 @@ export const CAREERS = [
       minAge: 34,
       stats: { Int: 58, Fel: 56, WP: 56, Inf: 60 },
       or: [{ anyCareers: ["militarum_officer", "tempestus_prime_cmd"] }, { allTags: ["imperial_military", "noble"], stats: { Int: 62, Inf: 66 } }],
-      excludeTags: ["abhuman", "astartes", "custodes", "heretic"]
+      excludeTags: ["abhuman", "astartes", "custodes", "grey_knight", "heretic", "imperial_knight", "knight_blood", "navigator", "sororitas", "mechanicus", "assassin", "living_saint"]
     },
     selectable: true,
     onJoin: { stats: { Int: 6, Fel: 6, Inf: 12, WP: 6 }, addTags: ["general_rank", "officer", "hero_of_imperium"] },
@@ -804,7 +804,7 @@ export const CAREERS = [
       excludeTags: ["heretic", "high_lord_terra"]
     },
     selectable: true,
-    trialCheck: { stat: "Fel", diff: -62, title: "테라 홀리 시노드 콘클라베 권력 암투", failDeathChance: 0.28 },
+    trialCheck: { stat: "Fel", diff: -50, title: "테라 홀리 시노드 콘클라베 권력 암투", failDeathChance: 0.28 },
     onJoin: { stats: { Inf: 12, Fel: 8, WP: 6 }, addTags: ["high_lord_terra", "cardinal", "hero_of_imperium"] },
     offerTitle: "테라 홀리 시노드 만장일치 선출 — 에클레시아크 즉위",
     offerPitch: "황궁 대성당의 종소리가 테라 대륙을 울렸다. 100만 행성 수천조 신도의 영혼을 이끄는 국교 총대주교 '에클레시아크'이자 테라의 하이 로드 자리가 그대를 기다린다.",
@@ -1402,7 +1402,7 @@ export const CAREERS = [
       excludeTags: ["heretic", "high_lord_terra"]
     },
     selectable: true,
-    trialCheck: { stat: "Inf", diff: -62, title: "테라 원로원 비밀 투표와 정적 숙청", failDeathChance: 0.28 },
+    trialCheck: { stat: "Inf", diff: -50, title: "테라 원로원 비밀 투표와 정적 숙청", failDeathChance: 0.28 },
     onJoin: { stats: { Inf: 12, Int: 6, WP: 6 }, addTags: ["high_lord_terra", "lord_inquisitor", "hero_of_imperium"] },
     offerTitle: "테라 원로원 비밀 투표 — 이단심문소 대표 하이 로드 선출",
     offerPitch: "세 대오르도 원로들이 침묵 속에 그대의 이름을 택했다. 제국 최고 의결 기구에서 이단심문소를 대변할 하이 로드 대표 의석에 오르겠는가?",
@@ -1925,7 +1925,7 @@ export const CAREERS = [
         { anyCareers: ["militarum_general", "lord_commissar", "commissar_general", "navy_admiral", "admin_departmento_head", "rt_lord_captain", "arbites_marshal"] },
         { allTags: ["noble"], stats: { Inf: 86 } }
       ],
-      excludeTags: ["astartes", "custodes", "grey_knight", "abhuman", "heretic", "assassin", "living_saint"]
+      excludeTags: ["astartes", "custodes", "grey_knight", "abhuman", "heretic", "assassin", "living_saint", "imperial_knight", "knight_blood", "navigator", "sororitas", "mechanicus"]
     },
     selectable: true,
     onJoin: { stats: { Inf: 10, Fel: 8, Int: 6 }, addTags: ["planetary_governor", "noble", "wealthy"] },

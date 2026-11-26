@@ -2,7 +2,7 @@
 // Astro 정적 페이지(/codex/*, /hall/)와 핵심 시뮬레이션 엔진(createEngine.js)이 단일 정본을 공유해
 // 코덱스·전당 페이지에 4,100줄 규모의 전체 시뮬레이션 엔진이 번들링되지 않도록 분리한다.
 
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 export const ALIGNMENT_KEYS = ["humane", "dogmatic", "ruthless"];
 

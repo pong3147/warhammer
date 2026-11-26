@@ -110,15 +110,25 @@ export default function ActiveEventPanel({ state, engine, onChoose }: Props) {
                     <span className="choice-odds locked">잠김 · {engine.describeReq(ch.req)}</span>
                   );
                 } else if (ch.check) {
-                  const target = engine.clamp(
-                    Math.round((state.stats[ch.check.stat] || 20) + (ch.check.diff || 0)),
-                    5,
-                    95
-                  );
-                  const meta = engine.STAT_META[ch.check.stat];
+                  const preview = engine.computeCheckPreview
+                    ? engine.computeCheckPreview(state, ch.check)
+                    : {
+                        statName:
+                          (engine.STAT_META[ch.check.stat] && engine.STAT_META[ch.check.stat].name) ||
+                          ch.check.stat,
+                        target: engine.clamp(
+                          Math.round((state.stats[ch.check.stat] || 20) + (ch.check.diff || 0)),
+                          5,
+                          90
+                        ),
+                        capped: false,
+                        modText: ""
+                      };
                   oddsNode = (
                     <span className="choice-odds">
-                      {meta ? meta.name : ch.check.stat} 성공률 {target}%
+                      {preview.statName} 성공률 {preview.target}%
+                      {preview.capped ? " (상한)" : ""}
+                      {preview.modText ? ` · ${preview.modText}` : ""}
                     </span>
                   );
                 }
@@ -131,7 +141,7 @@ export default function ActiveEventPanel({ state, engine, onChoose }: Props) {
                     disabled={!unlocked}
                     onClick={() => onChoose(idx)}
                   >
-                    <span>{ch.label}</span>
+                    <span>{ch.label}</span>{" "}
                     {oddsNode}
                   </button>
                 );

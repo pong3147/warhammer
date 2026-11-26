@@ -255,6 +255,7 @@ export default [
     id: "ev_s14_ch_csm_long_war",
     title: "배신자 아스타르테스 — 긁어 낸 순결의 인장과 옛 형제들과의 강습전",
     category: "배신자 군단",
+    alignBias: "ruthless",
     once: true,
     req: {
       anyCareers: ["renegade_marine"],
@@ -333,6 +334,7 @@ export default [
     id: "ev_s14_ch_csm_daemon_engine",
     title: "다크 메카니쿰 헤레텍 마고스 — 사슬에 묶인 데몬 엔진의 거래",
     category: "배신자 군단",
+    alignBias: "ruthless",
     once: true,
     req: {
       anyCareers: ["renegade_marine", "chaos_lord"],
@@ -398,6 +400,7 @@ export default [
     id: "ev_s14_ch_lord_black_crusade",
     title: "카오스 로드 — 공포의 눈 출정 함대와 블랙 리전의 약탈 협상",
     category: "배신자 군단",
+    alignBias: "ruthless",
     once: true,
     req: {
       anyCareers: ["chaos_lord"],
@@ -469,6 +472,7 @@ export default [
     id: "ev_s14_ch_lord_duel",
     title: "카오스 로드 — 피의 투기장, 야심 찬 아스파이어링 챔피언의 결투",
     category: "카오스 대비",
+    alignBias: "ruthless",
     once: true,
     req: {
       anyCareers: ["chaos_lord"],
@@ -1047,6 +1051,7 @@ export default [
     id: "ev_s16_ch_csm_iron_warriors",
     title: "안으로는 강철, 밖으로도 강철 — 아이언 워리어 워스미스와의 요새 공성전",
     category: "카오스 엔드게임",
+    alignBias: "ruthless",
     once: true,
     req: {
       anyCareers: ["renegade_marine", "chaos_lord"]
@@ -1184,6 +1189,7 @@ export default [
     id: "ev_s16_ch_csm_night_alpha",
     title: "자정의 발톱과 히드라의 밀약 — 보급 항로 습격과 이중 배신",
     category: "카오스 엔드게임",
+    alignBias: "ruthless",
     once: true,
     req: {
       anyCareers: ["renegade_marine", "chaos_lord"]

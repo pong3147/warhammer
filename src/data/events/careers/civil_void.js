@@ -333,9 +333,13 @@ export default [
     category: "부조리",
     req: {
       minAge: 15,
+      maxSocialTier: "common",
+      excludeRealms: ["cloistered", "heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "noble", "navigator", "knight_blood", "imperial_knight", "assassin", "living_saint", "saint_vessel", "sororitas",
         "high_lord_terra", "warmaster", "general_rank", "commissar_general", "lord_commissar",
         "canoness", "cardinal", "inquisitor", "lord_inquisitor",
         "magos", "fabricator_locum", "fabricator_general",

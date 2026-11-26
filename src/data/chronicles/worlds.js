@@ -20,7 +20,7 @@ export default [
     id: "ch_world_mars_1",
     badge: "화성 포지",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["mars"] },
+    req: { minAge: 14, anyWorlds: ["mars"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "붉은 방사능 모래폭풍이 올림푸스 몬스 주조소를 덮쳤다. 테크프리스트는 노동자 대피보다 외부 코기타토르 냉각기 덮개부터 씌우라고 명령했다.",
     effect: { stats: { Int: 1 }, wounds: -3 }
   },
@@ -28,7 +28,7 @@ export default [
     id: "ch_world_cadia_1",
     badge: "요새 카디아",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["cadia"] },
+    req: { minAge: 14, anyWorlds: ["cadia"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "카스르(요새 도시)의 방어 포대가 새벽마다 공포의 눈을 향해 시험 사격을 울렸다. 카디아에서 평화란 다음 침공까지의 장전 시간을 뜻할 뿐이다.",
     effect: { stats: { BS: 1, WP: 1 } }
   },
@@ -36,7 +36,7 @@ export default [
     id: "ch_world_krieg_1",
     badge: "크리그 속죄",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["krieg"] },
+    req: { minAge: 14, anyWorlds: ["krieg"], anyHomeWorlds: ["krieg"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "방사능 강우로 인해 지상 이동이 통제되었다. 일련번호 호명 중 옆자리 병사가 기침으로 쓰러지자, 위생병은 치료 대신 군장을 회수해 다음 신병에게 넘겼다.",
     effect: { stats: { T: 1, WP: 1 }, wounds: -2 }
   },
@@ -44,7 +44,7 @@ export default [
     id: "ch_world_armageddon_1",
     badge: "아마겟돈 황무지",
     priority: 3,
-    req: { minAge: 14, minYear: 942, anyWorlds: ["armageddon"] },
+    req: { minAge: 14, minYear: 942, anyWorlds: ["armageddon"], excludeBodyClasses: ["dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "잿빛 화산재가 하이브 환기구를 막아 산성 연무 경보가 내려졌다. 외곽 정글에서는 아직도 이전 전쟁의 오크 포자가 버섯처럼 돋아나 화염방사 부대가 출동했다.",
     effect: { stats: { T: 1 }, wounds: -3 }
   },
@@ -68,7 +68,7 @@ export default [
     id: "ch_world_macragge_1",
     badge: "울트라마 질서",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["macragge"] },
+    req: { minAge: 14, anyWorlds: ["macragge"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "제국 타 행성에서는 기적이라 부를 깨끗한 상수도와 정시 배급이 오늘도 차질 없이 돌아갔다. 마크라그 시민들은 울트라마린의 통치에 자부심을 품었다.",
     effect: { stats: { Int: 1 }, wounds: 3 }
   },
@@ -76,7 +76,7 @@ export default [
     id: "ch_world_baal_1",
     badge: "바알의 사막",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["baal"] },
+    req: { minAge: 14, anyWorlds: ["baal"], anyHomeWorlds: ["baal"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "살을 태우는 방사능 태양 아래 갈증의 행군이 이어졌다. 변이된 사막 전갈을 구워 먹으며 붉은 천사들의 그림자를 올려다보았다.",
     effect: { stats: { T: 1, WS: 1 }, wounds: -3 }
   },
@@ -84,7 +84,7 @@ export default [
     id: "ch_world_fenris_1",
     badge: "펜리스 빙원",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["fenris"] },
+    req: { minAge: 14, anyWorlds: ["fenris"], anyHomeWorlds: ["fenris"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "화산이 터지고 빙하가 무너져 마을 절반이 바다로 가라앉았다. 살아남은 자들은 슬퍼하는 대신 불을 피우고 메드 술을 마시며 죽은 자의 이름을 노래했다.",
     effect: { stats: { T: 1, WP: 1 }, wounds: -2 }
   },
@@ -92,7 +92,7 @@ export default [
     id: "ch_world_catachan_1",
     badge: "카타찬 밀림",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["catachan"] },
+    req: { minAge: 14, anyWorlds: ["catachan"], anyHomeWorlds: ["catachan"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "아침에 신발을 털자 손바닥만 한 신경독 두꺼비가 튀어나왔다. 신병 시절이었다면 즉사였겠지만 이제는 눈도 깜짝하지 않고 단검으로 찔러 구워 먹었다.",
     effect: { stats: { T: 1, Ag: 1 } }
   },
@@ -100,7 +100,7 @@ export default [
     id: "ch_world_vostroya_1",
     badge: "보스트로야 혹한",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["vostroya"] },
+    req: { minAge: 14, anyWorlds: ["vostroya"], excludeBodyClasses: ["dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "폭설과 매연 속에서 무기고 공장의 망치질이 밤낮없이 울렸다. 이웃 집 맏아들이 가문의 낡은 털모자와 플라즈마 총을 물려받고 출정 열차에 올랐다.",
     effect: { stats: { BS: 1, WP: 1 } }
   },
@@ -108,7 +108,7 @@ export default [
     id: "ch_world_valhalla_1",
     badge: "발할라 지하도시",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["valhalla"] },
+    req: { minAge: 14, anyWorlds: ["valhalla"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "지표 기온이 영하 80도까지 떨어져 지하 열교환기가 비명을 질렀다. 사람들은 두꺼운 외투를 껴입은 채 뜨거운 타나 차 한 모금으로 언 손을 녹였다.",
     effect: { stats: { T: 1 } }
   },
@@ -316,7 +316,7 @@ export default [
     id: "ch_mars_ex_1",
     badge: "화성 주조소",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["mars"] },
+    req: { minAge: 14, anyWorlds: ["mars"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "붉은 사막 위로 궤도 엘리베이터가 쉼 없이 리만 러스 전차 수천 대를 성간 수송선으로 끌어올렸다. 화성의 하루 생산량이 은하계 한 성계의 전쟁을 먹여 살린다.",
     effect: { stats: { Int: 1 } }
   },
@@ -324,7 +324,7 @@ export default [
     id: "ch_mars_ex_2",
     badge: "화성 기계령",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["mars"] },
+    req: { minAge: 14, anyWorlds: ["mars"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "데이터 슬레이트가 멈추자 테크프리스트가 '기계령의 노여움'을 달랜다며 2시간 동안 축성유를 바르고 타격 의식(살짝 두드리기)을 집전하자 다시 켜졌다.",
     effect: { stats: { Int: 1, WP: 1 } }
   },
@@ -332,7 +332,7 @@ export default [
     id: "ch_mars_ex_3",
     badge: "화성 대기",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["mars"], excludeTags: ["astartes", "custodes", "magos"] },
+    req: { minAge: 14, anyWorlds: ["mars"], excludeBodyClasses: ["augmetic", "transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"], excludeTags: ["astartes", "custodes", "magos"] },
     text: "산화철 먼지가 호흡기 필터를 막아 매달 폐 세척 주사를 맞아야 했다. 화성에서는 생체 폐를 유지하는 것 자체가 사치로 여겨진다.",
     effect: { stats: { T: 1 }, wounds: -2 }
   },
@@ -340,7 +340,7 @@ export default [
     id: "ch_cadia_ex_1",
     badge: "카디아 경보",
     priority: 3,
-    req: { minAge: 12, anyWorlds: ["cadia"] },
+    req: { minAge: 12, anyWorlds: ["cadia"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "새벽 3시 불시 대피 및 실탄 방어 훈련 사이렌이 울렸다. 카디아 시민들은 90초 만에 완전 군장을 갖추고 카스르 성벽으로 뛰어나갔다.",
     effect: { stats: { Ag: 1, BS: 1 } }
   },
@@ -348,7 +348,7 @@ export default [
     id: "ch_cadia_ex_2",
     badge: "자색 눈동자",
     priority: 3,
-    req: { minAge: 14, anyHomeWorlds: ["cadia"] },
+    req: { minAge: 14, anyHomeWorlds: ["cadia"], excludeBodyClasses: ["dreadnought", "daemonic"] },
     text: "공포의 눈 빛을 받으며 대대로 살아온 카디아인 특유의 자색 눈동자가 거울에 비쳤다. 타 행성 순례자들은 이를 두려워하지만 카디아인에게는 불굴의 긍지다.",
     effect: { stats: { WP: 1 } }
   },
@@ -356,7 +356,7 @@ export default [
     id: "ch_cadia_ex_3",
     badge: "카디아 방어선",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["cadia"] },
+    req: { minAge: 14, anyWorlds: ["cadia"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "행성 궤도의 방어 요새들이 카오스 해적 정찰선 3척을 순식간에 증발시키는 섬광이 밤하늘을 수놓았다. 카디아에서는 늘 있는 평범한 밤이었다.",
     effect: { stats: { BS: 1 } }
   },
@@ -364,7 +364,7 @@ export default [
     id: "ch_krieg_ex_1",
     badge: "크리그 참호",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["krieg"] },
+    req: { minAge: 14, maxCareerTier: 3, anyWorlds: ["krieg"], anyHomeWorlds: ["krieg"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "지하 훈련 구역에서 야전삽 하나로 4시간 만에 완벽한 배수 참호와 기관총좌를 파냈다. 교관은 칭찬 한마디 없이 '기준 시간 초과 3초'만 기록했다.",
     effect: { stats: { T: 1, WS: 1 } }
   },
@@ -372,7 +372,7 @@ export default [
     id: "ch_krieg_ex_2",
     badge: "크리그 병기창",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["krieg"] },
+    req: { minAge: 14, anyWorlds: ["krieg"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "전사한 선배 크리그 연대의 방독면과 코트가 수선되어 신병들에게 재지급되었다. 크리그에서 병사는 소모되지만 장비는 영원히 속죄를 이어 간다.",
     effect: { stats: { WP: 1 }, faith: 2 }
   },
@@ -380,7 +380,7 @@ export default [
     id: "ch_krieg_ex_3",
     badge: "크리그의 침묵",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["krieg"] },
+    req: { minAge: 14, maxCareerTier: 3, anyWorlds: ["krieg"], anyHomeWorlds: ["krieg"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "식당에 2,000명이 모여 앉아 영양 죽을 먹었지만 잡담 한마디 들리지 않았다. 오직 숟가락 부딪히는 소리와 방독면 숨소리뿐이었다.",
     effect: { stats: { WP: 1 } }
   },
@@ -388,7 +388,7 @@ export default [
     id: "ch_armageddon_ex_1",
     badge: "아마겟돈 공업",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["armageddon"] },
+    req: { minAge: 14, anyWorlds: ["armageddon"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "하이브 인페르누스의 거대 조립 공장이 매시간 키메라 장갑차 120대를 쏟아 내며 잿빛 하늘을 시커멓게 물들였다.",
     effect: { stats: { Int: 1, T: 1 } }
   },
@@ -396,7 +396,7 @@ export default [
     id: "ch_armageddon_ex_2",
     badge: "아마겟돈 정글",
     priority: 3,
-    req: { minAge: 14, minYear: 942, anyWorlds: ["armageddon"] },
+    req: { minAge: 14, minYear: 942, anyWorlds: ["armageddon"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "적도 정글 지대에서 야생 오크 무리가 출몰했다는 경보가 울려 스틸 리전 기계화 순찰대가 굉음을 내며 출동했다.",
     effect: { stats: { BS: 1 } }
   },
@@ -404,7 +404,7 @@ export default [
     id: "ch_armageddon_ex_3",
     badge: "야릭의 전설",
     priority: 3,
-    req: { minAge: 12, minYear: 942, anyWorlds: ["armageddon"] },
+    req: { minAge: 12, minYear: 942, anyWorlds: ["armageddon"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "하데스 하이브 폐허 기념비 앞에서 시민들이 '올 베일 아이' 세바스찬 야릭 커미사르의 무용담을 되새기며 오크에 대한 증오를 불태웠다.",
     effect: { stats: { WP: 1 }, faith: 2 }
   },
@@ -428,7 +428,7 @@ export default [
     id: "ch_macragge_ex_1",
     badge: "울트라마 영지",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["macragge"] },
+    req: { minAge: 14, anyWorlds: ["macragge"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "헤라의 요새에서 울트라마린 의장대가 대리석 대로를 행진했다. 은하계 어디에서도 보기 힘든 품격과 질서가 행성을 감쌌다.",
     effect: { stats: { WP: 1, Fel: 1 } }
   },
@@ -436,7 +436,7 @@ export default [
     id: "ch_macragge_ex_2",
     badge: "마크라그 시민정신",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["macragge"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 14, anyWorlds: ["macragge"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"], excludeTags: ["astartes", "custodes"] },
     text: "울트라마 원로원 도서관이 일반 시민에게도 개방되어 기초 역사와 수리학을 배울 수 있었다. 다른 하이브 월드에 가면 믿지도 못할 복이었다.",
     effect: { stats: { Int: 2 } }
   },
@@ -444,7 +444,7 @@ export default [
     id: "ch_baal_ex_1",
     badge: "바알의 두 위성",
     priority: 3,
-    req: { minAge: 12, anyWorlds: ["baal"] },
+    req: { minAge: 12, anyWorlds: ["baal"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "밤하늘에 바알 프리무스와 바알 세쿤두스 두 위성이 붉게 떠올랐다. 사막 부족민들은 저 위성 너머 천사들의 요새를 향해 기도를 올렸다.",
     effect: { stats: { WP: 1 }, faith: 2 }
   },
@@ -452,7 +452,7 @@ export default [
     id: "ch_baal_ex_2",
     badge: "방사능 모래폭풍",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["baal"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 14, anyWorlds: ["baal"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"], excludeTags: ["astartes", "custodes"] },
     text: "사흘간 이어진 유리 가루 모래폭풍 속에 천막 기둥을 온몸으로 붙들고 버텼다. 피부에 붉은 방사선 발진이 돋아났다.",
     effect: { stats: { T: 1 }, wounds: -3 }
   },
@@ -460,7 +460,7 @@ export default [
     id: "ch_fenris_ex_1",
     badge: "펜리스 송가",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["fenris"] },
+    req: { minAge: 14, anyWorlds: ["fenris"], anyHomeWorlds: ["fenris"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "긴 겨울밤, 화덕 주위에 둘러앉아 독한 펜리스 에일을 나누며 괴물 사냥과 하늘 전사들의 무용담을 밤새 노래했다.",
     effect: { stats: { Fel: 1, WP: 1 }, wounds: 2 }
   },
@@ -468,7 +468,7 @@ export default [
     id: "ch_fenris_ex_2",
     badge: "화산과 빙하",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["fenris"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 14, anyWorlds: ["fenris"], anyHomeWorlds: ["fenris"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"], excludeTags: ["astartes", "custodes"] },
     text: "거대한 유빙이 화산섬과 충돌해 해일이 몰아쳤다. 온 부족이 10분 만에 배를 띄워 새 땅을 찾아 떠나는 유목의 삶이 이어졌다.",
     effect: { stats: { Ag: 1, T: 1 } }
   },
@@ -476,7 +476,7 @@ export default [
     id: "ch_catachan_ex_1",
     badge: "카타찬 생존법",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["catachan"] },
+    req: { minAge: 14, anyWorlds: ["catachan"], excludeBodyClasses: ["dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "나무 껍질에 위장해 있던 흡혈 박쥐 떼를 정글 단검으로 베어 냈다. 카타찬에서 방심은 3초 만에 뼈만 남긴다.",
     effect: { stats: { WS: 1, Ag: 1 } }
   },
@@ -484,7 +484,7 @@ export default [
     id: "ch_catachan_ex_2",
     badge: "밀림 폭우",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["catachan"] },
+    req: { minAge: 14, anyWorlds: ["catachan"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "장화를 녹여 버리는 약산성 열대 폭우가 일주일째 쏟아졌다. 습기와 곰팡이 속에서 총기를 닦으며 늪지 너머를 경계했다.",
     effect: { stats: { T: 1 } }
   },
@@ -492,7 +492,7 @@ export default [
     id: "ch_vostroya_ex_1",
     badge: "보스트로야 공방",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["vostroya"] },
+    req: { minAge: 14, anyWorlds: ["vostroya"], excludeBodyClasses: ["dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "장인들이 한 땀씩 금실을 수놓은 연대 군복과 정교한 라스건 총열을 닦으며 만년설 너머의 전선을 떠올렸다.",
     effect: { stats: { BS: 1, Int: 1 } }
   },
@@ -500,7 +500,7 @@ export default [
     id: "ch_valhalla_ex_1",
     badge: "발할라 난방",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["valhalla"] },
+    req: { minAge: 14, anyWorlds: ["valhalla"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "지하 14층 난방관이 얼어붙어 주민 전원이 총동원되어 용접 토치로 얼음을 녹였다. 발할라에서 난방 중단은 곧 사형 선고다.",
     effect: { stats: { T: 1, Int: 1 } }
   },
@@ -508,7 +508,7 @@ export default [
     id: "ch_tanith_ex_1",
     badge: "타니스 백파이프",
     priority: 3,
-    req: { minAge: 12, maxYear: 764, anyWorlds: ["tanith"] },
+    req: { minAge: 12, maxYear: 764, anyWorlds: ["tanith"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "짙은 안개 숲 너머로 타니스 전통 백파이프 선율이 구슬프게 울려 퍼졌다. 나무들이 삐걱이며 뿌리를 옮기는 소리가 화음처럼 섞였다.",
     effect: { stats: { WP: 1, Ag: 1 } }
   },
@@ -516,7 +516,7 @@ export default [
     id: "ch_nocturne_ex_1",
     badge: "녹턴의 불꽃",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["nocturne"] },
+    req: { minAge: 14, anyWorlds: ["nocturne"], anyHomeWorlds: ["nocturne"], excludeBodyClasses: ["dreadnought", "daemonic"], excludeRealms: ["heretic"] },
     text: "녹턴 특유의 고중력과 화산 열기 속에서 무거운 쇠망치를 두드리며 튼튼한 농기구와 무기를 직접 벼렸다.",
     effect: { stats: { T: 1, WS: 1 } }
   },
@@ -524,7 +524,7 @@ export default [
     id: "ch_ophelia_ex_1",
     badge: "오펠리아 대성당",
     priority: 3,
-    req: { minAge: 14, anyWorlds: ["ophelia7"] },
+    req: { minAge: 14, anyWorlds: ["ophelia7"], excludeRealms: ["heretic"], excludeBodyClasses: ["daemonic"] },
     text: "대성당 스테인드글라스 아래 수만 자루의 황금 촛불이 타올랐다. 향 냄새가 도시 구석구석까지 스며들어 영혼을 진정시켰다.",
     effect: { faith: 3, corruption: -2 }
   },

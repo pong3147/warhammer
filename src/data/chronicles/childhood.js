@@ -526,7 +526,7 @@ export default [
     id: "ch_s8_kid_void_inf_2",
     badge: "함선 선실 요람",
     priority: 3,
-    req: { minAge: 1, maxAge: 5, anyWorlds: ["voidborn"] },
+    req: { minAge: 1, maxAge: 5, or: [{ anyWorlds: ["voidborn"] }, { allTags: ["rogue_trader_blood"] }] },
     text: "워프 항해 경보가 울리자 선실의 모든 방폭 셔터가 닫혔다. 어른들은 아이가 이상한 꿈을 꾸지 않도록 황제의 순결 인장을 요람에 걸어 두었다.",
     effect: { stats: { WP: 1 }, faith: 2 }
   },
@@ -542,7 +542,7 @@ export default [
     id: "ch_s8_kid_void_ch_1",
     badge: "함선 유년기",
     priority: 3,
-    req: { minAge: 6, maxAge: 13, anyWorlds: ["voidborn"] },
+    req: { minAge: 6, maxAge: 13, or: [{ anyWorlds: ["voidborn"] }, { allTags: ["rogue_trader_blood"] }] },
     text: "어두운 화물 갑판의 관측창 너머로 끝없이 펼쳐진 은하 성운을 바라보았다. 행성 표면의 흙보다 별빛과 강철 갑판이 훨씬 친숙했다.",
     effect: { stats: { WP: 1, Int: 1 } }
   },
@@ -558,7 +558,7 @@ export default [
     id: "ch_s8_kid_void_ch_3",
     badge: "함선 유년기",
     priority: 3,
-    req: { minAge: 6, maxAge: 13, anyWorlds: ["voidborn"] },
+    req: { minAge: 6, maxAge: 13, maxSocialTier: "common", anyWorlds: ["voidborn"] },
     text: "함내 장터에서 고철 부품과 합성 배급표를 물물교환하며 선원들 특유의 눈치와 흥정 요령을 익혔다.",
     effect: { stats: { Fel: 1, Int: 1 } }
   },

@@ -58,6 +58,24 @@ export default function AutonomousPanel({
   const actions: any[] = options.actions || [];
   const travelProfile = options.travelProfile;
   const travelWorlds: any[] = options.travelWorlds || [];
+  const manualCareerCooldownLeft: number = options.manualCareerCooldownLeft || 0;
+  const careerRetryAfter: Record<string, number> = options.careerRetryAfter || {};
+  const isSwornInstitution: boolean = Boolean(options.isSwornInstitution);
+  const isNobleApprentice =
+    state.careerId === "child" &&
+    state.age >= 14 &&
+    state.age <= 18 &&
+    Array.isArray(state.tags) &&
+    state.tags.includes("noble") &&
+    !state.tags.includes("schola");
+  const isScholaCadet =
+    state.careerId === "child" &&
+    state.age >= 14 &&
+    state.age <= 18 &&
+    Array.isArray(state.tags) &&
+    state.tags.includes("schola");
+  const isAbhuman = Array.isArray(state.tags) && state.tags.includes("abhuman");
+  const isHeretic = Array.isArray(state.tags) && state.tags.includes("heretic");
 
   const effectiveTargetWorldId = useMemo(() => {
     if (selectedWorldId && travelWorlds.some((w) => w.id === selectedWorldId)) {
@@ -73,9 +91,17 @@ export default function AutonomousPanel({
 
   const groupedLocked = useMemo(() => groupCareersByTree(lockedCareers), [lockedCareers]);
 
-  const careerSig = unlockedCareers.map((c) => c.id).join(",");
+  const careerSig = unlockedCareers
+    .map((c) => {
+      const retryLeft = Number.isFinite(careerRetryAfter[c.id])
+        ? Math.max(0, careerRetryAfter[c.id] - state.year)
+        : 0;
+      const serviceLeft = !c.isTranshuman && c.tree !== "chaos" ? manualCareerCooldownLeft : 0;
+      return `${c.id}:${retryLeft > 0 || serviceLeft > 0 ? "lock" : "open"}`;
+    })
+    .join(",");
   const actionSig = actions.map((a) => a.id).join(",");
-  const travelCanAttempt = Boolean(travelProfile?.canAttempt);
+  const travelCanAttempt = Boolean(travelProfile?.canAttempt && travelWorlds.length > 0);
 
   useLayoutEffect(() => {
     const initiatedByUserClick = selfActionInitiatedRef.current;
@@ -86,11 +112,13 @@ export default function AutonomousPanel({
       const sameBtn = careersWrapRef.current.querySelector<HTMLButtonElement>(
         `.btn-apply-career[data-cid="${focusedBeforeCommit.id}"]`
       );
-      if (sameBtn) {
+      if (sameBtn && !sameBtn.disabled) {
         if (document.activeElement !== sameBtn) sameBtn.focus();
         return;
       }
-      const nextBtn = careersWrapRef.current.querySelector<HTMLButtonElement>(".btn-apply-career");
+      const nextBtn = careersWrapRef.current.querySelector<HTMLButtonElement>(
+        ".btn-apply-career:not(:disabled)"
+      );
       if (nextBtn) {
         nextBtn.focus();
         if (!initiatedByUserClick) {
@@ -99,7 +127,7 @@ export default function AutonomousPanel({
       } else if (headingRef.current) {
         headingRef.current.focus();
         if (!initiatedByUserClick) {
-          onAnnounce("도전 가능한 진로가 모두 소진되어 자율 선택 제목으로 초점을 옮겼다.");
+          onAnnounce("지금 선택 가능한 진로가 없어 자율 선택 제목으로 초점을 옮겼다.");
         }
       }
       return;
@@ -109,11 +137,13 @@ export default function AutonomousPanel({
       const sameBtn = actionsWrapRef.current.querySelector<HTMLButtonElement>(
         `.btn-auto-action[data-aid="${focusedBeforeCommit.id}"]`
       );
-      if (sameBtn) {
+      if (sameBtn && !sameBtn.disabled) {
         if (document.activeElement !== sameBtn) sameBtn.focus();
         return;
       }
-      const nextBtn = actionsWrapRef.current.querySelector<HTMLButtonElement>(".btn-auto-action");
+      const nextBtn = actionsWrapRef.current.querySelector<HTMLButtonElement>(
+        ".btn-auto-action:not(:disabled)"
+      );
       if (nextBtn) {
         nextBtn.focus();
         if (!initiatedByUserClick) {
@@ -131,7 +161,7 @@ export default function AutonomousPanel({
     if (focusedBeforeCommit.kind === "travel" && !travelCanAttempt && headingRef.current) {
       headingRef.current.focus();
       if (!initiatedByUserClick) {
-        onAnnounce("성간 이동이 대기 상태가 되어 자율 선택 제목으로 초점을 옮겼다.");
+        onAnnounce("성간 이동이 제한되어 자율 선택 제목으로 초점을 옮겼다.");
       }
     }
   }, [careerSig, actionSig, travelCanAttempt, state.alive, hasPendingEvent]);
@@ -154,6 +184,40 @@ export default function AutonomousPanel({
       <div className="auto-section">
         <h3 className="auto-section-title">지금 도전 가능한 진로 · 승급</h3>
         <div id="auto-careers-wrap" className="career-list" ref={careersWrapRef}>
+          {isNobleApprentice && (
+            <div className="ready-offer-box" role="note">
+              <strong>귀족 가문 수습 기간 ({state.age}세 / 14~18세)</strong>
+              <p>
+                원하는 제국 정규 기관을 직접 선택해 지원할 수 있다. 만 18세까지 선택하지 않으면{" "}
+                {isHeretic
+                  ? "이미 이단 낙인이 찍혀 지하 카오스 밀교단에 의탁하게 된다."
+                  : isAbhuman
+                  ? "행성 방위군(PDF) 기간병으로 자동 편입된다."
+                  : "아드미니스트라툼 서기관으로 자동 임관한다."}
+              </p>
+            </div>
+          )}
+
+          {isScholaCadet && (
+            <div className="ready-offer-box" role="note">
+              <strong>스콜라 프로제니움 생도 ({state.age}세 / 14~18세)</strong>
+              <p>
+                자격이 열린 엘리트 기관에 직접 지원할 수 있다. 만 18세까지 선택하지 않으면 적성에
+                따라 자동 배치된다.
+              </p>
+            </div>
+          )}
+
+          {manualCareerCooldownLeft > 0 && (
+            <div className="ready-offer-box" role="note">
+              <strong>정규 기관 최소 복무 기간 ({manualCareerCooldownLeft}년 남음)</strong>
+              <p>
+                신규 취임 후 2년간은 일반 전직이 대기 상태다. 상부 발탁·초빙 사건과 초인·카오스
+                전환은 예외다.
+              </p>
+            </div>
+          )}
+
           {readyEventCareers.length > 0 && (
             <div className="ready-offer-box" role="note">
               <strong>임명 · 발탁 제안 대기 ({readyEventCareers.length}종)</strong>
@@ -169,28 +233,67 @@ export default function AutonomousPanel({
           )}
 
           {unlockedCareers.length > 0 ? (
-            unlockedCareers.map((c) => (
-              <div key={c.id} className="career-card unlocked">
-                <div className="career-top">
-                  <span className="career-name">{c.name}</span>
-                  <span className="career-faction">
-                    {c.faction} · Tier {c.tier}
-                  </span>
+            unlockedCareers.map((c) => {
+              const admission = engine.getAdmissionPreview
+                ? engine.getAdmissionPreview(state, c)
+                : null;
+              const trialPreview =
+                !admission && c.trialCheck && engine.computeCheckPreview
+                  ? engine.computeCheckPreview(state, c.trialCheck)
+                  : null;
+              const retryLeft = Number.isFinite(careerRetryAfter[c.id])
+                ? Math.max(0, careerRetryAfter[c.id] - state.year)
+                : 0;
+              const serviceLeft =
+                !c.isTranshuman && c.tree !== "chaos" ? manualCareerCooldownLeft : 0;
+              const isLockedByCooldown = retryLeft > 0 || serviceLeft > 0;
+              const btnText =
+                retryLeft > 0
+                  ? `${c.name} 재지원 대기 (${retryLeft}년 후)`
+                  : serviceLeft > 0
+                  ? `${c.name} 최소 복무 대기 (${serviceLeft}년 남음)`
+                  : admission
+                  ? `${c.name} 입단 심사 지원 (${admission.target}%)`
+                  : trialPreview
+                  ? `${c.name} 선발 시련 도전 (${trialPreview.target}%)`
+                  : `${c.name} 지원 / 전직하기`;
+
+              return (
+                <div key={c.id} className="career-card unlocked">
+                  <div className="career-top">
+                    <span className="career-name">{c.name}</span>
+                    <span className="career-faction">
+                      {c.faction} · Tier {c.tier}
+                    </span>
+                  </div>
+                  <p className="career-desc">{c.desc}</p>
+                  {admission && (
+                    <p className="career-req">
+                      입단 심사: {admission.statName} 성공률 {admission.target}% (탈락 시 2년 재지원
+                      대기)
+                    </p>
+                  )}
+                  {trialPreview && (
+                    <p className="career-req">
+                      선발 시련: {trialPreview.statName} 성공률 {trialPreview.target}%
+                      {trialPreview.capped ? " (상한)" : ""} (실패 시 부상 또는 순직 위험 · 2년 재도전 대기)
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    className="btn-gold btn-apply-career"
+                    data-cid={c.id}
+                    disabled={isLockedByCooldown}
+                    onClick={() => {
+                      selfActionInitiatedRef.current = true;
+                      onApplyCareer(c.id);
+                    }}
+                  >
+                    {btnText}
+                  </button>
                 </div>
-                <p className="career-desc">{c.desc}</p>
-                <button
-                  type="button"
-                  className="btn-gold btn-apply-career"
-                  data-cid={c.id}
-                  onClick={() => {
-                    selfActionInitiatedRef.current = true;
-                    onApplyCareer(c.id);
-                  }}
-                >
-                  {c.name} 지원 / 전직하기
-                </button>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className="auto-empty">
               {state.age < 14 ? (
@@ -198,7 +301,9 @@ export default function AutonomousPanel({
               ) : nearCareers.length > 0 ? (
                 <>
                   <p style={{ marginBottom: "6px" }}>
-                    지금 즉시 지원 가능한 새 입문 직군은 없다. 가까운 목표 진로:
+                    {isSwornInstitution
+                      ? "정규 서약 기관 복무 중에는 같은 기관 승급 또는 타 기관의 초빙 사건으로 전직한다. 가까운 목표 진로:"
+                      : "지금 즉시 지원 가능한 새 입문 직군은 없다. 가까운 목표 진로:"}
                   </p>
                   <ul className="near-list">
                     {nearCareers.map((nc) => (
@@ -254,6 +359,13 @@ export default function AutonomousPanel({
             <div className="travel-authority-box">
               <div className="travel-auth-label">{travelProfile.authority || "성간 이동 제한"}</div>
               <p className="travel-note">{travelProfile.reason}</p>
+            </div>
+          ) : travelWorlds.length === 0 ? (
+            <div className="travel-authority-box">
+              <div className="travel-auth-label">{travelProfile.authority}</div>
+              <p className="travel-note">
+                현재 신분·출입 자격 및 항행 범위 안에서 선택 가능한 목적 행성이 없다.
+              </p>
             </div>
           ) : (
             <div className="travel-authority-box">

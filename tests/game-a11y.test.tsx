@@ -477,4 +477,141 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
     expect(container.querySelector("#active-event-wrap a[href*='/glossary/']")).toBeNull();
     expect(container.querySelector("#auto-careers-wrap a[href*='/glossary/']")).toBeNull();
   });
+
+  it("displays computeCheckPreview capped at 90% with situational modifiers and synchronizes with roll banner", () => {
+    const modEvent = {
+      id: "ev_test_s19s2_preview",
+      title: "고위 난제 판정 검증",
+      category: "테스트 사건",
+      text: "부상과 암흑 제국 페널티가 투명하게 표시되어야 한다.",
+      choices: [
+        {
+          label: "[지성 판정] 위기를 분석한다",
+          check: { stat: "Int", diff: 0 },
+          success: { text: "성공." },
+          fail: { text: "실패." }
+        },
+        {
+          label: "[의지 판정] 극한의 의지로 버틴다",
+          check: { stat: "WP", diff: 35 },
+          success: { text: "성공." },
+          fail: { text: "실패." }
+        }
+      ],
+      source: "Test Suite"
+    };
+
+    let fired = false;
+    const engineProxy = {
+      ...realEngine,
+      createCharacter(cfg: any) {
+        const st = realEngine.createCharacter(cfg);
+        st.age = 35;
+        st.worldId = "baal";
+        st.segmentum = "ultima";
+        st.careerId = "inquisitor";
+        st.wounds = 40;
+        st.tags.push("inquisitor", "imperial_nihilus");
+        st.stats.Int = 80;
+        st.stats.WP = 100;
+        return st;
+      },
+      advanceQuarter(st: any, opts?: any) {
+        if (!fired) {
+          fired = true;
+          st.pendingEvent = modEvent;
+          return { status: "event", isNewYear: false };
+        }
+        return realEngine.advanceQuarter(st, opts);
+      }
+    };
+
+    const { container } = render(<GameApp engineOverride={engineProxy} dataOverride={FULL_DATA} />);
+    startCustomCharacter(container);
+    fireEvent.click(container.querySelector("#btn-step")!);
+
+    const btns = Array.from(container.querySelectorAll(".choice-btn")) as HTMLButtonElement[];
+    expect(btns).toHaveLength(2);
+    // Int 80 - 8(부상) - 5(임페리움 니힐루스) - 9(Tier 5 고위 난제) = 58%
+    expect(btns[0].textContent).toContain("위기를 분석한다 지성 성공률 58%");
+    expect(btns[0].textContent).toContain("부상 -8");
+    expect(btns[0].textContent).toContain("임페리움 니힐루스 -5");
+    expect(btns[0].textContent).toContain("고위 난제 -9");
+    // WP 100 + 35 - 22 = 113 -> compressed 91.5 -> capped at 90% (상한)
+    expect(btns[1].textContent).toContain("의지 성공률 90% (상한)");
+
+    fireEvent.click(btns[0]);
+    const banner = container.querySelector("#roll-banner")!;
+    expect(banner.textContent).toContain("목표 58");
+  });
+
+  it("locks manual travel for forced-duty soldiers, shows admission exam preview, and moves focus safely when a career button disables on rejection", () => {
+    const origRand = Math.random;
+    const engineProxy = {
+      ...realEngine,
+      createCharacter(cfg: any) {
+        const st = realEngine.createCharacter(cfg);
+        st.age = 16;
+        st.year = 960;
+        st.worldId = "necromunda";
+        st.segmentum = "solar";
+        st.originId = "planetary_noble";
+        st.careerId = "child";
+        st.tags = ["noble", "wealthy"];
+        st.stats = { WS: 40, BS: 40, T: 40, Ag: 40, Int: 44, WP: 42, Fel: 42, Inf: 45 };
+        return st;
+      }
+    };
+
+    const { container, unmount } = render(
+      <GameApp engineOverride={engineProxy} dataOverride={FULL_DATA} />
+    );
+    startCustomCharacter(container);
+
+    // 14-18 noble apprenticeship notice & admission exam odds shown on administratum card
+    const autoWrap = container.querySelector("#auto-careers-wrap")!;
+    expect(autoWrap.textContent).toContain("귀족 가문 수습 기간");
+    const adminBtn = autoWrap.querySelector(
+      '.btn-apply-career[data-cid="administratum"]'
+    ) as HTMLButtonElement;
+    expect(adminBtn).toBeTruthy();
+    expect(adminBtn.textContent).toContain("입단 심사 지원");
+
+    // Focus adminBtn, force non-lethal rejection -> button becomes disabled with 2-yr retry cooldown, focus must NOT drop to body & #sr-live preserves rejection toast
+    adminBtn.focus();
+    Math.random = () => 0.99;
+    try {
+      fireEvent.click(adminBtn);
+    } finally {
+      Math.random = origRand;
+    }
+    const updatedAdminBtn = container.querySelector(
+      '.btn-apply-career[data-cid="administratum"]'
+    ) as HTMLButtonElement;
+    expect(updatedAdminBtn.disabled).toBe(true);
+    expect(updatedAdminBtn.textContent).toContain("재지원 대기 (2년 후)");
+    expect(document.activeElement).not.toBe(document.body);
+    expect(document.activeElement).not.toBe(updatedAdminBtn);
+    expect(container.querySelector("#sr-live")?.textContent || "").toContain("입단 심사 탈락");
+    unmount();
+
+    // Forced-duty soldier: manual travel selector must be locked (no #sel-travel-world)
+    const soldierProxy = {
+      ...realEngine,
+      createCharacter(cfg: any) {
+        const st = realEngine.createCharacter(cfg);
+        st.age = 20;
+        st.worldId = "cadia";
+        st.segmentum = "obscurus";
+        st.careerId = "astra_militarum";
+        return st;
+      }
+    };
+    const { container: c2 } = render(
+      <GameApp engineOverride={soldierProxy} dataOverride={FULL_DATA} />
+    );
+    startCustomCharacter(c2);
+    expect(c2.querySelector("#sel-travel-world")).toBeNull();
+    expect(c2.querySelector("#auto-travel-wrap")?.textContent || "").toContain("수동 이동 잠금");
+  });
 });
