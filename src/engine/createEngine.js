@@ -3,6 +3,7 @@ import {
   ALIGNMENT_META,
   BODY_CLASS_KEYS,
   BODY_CLASS_LABELS,
+  FACTION_ENDING_KEYS,
   FOCUSES,
   LIFE_REALM_KEYS,
   LIFE_REALM_LABELS,
@@ -20,7 +21,8 @@ import {
   formatImperialYear,
   getAlignmentInfo,
   getWorldShortTag,
-  normalizeAlignment
+  normalizeAlignment,
+  resolveFactionEndingKey
 } from "./formatters.js";
 
 export function createImperiumEngine(DATA) {
@@ -2805,166 +2807,174 @@ export function createImperiumEngine(DATA) {
       return { ok: false, reason: "아직 생애를 마감할 고령이나 최고위 정점에 이르지 않았다." };
     }
 
-    const tags = state.tags || [];
-    if (tags.includes("daemon_prince") || state.careerId === "daemon_prince") {
-      return {
-        ok: true,
-        name: "위대한 게임 영구 승천 (생애 마감)",
-        desc: "필멸의 은하를 뒤로하고 워프 심연의 영원한 전장으로 물러나 영혼의 전당에 기록을 남긴다.",
-        btnLabel: "최후의 결단 열기"
-      };
+    const factionKey = resolveFactionEndingKey(state, career);
+    switch (factionKey) {
+      case "daemon_prince":
+        return {
+          ok: true,
+          name: "위대한 게임 영구 승천 (생애 마감)",
+          desc: "필멸의 은하를 뒤로하고 워프 심연의 영원한 전장으로 물러나 영혼의 전당에 기록을 남긴다.",
+          btnLabel: "최후의 결단 열기"
+        };
+      case "chaos_heretic":
+        return {
+          ok: true,
+          name: "공포의 눈 최후 약탈 원정 (생애 마감)",
+          desc: "남은 워밴드를 이끌고 대균열 심연으로 마지막 항해에 나서 배교의 연대기를 완결한다.",
+          btnLabel: "최후의 결단 열기"
+        };
+      case "living_saint":
+        return {
+          ok: true,
+          name: "황금 성광으로의 승화 (생애 마감)",
+          desc: "필멸의 은하에 기적의 빛을 남기고 황금 옥좌의 부름에 응해 성광 속으로 영원히 승화한다.",
+          btnLabel: "최후의 결단 열기"
+        };
+      case "custodes":
+        return {
+          ok: true,
+          name: "황제의 눈 은퇴 의식 (생애 마감)",
+          desc: "황금 갑주를 무기고에 반납하고 제국 변방의 은밀한 감시자로 물러나 생애를 명예롭게 갈무리한다.",
+          btnLabel: "최후의 결단 열기"
+        };
+      case "dreadnought":
+        return {
+          ok: true,
+          name: "강철 석관의 영원한 안식 (생애 마감)",
+          desc: "수세기의 봉사를 마치고 챕터 영웅의 전당에서 영구 동면에 들어 생애를 명예롭게 마감한다.",
+          btnLabel: "최후의 결단 열기"
+        };
+      case "grey_knight":
+      case "astartes":
+        return {
+          ok: true,
+          name: "최후의 영광스러운 성전 출정 (생애 마감)",
+          desc: "노쇠한 육신으로 제국 최전선에 마지막 돌격을 감행해 영혼의 전당에 불멸의 이름을 새긴다.",
+          btnLabel: "최후의 결단 열기"
+        };
+      case "imperial_knight":
+        return {
+          ok: true,
+          name: "스론 메카니쿰 영원한 안치 (생애 마감)",
+          desc: "후계자에게 기사 갑주와 가문의 맹세를 물려주고 선조들의 기억 속으로 명예롭게 합일한다.",
+          btnLabel: "최후의 결단 열기"
+        };
+      case "officio_assassinorum":
+        return {
+          ok: true,
+          name: "테라 비밀 신전 영구 동면 (생애 마감)",
+          desc: "모든 표적 장부를 봉인하고 이름 없는 정지장 관 속으로 들어가 영원한 침묵의 휴식에 든다.",
+          btnLabel: "최후의 결단 열기"
+        };
+      case "navis_navigator":
+        return {
+          ok: true,
+          name: "항법사 성소 최후의 성도 봉헌 (생애 마감)",
+          desc: "일생 동안 측량한 워프 항로와 성도를 가문 대서고에 남기고 파테르노바의 품으로 물러난다.",
+          btnLabel: "최후의 결단 열기"
+        };
+      case "mechanicus":
+        return {
+          ok: true,
+          name: "대서고 데이터 합일 승화 (생애 마감)",
+          desc: "축적한 지식과 기억을 기계교 성소 코지테이터에 영구 이관하고 옴니시아의 품으로 든다.",
+          btnLabel: "최후의 결단 열기"
+        };
+      default:
+        return {
+          ok: true,
+          name: "명예로운 퇴임과 생애 갈무리 (생애 마감)",
+          desc: "후계자에게 직책과 유산을 물려주고 황제의 품으로 평온히 물러나 영혼의 전당에 기록을 남긴다.",
+          btnLabel: "최후의 결단 열기"
+        };
     }
-    if (career.tree === "chaos" || tags.includes("heretic")) {
-      return {
-        ok: true,
-        name: "공포의 눈 최후 약탈 원정 (생애 마감)",
-        desc: "남은 워밴드를 이끌고 대균열 심연으로 마지막 항해에 나서 배교의 연대기를 완결한다.",
-        btnLabel: "최후의 결단 열기"
-      };
-    }
-    if (career.tree === "living_saint" || tags.includes("living_saint")) {
-      return {
-        ok: true,
-        name: "황금 성광으로의 승화 (생애 마감)",
-        desc: "필멸의 은하에 기적의 빛을 남기고 황금 옥좌의 부름에 응해 성광 속으로 영원히 승화한다.",
-        btnLabel: "최후의 결단 열기"
-      };
-    }
-    if (career.tree === "custodes" || tags.includes("custodes")) {
-      return {
-        ok: true,
-        name: "황제의 눈 은퇴 의식 (생애 마감)",
-        desc: "황금 갑주를 무기고에 반납하고 제국 변방의 은밀한 감시자로 물러나 생애를 명예롭게 갈무리한다.",
-        btnLabel: "최후의 결단 열기"
-      };
-    }
-    if (tags.includes("dreadnought")) {
-      return {
-        ok: true,
-        name: "강철 석관의 영원한 안식 (생애 마감)",
-        desc: "수세기의 봉사를 마치고 챕터 영웅의 전당에서 영구 동면에 들어 생애를 명예롭게 마감한다.",
-        btnLabel: "최후의 결단 열기"
-      };
-    }
-    if (career.tree === "astartes" || career.tree === "grey_knights" || tags.includes("astartes") || tags.includes("grey_knight")) {
-      return {
-        ok: true,
-        name: "최후의 영광스러운 성전 출정 (생애 마감)",
-        desc: "노쇠한 육신으로 제국 최전선에 마지막 돌격을 감행해 영혼의 전당에 불멸의 이름을 새긴다.",
-        btnLabel: "최후의 결단 열기"
-      };
-    }
-    if (career.tree === "imperial_knight" || tags.includes("imperial_knight")) {
-      return {
-        ok: true,
-        name: "스론 메카니쿰 영원한 안치 (생애 마감)",
-        desc: "후계자에게 기사 갑주와 가문의 맹세를 물려주고 선조들의 기억 속으로 명예롭게 합일한다.",
-        btnLabel: "최후의 결단 열기"
-      };
-    }
-    if (career.tree === "officio_assassinorum" || tags.includes("assassin")) {
-      return {
-        ok: true,
-        name: "테라 비밀 신전 영구 동면 (생애 마감)",
-        desc: "모든 표적 장부를 봉인하고 이름 없는 정지장 관 속으로 들어가 영원한 침묵의 휴식에 든다.",
-        btnLabel: "최후의 결단 열기"
-      };
-    }
-    if (career.tree === "navis_navigator" || tags.includes("navigator")) {
-      return {
-        ok: true,
-        name: "항법사 성소 최후의 성도 봉헌 (생애 마감)",
-        desc: "일생 동안 측량한 워프 항로와 성도를 가문 대서고에 남기고 파테르노바의 품으로 물러난다.",
-        btnLabel: "최후의 결단 열기"
-      };
-    }
-    if (career.tree === "mechanicus" || tags.includes("magos")) {
-      return {
-        ok: true,
-        name: "대서고 데이터 합일 승화 (생애 마감)",
-        desc: "축적한 지식과 기억을 기계교 성소 코지테이터에 영구 이관하고 옴니시아의 품으로 든다.",
-        btnLabel: "최후의 결단 열기"
-      };
-    }
-    return {
-      ok: true,
-      name: "명예로운 퇴임과 생애 갈무리 (생애 마감)",
-      desc: "후계자에게 직책과 유산을 물려주고 황제의 품으로 평온히 물러나 영혼의 전당에 기록을 남긴다.",
-      btnLabel: "최후의 결단 열기"
-    };
   }
 
   function createHonorableEndingEvent(state) {
     const career = getCareer(state.careerId);
     const titleStr = getCareerDisplayTitle(state, career);
-    const tags = state.tags || [];
     const world = getWorld(state.worldId);
+    const factionKey = resolveFactionEndingKey(state, career);
     let title = "생애의 갈무리 — 명예로운 퇴임의 시간";
     let text = `어느덧 ${state.age}세에 이른 [${titleStr}]로서 수십 년에 걸친 제국의 풍파를 버텨 냈다. 지금 직책을 내려놓고 후대에 기록을 남길 것인지, 아니면 끝까지 현역으로 싸울 것인지 스스로 결정할 때다.`;
     let retireLabel = "후계자에게 직책을 물려주고 명예롭게 생애를 마감한다 (영혼의 전당 등재)";
     let retireText = `긴 세월의 소임을 마친 [${titleStr}]은(는) 모든 인장과 기록을 정돈한 뒤 조용히 눈을 감았다. 그대의 생애는 제국 영혼의 전당에 영구히 등재되었다.`;
     let retireCause = `향년 ${state.age}세, ${world.name}에서 긴 소임을 완수하고 명예로운 퇴임 끝에 황제의 품으로 영면`;
 
-    if (tags.includes("daemon_prince") || state.careerId === "daemon_prince") {
-      title = "생애의 갈무리 — 위대한 게임으로의 영구 승천";
-      text = `${state.age}세의 세월 동안 필멸의 은하를 짓밟아 온 불멸의 데몬 프린스 앞에 워프 심연의 거대한 균열이 열렸다. 물질 우주에서의 연대기를 여기서 갈무리하고 암흑 신들의 위대한 게임으로 영구히 승천할 수 있다.`;
-      retireLabel = "물질 우주를 뒤로하고 워프 심연의 위대한 게임으로 영구 승천한다 (영혼의 전당 등재)";
-      retireText = "현실의 막 너머로 걸어 들어간 그대의 이름은 오르도 말레우스 금서고에 영원한 재앙으로 각인되었다.";
-      retireCause = `향년 ${state.age}세, 물질 우주의 연대기를 마치고 워프 심연의 위대한 게임으로 영구 승천`;
-    } else if (career.tree === "chaos" || tags.includes("heretic")) {
-      title = "생애의 갈무리 — 공포의 눈 최후 원정";
-      text = `${state.age}세에 이른 배교자 [${titleStr}]은(는) 이미 은하에 지워지지 않을 피의 흔적을 남겼다. 워밴드의 기함을 몰아 대균열의 가장 깊은 폭풍 속으로 최후의 약탈 원정을 떠나 연대기를 마감할 수 있다.`;
-      retireLabel = "대균열 심연으로 최후의 약탈 원정을 떠난다 (영혼의 전당 등재)";
-      retireText = "붉은 워프의 폭풍 속으로 사라진 그대의 기함은 훗날 제국 함대의 공포스러운 전설로만 전해졌다.";
-      retireCause = `향년 ${state.age}세, 대균열 심연으로 최후의 배신자 원정을 떠나 행방불명`;
-    } else if (career.tree === "living_saint" || tags.includes("living_saint")) {
-      title = "생애의 갈무리 — 황금 성광으로의 승화";
-      text = `${state.age}세의 세월 동안 어둠 속 전장을 밝혀 온 [${titleStr}] 위로 아스트로노미칸의 따스한 빛기둥이 내려앉았다. 지금 이 순간 필멸의 형상을 내려놓고 황제의 곁으로 돌아가, 언젠가 인류가 가장 절망할 때 다시 강림할 약속으로 남을 수 있다.`;
-      retireLabel = "찬란한 황금 성광 속으로 승화해 황제의 곁으로 돌아간다 (영혼의 전당 등재)";
-      retireText = "황금빛 깃털과 향기만 남긴 채 그대의 형상이 빛 속으로 녹아들었다. 모든 성당의 종이 저절로 울려 퍼졌다.";
-      retireCause = `향년 ${state.age}세, ${world.name} 전선 위에 황금 성광을 남기고 황제의 곁으로 영구 승화`;
-    } else if (career.tree === "custodes" || tags.includes("custodes")) {
-      title = "생애의 갈무리 — 황제의 눈으로 물러나다";
-      text = `${state.age}세에 이른 쿠스토데스로서 반사 속도가 단 0.01초 무뎌졌음을 스스로 깨달았다. 만 명의 수호자 전통에 따라 황금 갑주와 가디언 스피어를 무기고에 반납하고, 제국 변방의 위협을 감시하는 '황제의 눈'으로 은퇴할 수 있다.`;
-      retireLabel = "황금 갑주를 반납하고 '황제의 눈'으로 명예 은퇴한다 (영혼의 전당 등재)";
-      retireText = "황궁 영원의 회랑에 그대의 수백 개 진명이 새겨졌고, 그대는 검은 망토를 걸친 채 황금 옥좌의 그림자 너머로 조용히 떠났다.";
-      retireCause = `향년 ${state.age}세, 쿠스토데스 전통에 따라 황금 갑주를 반납하고 황제의 눈으로 명예 은퇴`;
-    } else if (tags.includes("dreadnought")) {
-      title = "생애의 갈무리 — 강철 석관의 영원한 안식";
-      text = `수세기를 싸워 온 고대 드레드노트의 동력로가 고요히 숨을 고른다. 테크마린과 채플린이 지켜보는 가운데 챕터 영웅의 전당으로 돌아가 영원한 안식에 들 수 있다.`;
-      retireLabel = "챕터 성소의 제단에서 영원한 안식에 든다 (영혼의 전당 등재)";
-      retireText = "성유와 향불 속에서 고대인의 사르코파구스가 영원히 잠들었다. 챕터의 모든 형제들이 무릎을 꿇고 경례를 올렸다.";
-      retireCause = `향년 ${state.age}세, 챕터 영웅의 전당에서 강철 석관의 영원한 안식에 듦`;
-    } else if (career.tree === "astartes" || career.tree === "grey_knights" || tags.includes("astartes") || tags.includes("grey_knight")) {
-      title = "생애의 갈무리 — 최후의 영광스러운 성전";
-      text = `${state.age}세의 장구한 세월 동안 수백 개의 전장을 누빈 [${titleStr}] 앞에 마지막 결전의 부름이 울린다. 후배 형제들에게 챕터의 미래를 맡기고 가장 치열한 전선으로 최후의 출정에 나설 수 있다.`;
-      retireLabel = "형제들에게 유산을 맡기고 최후의 영광스러운 성전에 출정한다 (영혼의 전당 등재)";
-      retireText = "황제의 이름을 외치며 적진 한가운데로 돌격한 그대의 마지막 전투는 수천 년 동안 챕터의 서사시로 노래되었다.";
-      retireCause = `향년 ${state.age}세, 최전선 최후의 성전에서 수많은 적을 쓰러뜨리고 영광스럽게 순직`;
-    } else if (career.tree === "imperial_knight" || tags.includes("imperial_knight")) {
-      title = "생애의 갈무리 — 스론 메카니쿰의 선조가 되다";
-      text = `${state.age}세에 이른 [${titleStr}]의 기사 갑주가 사크리스탄 성소로 돌아왔다. 젊은 후계자에게 고삐를 넘겨주고 스론 메카니쿰 속 선조들의 메아리로 영원히 자리 잡을 시간이다.`;
-      retireLabel = "후계자에게 기사 갑주를 물려주고 선조들의 기억 속으로 안식한다 (영혼의 전당 등재)";
-      retireText = "사크리스탄의 축성 종소리 속에 그대의 인장이 기사 갑주의 제단에 봉안되었고, 다음 세대 조종사의 정신 속에 그대의 지혜가 깃들었다.";
-      retireCause = `향년 ${state.age}세, 기사 가문 성소에 갑주를 봉납하고 스론 메카니쿰의 선조로 영면`;
-    } else if (career.tree === "officio_assassinorum" || tags.includes("assassin")) {
-      title = "생애의 갈무리 — 이름 없는 정지장 관의 침묵";
-      text = `${state.age}세의 세월 동안 제국의 적들을 그림자 속에서 지워 온 [${titleStr}]의 임무 장부가 마지막 줄에 다다랐다. 테라 비밀 신전의 영구 정지장 관에 몸을 눕혀 영원한 침묵으로 생애를 닫을 수 있다.`;
-      retireLabel = "표적 장부를 봉인하고 테라 비밀 신전의 영구 정지장 관에 든다 (영혼의 전당 등재)";
-      retireText = "차가운 정지장 뚜껑이 닫히며 어떤 공식 기록에도 남지 않은 위대한 암살자의 연대기가 완결되었다.";
-      retireCause = `향년 ${state.age}세, 오피시오 아사시노룸 비밀 신전의 영구 정지장 관에 안치되어 생애 마감`;
-    } else if (career.tree === "navis_navigator" || tags.includes("navigator")) {
-      title = "생애의 갈무리 — 최후의 워프 성도 봉헌";
-      text = `${state.age}세의 세월 동안 아스트로노미칸의 빛을 따라 은하를 가로질러 온 [${titleStr}]의 제3의 눈이 깊은 평온을 맞았다. 가문 대서고에 모든 항로 성도를 봉헌하고 항법사 궁정에서 조용히 눈을 감을 수 있다.`;
-      retireLabel = "가문 대서고에 워프 성도를 봉헌하고 명예롭게 은퇴한다 (영혼의 전당 등재)";
-      retireText = "그대가 남긴 황금 항로도는 수백 년 동안 제국 함대와 상선들을 워프의 폭풍에서 지켜 냈다.";
-      retireCause = `향년 ${state.age}세, 나비스 노빌리테 대서고에 최후의 성도를 봉헌하고 파테르노바의 품으로 영면`;
-    } else if (career.tree === "mechanicus" || tags.includes("magos")) {
-      title = "생애의 갈무리 — 대서고 데이터 합일 의식";
-      text = `${state.age}세 동안 축적한 연산 기록과 지식의 총합이 임계점에 도달했다. 육신의 껍질을 내려놓고 화성 대서고의 신성한 코지테이터와 영구히 합일해 옴니시아의 기록으로 남을 수 있다.`;
-      retireLabel = "기억과 지식을 대서고에 봉헌하고 옴니시아와 합일한다 (영혼의 전당 등재)";
-      retireText = "이진법 찬가가 성소를 울리는 가운데 그대의 모든 지혜가 신성한 데이터 저장소에 영구 각인되었다.";
-      retireCause = `향년 ${state.age}세, 기계교 대서고에 전 생애의 연산 기록을 봉헌하고 옴니시아와 합일`;
+    switch (factionKey) {
+      case "daemon_prince":
+        title = "생애의 갈무리 — 위대한 게임으로의 영구 승천";
+        text = `${state.age}세의 세월 동안 필멸의 은하를 짓밟아 온 불멸의 데몬 프린스 앞에 워프 심연의 거대한 균열이 열렸다. 물질 우주에서의 연대기를 여기서 갈무리하고 암흑 신들의 위대한 게임으로 영구히 승천할 수 있다.`;
+        retireLabel = "물질 우주를 뒤로하고 워프 심연의 위대한 게임으로 영구 승천한다 (영혼의 전당 등재)";
+        retireText = "현실의 막 너머로 걸어 들어간 그대의 이름은 오르도 말레우스 금서고에 영원한 재앙으로 각인되었다.";
+        retireCause = `향년 ${state.age}세, 물질 우주의 연대기를 마치고 워프 심연의 위대한 게임으로 영구 승천`;
+        break;
+      case "chaos_heretic":
+        title = "생애의 갈무리 — 공포의 눈 최후 원정";
+        text = `${state.age}세에 이른 배교자 [${titleStr}]은(는) 이미 은하에 지워지지 않을 피의 흔적을 남겼다. 워밴드의 기함을 몰아 대균열의 가장 깊은 폭풍 속으로 최후의 약탈 원정을 떠나 연대기를 마감할 수 있다.`;
+        retireLabel = "대균열 심연으로 최후의 약탈 원정을 떠난다 (영혼의 전당 등재)";
+        retireText = "붉은 워프의 폭풍 속으로 사라진 그대의 기함은 훗날 제국 함대의 공포스러운 전설로만 전해졌다.";
+        retireCause = `향년 ${state.age}세, 대균열 심연으로 최후의 배신자 원정을 떠나 행방불명`;
+        break;
+      case "living_saint":
+        title = "생애의 갈무리 — 황금 성광으로의 승화";
+        text = `${state.age}세의 세월 동안 어둠 속 전장을 밝혀 온 [${titleStr}] 위로 아스트로노미칸의 따스한 빛기둥이 내려앉았다. 지금 이 순간 필멸의 형상을 내려놓고 황제의 곁으로 돌아가, 언젠가 인류가 가장 절망할 때 다시 강림할 약속으로 남을 수 있다.`;
+        retireLabel = "찬란한 황금 성광 속으로 승화해 황제의 곁으로 돌아간다 (영혼의 전당 등재)";
+        retireText = "황금빛 깃털과 향기만 남긴 채 그대의 형상이 빛 속으로 녹아들었다. 모든 성당의 종이 저절로 울려 퍼졌다.";
+        retireCause = `향년 ${state.age}세, ${world.name} 전선 위에 황금 성광을 남기고 황제의 곁으로 영구 승화`;
+        break;
+      case "custodes":
+        title = "생애의 갈무리 — 황제의 눈으로 물러나다";
+        text = `${state.age}세에 이른 쿠스토데스로서 반사 속도가 단 0.01초 무뎌졌음을 스스로 깨달았다. 만 명의 수호자 전통에 따라 황금 갑주와 가디언 스피어를 무기고에 반납하고, 제국 변방의 위협을 감시하는 '황제의 눈'으로 은퇴할 수 있다.`;
+        retireLabel = "황금 갑주를 반납하고 '황제의 눈'으로 명예 은퇴한다 (영혼의 전당 등재)";
+        retireText = "황궁 영원의 회랑에 그대의 수백 개 진명이 새겨졌고, 그대는 검은 망토를 걸친 채 황금 옥좌의 그림자 너머로 조용히 떠났다.";
+        retireCause = `향년 ${state.age}세, 쿠스토데스 전통에 따라 황금 갑주를 반납하고 황제의 눈으로 명예 은퇴`;
+        break;
+      case "dreadnought":
+        title = "생애의 갈무리 — 강철 석관의 영원한 안식";
+        text = `수세기를 싸워 온 고대 드레드노트의 동력로가 고요히 숨을 고른다. 테크마린과 채플린이 지켜보는 가운데 챕터 영웅의 전당으로 돌아가 영원한 안식에 들 수 있다.`;
+        retireLabel = "챕터 성소의 제단에서 영원한 안식에 든다 (영혼의 전당 등재)";
+        retireText = "성유와 향불 속에서 고대인의 사르코파구스가 영원히 잠들었다. 챕터의 모든 형제들이 무릎을 꿇고 경례를 올렸다.";
+        retireCause = `향년 ${state.age}세, 챕터 영웅의 전당에서 강철 석관의 영원한 안식에 듦`;
+        break;
+      case "grey_knight":
+      case "astartes":
+        title = "생애의 갈무리 — 최후의 영광스러운 성전";
+        text = `${state.age}세의 장구한 세월 동안 수백 개의 전장을 누빈 [${titleStr}] 앞에 마지막 결전의 부름이 울린다. 후배 형제들에게 챕터의 미래를 맡기고 가장 치열한 전선으로 최후의 출정에 나설 수 있다.`;
+        retireLabel = "형제들에게 유산을 맡기고 최후의 영광스러운 성전에 출정한다 (영혼의 전당 등재)";
+        retireText = "황제의 이름을 외치며 적진 한가운데로 돌격한 그대의 마지막 전투는 수천 년 동안 챕터의 서사시로 노래되었다.";
+        retireCause = `향년 ${state.age}세, 최전선 최후의 성전에서 수많은 적을 쓰러뜨리고 영광스럽게 순직`;
+        break;
+      case "imperial_knight":
+        title = "생애의 갈무리 — 스론 메카니쿰의 선조가 되다";
+        text = `${state.age}세에 이른 [${titleStr}]의 기사 갑주가 사크리스탄 성소로 돌아왔다. 젊은 후계자에게 고삐를 넘겨주고 스론 메카니쿰 속 선조들의 메아리로 영원히 자리 잡을 시간이다.`;
+        retireLabel = "후계자에게 기사 갑주를 물려주고 선조들의 기억 속으로 안식한다 (영혼의 전당 등재)";
+        retireText = "사크리스탄의 축성 종소리 속에 그대의 인장이 기사 갑주의 제단에 봉안되었고, 다음 세대 조종사의 정신 속에 그대의 지혜가 깃들었다.";
+        retireCause = `향년 ${state.age}세, 기사 가문 성소에 갑주를 봉납하고 스론 메카니쿰의 선조로 영면`;
+        break;
+      case "officio_assassinorum":
+        title = "생애의 갈무리 — 이름 없는 정지장 관의 침묵";
+        text = `${state.age}세의 세월 동안 제국의 적들을 그림자 속에서 지워 온 [${titleStr}]의 임무 장부가 마지막 줄에 다다랐다. 테라 비밀 신전의 영구 정지장 관에 몸을 눕혀 영원한 침묵으로 생애를 닫을 수 있다.`;
+        retireLabel = "표적 장부를 봉인하고 테라 비밀 신전의 영구 정지장 관에 든다 (영혼의 전당 등재)";
+        retireText = "차가운 정지장 뚜껑이 닫히며 어떤 공식 기록에도 남지 않은 위대한 암살자의 연대기가 완결되었다.";
+        retireCause = `향년 ${state.age}세, 오피시오 아사시노룸 비밀 신전의 영구 정지장 관에 안치되어 생애 마감`;
+        break;
+      case "navis_navigator":
+        title = "생애의 갈무리 — 최후의 워프 성도 봉헌";
+        text = `${state.age}세의 세월 동안 아스트로노미칸의 빛을 따라 은하를 가로질러 온 [${titleStr}]의 제3의 눈이 깊은 평온을 맞았다. 가문 대서고에 모든 항로 성도를 봉헌하고 항법사 궁정에서 조용히 눈을 감을 수 있다.`;
+        retireLabel = "가문 대서고에 워프 성도를 봉헌하고 명예롭게 은퇴한다 (영혼의 전당 등재)";
+        retireText = "그대가 남긴 황금 항로도는 수백 년 동안 제국 함대와 상선들을 워프의 폭풍에서 지켜 냈다.";
+        retireCause = `향년 ${state.age}세, 나비스 노빌리테 대서고에 최후의 성도를 봉헌하고 파테르노바의 품으로 영면`;
+        break;
+      case "mechanicus":
+        title = "생애의 갈무리 — 대서고 데이터 합일 의식";
+        text = `${state.age}세 동안 축적한 연산 기록과 지식의 총합이 임계점에 도달했다. 육신의 껍질을 내려놓고 화성 대서고의 신성한 코지테이터와 영구히 합일해 옴니시아의 기록으로 남을 수 있다.`;
+        retireLabel = "기억과 지식을 대서고에 봉헌하고 옴니시아와 합일한다 (영혼의 전당 등재)";
+        retireText = "이진법 찬가가 성소를 울리는 가운데 그대의 모든 지혜가 신성한 데이터 저장소에 영구 각인되었다.";
+        retireCause = `향년 ${state.age}세, 기계교 대서고에 전 생애의 연산 기록을 봉헌하고 옴니시아와 합일`;
+        break;
+      default:
+        break;
     }
 
     return {
@@ -3147,6 +3157,7 @@ export function createImperiumEngine(DATA) {
   function evaluateLifeGrade(state) {
     const tags = state.tags || [];
     const career = getCareer(state.careerId);
+    const factionKey = resolveFactionEndingKey(state, career);
 
     const withEpilogue = (res, mode = "loyal") => {
       const extra = buildObituaryEpilogue(state, mode);
@@ -3159,7 +3170,7 @@ export function createImperiumEngine(DATA) {
     if (tags.includes("mark_nurgle")) chaosGodNames.push("너글");
     if (tags.includes("mark_slaanesh")) chaosGodNames.push("슬라네쉬");
 
-    if (tags.includes("daemon_prince") || state.careerId === "daemon_prince") {
+    if (factionKey === "daemon_prince") {
       const patron = chaosGodNames.length ? `${chaosGodNames.join("·")}의 ` : "암흑 사대신의 ";
       return withEpilogue({
         rank: "APOTHEOSIS — DAEMON PRINCE BANISHED",
@@ -3176,7 +3187,7 @@ export function createImperiumEngine(DATA) {
       }, "spawn");
     }
 
-    if (tags.includes("chaos_lord") || tags.includes("renegade_marine")) {
+    if (factionKey === "chaos_heretic" && (tags.includes("chaos_lord") || tags.includes("renegade_marine"))) {
       const title = tags.includes("chaos_lord") ? "배신자 군단의 공포 — 카오스 로드 최후" : "거짓 황제를 등진 배신자 아스타르테스";
       return withEpilogue({
         rank: "EXCOMMUNICATE TRAITORIS — LONG WAR",
@@ -3185,7 +3196,7 @@ export function createImperiumEngine(DATA) {
       }, "heretic");
     }
 
-    if ((tags.includes("heretic") || state.corruption >= 65) && chaosGodNames.length > 0) {
+    if ((factionKey === "chaos_heretic" || state.corruption >= 65) && chaosGodNames.length > 0) {
       return withEpilogue({
         rank: "DAMNATUS — CHAMPION OF RUIN",
         title: `${chaosGodNames[0]}의 낙인이 찍힌 배교자`,
@@ -3194,13 +3205,13 @@ export function createImperiumEngine(DATA) {
     }
 
     if (
-      tags.includes("heretic") ||
+      factionKey === "chaos_heretic" ||
       state.corruption >= 65 ||
       (tags.includes("wanted_by_inquisition") &&
         !tags.includes("high_lord_terra") &&
-        !tags.includes("living_saint") &&
-        !tags.includes("custodes") &&
-        !tags.includes("grey_knight"))
+        factionKey !== "living_saint" &&
+        factionKey !== "custodes" &&
+        factionKey !== "grey_knight")
     ) {
       return withEpilogue({
         rank: "EXCOMMUNICATE TRAITORIS",
@@ -3224,7 +3235,7 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (tags.includes("living_saint") || state.careerId === "living_saint") {
+    if (factionKey === "living_saint") {
       const saintNoun = state.gender === "female" ? "성녀" : "성인";
       const aspect = getLivingSaintAspect(state);
       const isMercy = aspect === "mercy";
@@ -3252,7 +3263,7 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (tags.includes("dreadnought")) {
+    if (factionKey === "dreadnought") {
       return withEpilogue({
         rank: "ETERNAL SLUMBER OF THE ANCIENT",
         title: "강철 석관의 영원한 안식",
@@ -3276,7 +3287,7 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (career.tree === "custodes" || tags.includes("custodes")) {
+    if (factionKey === "custodes") {
       return withEpilogue({
         rank: tags.includes("captain_general") ? "CAPTAIN-GENERAL OF THE TEN THOUSAND" : "NAMES OF THE TEN THOUSAND",
         title: tags.includes("captain_general") ? "만 명의 수호자를 이끈 캡틴-제너럴" : "황금 갑주 안쪽에 새겨진 이름",
@@ -3292,7 +3303,7 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (career.tree === "grey_knights" || tags.includes("grey_knight")) {
+    if (factionKey === "grey_knight") {
       return withEpilogue({
         rank: tags.includes("gk_supreme_master") ? "SUPREME GRAND MASTER OF TITAN" : "HALL OF CHAMPIONS — TITAN",
         title: tags.includes("gk_supreme_master") ? "타이탄의 불멸 슈프림 그랜드 마스터" : "타이탄 영웅의 전당 등재",
@@ -3300,7 +3311,7 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (career.tree === "officio_assassinorum" || tags.includes("assassin")) {
+    if (factionKey === "officio_assassinorum") {
       const cladeLabel = tags.includes("clade_vindicare")
         ? "빈디카레 템플의 유령 저격수"
         : tags.includes("clade_callidus")
@@ -3317,7 +3328,7 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (career.tree === "imperial_knight" || tags.includes("imperial_knight")) {
+    if (factionKey === "imperial_knight") {
       if (tags.includes("knight_high_king") || state.careerId === "knight_high_king") {
         const kingWord = state.gender === "female" ? "하이 퀸" : "하이 킹";
         return withEpilogue({
@@ -3347,7 +3358,10 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (career.tree === "navis_navigator" || tags.includes("nav_novator") || tags.includes("navis_officer")) {
+    if (
+      factionKey === "navis_navigator" &&
+      (career.tree === "navis_navigator" || tags.includes("nav_novator") || tags.includes("navis_officer") || tags.includes("paternoval_envoy"))
+    ) {
       const isNovator = tags.includes("nav_novator") || state.careerId === "nav_novator";
       const isSenior = tags.includes("navis_officer") || state.careerId === "nav_senior";
       return withEpilogue({
@@ -3365,7 +3379,7 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (career.tree === "inquisition" && tags.includes("inquisitor")) {
+    if (factionKey === "inquisition") {
       const isRadical = state.corruption >= 25 || tags.includes("tech_heresy") || tags.includes("xenos_contact");
       if (isRadical) {
         return withEpilogue({
@@ -3381,7 +3395,7 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (tags.includes("sector_lord") || tags.includes("planetary_governor")) {
+    if (factionKey === "governor") {
       const isSector = tags.includes("sector_lord");
       return withEpilogue({
         rank: isSector ? "LORD OF THE SECTOR — IMPERIAL SOVEREIGN" : "IMPERIAL COMMANDER — RULER OF WORLDS",
@@ -3392,45 +3406,46 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (tags.includes("astartes") && (tags.includes("role_chaplain") || tags.includes("role_apothecary") || tags.includes("role_techmarine") || tags.includes("role_librarian"))) {
-      const chapName = state.chapterName || "아스타르테스";
-      if (tags.includes("role_chaplain")) {
+    if (factionKey === "astartes" && tags.includes("astartes")) {
+      if (tags.includes("role_chaplain") || tags.includes("role_apothecary") || tags.includes("role_techmarine") || tags.includes("role_librarian")) {
+        const chapName = state.chapterName || "아스타르테스";
+        if (tags.includes("role_chaplain")) {
+          return withEpilogue({
+            rank: "RECLUSIAM — KEEPER OF FAITH",
+            title: `${chapName}의 영원한 채플린`,
+            verdict: "해골 투구 아래 흔들림 없는 증오의 기도문으로 형제들의 영혼을 지킨 영적 수호자였다. 그대가 휘두른 크로지우스 아르카눔은 챕터 성소에 경건히 안치되었다."
+          });
+        }
+        if (tags.includes("role_apothecary")) {
+          return withEpilogue({
+            rank: "APOTHECARION — GUARDIAN OF GENESEED",
+            title: `${chapName}의 위대한 아포세카리`,
+            verdict: "포화 속에서도 전사한 형제들의 진시드를 끝까지 회수해 챕터의 미래를 이어 낸 백색 갑주의 수호자였다. 수십 세대의 배틀 브라더가 그대의 헌신 덕분에 살아 숨 쉰다."
+          });
+        }
+        if (tags.includes("role_techmarine")) {
+          return withEpilogue({
+            rank: "ARMOURY — MASTER OF THE FORGE",
+            title: `${chapName}의 붉은 대장장이`,
+            verdict: "화성의 비술과 챕터의 형제애를 함께 짊어지고 전차와 드레드노트의 기계령을 깨워 온 테크마린이었다. 챕터 무기고의 모든 화로가 그대의 안식을 위해 이진법 찬가를 울린다."
+          });
+        }
         return withEpilogue({
-          rank: "RECLUSIAM — KEEPER OF FAITH",
-          title: `${chapName}의 영원한 채플린`,
-          verdict: "해골 투구 아래 흔들림 없는 증오의 기도문으로 형제들의 영혼을 지킨 영적 수호자였다. 그대가 휘두른 크로지우스 아르카눔은 챕터 성소에 경건히 안치되었다."
+          rank: "LIBRARIUS — KEEPER OF THE VEIL",
+          title: `${chapName}의 고결한 라이브러리안`,
+          verdict: "워프의 광풍과 악마의 속삭임에 맞서 정신 방벽과 챕터의 역사를 지켜 낸 푸른 갑주의 현자였다. 그대의 전술 기록과 예지는 라이브러리우스 서고에 영구 보존되었다."
         });
       }
-      if (tags.includes("role_apothecary")) {
+      if (tags.includes("astartes_captain") || tags.includes("terminator_honors") || state.age >= 120 || score >= 150) {
         return withEpilogue({
-          rank: "APOTHECARION — GUARDIAN OF GENESEED",
-          title: `${chapName}의 위대한 아포세카리`,
-          verdict: "포화 속에서도 전사한 형제들의 진시드를 끝까지 회수해 챕터의 미래를 이어 낸 백색 갑주의 수호자였다. 수십 세대의 배틀 브라더가 그대의 헌신 덕분에 살아 숨 쉰다."
+          rank: "CODEX HONORIS — ANGEL OF DEATH",
+          title: `${state.chapterName || "아스타르테스"}의 불멸 전설`,
+          verdict: "수많은 전장을 누빈 죽음의 천사였다. 아포세카리가 회수한 그대의 진시드는 다음 세대 배틀 브라더의 가슴속에서 다시 고동칠 것이다."
         });
       }
-      if (tags.includes("role_techmarine")) {
-        return withEpilogue({
-          rank: "ARMOURY — MASTER OF THE FORGE",
-          title: `${chapName}의 붉은 대장장이`,
-          verdict: "화성의 비술과 챕터의 형제애를 함께 짊어지고 전차와 드레드노트의 기계령을 깨워 온 테크마린이었다. 챕터 무기고의 모든 화로가 그대의 안식을 위해 이진법 찬가를 울린다."
-        });
-      }
-      return withEpilogue({
-        rank: "LIBRARIUS — KEEPER OF THE VEIL",
-        title: `${chapName}의 고결한 라이브러리안`,
-        verdict: "워프의 광풍과 악마의 속삭임에 맞서 정신 방벽과 챕터의 역사를 지켜 낸 푸른 갑주의 현자였다. 그대의 전술 기록과 예지는 라이브러리우스 서고에 영구 보존되었다."
-      });
     }
 
-    if (tags.includes("astartes") && (tags.includes("astartes_captain") || tags.includes("terminator_honors") || state.age >= 120 || score >= 150)) {
-      return withEpilogue({
-        rank: "CODEX HONORIS — ANGEL OF DEATH",
-        title: `${state.chapterName || "아스타르테스"}의 불멸 전설`,
-        verdict: "수많은 전장을 누빈 죽음의 천사였다. 아포세카리가 회수한 그대의 진시드는 다음 세대 배틀 브라더의 가슴속에서 다시 고동칠 것이다."
-      });
-    }
-
-    if (career.tree === "rogue_trader" && tags.includes("rogue_trader")) {
+    if (factionKey === "rogue_trader") {
       return withEpilogue({
         rank: "WARRANT OF TRADE — BEYOND THE HALO STARS",
         title: tags.includes("rt_lord_captain") ? "헤일로 스타를 제패한 로그 트레이더 대왕조 총수" : "무역 영장의 전설적 개척자",
@@ -3438,7 +3453,7 @@ export function createImperiumEngine(DATA) {
       });
     }
 
-    if (tags.includes("stc_finder") || tags.includes("magos")) {
+    if (tags.includes("stc_finder") || (factionKey === "mechanicus" && tags.includes("magos"))) {
       return withEpilogue({
         rank: "OMNISSIAH'S CHOSEN — MARS ARCHIVE",
         title: "화성 대서고 등재 현자",
@@ -4743,6 +4758,7 @@ export function createImperiumEngine(DATA) {
     LIFE_REALM_LABELS,
     BODY_CLASS_KEYS,
     BODY_CLASS_LABELS,
+    FACTION_ENDING_KEYS,
     STAT_META,
     FOCUSES,
     ERA_PRESETS,
@@ -4782,6 +4798,7 @@ export function createImperiumEngine(DATA) {
     performAction,
     canRetireHonorably,
     createHonorableEndingEvent,
+    resolveFactionEndingKey: (state, career) => resolveFactionEndingKey(state, career || (state ? getCareer(state.careerId) : null)),
     buildStatusSummary,
     evaluateLifeGrade,
     createWarpAnomalyTransitEvent,

@@ -180,6 +180,66 @@ export function computeLifeRealm(state, career, world, tagSet) {
   return "civilian";
 }
 
+export const FACTION_ENDING_KEYS = [
+  "daemon_prince",
+  "chaos_heretic",
+  "living_saint",
+  "custodes",
+  "dreadnought",
+  "grey_knight",
+  "astartes",
+  "imperial_knight",
+  "officio_assassinorum",
+  "navis_navigator",
+  "inquisition",
+  "governor",
+  "rogue_trader",
+  "mechanicus",
+  "imperial_standard"
+];
+
+export function resolveFactionEndingKey(state, career) {
+  const tags = (state && state.tags) || [];
+  const c = career || {};
+  const cid = c.id || (state && state.careerId) || "child";
+  const tree = c.tree || "civil";
+
+  if (tags.includes("daemon_prince") || cid === "daemon_prince") return "daemon_prince";
+  if (
+    tree === "chaos" ||
+    tags.includes("heretic") ||
+    tags.includes("chaos_lord") ||
+    tags.includes("renegade_marine")
+  ) {
+    return "chaos_heretic";
+  }
+  if (tags.includes("living_saint") || cid === "living_saint") return "living_saint";
+  if (tree === "custodes" || tags.includes("custodes")) return "custodes";
+  if (tags.includes("dreadnought")) return "dreadnought";
+  if (tree === "grey_knights" || tags.includes("grey_knight")) return "grey_knight";
+  if (tree === "astartes" || tags.includes("astartes")) return "astartes";
+  if (tree === "imperial_knight" || tags.includes("imperial_knight")) return "imperial_knight";
+  if (tree === "officio_assassinorum" || tags.includes("assassin")) return "officio_assassinorum";
+  // Active sworn/specialist trees take precedence over historical cross-career tags
+  if (tree === "inquisition" && tags.includes("inquisitor")) return "inquisition";
+  if (tree === "rogue_trader" && tags.includes("rogue_trader")) return "rogue_trader";
+  if (tree === "governor") return "governor";
+  if (tree === "navis_navigator") return "navis_navigator";
+  if (tree === "mechanicus") return "mechanicus";
+  // Historical tag fallbacks when current tree is non-specialized
+  if (tags.includes("sector_lord") || tags.includes("planetary_governor")) return "governor";
+  if (
+    tags.includes("nav_novator") ||
+    tags.includes("navis_officer") ||
+    tags.includes("paternoval_envoy") ||
+    tags.includes("navigator")
+  ) {
+    return "navis_navigator";
+  }
+  if (tags.includes("magos")) return "mechanicus";
+  return "imperial_standard";
+}
+
 export const STAT_META = {
   WS:  { key: "WS",  name: "백병", en: "Weapon Skill", desc: "근접전·체인소드·도검 전투력" },
   BS:  { key: "BS",  name: "사격", en: "Ballistic Skill", desc: "라스건·볼터·포술 명중률" },
@@ -562,6 +622,7 @@ export function createCoreFormatters(DATA) {
     LIFE_REALM_LABELS,
     BODY_CLASS_KEYS,
     BODY_CLASS_LABELS,
+    FACTION_ENDING_KEYS,
     STAT_META,
     FOCUSES,
     QUARTER_LABELS,
@@ -584,6 +645,7 @@ export function createCoreFormatters(DATA) {
     computeSocialTier,
     computeLifeRealm,
     computeBodyClass,
+    resolveFactionEndingKey,
     formatImperialYear,
     formatImperialDate,
     getWorldShortTag,

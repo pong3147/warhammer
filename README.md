@@ -44,13 +44,13 @@ Warhammer 40,000 인류제국 세계관을 배경으로 한 **Astro + React 아�
    * 스페이스 마린 네오파이트로 입단하면 울트라마린, 블러드 엔젤, 스페이스 울프, 다크 엔젤, 임페리얼 피스트, 샐러맨더, 블랙 템플러(사이커 입단 불가), 레이븐 가드, 화이트 스카 중 챕터를 선택해 전투 함성과 챕터 고유 이벤트(붉은 갈증, 폴른 사냥, 황제의 투사 등)를 경험합니다.
 5. **M41~M42 29대 역사 대사건 · 28인 네임드 스포트라이트 & 정사 크로스오버**
    * 고딕 전쟁(제12차 블랙 크루세이드), 마카리우스 대성전, 제1차 아마겟돈 전쟁과 수치의 달들, 사바트 월드 성전, 바답 전쟁, 제2·3차 아마겟돈 전쟁, 제3차 타이라니드 전쟁(크립트만의 방화선), 카디아 붕괴, 대균열과 영원한 밤, 옥타리우스 전쟁, 울트라마 역병 전쟁, 파리아 넥서스, 징조의 방주와 라이온 귀환, 제4차 타이라니드 전쟁 등 **29대 M41~M42 역사 대사건**과 28인 네임드 인물의 단독 조우·정사 크로스오버·후일담 연대기를 제공합니다.
-6. **699종 분기/역사 사건 · 796종 연대기 · 스크린 리더 접근성 · 자동 저장/백업**
+6. **705종 분기/역사 사건 · 796종 연대기 · 스크린 리더 접근성 · 자동 저장/백업**
    * 진행 중인 생애는 브라우저 `localStorage`에 자동 저장되며(기존 저장 키 100% 하위 호환, `.json` 백업 내보내기/불러오기 지원), `현재 상태 요약 듣기`·`다음 사건까지 진행`·`초장수 자발적 명예 마감`·`유년기 빠른 진행`·`새 진로 해금 시 알림·일시정지`·`새 기록 자동 알림` 등 시각장애인 스크린 리더 친화 기능을 제공합니다.
    * **`전체 인생 기록서`**와 사망 부고 창에서 도덕 성향·거쳐 온 계급 궤적·생애 전문을 순수 텍스트로 복사하거나 `.txt` 파일로 저장할 수 있습니다.
 
 ## 데이터 확장 방법 및 개발 문서
 
-`src/data/core/`의 코어 정의 파일(`worlds.js`, `origins.js`, `careers.js`, `chapters.js`, `characters.js`, `timeline.js`, `tags.js`), 개념 사전 `src/data/glossary.js`, 그리고 도메인별 계층 폴더(`src/data/events/{careers,chapters,worlds,themes}/`, `src/data/chronicles/`)에 ESM 모듈(`export default [...]`)로 항목이나 새 파일을 추가하면 Astro 빌드, `import.meta.glob`, Node.js QA 스위트가 자동으로 인식합니다.
+`src/data/core/`의 코어 정의 파일(`worlds.js`, `origins.js`, `careers.js`, `chapters.js`, `characters.js`, `timeline.js` + `timeline/{m41_early,m41_late,m42_indomitus}.js`, `tags.js`), 개념 사전 `src/data/glossary.js`, 그리고 도메인별 계층 폴더(`src/data/events/{careers,chapters,worlds,themes}/`, `src/data/chronicles/`)에 ESM 모듈(`export default [...]`)로 항목이나 새 파일을 추가하면 Astro 빌드, `import.meta.glob`, Node.js QA 스위트가 자동으로 인식합니다.
 
 변경 후에는 `npm run verify` 또는 `npm run qa:deep`을 실행해 7대 QA 게이트, 200생애 무작위 퍼징, Vitest 행동형 접근성 테스트, 정적 빌드를 한 번에 검증할 수 있습니다.
 

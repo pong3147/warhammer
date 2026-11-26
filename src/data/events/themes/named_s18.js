@@ -12,7 +12,7 @@ export default [
       maxYear: 151,
       excludeWorlds: ["terra", "mars"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "custodes", "high_lord_terra"]
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "custodes", "grey_knight", "high_lord_terra", "dreadnought", "met_ravensburg"]
     },
     reqLabel: "139~151.M41 · 16세 이상 · 제국 충성파",
     weight: 34,
@@ -96,7 +96,7 @@ export default [
       maxYear: 400,
       excludeWorlds: ["terra", "mars"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "custodes", "high_lord_terra"]
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "custodes", "astartes", "grey_knight", "living_saint", "high_lord_terra", "dreadnought", "met_macharius"]
     },
     reqLabel: "392.M41~400.M41 · 16세 이상 · 제국 충성파",
     weight: 36,
@@ -178,7 +178,7 @@ export default [
       minYear: 901,
       excludeWorlds: ["terra", "mars"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "high_lord_terra"]
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "high_lord_terra", "dreadnought", "gk_supreme_master", "met_kaldor_draigo"]
     },
     reqLabel: "901.M41+ · 16세 이상 · 제국 충성파",
     weight: 34,
@@ -208,7 +208,7 @@ export default [
         label: "[백병 판정] 드라이고가 악마를 묶은 틈에 고립된 부상병과 생존자들을 끌어낸다",
         check: { stat: "WS", diff: -6 },
         success: {
-          text: "은빛 거인이 상급 악마를 압도하는 사이, 그대는 하급 악마 무리를 베어 넘기며 성당 폐허에 갇힌 생존자들을 결계 뒤로 대피시켰다. 균열이 닫히기 직전 드라이고의 묵직한 고갯짓이 남았고, 혼란 속에 어떠한 기억 소거 집행도 따라붙지 않았다.",
+          text: "은빛 거인이 상급 악마를 압도하는 사이, 그대는 하급 악마 무리를 베어 넘기며 성당 폐허에 갇힌 생존자들을 결계 뒤로 대피시켰다. 균열이 닫히기 직전 드라이고의 묵직한 고갯짓이 남았고, 전장에는 무거운 침묵의 맹약만이 남았다.",
           stats: { WS: 6, WP: 5, Fel: 4 },
           faith: 6,
           corruption: -5,
@@ -243,7 +243,7 @@ export default [
       {
         label: "성호를 그으며 은빛 거인의 승리를 묵묵히 가슴에 묻고 침묵을 서약한다",
         effect: {
-          text: "은빛 균열이 닫힌 자리에 오존 냄새와 재만 남았다. 그 이름을 함부로 입에 올리지 않는 것만이 제국의 비밀과 자신의 목숨을 함께 지키는 길임을 본능으로 깨달았다.",
+          text: "은빛 균열이 닫힌 자리에 오존 냄새와 재만 남았다. 타이탄의 비밀을 함부로 입에 올리지 않는 침묵의 맹약이야말로 제국의 방벽을 지키는 길임을 되새겼다.",
           stats: { WP: 5, T: 3 },
           faith: 6,
           corruption: -6,
@@ -265,7 +265,7 @@ export default [
       minYear: 1001,
       greatRift: true,
       excludeWorldTags: ["feral"],
-      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "imperial_nihilus"]
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "imperial_nihilus", "dreadnought", "grey_knight", "custodes", "met_morvenn_vahl"]
     },
     reqLabel: "001.M42+ · 대균열 이후 · 16세 이상 · 제국 충성파",
     weight: 36,
@@ -350,7 +350,8 @@ export default [
       minYear: 997,
       maxYear: 1003,
       excludeWorlds: ["terra", "mars"],
-      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "met_kryptman"]
+      excludeWorldTags: ["feral"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "custodes", "high_lord_terra", "met_kryptman"]
     },
     reqLabel: "997.M41~003.M42 · 16세 이상 · 제국 충성파",
     weight: 35,
@@ -431,7 +432,7 @@ export default [
       minYear: 980,
       excludeWorlds: ["terra", "mars", "voidborn"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "custodes", "grey_knight", "high_lord_terra", "dreadnought"]
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "custodes", "grey_knight", "high_lord_terra", "dreadnought", "met_canis_rex"]
     },
     reqLabel: "980.M41+ · 16세 이상 · 제국 충성파",
     weight: 34,
@@ -517,7 +518,7 @@ export default [
       greatRift: true,
       excludeWorlds: ["terra", "mars"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["imperial_nihilus"]
+      excludeTags: ["imperial_nihilus", "dreadnought", "high_lord_terra", "met_mortarion"]
     },
     reqLabel: "013~020.M42 · 대균열 이후 · 역병 전쟁기 · 16세 이상",
     weight: 35,
@@ -575,7 +576,7 @@ export default [
           addTags: ["met_mortarion", "plague_war_vet"]
         },
         fail: {
-          text: "악마 프라이마크가 내뿜는 원초적 역병은 카오스 신도에게조차 가혹했다. 온몸에 종기가 돋고 피를 토하며 쓰러졌으나 간신히 목숨은 건졌다.",
+          text: "악마 프라이마크가 내뿜는 원초적 역병은 카오스의 투사에게조차 가혹했다. 온몸에 종기가 돋고 피를 토하며 쓰러졌으나 간신히 목숨은 건졌다.",
           wounds: -22,
           corruption: 10,
           stats: { T: 3 },
@@ -584,12 +585,11 @@ export default [
         }
       },
       {
-        label: "방독 봉인을 조이고 모타리온의 직격 진로를 피해 후방 방어선으로 물러난다",
+        label: "장갑 봉인을 굳히고 모타리온의 직격 진로를 피해 후방 전선으로 물러난다",
         effect: {
-          text: "데몬 프라이마크와의 정면 대결은 무모한 소멸일 뿐이다. 방폭 격벽을 차례로 닫으며 전력을 보존해 반격 전선을 재정비할 귀중한 정보를 가져왔다.",
+          text: "데몬 프라이마크와의 정면 대결은 무모한 소멸일 뿐이다. 방폭 격벽을 차례로 닫으며 전력을 보존해 전선 재정비에 필요한 귀중한 정보를 가져왔다.",
           stats: { Ag: 4, WP: 4, Int: 3 },
           wounds: -12,
-          align: { ruthless: 3, humane: 3 },
           addTags: ["met_mortarion", "plague_war_vet"]
         }
       }

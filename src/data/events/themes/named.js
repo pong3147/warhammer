@@ -1013,7 +1013,8 @@ export default [
     req: {
       minAge: 16,
       excludeTags: [
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "dreadnought"
       ],
       anyTags: [
         "met_guilliman",
@@ -1023,10 +1024,11 @@ export default [
         "met_calgar",
         "met_grimnar",
         "met_tushan",
-        "met_azrael"
+        "met_azrael",
+        "met_morvenn_vahl"
       ]
     },
-    reqLabel: "프라이마크 · 섭정 · 챕터 마스터급 조우 이력",
+    reqLabel: "프라이마크 · 섭정 · 챕터 마스터 · 총원장급 조우 이력",
     weight: 34,
     text: "그대가 인류제국의 최정점에 선 거인들과 직접 대면했다는 소문이 성계 사령부까지 퍼져 나갔다. 교착 상태에 빠진 작전 회의 도중, 고위 장교와 귀족 대표들이 돌연 그대에게 시선을 집중하며 '위대한 분의 뜻'을 대변해 달라고 압박하기 시작했다.",
     choices: [
@@ -1063,7 +1065,7 @@ export default [
         }
       }
     ],
-    source: "Dark Imperium / Codex: Space Marines / Lexicanum: Indomitus Crusade"
+    source: "Dark Imperium / Codex: Space Marines / Codex: Adepta Sororitas"
   },
   {
     id: "ev_s4_met_commanders_echo",
@@ -1073,7 +1075,8 @@ export default [
     req: {
       minAge: 16,
       excludeTags: [
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "dreadnought", "custodes", "grey_knight", "high_lord_terra", "living_saint"
       ],
       anyTags: [
         "met_yarrick",
@@ -1081,12 +1084,15 @@ export default [
         "met_gaunt",
         "met_cain",
         "met_marbo",
-        "met_grimaldus"
+        "met_grimaldus",
+        "met_ravensburg",
+        "met_macharius",
+        "met_canis_rex"
       ]
     },
-    reqLabel: "전설적 지휘관 · 커미사르 · 영웅 조우 이력",
+    reqLabel: "전설적 지휘관 · 제독 · 커미사르 · 프리블레이드 영웅 조우 이력",
     weight: 34,
-    text: "포격이 멎지 않는 전초 기지에서 신병들 사이에 은밀한 속삭임이 돌았다. 제국 전역에 이름을 떨친 전설적 지휘관과 같은 전장을 밟았던 고참이 바로 여기 있다는 소문이었다. 적의 야습 경보가 울린 순간, 공포에 질린 병사들의 시선이 일제히 그대에게 쏠렸다.",
+    text: "포격이 멎지 않는 전초 기지에서 신병들 사이에 은밀한 속삭임이 돌았다. 제국 전역에 이름을 떨친 전설적 지휘관이나 영웅과 같은 전장을 밟았던 고참이 바로 여기 있다는 소문이었다. 적의 야습 경보가 울린 순간, 공포에 질린 병사들의 시선이 일제히 그대에게 쏠렸다.",
     choices: [
       {
         label: "[의지 판정] 방벽 위로 올라 전설들에게 배운 불굴의 구호를 외치며 병사들의 사기를 끌어올린다",
@@ -1123,7 +1129,7 @@ export default [
         }
       }
     ],
-    source: "Codex: Astra Militarum / Helsreach / Gaunt's Ghosts"
+    source: "Codex: Astra Militarum / Battlefleet Gothic / Macharian Crusade / Codex: Imperial Knights"
   },
   {
     id: "ev_s4_met_shadows_echo",
@@ -1133,18 +1139,21 @@ export default [
     req: {
       minAge: 16,
       excludeTags: [
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "dreadnought", "custodes", "living_saint"
       ],
       anyTags: [
         "met_eisenhorn",
         "met_amberley_vail",
+        "met_kryptman",
+        "met_kaldor_draigo",
         "met_cawl",
         "met_celestine"
       ]
     },
-    reqLabel: "아이젠혼 · 앰벌리 베일 · 카울 · 성녀 셀레스틴 조우 이력",
+    reqLabel: "아이젠혼 · 앰벌리 베일 · 크립트만 · 드라이고 · 카울 · 성녀 셀레스틴 조우 이력",
     weight: 34,
-    text: "늦은 밤, 인장 없는 검은 봉투를 든 밀사가 그대의 거처를 찾아왔다. 그대가 과거 이단심문소 거물이나 화성의 대현자, 혹은 살아 있는 성녀와 얽혔던 사건 기록이 상층부에서 재검토되고 있으며, 그날의 진실을 증언해 주면 막대한 보상을 내리겠다는 위험한 제안이었다.",
+    text: "늦은 밤, 인장 없는 검은 봉투를 든 밀사가 그대의 거처를 찾아왔다. 그대가 과거 이단심문소 거물이나 봉인된 은빛 기사, 화성의 대현자, 혹은 살아 있는 성녀와 얽혔던 극비 사건 기록이 상층부에서 재검토되고 있으며, 그날의 진실을 증언해 주면 막대한 보상을 내리겠다는 위험한 제안이었다.",
     choices: [
       {
         label: "[지성 판정] 밀사가 속한 파벌의 의도를 역으로 캐내어 제국 공식 보고서 선에서만 교묘히 빠져나간다",
@@ -1181,7 +1190,7 @@ export default [
         }
       }
     ],
-    source: "Eisenhorn Trilogy / Ciaphas Cain Novels / Belisarius Cawl: The Great Work / Celestine: The Living Saint"
+    source: "Eisenhorn Trilogy / Ciaphas Cain Novels / Codex: Tyranids / Codex: Grey Knights / Belisarius Cawl: The Great Work / Celestine: The Living Saint"
   },
   {
     id: "ev_s4_met_nemesis_echo",
@@ -1191,13 +1200,14 @@ export default [
     req: {
       minAge: 16,
       excludeTags: [
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "dreadnought"
       ],
-      anyTags: ["met_abaddon", "met_ghazghkull"]
+      anyTags: ["met_abaddon", "met_ghazghkull", "met_mortarion", "met_trazyn"]
     },
-    reqLabel: "약탈자 아바돈 또는 가즈쿨 조우 생존자",
+    reqLabel: "약탈자 아바돈 · 가즈쿨 · 모타리온 · 무한의 트라진 조우 생존자",
     weight: 36,
-    text: "은하를 불태우는 최악의 대적자를 두 눈으로 직접 마주하고도 살아남은 자는 제국 전체를 통틀어도 손에 꼽는다. 그러나 그날의 기억은 쉽게 지워지지 않는다. 칠흑 같은 마검의 비명이나 성계를 뒤흔들던 와아아의 포효가 오늘 밤에도 그대의 잠자리를 찢어 놓는다.",
+    text: "은하를 뒤흔드는 최악의 대적자나 기이한 외계 군주를 두 눈으로 직접 마주하고도 살아남은 자는 제국 전체를 통틀어도 손에 꼽는다. 그러나 그날의 기억은 쉽게 지워지지 않는다. 칠흑 같은 마검의 비명이나 성계를 뒤흔들던 와아아의 포효, 부패한 대낫의 종소리나 비취빛 정지장 금고의 서늘한 시선이 오늘 밤에도 그대의 잠자리를 찢어 놓는다.",
     choices: [
       {
         label: "[의지 판정] 공포를 불타는 증오로 벼려 내고 대적자의 전술 습성을 전술 교범으로 정리한다",
@@ -1237,6 +1247,6 @@ export default [
         }
       }
     ],
-    source: "Lexicanum: Abaddon the Despoiler / Ghazghkull Mag Uruk Thraka"
+    source: "Lexicanum: Abaddon the Despoiler / Ghazghkull Mag Uruk Thraka / Mortarion / Trazyn the Infinite"
   }
 ];

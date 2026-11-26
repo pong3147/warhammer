@@ -61,7 +61,8 @@ export default [
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought",
         "high_lord_terra", "sector_lord", "planetary_governor", "warmaster",
-        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "met_calgar"
       ]
     },
     reqLabel: "행성: 마크라그 · 12~35세 · 700.M41 이후",

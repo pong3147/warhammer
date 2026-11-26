@@ -77,7 +77,29 @@ let age500RetireExecutedOK = 0;
 let age500RetireFailed = 0;
 let mortalOver300 = 0;
 let maxAgeSeen = 0;
+let logCharSum = 0;
+let logCharSamples = 0;
+let maxLogChars = 0;
+let maxAdultQuietQ = 0;
+let maxQuietCareer = "none";
+let maxQuietAge = 0;
+let namedSpotlightEvents = 0;
+let maxSpotlightCards = 0;
+let timelineMultiSpotlights = 0;
 const ages = [];
+
+// addLog uses state.logs.unshift(...), so newest entries sit at index 0 up to prevTop
+const sampleNewLogs = (st, prevTop) => {
+  const logs = st.logs || [];
+  for (let li = 0; li < logs.length; li++) {
+    if (logs[li] === prevTop) break;
+    const txt = (logs[li] && typeof logs[li].text === "string") ? logs[li].text : "";
+    if (!txt) continue;
+    logCharSum += txt.length;
+    logCharSamples++;
+    if (txt.length > maxLogChars) maxLogChars = txt.length;
+  }
+};
 
 for (let i = 0; i < FUZZ_LIVES; i++) {
   try {
@@ -85,6 +107,7 @@ for (let i = 0; i < FUZZ_LIVES; i++) {
     const focusKeys = Object.keys(Engine.FOCUSES);
     st.focus = focusKeys[Math.floor(Math.random() * focusKeys.length)];
     let testedRetireAt500 = false;
+    let quietStreak = 0;
 
     let steps = 0;
     while (st.alive && steps < 3600) {
@@ -151,13 +174,34 @@ for (let i = 0; i < FUZZ_LIVES; i++) {
       }
 
       if (st.alive && !st.pendingEvent) {
+        const prevTop = (st.logs && st.logs[0]) || null;
         Engine.advanceQuarter(st);
+        sampleNewLogs(st, prevTop);
+        if (st.age >= 14 && st.age <= 100) {
+          if (st.pendingEvent) {
+            quietStreak = 0;
+          } else {
+            quietStreak++;
+            if (quietStreak > maxAdultQuietQ) {
+              maxAdultQuietQ = quietStreak;
+              maxQuietCareer = st.careerId;
+              maxQuietAge = st.age;
+            }
+          }
+        }
       }
 
       let guard = 0;
       while (st.alive && st.pendingEvent && guard < 12) {
         guard++;
-        const choices = st.pendingEvent.choices || [];
+        const ev = st.pendingEvent;
+        const evChars = Array.isArray(ev.characters) ? ev.characters : [];
+        if (evChars.length > 0) {
+          namedSpotlightEvents++;
+          if (evChars.length > maxSpotlightCards) maxSpotlightCards = evChars.length;
+          if (ev.isTimeline && evChars.length > 1) timelineMultiSpotlights++;
+        }
+        const choices = ev.choices || [];
         const validIdx = [];
         for (let ci = 0; ci < choices.length; ci++) {
           if (Engine.checkReq(st, choices[ci].req)) validIdx.push(ci);
@@ -167,8 +211,10 @@ for (let i = 0; i < FUZZ_LIVES; i++) {
           st.pendingEvent = null;
           break;
         }
+        const prevTop = (st.logs && st.logs[0]) || null;
         const chosen = validIdx[Math.floor(Math.random() * validIdx.length)];
         Engine.resolvePendingChoice(st, chosen);
+        sampleNewLogs(st, prevTop);
       }
 
       if ((st.tags.includes("custodes") || st.tags.includes("grey_knight") || st.tags.includes("living_saint")) && st.corruption > 0) {
@@ -210,11 +256,62 @@ for (let i = 0; i < FUZZ_LIVES; i++) {
   }
 }
 
+// Stage 19-C: Deterministic listening & ending-parity probes for Stage 17-18 apex high-rank careers
+const FORBIDDEN_SYM_RE = /[★↗←✓↑↓]/;
+const apexSpecs = [
+  { careerId: "master_of_administratum", worldId: "terra", originId: "terra_high_blood", gender: "female", age: 65, tags: ["administratum", "high_lord_terra"], expectedKey: "imperial_standard" },
+  { careerId: "living_saint", worldId: "ophelia7", originId: "ecclesiarchy_novice", gender: "female", age: 65, tags: ["living_saint", "saint_mercy_aspect"], expectedKey: "living_saint" },
+  { careerId: "knight_high_king", worldId: "generic_knight", originId: "knight_house", gender: "female", age: 100, tags: ["imperial_knight", "knight_high_king"], expectedKey: "imperial_knight" },
+  { careerId: "nav_novator", worldId: "terra", originId: "navigator_house", gender: "male", age: 100, tags: ["navigator", "nav_novator"], expectedKey: "navis_navigator" },
+  { careerId: "paternoval_envoy", worldId: "terra", originId: "navigator_house", gender: "male", age: 65, tags: ["navigator", "paternoval_envoy", "high_lord_terra"], expectedKey: "navis_navigator" },
+  { careerId: "grand_master_of_assassins", worldId: "terra", originId: "schola_progenium", gender: "male", age: 65, tags: ["assassin", "clade_vindicare", "grand_master_assassins", "high_lord_terra"], expectedKey: "officio_assassinorum" },
+  { careerId: "fabricator_general", worldId: "mars", originId: "mechanicus_menial", gender: "male", age: 65, tags: ["mechanicus", "magos", "fabricator_general", "high_lord_terra"], expectedKey: "mechanicus" },
+  { careerId: "custodes_captain_general", worldId: "terra", originId: "terra_high_blood", gender: "male", age: 65, tags: ["custodes", "captain_general", "high_lord_terra"], expectedKey: "custodes" }
+];
+let apexProbesOK = 0;
+let apexProbeFailures = 0;
+const apexProbeIssues = [];
+for (const spec of apexSpecs) {
+  const p = Engine.createCharacter({
+    mode: "custom",
+    worldId: spec.worldId,
+    originId: spec.originId,
+    traitId: "none",
+    eraId: "indomitus",
+    gender: spec.gender
+  });
+  p.age = spec.age;
+  p.year = p.birthYear + spec.age;
+  p.careerId = spec.careerId;
+  p.tags = [...new Set([...p.tags, ...spec.tags])];
+  const summary = Engine.buildStatusSummary(p);
+  const fKey = Engine.resolveFactionEndingKey(p);
+  const canRet = Engine.canRetireHonorably(p);
+  const honEv = Engine.createHonorableEndingEvent(p);
+  const grade = Engine.evaluateLifeGrade(p);
+  const combined = `${summary} ${honEv.title} ${honEv.text} ${grade.rank} ${grade.title} ${grade.verdict}`;
+  const issues = [];
+  if (Engine.getCareer(spec.careerId).id !== spec.careerId) issues.push(`unknownCareer=${spec.careerId}`);
+  if (!summary || summary.length > 320) issues.push(`summaryLen=${summary ? summary.length : 0}`);
+  if (fKey !== spec.expectedKey) issues.push(`factionKey=${fKey}!=${spec.expectedKey}`);
+  if (!canRet || !canRet.ok) issues.push(`canRetireHonorably=false`);
+  if (!honEv || !honEv.choices || honEv.choices.length < 2) issues.push(`honorableChoices<2`);
+  if (!grade || !grade.rank || !grade.title || !grade.verdict) issues.push(`missingGrade`);
+  if (/undefined|NaN/.test(combined) || FORBIDDEN_SYM_RE.test(combined)) issues.push(`dirtyText`);
+  if (issues.length === 0) {
+    apexProbesOK++;
+  } else {
+    apexProbeFailures++;
+    apexProbeIssues.push(`${spec.careerId}: ${issues.join(", ")}`);
+  }
+}
+
 console.warn = origWarn;
 ages.sort((a, b) => a - b);
 const medAge = ages.length ? ages[Math.floor(ages.length / 2)] : 0;
 const avgJsonKB = jsonSamples ? (totalJsonBytes / jsonSamples / 1024).toFixed(1) : "0.0";
 const maxJsonKB = (maxJsonBytes / 1024).toFixed(1);
+const avgLogChars = logCharSamples ? (logCharSum / logCharSamples).toFixed(1) : "0.0";
 const saveCapExceeded = maxJsonBytes > MAX_SAVE_BYTES;
 
 console.log(
@@ -228,16 +325,28 @@ console.log(
   `age1000+=${age1000Plus}, mortalOver300=${mortalOver300}`
 );
 console.log(
+  `[Listening Rhythm] avgLogChars=${avgLogChars}, maxLogChars=${maxLogChars}, maxAdultQuietQ=${maxAdultQuietQ}(${maxQuietCareer}@${maxQuietAge}), ` +
+  `namedSpotlights=${namedSpotlightEvents}, maxSpotlightCards=${maxSpotlightCards}, ` +
+  `timelineMultiSpotlights=${timelineMultiSpotlights}, apexProbesOK=${apexProbesOK}/${apexSpecs.length}`
+);
+console.log(
   `[SaveSize] avg=${avgJsonKB}KB, max=${maxJsonKB}KB / limit ${(MAX_SAVE_BYTES / 1024).toFixed(0)}KB ` +
   `(samples=${jsonSamples})${saveCapExceeded ? " [EXCEEDED!]" : ""}`
 );
 
 const nearLimit = [];
-for (const s of [...eventFiles, ...chronFiles]) {
+for (const s of [...coreFiles, ...eventFiles, ...chronFiles, "src/engine/createEngine.js"]) {
+  if (!fs.existsSync(path.join(ROOT, s))) continue;
   const raw = readRel(s);
   const kb = Buffer.byteLength(raw, "utf8") / 1024;
   const lines = raw.split("\n").length;
-  if (s.startsWith("src/data/events/") && (kb >= 95 || lines >= 1950)) {
+  if (s === "src/engine/createEngine.js" && (kb >= 240 || lines >= 5000)) {
+    nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 260KB·5400L)`);
+  } else if (s === "src/data/core/careers.js" && (kb >= 145 || lines >= 3000)) {
+    nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 165KB·3300L)`);
+  } else if (s.startsWith("src/data/core/") && s !== "src/data/core/careers.js" && (kb >= 80 || lines >= 1650)) {
+    nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 95KB·1900L)`);
+  } else if (s.startsWith("src/data/events/") && (kb >= 95 || lines >= 1950)) {
     nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 110KB·2200L)`);
   } else if (s.startsWith("src/data/chronicles/") && (kb >= 58 || lines >= 1200)) {
     nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 70KB·1400L)`);
@@ -254,6 +363,9 @@ if (incorruptibleCorrupted > 0) hardFailures.push(`incorruptibleLeaks=${incorrup
 if (age500RetireFailed > 0) hardFailures.push(`retireExecFailed=${age500RetireFailed}`);
 if (mortalOver300 > 0) hardFailures.push(`mortalOver300=${mortalOver300}`);
 if (saveCapExceeded) hardFailures.push(`maxSaveSize=${maxJsonKB}KB > 2048KB`);
+if (timelineMultiSpotlights > 0) hardFailures.push(`timelineMultiSpotlights=${timelineMultiSpotlights}`);
+if (maxSpotlightCards > 2) hardFailures.push(`maxSpotlightCards=${maxSpotlightCards} > 2`);
+if (apexProbeFailures > 0) hardFailures.push(`apexProbeFailures=${apexProbeFailures} (${apexProbeIssues.join("; ")})`);
 
 if (hardFailures.length > 0) {
   if (warningsCaught.length) {
@@ -264,5 +376,6 @@ if (hardFailures.length > 0) {
 }
 console.log(
   `HEALTH CHECK PASSED (seed=${SEED}, 0 crashes, 0 softlocks, 0 migrate failures, 0 unknown-ID warnings, ` +
-  `0 incorruptible leaks, retireExec=${age500RetireExecutedOK}/${age500Plus}, maxSave=${maxJsonKB}KB<=2048KB).`
+  `0 incorruptible leaks, retireExec=${age500RetireExecutedOK}/${age500Plus}, maxSpotlight=${maxSpotlightCards}, ` +
+  `apexProbes=${apexProbesOK}/${apexSpecs.length}, maxSave=${maxJsonKB}KB<=2048KB).`
 );

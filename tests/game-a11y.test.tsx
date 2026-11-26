@@ -10,7 +10,7 @@ import { CORE_DATA } from "../src/data/core/index.js";
 import { EVENTS, CHRONICLES } from "../src/data/narrative.js";
 import { GLOSSARY_CATEGORIES, GLOSSARY_TERMS } from "../src/data/glossary.js";
 import { createImperiumEngine } from "../src/engine/createEngine.js";
-import { applyImportedBackup, loadHall, STORAGE_KEY } from "../src/lib/storage";
+import { ACTIVE_SAVE_KEY, applyImportedBackup, loadHall, saveActiveState, STORAGE_KEY } from "../src/lib/storage";
 
 const FULL_DATA = { ...CORE_DATA, EVENTS, CHRONICLES };
 const realEngine = createImperiumEngine(FULL_DATA);
@@ -836,4 +836,154 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
       Math.random = origRand;
     }
   });
+
+  it("Stage 19-A/19-C: enforces 1 named spotlight on trimmed TIMELINE events vs 2 on crossovers with accessible focus & choice resolution", () => {
+    localStorage.clear();
+    const cadiaTl = CORE_DATA.TIMELINE.find((t: any) => t.id === "tl_fall_of_cadia")!;
+    const creedCelestineXover = EVENTS.find((e: any) => e.id === "ev_s19a_xover_creed_celestine")!;
+    expect(CORE_DATA.TIMELINE.every((t: any) => (t.characters || []).length <= 1)).toBe(true);
+    expect(
+      EVENTS.filter((e: any) => e.id.startsWith("ev_s19a_xover_")).every((e: any) => (e.characters || []).length === 2)
+    ).toBe(true);
+    expect(cadiaTl.characters).toEqual(["creed"]);
+    expect(creedCelestineXover.characters).toEqual(["creed", "celestine"]);
+
+    let stepNum = 0;
+    const spotlightProxy = {
+      ...realEngine,
+      advanceQuarter(st: any) {
+        stepNum++;
+        if (stepNum === 1) {
+          st.pendingEvent = { ...cadiaTl, isTimeline: true };
+          return { status: "event", event: st.pendingEvent };
+        }
+        if (stepNum === 2) {
+          st.pendingEvent = { ...creedCelestineXover, isTimeline: false };
+          return { status: "event", event: st.pendingEvent };
+        }
+        return realEngine.advanceQuarter(st);
+      }
+    };
+
+    const { container, unmount } = render(<GameApp engineOverride={spotlightProxy} dataOverride={FULL_DATA} />);
+    startCustomCharacter(container);
+
+    // 1. Trimmed TIMELINE event -> exactly 1 named spotlight card & focus on #active-event-heading
+    fireEvent.click(container.querySelector("#btn-step")!);
+    expect(document.activeElement).toBe(container.querySelector("#active-event-heading"));
+    const tlDetails = container.querySelector("details.named-spotlight") as HTMLDetailsElement;
+    expect(tlDetails).not.toBeNull();
+    expect(tlDetails.open).toBe(true);
+    expect(tlDetails.querySelectorAll(".named-profile-card")).toHaveLength(1);
+    expect(tlDetails.querySelector(".named-spotlight-names")?.textContent).toContain("우르사카르 E. 크리드");
+    // English name in spotlight card must remain aria-hidden
+    expect(tlDetails.querySelector(".named-profile-en")?.getAttribute("aria-hidden")).toBe("true");
+    // Resolve unconditional fallback choice (last enabled choice)
+    const tlChoices = [...container.querySelectorAll(".choice-btn")] as HTMLButtonElement[];
+    const tlFallback = tlChoices.filter((b) => !b.disabled).at(-1)!;
+    fireEvent.click(tlFallback);
+    expect(container.querySelector("#active-event-heading")).toBeNull();
+
+    // 2. Stage 19-A 2-person crossover -> exactly 2 named spotlight cards & crossover_oath/met_* tags on resolution
+    fireEvent.click(container.querySelector("#btn-step")!);
+    expect(document.activeElement).toBe(container.querySelector("#active-event-heading"));
+    const xoverDetails = container.querySelector("details.named-spotlight") as HTMLDetailsElement;
+    expect(xoverDetails).not.toBeNull();
+    expect(xoverDetails.querySelectorAll(".named-profile-card")).toHaveLength(2);
+    const xoverNames = xoverDetails.querySelector(".named-spotlight-names")?.textContent || "";
+    expect(xoverNames).toContain("우르사카르 E. 크리드");
+    expect(xoverNames).toContain("성녀 셀레스틴");
+    const xoverChoices = [...container.querySelectorAll(".choice-btn")] as HTMLButtonElement[];
+    const xoverFallback = xoverChoices.filter((b) => !b.disabled).at(-1)!;
+    fireEvent.click(xoverFallback);
+    expect(container.querySelector("#active-event-heading")).toBeNull();
+    const savedRaw = localStorage.getItem(ACTIVE_SAVE_KEY) || "";
+    expect(savedRaw).toContain("met_creed");
+    expect(savedRaw).toContain("met_celestine");
+    expect(savedRaw).toContain("crossover_oath");
+
+    unmount();
+    localStorage.clear();
+  });
+
+  it("Stage 19-B/19-C: validates Stage 17-18 high-rank listening telemetry, resolveFactionEndingKey parity, and honorable ending flow", () => {
+    localStorage.clear();
+    const FORBIDDEN_SYM = /[★↗←✓↑↓]/;
+    const profiles = [
+      { careerId: "master_of_administratum", worldId: "terra", originId: "terra_high_blood", gender: "female", age: 68, tags: ["administratum", "high_lord_terra"], key: "imperial_standard" },
+      { careerId: "living_saint", worldId: "ophelia7", originId: "ecclesiarchy_novice", gender: "female", age: 68, tags: ["living_saint", "saint_mercy_aspect"], key: "living_saint" },
+      { careerId: "knight_high_king", worldId: "generic_knight", originId: "knight_house", gender: "female", age: 100, tags: ["imperial_knight", "knight_high_king"], key: "imperial_knight" },
+      { careerId: "nav_novator", worldId: "terra", originId: "navigator_house", gender: "male", age: 100, tags: ["navigator", "nav_novator"], key: "navis_navigator" },
+      { careerId: "grand_master_of_assassins", worldId: "terra", originId: "schola_progenium", gender: "male", age: 68, tags: ["assassin", "clade_vindicare", "grand_master_assassins", "high_lord_terra"], key: "officio_assassinorum" },
+      { careerId: "daemon_prince", worldId: "cadia", originId: "imperial_citizen", gender: "male", age: 68, tags: ["heretic", "daemon_prince", "mark_khorne"], key: "daemon_prince" },
+      { careerId: "saint_vessel", worldId: "ophelia7", originId: "ecclesiarchy_novice", gender: "female", age: 100, tags: ["saint_vessel", "saint_spark"], key: "imperial_standard" },
+      { careerId: "inquisitor", worldId: "terra", originId: "navigator_house", gender: "male", age: 100, tags: ["navigator", "navis_officer", "inquisitor"], key: "inquisition" }
+    ];
+
+    for (const p of profiles) {
+      expect(realEngine.getCareer(p.careerId).id).toBe(p.careerId);
+      const st = realEngine.createCharacter({
+        mode: "custom",
+        worldId: p.worldId,
+        originId: p.originId,
+        traitId: "none",
+        eraId: "indomitus",
+        gender: p.gender
+      });
+      st.age = p.age;
+      st.year = st.birthYear + p.age;
+      st.careerId = p.careerId;
+      st.tags = [...new Set([...st.tags, ...p.tags])];
+
+      expect(realEngine.resolveFactionEndingKey(st)).toBe(p.key);
+      const summary = realEngine.buildStatusSummary(st);
+      expect(summary.length).toBeGreaterThan(40);
+      expect(summary.length).toBeLessThanOrEqual(320);
+      expect(summary).not.toMatch(/undefined|NaN/);
+      expect(summary).not.toMatch(FORBIDDEN_SYM);
+
+      const retChk = realEngine.canRetireHonorably(st);
+      expect(retChk.ok).toBe(true);
+      const honEv = realEngine.createHonorableEndingEvent(st);
+      expect(honEv.title).not.toMatch(FORBIDDEN_SYM);
+      expect(honEv.choices.length).toBe(2);
+      const grade = realEngine.evaluateLifeGrade(st);
+      expect(grade.rank).toBeTruthy();
+      expect(grade.verdict).not.toMatch(/undefined|NaN/);
+      expect(grade.verdict).not.toMatch(FORBIDDEN_SYM);
+    }
+
+    // Live UI verification: resume a saved High Queen state, trigger honorable ending, confirm obituary & single #sr-live
+    const hqState = realEngine.createCharacter({
+      mode: "custom",
+      worldId: "generic_knight",
+      originId: "knight_house",
+      traitId: "none",
+      eraId: "indomitus",
+      gender: "female",
+      customName: "하이퀸검증"
+    });
+    hqState.age = 100;
+    hqState.year = hqState.birthYear + 100;
+    hqState.careerId = "knight_high_king";
+    hqState.tags = [...new Set([...hqState.tags, "imperial_knight", "knight_high_king"])];
+    hqState.pendingEvent = realEngine.createHonorableEndingEvent(hqState);
+    saveActiveState(hqState, realEngine);
+
+    const { container, unmount } = render(<GameApp engineOverride={realEngine} dataOverride={FULL_DATA} />);
+    fireEvent.click(container.querySelector("#btn-resume-saved")!);
+    expect(container.querySelectorAll("#sr-live")).toHaveLength(1);
+    expect(container.querySelector("#active-event-heading")?.textContent).toContain("스론 메카니쿰의 선조가 되다");
+    // Choose honorable retirement (first choice) -> enters death summary with matching High Queen obituary
+    const retireBtn = container.querySelector(".choice-btn") as HTMLButtonElement;
+    fireEvent.click(retireBtn);
+    const bodyText = container.textContent || "";
+    expect(bodyText).toContain("HIGH MONARCH OF THE KNIGHT WORLD");
+    expect(bodyText).toContain("하이 퀸");
+    expect(bodyText).not.toMatch(FORBIDDEN_SYM);
+
+    unmount();
+    localStorage.clear();
+  });
 });
+

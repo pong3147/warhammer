@@ -1,4 +1,4 @@
-// 분기 사건 — 전설의 교차 (네임드 인물 크로스오버 8종)
+// 분기 사건 — 전설의 교차 (네임드 인물 크로스오버 14종)
 export default [
   {
     id: "ev_s18_xover_shame_grimnar",
@@ -699,5 +699,558 @@ export default [
       }
     ],
     source: "Ciaphas Cain Series: For the Emperor / The Traitor's Hand / Lexicanum: Amberley Vail"
+  },
+  {
+    id: "ev_s19a_xover_yarrick_ghazghkull",
+    title: "강철의 노장과 야수의 숙명 — 커미사르 야릭과 가즈쿨 스라카",
+    category: "전설의 교차",
+    once: true,
+    characters: ["yarrick", "ghazghkull"],
+    req: {
+      minAge: 16,
+      minYear: 998,
+      maxYear: 999,
+      excludeWorlds: ["terra", "mars"],
+      excludeWorldTags: ["feral"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince", "custodes", "grey_knight", "high_lord_terra", "dreadnought"],
+      or: [
+        { anyWorlds: ["armageddon"] },
+        { anySegmenta: ["solar"] },
+        { anyTags: ["militarum", "commissar", "officer", "astartes", "imperial_knight", "sororitas", "inquisitor", "inquisition_agent", "navy", "rogue_trader", "armageddon_hero"] }
+      ]
+    },
+    reqLabel: "998~999.M41 · 제3차 아마겟돈 전쟁기 · 16세 이상 · 제국 충성파",
+    weight: 36,
+    text: "궤도 소행성 폭격으로 잿더미가 된 하데스 하이브 폐허 너머, 타르타루스 하이브 외곽 방벽에 포연이 뒤엉켰다. 굉음을 울리며 쇄도하는 오크 대군 선두에 거대한 강철 갑주를 두른 워로드 가즈쿨 막 우룩 스라카가 모습을 드러내자 방어선 전체가 진동했다. 바로 그 순간, 회수 복구된 초중전차 베인블레이드 '오만의 요새' 포탑 위에 한 노인이 우뚝 섰다. 붉은 레이저 의안 '사안'을 번뜩이며 노획한 오크 파워 클로를 치켜든 커미사르 세바스찬 야릭이다. 야수가 그 옛 호적을 알아보고 천둥 같은 웃음을 터뜨리자, 야릭은 흔들리지 않는 목소리로 방벽의 모든 총구를 지목했다.",
+    choices: [
+      {
+        label: "[사격 판정] '오만의 요새' 포격 유도에 맞춰 가즈쿨 친위 메가노브 대열에 집중 화망을 꽂는다",
+        req: { anyTags: ["militarum", "commissar", "officer", "astartes", "imperial_knight", "sororitas"] },
+        check: { stat: "BS", diff: -6 },
+        success: {
+          text: "베인블레이드의 주포 화염과 그대가 유도한 십자포화가 정확히 맞물리며 가즈쿨의 친위대를 산산이 갈라 놓았다! 거대한 야수가 분노 섞인 경탄을 남기고 물러난 뒤, 야릭이 붉은 의안으로 그대의 사격 지휘에 묵직한 경례를 보냈다.",
+          stats: { BS: 7, WP: 6, Inf: 8 },
+          faith: 6,
+          align: { dogmatic: 8 },
+          addTags: ["met_yarrick", "met_ghazghkull", "armageddon_hero", "armageddon_3_vet", "crossover_oath"]
+        },
+        fail: {
+          text: "오크 중화기의 무차별 역포격이 관측 진지를 강타해 깊은 파편상을 입었으나, 야릭의 지휘차가 돌격 선봉을 꺾을 결정적 몇 분은 끝내 벌어 냈다.",
+          wounds: -22,
+          stats: { BS: 2, T: 3 },
+          align: { dogmatic: 5 },
+          addTags: ["met_yarrick", "met_ghazghkull", "armageddon_3_vet", "crossover_oath"]
+        }
+      },
+      {
+        label: "[의지 판정] 야릭의 곁에서 무너지는 방벽의 신병들을 붙잡고 가즈쿨의 와아아 포효를 버텨 낸다",
+        check: { stat: "WP", diff: -6 },
+        success: {
+          text: "귀청을 찢는 와아아 함성에 패주하려던 방위병들을 붙잡아 세우고 야릭의 구호를 복창하자 방벽의 라스건 일제 사격이 다시 살아났다! 강철 노장이 그대의 어깨를 두드리며 진정한 아마겟돈의 방패라 치하했다.",
+          stats: { WP: 8, Fel: 6, Inf: 7 },
+          faith: 8,
+          align: { dogmatic: 7, humane: 4 },
+          addTags: ["met_yarrick", "met_ghazghkull", "armageddon_hero", "armageddon_3_vet", "crossover_oath"]
+        },
+        fail: {
+          text: "오크 돌격대의 충격파에 휩쓸려 가슴에 깊은 상처를 입었으나, 끝까지 방벽에서 물러서지 않아 아군 후속 연대가 증원할 틈을 만들었다.",
+          wounds: -24,
+          stats: { WP: 4, T: 2 },
+          align: { dogmatic: 5 },
+          addTags: ["met_yarrick", "met_ghazghkull", "armageddon_3_vet", "crossover_oath"]
+        }
+      },
+      {
+        label: "[민첩 판정] 화염에 갇힌 정련소 노동자들을 두 숙적의 교전 틈새로 빼돌린다",
+        check: { stat: "Ag", diff: -5 },
+        success: {
+          text: "야릭의 베인블레이드가 가즈쿨의 주력을 붙잡아 둔 사이, 붕괴하는 타르타루스 정련소 지하에서 수천 명의 노동자와 부상병을 외곽 방공호로 안전히 빼돌렸다! 포연 너머 야릭은 굳은 표정 속에서도 생명을 지켜 낸 기민함을 묵묵히 인정했다.",
+          stats: { Ag: 7, Fel: 6, WP: 5 },
+          faith: 6,
+          align: { humane: 10, ruthless: -4 },
+          addTags: ["met_yarrick", "met_ghazghkull", "armageddon_3_vet", "macro_mercy_sanctuary", "crossover_oath"]
+        },
+        fail: {
+          text: "무너지는 보급 통로에서 오크 약탈조와 부딪혀 큰 부상을 입었으나, 선두 대열이 방공 구역으로 빠져나갈 때까지 뒤를 막아 냈다.",
+          wounds: -20,
+          stats: { Ag: 2, T: 2 },
+          align: { humane: 7 },
+          addTags: ["met_yarrick", "met_ghazghkull", "armageddon_3_vet", "crossover_oath"]
+        }
+      },
+      {
+        label: "참호선 후방에서 탄약과 정찰 신호를 이어 가며 야릭의 사수 명령을 끝까지 수행한다",
+        effect: {
+          text: "타르타루스의 잿빛 하늘 아래 노장과 야수가 서로를 노려보는 거대한 대치 속에서, 그대는 맡은 참호와 화력 보급을 단 한 순간도 끊지 않고 지켜 냈다.",
+          stats: { T: 3, WP: 3, BS: 2 },
+          faith: 3,
+          align: { dogmatic: 4, humane: 2 },
+          addTags: ["met_yarrick", "met_ghazghkull", "armageddon_3_vet", "crossover_oath"]
+        }
+      }
+    ],
+    source: "Codex: Armageddon / Yarrick: The Pyres of Armageddon / Gunheads / Lexicanum: Sebastian Yarrick / Ghazghkull Mag Uruk Thraka"
+  },
+  {
+    id: "ev_s19a_xover_creed_celestine",
+    title: "무너지는 요새의 마지막 서약 — 우르사카르 E. 크리드와 살아 있는 성녀 셀레스틴",
+    category: "전설의 교차",
+    once: true,
+    characters: ["creed", "celestine"],
+    req: {
+      minAge: 16,
+      minYear: 998,
+      maxYear: 998,
+      greatRift: false,
+      excludeWorlds: ["terra", "mars"],
+      excludeWorldTags: ["feral"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince", "custodes", "high_lord_terra", "dreadnought", "cadia_stands", "rift_survivor"],
+      or: [
+        { anyWorlds: ["cadia"] },
+        { anySegmenta: ["obscurus"] },
+        { anyTags: ["militarum", "sororitas", "ecclesiarchy", "commissar", "astartes", "inquisitor", "inquisition_agent", "navy", "imperial_knight"] }
+      ]
+    },
+    reqLabel: "998.M41 · 제13차 블랙 크루세이드 공방전 · 대균열 이전 · 16세 이상 · 제국 충성파",
+    weight: 38,
+    text: "제13차 블랙 크루세이드의 포화가 카디아의 검은 파일런 평원을 불바다로 바꾼 공방전 전야. 포격에 흔들리는 카스르 크라프 지휘 참호에서 로드 카스텔란 우르사카르 E. 크리드가 낡은 라호 시가를 문 채 한 치도 물러서지 않고 반격 방어선을 긋고 있었다. 바로 그 머리 위로 보랏빛 워프 먹구름이 갈라지며 황금빛 날개를 펼친 살아 있는 성녀 셀레스틴이 불타는 대검을 들고 강림했다. 파일런 외곽선이 무너지면 카디아의 운명이 기울 위기 속에서, 필멸의 명장과 황제의 기적이 동시에 그대를 부른다.",
+    choices: [
+      {
+        label: "[의지 판정] 성녀 셀레스틴의 황금 광휘 아래 크리드의 예비 연대와 함께 파일런 돌격로를 사수한다",
+        req: { anyTags: ["militarum", "sororitas", "ecclesiarchy", "commissar", "astartes", "inquisitor", "saint_vessel"] },
+        check: { stat: "WP", diff: -6 },
+        success: {
+          text: "셀레스틴의 불꽃이 블랙 리전 선봉을 태워 버리는 틈에 크리드가 숨겨 둔 중화기 부대와 합류해 파일런 외곽선을 끝내 지켜 냈다! 크리드가 굳건한 경례를 올렸고, 성녀의 따스한 성광이 전장의 공포를 씻어 내렸다.",
+          stats: { WP: 8, WS: 5, Inf: 8 },
+          faith: 12,
+          corruption: -8,
+          align: { dogmatic: 9 },
+          addTags: ["met_creed", "met_celestine", "cadia_stands", "crossover_oath"]
+        },
+        fail: {
+          text: "블랙 리전 헤비 볼터의 탄막에 중상을 입고 쓰러졌으나, 셀레스틴의 날개가 쏟아지는 파편을 막아 준 덕에 가까스로 전선 후방으로 끌어 올려졌다.",
+          wounds: -24,
+          stats: { WP: 4, T: 2 },
+          faith: 6,
+          align: { dogmatic: 6 },
+          addTags: ["met_creed", "met_celestine", "cadia_stands", "crossover_oath"]
+        }
+      },
+      {
+        label: "[교섭 판정] 성녀가 연 성광 회랑으로 카스르 크라프 부상병과 피난 대열을 안전 지대로 유도한다",
+        check: { stat: "Fel", diff: -5 },
+        success: {
+          text: "셀레스틴이 하늘에서 악마 군세를 붙잡고 크리드가 예비 기갑대로 측면 화망을 막아 선 사이, 공황에 빠진 카디아 시민과 부상병 수만 명을 후방 지하 성채로 무사히 이끌었다! 카디아의 불굴 의지가 생존자들 속에 살아남았다.",
+          stats: { Fel: 7, WP: 6, Inf: 7 },
+          faith: 8,
+          align: { humane: 10, ruthless: -4 },
+          addTags: ["met_creed", "met_celestine", "cadia_stands", "macro_mercy_sanctuary", "crossover_oath"]
+        },
+        fail: {
+          text: "지하 성채 입구에 떨어진 궤도 포격 파편에 큰 상처를 입었으나, 대열 선두가 방어 구역에 안착할 때까지 끝내 흔들리지 않았다.",
+          wounds: -20,
+          stats: { Fel: 3, T: 2 },
+          align: { humane: 7 },
+          addTags: ["met_creed", "met_celestine", "cadia_stands", "crossover_oath"]
+        }
+      },
+      {
+        label: "[지성 판정] 크리드의 기만 포병 좌표를 전파해 적 강습선을 파일런 사격 지대로 유인 섬멸한다",
+        check: { stat: "Int", diff: -6 },
+        success: {
+          text: "전술 천재 크리드의 계산대로 카오스 강습선 편대를 좁은 협곡으로 유인해 단숨에 궤멸시켰고, 뒤이어 강하한 셀레스틴의 세라핌 부대가 잔당을 깨끗이 소탕했다. 냉철한 전술안이 전황의 숨통을 틔웠다.",
+          stats: { Int: 8, BS: 5, Inf: 7 },
+          align: { ruthless: 6, dogmatic: 5 },
+          addTags: ["met_creed", "met_celestine", "cadia_stands", "crossover_oath"]
+        },
+        fail: {
+          text: "적 워프 교란으로 좌표 송신이 어긋나 아군 관측소가 역포격을 맞았다. 적잖은 상처를 입고 후퇴했으나 귀중한 교전 기록만은 지켜 냈다.",
+          wounds: -20,
+          stats: { Int: 2, Inf: -2 },
+          align: { ruthless: 4 },
+          addTags: ["met_creed", "met_celestine", "cadia_stands", "crossover_oath"]
+        }
+      },
+      {
+        label: "성호를 그으며 카스르 방벽 끝자락에서 마지막 탄창까지 엄호 사격을 이어 간다",
+        effect: {
+          text: "공포의 눈이 붉게 타오르는 하늘 아래, 로드 카스텔란과 살아 있는 성녀가 어깨를 맞댄 결사항전을 두 눈으로 지켜보며 끝까지 방아쇠를 놓지 않았다.",
+          stats: { WP: 3, BS: 3, T: 2 },
+          faith: 5,
+          align: { dogmatic: 4, humane: 2 },
+          addTags: ["met_creed", "met_celestine", "cadia_stands", "crossover_oath"]
+        }
+      }
+    ],
+    source: "Gathering Storm I: Fall of Cadia / Celestine: The Living Saint / Lexicanum: Ursarkar E. Creed / Saint Celestine"
+  },
+  {
+    id: "ev_s19a_xover_dante_guilliman",
+    title: "핏빛 폐허 위의 섭정 임명 — 사령관 단테와 로부테 길리먼",
+    category: "전설의 교차",
+    once: true,
+    characters: ["dante", "guilliman"],
+    req: {
+      minAge: 16,
+      minYear: 1001,
+      maxYear: 1015,
+      greatRift: true,
+      excludeWorlds: ["terra", "mars"],
+      excludeWorldTags: ["feral"],
+      excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince", "custodes", "grey_knight", "high_lord_terra", "dreadnought"],
+      or: [
+        { anyWorlds: ["baal"] },
+        { anySegmenta: ["ultima"] },
+        { anyTags: ["astartes", "militarum", "sororitas", "navy", "imperial_knight", "inquisitor", "inquisition_agent", "indomitus_crusader", "baal_survivor"] }
+      ]
+    },
+    reqLabel: "001~015.M42 · 대균열 이후 · 인도미투스 성전기 · 16세 이상 · 제국 충성파",
+    weight: 35,
+    text: "하이브 함대 레비아탄의 참혹한 공세가 막 끝난 바알의 요새 수도원 아르크스 안젤리쿰 폐허. 갈라진 황금 갑주와 피 묻은 데스 마스크, 부서진 황금 점프 팩 차림으로 천오백 년을 버텨 온 블러드 엔젤 챕터 마스터 사령관 단테가 마침내 안식을 바라며 무릎을 꿇었다. 그 앞에 인도미투스 구원 함대를 이끌고 강림한 푸른 거인, 부활한 프라이마크 로부테 길리먼이 서 있었다. 길리먼은 늙은 영웅의 팔을 잡아 일으켜 세우며, 대균열 너머 영구 암흑에 잠긴 임페리움 니힐루스의 섭정직을 단테의 어깨에 맡겼다.",
+    choices: [
+      {
+        label: "[의지 판정] 두 거인의 서약 앞에 서서 임페리움 니힐루스 재건 선봉 임무를 자원한다",
+        req: { anyTags: ["astartes", "militarum", "officer", "sororitas", "navy", "imperial_knight", "inquisitor"] },
+        check: { stat: "WP", diff: -6 },
+        success: {
+          text: "길리먼이 차분한 시선으로 그대의 결의를 재단한 뒤 인도미투스 성전 인장을 내렸고, 지친 눈빛을 추스른 단테가 황금 데스 마스크 너머로 고개를 끄덕였다. 암흑 성역의 반격이 그대의 발끝에서 시작되었다.",
+          stats: { WP: 8, WS: 5, Inf: 9 },
+          faith: 7,
+          align: { dogmatic: 8, humane: 3 },
+          addTags: ["met_dante", "met_guilliman", "baal_survivor", "indomitus_crusader", "crossover_oath"]
+        },
+        fail: {
+          text: "반신 프라이마크와 천오백 년 영웅의 중압감에 옛 전상이 욱신거렸으나, 끝내 무릎을 꺾지 않아 선봉 편입 허가를 받아 냈다.",
+          wounds: -14,
+          stats: { WP: 4, T: 2 },
+          align: { dogmatic: 5 },
+          addTags: ["met_dante", "met_guilliman", "baal_survivor", "crossover_oath"]
+        }
+      },
+      {
+        label: "[교섭 판정] 바알의 생존 민간인과 방사능 황무지 재건 구호 계획을 길리먼의 참모진에 직언한다",
+        check: { stat: "Fel", diff: -6 },
+        success: {
+          text: "길리먼은 황무지 시민들을 고통 속에 방치해선 안 된다며 단테에게 바알의 테라포밍과 구호 보급을 명했고, 그대의 구호안이 그대로 채택되었다! 단테가 조용히 감사의 경례를 올렸다.",
+          stats: { Fel: 8, Int: 5, Inf: 7 },
+          faith: 6,
+          align: { humane: 10, ruthless: -4 },
+          addTags: ["met_dante", "met_guilliman", "baal_survivor", "macro_mercy_sanctuary", "crossover_oath"]
+        },
+        fail: {
+          text: "보급난을 앞세운 인도미투스 군수관들의 반발에 부딪혀 계획의 절반만 반영되었으나, 바알 구호의 불씨만은 지켜 냈다.",
+          stats: { Fel: 3, Inf: -2 },
+          align: { humane: 6 },
+          addTags: ["met_dante", "met_guilliman", "baal_survivor", "crossover_oath"]
+        }
+      },
+      {
+        label: "[지성 판정] 프라이머리스 증원군 편제와 니힐루스 성간 항로 물자 배분권을 선점한다",
+        check: { stat: "Int", diff: -6 },
+        success: {
+          text: "길리먼이 가져온 인도미투스 보급 대장과 블러드 엔젤 후계 챕터들의 손실표를 빈틈없이 대조해 핵심 성계 군수 라인의 실권을 확보했다. 거대한 세대 교체의 한복판에서 막대한 영향력을 손에 쥐었다.",
+          stats: { Int: 8, Inf: 9 },
+          align: { ruthless: 8, humane: -3 },
+          addTags: ["met_dante", "met_guilliman", "indomitus_crusader", "crossover_oath"]
+        },
+        fail: {
+          text: "프라이마크의 냉철한 감사망에 무리한 물자 배정 시도가 적발되어 날카로운 문책과 권한 축소를 당했다.",
+          stats: { Inf: -4, Int: 2 },
+          align: { ruthless: 5 },
+          addTags: ["met_dante", "met_guilliman", "crossover_oath"]
+        }
+      },
+      {
+        label: "폐허가 된 아르크스 안젤리쿰 외곽에서 경례를 올리며 암흑 성역의 새 시대를 묵묵히 증언한다",
+        effect: {
+          text: "죽음마저 허락받지 못한 천오백 년의 노장이 다시 황금 가면을 고쳐 쓰는 뒷모습과, 그 곁을 지키는 부활한 프라이마크의 결의를 평생 가슴에 새겼다.",
+          stats: { WP: 3, Int: 3, Inf: 2 },
+          faith: 3,
+          align: { dogmatic: 3, humane: 3 },
+          addTags: ["met_dante", "met_guilliman", "baal_survivor", "crossover_oath"]
+        }
+      }
+    ],
+    source: "The Devastation of Baal / Darkness in the Blood / Lexicanum: Luis Dante / Roboute Guilliman"
+  },
+  {
+    id: "ev_s19a_xover_guilliman_cawl",
+    title: "프라이머리스의 대가와 화성의 밀약 — 로부테 길리먼과 벨리사리우스 카울",
+    category: "전설의 교차",
+    once: true,
+    characters: ["guilliman", "cawl"],
+    req: {
+      minAge: 16,
+      minYear: 1001,
+      maxYear: 1025,
+      greatRift: true,
+      excludeWorldTags: ["feral"],
+      excludeTags: [
+        "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
+        "imperial_nihilus", "dreadnought", "abhuman", "ogryn", "ratling", "living_saint", "grey_knight", "custodes", "fabricator_general"
+      ],
+      or: [
+        { anyWorlds: ["terra", "mars", "macragge"] },
+        { anyTags: ["mechanicus", "astartes", "inquisitor", "inquisition_agent", "administratum", "high_lord_terra", "officer", "navy", "rogue_trader", "noble", "sororitas", "ecclesiarchy", "imperial_knight", "navigator", "indomitus_crusader"] }
+      ]
+    },
+    reqLabel: "001~025.M42 · 대균열 이후 · 임페리움 상크투스 · 16세 이상 · 제국 충성파",
+    weight: 34,
+    text: "인도미투스 성전 기함 '마크라그의 영예' 깊숙한 봉인 회의실. 수많은 기계 촉수와 현자의 로브를 두른 아크마고스 도미누스 벨리사리우스 카울이 프라이마크 로부테 길리먼과 팽팽히 맞서고 있었다. 길리먼은 카울이 함내에 설치해 둔 원격 대리 장치 '카울 인페리어'의 금지된 지능 의혹과 배신자 군단 진시드 활용 요청을 날카롭게 추궁했고, 카울은 프라이머리스 스페이스 마린과 대균열을 봉쇄할 블랙스톤 연구 전권 없이는 인류가 생존할 수 없다며 화성 보수파의 견제를 일축했다. 봉인 회의에 배석한 그대에게 두 거물의 질문이 동시에 날아든다.",
+    choices: [
+      {
+        label: "[지성 판정] 프라이머리스 보급 효율과 화성 교리 충돌의 절충 감사안을 제시한다",
+        req: { anyTags: ["mechanicus", "astartes", "inquisitor", "administratum", "high_lord_terra"] },
+        check: { stat: "Int", diff: -6 },
+        success: {
+          text: "카울의 블랙스톤 실험을 성전군 직속 감찰 편제로 분리하되 금지된 진시드 전용은 영구 봉인하는 절묘한 감사 보고서를 올렸다! 길리먼이 깊은 만족감을 표했고, 카울마저 이진법 웃음으로 그대의 연산력을 인정했다.",
+          stats: { Int: 9, Inf: 8, WP: 4 },
+          align: { dogmatic: 5, humane: 4 },
+          addTags: ["met_guilliman", "met_cawl", "indomitus_crusader", "crossover_oath"]
+        },
+        fail: {
+          text: "화성 보수파와 카울 지지파 양쪽의 교리 논쟁에 끼여 호된 질책을 받았으나, 핵심 성전 보급표만은 끝내 지켜 냈다.",
+          stats: { Int: 3, Inf: -3 },
+          align: { dogmatic: 3 },
+          addTags: ["met_guilliman", "met_cawl", "crossover_oath"]
+        }
+      },
+      {
+        label: "[의지 판정] 기술 이단과 자의식 기계의 위험을 직언하며 길리먼의 엄격한 통제선을 지지한다",
+        check: { stat: "WP", diff: -6 },
+        success: {
+          text: "'카울 인페리어'가 본인의 통제를 벗어나 독자 판단을 내릴 위험을 정면으로 지적하자 카울의 기계 눈이 서늘하게 빛났으나, 길리먼이 고개를 끄덕이며 그대에게 성전군 기술 감찰 권한을 부여했다.",
+          stats: { WP: 8, Inf: 8, Int: 4 },
+          faith: 7,
+          align: { dogmatic: 9, ruthless: -2 },
+          addTags: ["met_guilliman", "met_cawl", "indomitus_crusader", "crossover_oath"]
+        },
+        fail: {
+          text: "카울의 방대한 만 년 기억 데이터에 논리가 역공당해 회의실에서 체면을 구겼다. 다만 원칙을 꺾지 않은 기개는 길리먼의 기억에 남았다.",
+          stats: { Inf: -3, WP: 3 },
+          align: { dogmatic: 6 },
+          addTags: ["met_guilliman", "met_cawl", "crossover_oath"]
+        }
+      },
+      {
+        label: "[권위 판정] 카울의 비밀 블랙스톤 실험 데이터를 확보하는 조건으로 암묵적 협조 라인을 구축한다",
+        check: { stat: "Inf", diff: -6 },
+        success: {
+          text: "회의 뒤 카울과 은밀한 이진법 암호를 교환해 대균열 봉쇄 연구의 최신 기술과 막대한 후원을 끌어냈다. 길리먼의 감시선 아슬아슬한 경계에서 전례 없는 실리를 거두었다.",
+          stats: { Inf: 10, Int: 8 },
+          align: { ruthless: 9, dogmatic: -4 },
+          addTags: ["met_guilliman", "met_cawl", "crossover_oath"]
+        },
+        fail: {
+          text: "은밀한 접촉이 길리먼 직속 정보망의 눈에 걸려 엄중한 경고를 받았고, 카울 역시 시치미를 떼며 손을 떼 버렸다.",
+          stats: { Inf: -5, WP: 2 },
+          align: { ruthless: 5, dogmatic: -3 },
+          addTags: ["met_guilliman", "met_cawl", "crossover_oath"]
+        }
+      },
+      {
+        label: "두 거물의 논쟁에 끼어들지 않고 확정된 성전군 보급 현안과 공식 의정만 냉정히 점검한다",
+        effect: {
+          text: "만 년의 야망을 품은 대현자와 제국을 떠받치는 프라이마크 사이의 서늘한 긴장을 온몸으로 체감하며, 공식 의정 검토만 깔끔히 마치고 회의를 마무리했다.",
+          stats: { Int: 3, WP: 3, Inf: 2 },
+          align: { dogmatic: 2, humane: 2 },
+          addTags: ["met_guilliman", "met_cawl", "crossover_oath"]
+        }
+      }
+    ],
+    source: "Dark Imperium / Belisarius Cawl: The Great Work / Lexicanum: Belisarius Cawl / Roboute Guilliman"
+  },
+  {
+    id: "ev_s19a_xover_calgar_abaddon",
+    title: "복수의 영혼 아래의 결투 — 마르네우스 칼가와 약탈자 아바돈",
+    category: "전설의 교차",
+    once: true,
+    characters: ["calgar", "abaddon"],
+    req: {
+      minAge: 16,
+      minYear: 1008,
+      maxYear: 1015,
+      greatRift: true,
+      excludeWorlds: ["terra", "mars"],
+      excludeWorldTags: ["feral"],
+      excludeTags: ["custodes", "high_lord_terra", "dreadnought"],
+      or: [
+        { anySegmenta: ["obscurus"] },
+        { anyTags: ["astartes", "militarum", "sororitas", "navy", "imperial_knight", "inquisitor", "inquisition_agent", "vigilus_veteran", "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] }
+      ]
+    },
+    reqLabel: "008~015.M42 · 대균열 이후 · 비질루스 전쟁기 · 16세 이상",
+    weight: 35,
+    text: "나흐문트 건틀릿의 요충지 비질루스 행성이 불타는 가운데, 궤도를 뒤덮은 기함 '복수의 영혼' 아래로 블랙 리전 대군이 강하했다. '호루스의 발톱'과 비명을 지르는 마검 '드라크니옌'을 쥔 약탈자 아바돈이 방어선 중앙을 짓밟고 들어서자, 루비콘 프라이머리스 개조를 마치고 푸른 그라비스 파워 아머('헤라클루스의 갑주')를 두른 울트라마린 챕터 마스터 마르네우스 칼가가 '울트라마의 건틀릿'을 치켜들고 정면으로 막아 섰다! 칼가는 아엘다리(사임-한)의 은폐장을 두른 자폭 화선이 궤도의 '복수의 영혼'을 들이받을 때까지 목숨을 걸고 워마스터의 발을 묶으려 한다.",
+    choices: [
+      {
+        label: "[백병 판정] 마르네우스 칼가의 측면을 사수하며 블랙 리전 친위대의 포위를 지연시킨다",
+        req: { excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "WS", diff: -8 },
+        success: {
+          text: "치명상을 입고도 끝까지 물러서지 않는 칼가의 곁에서 블랙 리전 터미네이터의 협공을 끊어 냈다! 궤도의 '복수의 영혼'이 은폐 자폭 화선의 충돌에 흔들리며 아바돈이 강제 철수하는 순간까지 나흐문트 회랑을 지켜 냈다.",
+          stats: { WS: 8, T: 5, Inf: 9 },
+          faith: 8,
+          wounds: -14,
+          align: { dogmatic: 9, ruthless: -2 },
+          addTags: ["met_calgar", "met_abaddon", "vigilus_veteran", "crossover_oath"]
+        },
+        fail: {
+          text: "드라크니옌이 뿜은 어둠의 충격파와 블랙 리전의 포화에 휩쓸려 중상을 입었으나, 칼가가 시간을 버는 동안 전선이 완전히 무너지지는 않았다.",
+          wounds: -26,
+          stats: { WS: 3, T: 3 },
+          align: { dogmatic: 6 },
+          addTags: ["met_calgar", "met_abaddon", "vigilus_veteran", "crossover_oath"]
+        }
+      },
+      {
+        label: "[지성 판정] 궤도 은폐 화선의 유도 표식을 점화해 '복수의 영혼' 사각을 연다",
+        req: { excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "Int", diff: -6 },
+        success: {
+          text: "블랙 리전 텔레포트 교란망을 역추적해 은폐 자폭 화선의 최종 돌입 표식을 점화했다! '복수의 영혼' 선체가 거대한 화염에 휩싸이며 아바돈이 울며 겨자 먹기로 철수했고, 칼가는 그대의 냉철한 공조에 깊은 경의를 표했다.",
+          stats: { Int: 8, Fel: 5, Inf: 8 },
+          faith: 5,
+          align: { humane: 7, dogmatic: 4 },
+          addTags: ["met_calgar", "met_abaddon", "vigilus_veteran", "crossover_oath"]
+        },
+        fail: {
+          text: "궤도 중계탑에서 블랙 리전 침투조의 매복에 걸려 깊은 상처를 입었으나, 보조 유도 신호만은 끝내 궤도로 쏘아 올렸다.",
+          wounds: -20,
+          stats: { Int: 3, T: 2 },
+          align: { dogmatic: 5 },
+          addTags: ["met_calgar", "met_abaddon", "vigilus_veteran", "crossover_oath"]
+        }
+      },
+      {
+        label: "[백병 판정 · 이단] 워마스터 아바돈의 선봉에 서서 울트라마린 방어선의 측면을 짓밟는다",
+        req: { anyTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "WS", diff: -6 },
+        success: {
+          text: "아바돈이 칼가의 그라비스 갑주를 찢어발기는 동안 그대는 울트라마린 지원 분대를 돌파해 제국 방어선 절반을 불바다로 만들었다! 비록 궤도 기습 탓에 본대가 철수했으나 워마스터 앞에 두려운 공적을 새겼다.",
+          stats: { WS: 8, Inf: 10, WP: 4 },
+          corruption: 12,
+          align: { ruthless: 10, humane: -5 },
+          addTags: ["met_calgar", "met_abaddon", "vigilus_veteran", "crossover_oath"]
+        },
+        fail: {
+          text: "울트라마린 명예 경비대의 처절한 반격에 중상을 입고 텔레포트 섬광 속에 간신히 회수되었다.",
+          wounds: -24,
+          corruption: 8,
+          stats: { WS: 3 },
+          align: { ruthless: 6 },
+          addTags: ["met_calgar", "met_abaddon", "vigilus_veteran", "crossover_oath"]
+        }
+      },
+      {
+        label: "결투 충격파의 직격 반경에서 이탈해 전선 지휘망에 교전 추이를 타전하며 전력을 보전한다",
+        effect: {
+          text: "드라크니옌의 번개와 울트라마의 건틀릿이 맞부딪히는 파괴 반경 밖으로 물러나, 전황 변화와 궤도 교전 추이를 정확히 상부에 보고하며 생존했다.",
+          stats: { WP: 4, Ag: 3, Int: 3 },
+          wounds: -10,
+          addTags: ["met_calgar", "met_abaddon", "vigilus_veteran", "crossover_oath"]
+        }
+      }
+    ],
+    source: "Imperium Nihilus: Vigilus Ablaze / Lexicanum: Marneus Calgar / Ezekyle Abaddon"
+  },
+  {
+    id: "ev_s19a_xover_guilliman_mortarion",
+    title: "역병의 정원 이악스의 격돌 — 로부테 길리먼과 데몬 프라이마크 모타리온",
+    category: "전설의 교차",
+    once: true,
+    characters: ["guilliman", "mortarion"],
+    req: {
+      minAge: 16,
+      minYear: 1013,
+      maxYear: 1016,
+      greatRift: true,
+      excludeWorlds: ["terra", "mars"],
+      excludeWorldTags: ["feral"],
+      excludeTags: ["imperial_nihilus", "high_lord_terra", "dreadnought"],
+      or: [
+        { anySegmenta: ["ultima"] },
+        { anyWorlds: ["macragge"] },
+        { anyTags: ["astartes", "militarum", "sororitas", "navy", "imperial_knight", "inquisitor", "inquisition_agent", "plague_war_vet", "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] }
+      ]
+    },
+    reqLabel: "013~016.M42 · 대균열 이후 · 역병 전쟁기 · 16세 이상",
+    weight: 35,
+    text: "한때 울트라마의 치유 낙원이었던 정원 행성 이악스가 썩어 내리는 녹색 늪으로 변해 버렸다. 찢어진 나방 날개와 대낫 '침묵'을 휘두르는 데몬 프라이마크 모타리온이 프라이마크마저 쓰러뜨리는 워프 역병 '신살의 역병'을 품고 내려앉자, 황제의 불타는 검을 뽑아 든 로부테 길리먼이 정면으로 격돌했다! 반신 형제가 맞부딪힐 때마다 하늘에서 황금 화염과 녹색 독안개가 번갈아 쏟아지며, 너글의 역병 시계가 울트라마 전체를 워프 속으로 끌어당기기 시작한다.",
+    choices: [
+      {
+        label: "[의지 판정] 황제의 검이 뿜어 내는 성광에 호응해 이악스 성소 앞 데스 가드 전열을 돌파한다",
+        req: { excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "WP", diff: -10 },
+        success: {
+          text: "이악스 대기를 찢고 폭발한 황제의 성광 아래 데스 가드 포위망을 돌파해 길리먼의 반격로를 열었다! 창백한 왕이 너글의 정원으로 쫓겨나고 울트라마가 해방되는 기적의 순간을 끝내 함께했다.",
+          stats: { WP: 9, WS: 5, Inf: 9 },
+          faith: 14,
+          corruption: -10,
+          wounds: -12,
+          align: { dogmatic: 10, ruthless: -3 },
+          addTags: ["met_guilliman", "met_mortarion", "plague_war_vet", "crossover_oath"]
+        },
+        fail: {
+          text: "역병 시계의 불길한 진동과 독성 파편에 가슴을 얻어맞고 쓰러졌으나, 황제의 검에서 번진 성광의 여파 덕분에 타락만은 면하고 구조되었다.",
+          wounds: -24,
+          stats: { WP: 4, T: 2 },
+          faith: 6,
+          align: { dogmatic: 6 },
+          addTags: ["met_guilliman", "met_mortarion", "plague_war_vet", "crossover_oath"]
+        }
+      },
+      {
+        label: "[지성 판정] 역병 가마솥의 워프 공명을 교란해 '신살의 역병' 확산을 끊고 해독 표본을 회수한다",
+        req: { excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "Int", diff: -8 },
+        success: {
+          text: "대부정자 쿠가스의 역병 가마솥에 연결된 의식 도관을 파괴해 '신살의 역병' 확산을 차단하고 울트라마 의무단이 쓸 귀중한 해독 표본까지 확보했다! 수많은 행성을 구원한 냉철한 기지가 연대기에 새겨졌다.",
+          stats: { Int: 8, WP: 6, Fel: 5 },
+          faith: 7,
+          wounds: -10,
+          align: { humane: 10, ruthless: -4 },
+          addTags: ["met_guilliman", "met_mortarion", "plague_war_vet", "macro_mercy_sanctuary", "crossover_oath"]
+        },
+        fail: {
+          text: "역병 가마솥 주변의 독성 증기가 분출해 큰 화상을 입었으나, 공명 회로 절반을 끊어 내며 울트라마 전선의 숨통은 틔워 냈다.",
+          wounds: -22,
+          stats: { Int: 3, T: 2 },
+          align: { humane: 7 },
+          addTags: ["met_guilliman", "met_mortarion", "plague_war_vet", "crossover_oath"]
+        }
+      },
+      {
+        label: "[백병 판정 · 이단] 모타리온의 데스슈라우드 친위대 측면을 따라 울트라마린 엄호진을 분쇄한다",
+        req: { anyTags: ["heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"] },
+        check: { stat: "WS", diff: -6 },
+        success: {
+          text: "창백한 왕이 길리먼에게 '신살의 역병'을 주입하는 틈을 타 데스슈라우드 친위대와 합류해 울트라마린 엄호진을 갈아 버렸다! 황금 성광이 터져 전장이 뒤집히는 찰나에도 배신자 군단 사이에 두려운 무훈을 각인시켰다.",
+          stats: { WS: 8, T: 5, Inf: 9 },
+          corruption: 14,
+          align: { ruthless: 9, humane: -5 },
+          addTags: ["met_guilliman", "met_mortarion", "plague_war_vet", "crossover_oath"]
+        },
+        fail: {
+          text: "황제의 성광과 역병 파동이 충돌한 충격파에 큰 상처를 입고 워프 퇴각선으로 간신히 기어올랐다.",
+          wounds: -24,
+          corruption: 10,
+          stats: { WS: 3 },
+          align: { ruthless: 6 },
+          addTags: ["met_guilliman", "met_mortarion", "plague_war_vet", "crossover_oath"]
+        }
+      },
+      {
+        label: "황금 화염과 녹색 독기가 교차하는 격돌 반경에서 물러나 전선 재편 좌표를 확보한다",
+        effect: {
+          text: "두 반신이 맞부딪히며 지형이 통째로 뒤틀리는 이악스 중심부를 벗어나, 전선 재편에 필요한 교전 좌표를 끝까지 보전하며 살아남았다.",
+          stats: { Ag: 3, WP: 4, Int: 3 },
+          wounds: -10,
+          addTags: ["met_guilliman", "met_mortarion", "plague_war_vet", "crossover_oath"]
+        }
+      }
+    ],
+    source: "Dark Imperium: Godblight / Lexicanum: Plague Wars / Roboute Guilliman / Mortarion"
   }
 ];
+

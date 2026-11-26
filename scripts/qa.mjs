@@ -250,14 +250,36 @@ const EVENT_SIZE_WARN_KB = 110;
 const EVENT_LINE_WARN = 2200;
 const CHRON_SIZE_WARN_KB = 70;
 const CHRON_LINE_WARN = 1400;
+const CORE_SIZE_WARN_KB = 95;
+const CORE_LINE_WARN = 1900;
+const CAREERS_SIZE_WARN_KB = 165;
+const CAREERS_LINE_WARN = 3300;
+const ENGINE_SIZE_WARN_KB = 260;
+const ENGINE_LINE_WARN = 5400;
 let maxEvKB = 0;
 let maxChKB = 0;
+let maxCoreKB = 0;
+let engineKB = 0;
 
-for (const s of [...eventFiles, ...chronFiles]) {
+for (const s of [...coreFiles, ...eventFiles, ...chronFiles, "src/engine/createEngine.js"]) {
+  if (!fs.existsSync(path.join(ROOT, s))) continue;
   const rawSrc = readRel(s);
   const kb = Buffer.byteLength(rawSrc, "utf8") / 1024;
   const lineCount = rawSrc.split("\n").length;
-  if (s.startsWith("src/data/events/")) {
+  if (s === "src/engine/createEngine.js") {
+    engineKB = kb;
+    if (kb > ENGINE_SIZE_WARN_KB || lineCount > ENGINE_LINE_WARN) {
+      warnings.push(`Large engine file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines) — consider extracting sub-modules`);
+    }
+  } else if (s.startsWith("src/data/core/")) {
+    if (kb > maxCoreKB) maxCoreKB = kb;
+    const isCareers = s === "src/data/core/careers.js";
+    const kbLim = isCareers ? CAREERS_SIZE_WARN_KB : CORE_SIZE_WARN_KB;
+    const lineLim = isCareers ? CAREERS_LINE_WARN : CORE_LINE_WARN;
+    if (kb > kbLim || lineCount > lineLim) {
+      warnings.push(`Large core file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines) — consider splitting`);
+    }
+  } else if (s.startsWith("src/data/events/")) {
     if (kb > maxEvKB) maxEvKB = kb;
     if (kb > EVENT_SIZE_WARN_KB || lineCount > EVENT_LINE_WARN) {
       warnings.push(`Large event file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines) — consider splitting/promoting`);
@@ -282,7 +304,7 @@ if (!cssPath) {
 
 console.log(
   `[Gate 1] ESM data verified (${coreFiles.length} core, ${eventFiles.length} events, ${chronFiles.length} chronicles, glossary=${DATA.GLOSSARY_TERMS.length}; ` +
-  `maxEv=${maxEvKB.toFixed(1)}KB, maxCh=${maxChKB.toFixed(1)}KB).`
+  `maxCore=${maxCoreKB.toFixed(1)}KB, engine=${engineKB.toFixed(1)}KB, maxEv=${maxEvKB.toFixed(1)}KB, maxCh=${maxChKB.toFixed(1)}KB).`
 );
 
 // ============================================================================
@@ -1464,10 +1486,135 @@ for (const ch of DATA.CHRONICLES) {
         fail(4, `Tanith warp anomaly at year 764 must NOT trigger time dilation past destroyedYear 765`);
       }
     }
+
+    // Stage 19-A: Named spotlight cardinality discipline (AGENTS.md 2.2(6): <=1 per TIMELINE/normal event, <=2 only in named_crossover.js)
+    for (const tl of DATA.TIMELINE) {
+      const cnt = Array.isArray(tl.characters) ? tl.characters.length : 0;
+      if (cnt > 1) {
+        fail(4, `TIMELINE "${tl.id}" violates AGENTS.md 2.2(6) single-spotlight rule (${cnt} characters: ${tl.characters.join(", ")})`);
+      }
+    }
+    DATA.EVENTS.forEach((ev, idx) => {
+      const cnt = Array.isArray(ev.characters) ? ev.characters.length : 0;
+      const srcFile = eventSourceByIndex[idx] || "";
+      const isCrossover = srcFile === "src/data/events/themes/named_crossover.js";
+      if (!isCrossover && cnt > 1) {
+        fail(4, `Non-crossover event "${ev.id}" (${srcFile}) has ${cnt} characters (max 1 allowed outside named_crossover.js)`);
+      }
+      if (isCrossover && cnt > 2) {
+        fail(4, `Crossover event "${ev.id}" has ${cnt} characters (max 2 allowed)`);
+      }
+    });
+    const requiredS19aXovers = [
+      "ev_s19a_xover_yarrick_ghazghkull",
+      "ev_s19a_xover_creed_celestine",
+      "ev_s19a_xover_dante_guilliman",
+      "ev_s19a_xover_guilliman_cawl",
+      "ev_s19a_xover_calgar_abaddon",
+      "ev_s19a_xover_guilliman_mortarion"
+    ];
+    for (const xid of requiredS19aXovers) {
+      const ev = DATA.EVENTS.find((e) => e.id === xid);
+      if (!ev || !Array.isArray(ev.characters) || ev.characters.length !== 2) {
+        fail(4, `Missing or malformed Stage 19-A 2-person crossover "${xid}"`);
+      }
+    }
+
+    // Stage 19-B: Chronological integrity of split TIMELINE modules & shared resolveFactionEndingKey SSOT
+    for (let i = 1; i < DATA.TIMELINE.length; i++) {
+      if (DATA.TIMELINE[i].year < DATA.TIMELINE[i - 1].year) {
+        fail(4, `Split TIMELINE order regressed: ${DATA.TIMELINE[i - 1].id}(${DATA.TIMELINE[i - 1].year}) -> ${DATA.TIMELINE[i].id}(${DATA.TIMELINE[i].year})`);
+      }
+    }
+    const factionMatrix = [
+      { careerId: "daemon_prince", tags: ["heretic", "daemon_prince"], expected: "daemon_prince" },
+      { careerId: "chaos_lord", tags: ["heretic", "chaos_lord"], expected: "chaos_heretic" },
+      { careerId: "living_saint", tags: ["living_saint"], expected: "living_saint" },
+      { careerId: "saint_vessel", tags: ["saint_vessel", "saint_spark"], expected: "imperial_standard" },
+      { careerId: "custodes_captain_general", tags: ["custodes", "captain_general", "high_lord_terra"], expected: "custodes" },
+      { careerId: "astartes_brother", tags: ["astartes", "dreadnought"], expected: "dreadnought" },
+      { careerId: "gk_supreme_grand_master", tags: ["grey_knight", "gk_supreme_master"], expected: "grey_knight" },
+      { careerId: "astartes_captain", tags: ["astartes", "astartes_captain"], expected: "astartes" },
+      { careerId: "knight_high_king", tags: ["imperial_knight", "knight_high_king"], expected: "imperial_knight" },
+      { careerId: "grand_master_of_assassins", tags: ["assassin", "grand_master_assassins", "high_lord_terra"], expected: "officio_assassinorum" },
+      { careerId: "nav_novator", tags: ["navigator", "nav_novator"], expected: "navis_navigator" },
+      { careerId: "inquisitor", tags: ["inquisitor", "navigator", "navis_officer"], expected: "inquisition" },
+      { careerId: "rogue_trader", tags: ["rogue_trader", "navigator", "navis_officer", "planetary_governor"], expected: "rogue_trader" },
+      { careerId: "planetary_governor", tags: ["planetary_governor"], expected: "governor" },
+      { careerId: "fabricator_general", tags: ["mechanicus", "magos", "fabricator_general", "high_lord_terra"], expected: "mechanicus" },
+      { careerId: "master_of_administratum", tags: ["administratum", "high_lord_terra"], expected: "imperial_standard" }
+    ];
+    for (const row of factionMatrix) {
+      if (Engine.getCareer(row.careerId).id !== row.careerId) {
+        fail(4, `Stage 19-B factionMatrix references unknown careerId "${row.careerId}"`);
+      }
+      const fSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "indomitus", gender: "female" });
+      fSt.age = 70;
+      fSt.faith = 85;
+      fSt.careerId = row.careerId;
+      fSt.tags = [...new Set([...fSt.tags, ...row.tags])];
+      const resolved = Engine.resolveFactionEndingKey(fSt);
+      if (resolved !== row.expected) {
+        fail(4, `resolveFactionEndingKey(${row.careerId}) expected "${row.expected}", got "${resolved}"`);
+      }
+      const honEv = Engine.createHonorableEndingEvent(fSt);
+      const grade = Engine.evaluateLifeGrade(fSt);
+      if (!honEv || !honEv.title || !grade || !grade.rank || !grade.title) {
+        fail(4, `Honorable ending or obituary failed for faction "${row.expected}" (${row.careerId})`);
+      }
+      // P1-1 regression: unascended mortal saint_vessel must NOT receive Golden Apotheosis
+      if (row.careerId === "saint_vessel" && grade.rank.includes("GOLDEN APOTHEOSIS")) {
+        fail(4, `Unascended mortal saint_vessel erroneously received GOLDEN APOTHEOSIS rank`);
+      }
+      // P1-2 regression: nav_senior -> inquisitor/rogue_trader must NOT downgrade to Navigator obituary
+      if (row.careerId === "inquisitor" && !grade.rank.includes("ROSETTE")) {
+        fail(4, `Cross-career nav_senior -> inquisitor did not get Inquisitor obituary: "${grade.rank}"`);
+      }
+      if (row.careerId === "rogue_trader" && !grade.rank.includes("WARRANT OF TRADE")) {
+        fail(4, `Cross-career nav_senior/governor -> rogue_trader did not get Rogue Trader obituary: "${grade.rank}"`);
+      }
+    }
+
+    // Stage 19-C: 100% echo coverage for all 28 named characters & standardized met_<id> solo duplicate guards across ALL non-crossover single-character events
+    const echoIds = [
+      "ev_s4_met_primarchs_echo",
+      "ev_s4_met_commanders_echo",
+      "ev_s4_met_shadows_echo",
+      "ev_s4_met_nemesis_echo"
+    ];
+    const echoCoveredTags = new Set();
+    for (const eid of echoIds) {
+      const ev = DATA.EVENTS.find((e) => e.id === eid);
+      if (!ev) {
+        fail(4, `Missing named echo event "${eid}"`);
+      } else {
+        for (const t of (ev.req && ev.req.anyTags) || []) echoCoveredTags.add(t);
+      }
+    }
+    for (const ch of DATA.CHARACTERS) {
+      const metTag = `met_${ch.id}`;
+      if (!echoCoveredTags.has(metTag)) {
+        fail(4, `Named character "${ch.id}" (${ch.name}) is missing from ev_s4_met_*_echo anyTags (${metTag})`);
+      }
+    }
+    // Intentional institutional re-encounter whitelist (e.g., High Lord council with Regent Guilliman)
+    const INTENTIONAL_REENCOUNTER_WHITELIST = new Set(["ev_s14_hl_regent_guilliman"]);
+    DATA.EVENTS.forEach((ev, idx) => {
+      const srcFile = eventSourceByIndex[idx] || "";
+      if (srcFile === "src/data/events/themes/named_crossover.js") return;
+      if (INTENTIONAL_REENCOUNTER_WHITELIST.has(ev.id)) return;
+      if (Array.isArray(ev.characters) && ev.characters.length === 1) {
+        const expectedGuard = `met_${ev.characters[0]}`;
+        const excl = (ev.req && ev.req.excludeTags) || [];
+        if (!excl.includes(expectedGuard)) {
+          fail(4, `Single-character event "${ev.id}" (${srcFile}) is missing duplicate guard "${expectedGuard}" in req.excludeTags`);
+        }
+      }
+    });
   }
 }
 
-console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-19S2 guards verified.`);
+console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-19C guards verified.`);
 
 // ============================================================================
 // Gate 4P: 15종 대표 페르소나 + 타 행성 방문·성인 귀족 신분·생활권·신체 정합성 & 최소 풀 하한(>= 8) 검증
