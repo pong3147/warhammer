@@ -8,7 +8,7 @@ Warhammer 40,000 인류제국 세계관을 배경으로 한 **Astro + React 아�
 
 * **GitHub Pages 자동 배포 (권장):**
   * 퍼블릭 저장소 `Settings` > `Pages` > `Build and deployment` > `Source`를 **`GitHub Actions`**로 한 번만 설정하면, `main` 브랜치에 푸시할 때마다 `.github/workflows/deploy.yml`이 자동 검증(`qa.mjs` · `audit-health.mjs` · `npm test` · `npm run build`) 후 `https://pong3147.github.io/warhammer/`에 배포합니다.
-* **로컬 개발 · 미리보기 · 전체 검증 (Node.js 22+):**
+* **로컬 개발 · 미리보기 · 전체 검증 (Node.js 22.23.4+):**
   * 의존성 설치: `npm install`
   * 개발 서버: `npm run dev`
   * 정적 빌드 및 미리보기: `npm run build && npm run preview`

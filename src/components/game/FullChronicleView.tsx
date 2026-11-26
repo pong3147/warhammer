@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { formatRollOutcomeLabel } from "../../engine/formatters.js";
 import { getLifeChapter } from "../../lib/chronicleText";
 
 interface Props {
@@ -153,7 +154,7 @@ export default function FullChronicleView({
                         {item.meta ? (
                           <span>
                             d100 {item.meta.roll}/{item.meta.target}{" "}
-                            {item.meta.success ? "성공" : "실패"}
+                            {formatRollOutcomeLabel(item.meta)}
                           </span>
                         ) : null}
                       </div>

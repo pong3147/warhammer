@@ -331,6 +331,12 @@ export function formatImperialDate(absYear, quarter = 1) {
   return `${formatImperialYear(absYear)} ${QUARTER_LABELS[quarter] || "상반기"}`;
 }
 
+export function formatRollOutcomeLabel(roll) {
+  if (!roll) return "";
+  if (roll.success) return roll.critSuccess ? "대성공" : "성공";
+  return roll.critFail ? "대실패" : "실패";
+}
+
 export function getWorldShortTag(world) {
   if (!world) return "";
   if (world.id === "terra") return "제국 수도 · 황궁";

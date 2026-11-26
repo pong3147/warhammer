@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { formatRollOutcomeLabel } from "../../engine/formatters.js";
 
 interface Props {
   state: any;
@@ -33,7 +34,7 @@ export default function ActiveEventPanel({ state, engine, onChoose }: Props) {
       {lastRoll ? (
         <div id="roll-banner" className={`roll-banner ${lastRoll.success ? "ok" : "fail"}`}>
           직전 판정 ({rollLabel}): d100 굴림 <strong>{lastRoll.roll}</strong> / 목표{" "}
-          <strong>{lastRoll.target}</strong> {lastRoll.success ? "성공" : "실패"}
+          <strong>{lastRoll.target}</strong> {formatRollOutcomeLabel(lastRoll)}
         </div>
       ) : (
         <div id="roll-banner" className="roll-banner" style={{ display: "none" }} />

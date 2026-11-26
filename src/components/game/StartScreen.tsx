@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CORE_DATA, coreEngine } from "../../data/index.js";
+import { CODEX_COUNTS } from "../../lib/codexMeta";
 import { withBase } from "../../lib/links";
 import type { StartConfig } from "./types";
 
@@ -7,18 +8,24 @@ interface Props {
   headingRef: React.RefObject<HTMLHeadingElement | null>;
   savedSummary: any | null;
   narrativeLoading: boolean;
+  narrativeCounts?: { events: number; chronicles: number } | null;
   onStart: (config: StartConfig) => void;
   onResume: () => void;
   onDiscardSaved: () => void;
+  onNotify?: (msg: string) => void;
 }
+
+type ArmedAction = "discard" | "random" | "custom" | null;
 
 export default function StartScreen({
   headingRef,
   savedSummary,
   narrativeLoading,
+  narrativeCounts,
   onStart,
   onResume,
-  onDiscardSaved
+  onDiscardSaved,
+  onNotify
 }: Props) {
   const [eraId, setEraId] = useState(coreEngine.ERA_PRESETS[0]?.id || "armageddon");
   const [worldId, setWorldId] = useState(CORE_DATA.WORLDS[0]?.id || "terra");
@@ -26,9 +33,66 @@ export default function StartScreen({
   const [traitId, setTraitId] = useState(CORE_DATA.TRAITS[0]?.id || "none");
   const [gender, setGender] = useState("random");
   const [name, setName] = useState("");
+  const [armedAction, setArmedAction] = useState<ArmedAction>(null);
+  const armTimerRef = useRef<number | null>(null);
+
+  const clearArm = () => {
+    if (armTimerRef.current !== null) {
+      window.clearTimeout(armTimerRef.current);
+      armTimerRef.current = null;
+    }
+    setArmedAction(null);
+  };
+
+  useEffect(() => {
+    clearArm();
+  }, [savedSummary]);
+
+  useEffect(() => {
+    return () => {
+      if (armTimerRef.current !== null) {
+        window.clearTimeout(armTimerRef.current);
+        armTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  const armForConfirm = (kind: Exclude<ArmedAction, null>, notice: string) => {
+    if (armTimerRef.current !== null) window.clearTimeout(armTimerRef.current);
+    setArmedAction(kind);
+    armTimerRef.current = window.setTimeout(() => {
+      armTimerRef.current = null;
+      setArmedAction(null);
+    }, 5000);
+    onNotify?.(notice);
+  };
 
   const savedWorld = savedSummary ? coreEngine.getWorld(savedSummary.worldId) : null;
   const savedCareerTitle = savedSummary ? coreEngine.getCareerDisplayTitle(savedSummary) : "";
+
+  const handleDiscardClick = () => {
+    if (armedAction !== "discard") {
+      armForConfirm(
+        "discard",
+        `진행 중인 '${savedSummary?.name || "영혼"}'의 저장본을 영구 삭제하려면 5초 안에 한 번 더 누르라.`
+      );
+      return;
+    }
+    clearArm();
+    onDiscardSaved();
+  };
+
+  const handleStartWithGuard = (kind: "random" | "custom", config: StartConfig) => {
+    if (savedSummary && armedAction !== kind) {
+      armForConfirm(
+        kind,
+        `진행 중인 '${savedSummary.name}'의 생애가 삭제된다. 덮어쓰고 새 인생을 시작하려면 5초 안에 한 번 더 누르라.`
+      );
+      return;
+    }
+    clearArm();
+    onStart(config);
+  };
 
   return (
     <section id="start-screen" className="sanctum-hero" aria-labelledby="start-heading">
@@ -100,12 +164,15 @@ export default function StartScreen({
               type="button"
               className="btn-primary"
               disabled={narrativeLoading}
-              onClick={onResume}
+              onClick={() => {
+                clearArm();
+                onResume();
+              }}
             >
               이어하기
             </button>
-            <button id="btn-discard-saved" type="button" className="btn-ghost" onClick={onDiscardSaved}>
-              저장 삭제
+            <button id="btn-discard-saved" type="button" className="btn-ghost" onClick={handleDiscardClick}>
+              {armedAction === "discard" ? "삭제 재확인 (5초 내 다시 선택)" : "저장 삭제"}
             </button>
           </div>
         </div>
@@ -121,9 +188,20 @@ export default function StartScreen({
             </p>
             <ul className="feature-list">
               <li>1년 = 60초 (1배속 · 1년 3분기 · 2/4/8/16배속 자유 전환)</li>
-              <li>21개 세력 91종 풀 계급도(테라의 하이 로드 12석 완비·임페리얼 나이트·리빙 세인트·데몬 프린스) 및 발탁·평행 횡단 이벤트</li>
-              <li>23개 행성·직군·챕터·시기·3대 도덕 성향(자비·교조·암흑) 796종 연대기 및 699종 분기·역사 사건</li>
-              <li>9대 아스타르테스 챕터 서약 · 28인 네임드 조우 · 8대 특성치(d100 판정)</li>
+              <li>
+                {CODEX_COUNTS.factions}개 세력 {CODEX_COUNTS.careers}종 풀 계급도(테라의 하이 로드 12석 완비·임페리얼
+                나이트·리빙 세인트·데몬 프린스) 및 발탁·평행 횡단 이벤트
+              </li>
+              <li>
+                {CODEX_COUNTS.worlds}개 행성·직군·챕터·시기·3대 도덕 성향(자비·교조·암흑){" "}
+                {narrativeCounts
+                  ? `${narrativeCounts.chronicles}종 연대기 및 ${narrativeCounts.events}종 분기·역사 사건`
+                  : "다채로운 연대기 및 분기·역사 사건"}
+              </li>
+              <li>
+                {CODEX_COUNTS.chapters}대 아스타르테스 챕터 서약 · {CODEX_COUNTS.characters}인 네임드 조우 · 8대
+                특성치(d100 판정)
+              </li>
             </ul>
           </div>
           <button
@@ -131,9 +209,9 @@ export default function StartScreen({
             type="button"
             className="btn-primary"
             disabled={narrativeLoading}
-            onClick={() => onStart({ mode: "random" })}
+            onClick={() => handleStartWithGuard("random", { mode: "random" })}
           >
-            무작위 운명으로 탄생하기
+            {armedAction === "random" ? "기존 저장본 덮어쓰고 탄생 (5초 내 다시 선택)" : "무작위 운명으로 탄생하기"}
           </button>
         </div>
 
@@ -209,7 +287,7 @@ export default function StartScreen({
             className="btn-gold"
             disabled={narrativeLoading}
             onClick={() =>
-              onStart({
+              handleStartWithGuard("custom", {
                 mode: "custom",
                 eraId,
                 worldId,
@@ -220,7 +298,7 @@ export default function StartScreen({
               })
             }
           >
-            지정된 운명으로 탄생하기
+            {armedAction === "custom" ? "기존 저장본 덮어쓰고 시작 (5초 내 다시 선택)" : "지정된 운명으로 탄생하기"}
           </button>
         </div>
       </div>

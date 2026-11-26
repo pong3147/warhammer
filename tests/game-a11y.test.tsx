@@ -595,6 +595,7 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
     expect(document.activeElement).not.toBe(updatedAdminBtn);
     expect(container.querySelector("#sr-live")?.textContent || "").toContain("입단 심사 탈락");
     unmount();
+    localStorage.clear();
 
     // Forced-duty soldier: manual travel selector must be locked (no #sel-travel-world)
     const soldierProxy = {
@@ -732,5 +733,107 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
     expect(fullText).toContain(`1 / ${CORE_DATA.WORLDS.length}`);
     expect(fullText).toContain(`0 / ${CORE_DATA.CHAPTERS.length}`);
     expect(fullText).toContain("역사 1건 · 인물 1명");
+  });
+
+  it("Stage 19-M2: guards saved life against 1-click discard/overwrite with 2-step confirm, renders dynamic counts, and displays 대성공/대실패 labels", () => {
+    const { container, unmount } = render(<GameApp engineOverride={realEngine} dataOverride={FULL_DATA} />);
+
+    // Dynamic StartScreen counts match live data (no stale hardcoded numbers)
+    expect(container.textContent).toContain(`${EVENTS.length + CORE_DATA.TIMELINE.length}종 분기·역사 사건`);
+    expect(container.textContent).toContain(`${CHRONICLES.length}종 연대기`);
+    expect(container.textContent).toContain(`${CORE_DATA.WORLDS.length}개 행성`);
+
+    // Start first life, then return to StartScreen via #btn-new-life (saves active run)
+    startCustomCharacter(container);
+    fireEvent.click(container.querySelector("#btn-new-life")!);
+    expect(container.querySelector("#resume-banner")).not.toBeNull();
+    expect(container.querySelector("#resume-banner")?.textContent).toContain("포커스검증병");
+
+    // 1st click on #btn-start-random must ARM without overwriting
+    const randBtn = container.querySelector("#btn-start-random") as HTMLButtonElement;
+    fireEvent.click(randBtn);
+    expect(container.querySelector("#resume-banner")).not.toBeNull();
+    expect(randBtn.textContent).toContain("5초 내 다시 선택");
+    expect(container.querySelector("#sr-live")?.textContent).toContain("덮어쓰고 새 인생을 시작하려면");
+
+    // Switching to #btn-discard-saved arms discard instead of deleting on 1st click
+    const discardBtn = container.querySelector("#btn-discard-saved") as HTMLButtonElement;
+    fireEvent.click(discardBtn);
+    expect(container.querySelector("#resume-banner")).not.toBeNull();
+    expect(discardBtn.textContent).toContain("삭제 재확인");
+    expect(randBtn.textContent).toContain("무작위 운명으로 탄생하기");
+
+    // 2nd click on #btn-discard-saved deletes save and restores focus to #start-heading
+    vi.useFakeTimers();
+    fireEvent.click(discardBtn);
+    act(() => {
+      vi.runAllTimers();
+    });
+    vi.useRealTimers();
+    expect(container.querySelector("#resume-banner")).toBeNull();
+    expect(document.activeElement).toBe(container.querySelector("#start-heading"));
+
+    // Create a new life again, return to StartScreen, and confirm 2-click overwrite on #btn-start-custom
+    startCustomCharacter(container);
+    fireEvent.click(container.querySelector("#btn-new-life")!);
+    expect(container.querySelector("#resume-banner")).not.toBeNull();
+    fireEvent.change(container.querySelector("#inp-name")!, { target: { value: "덮어쓰기신규병" } });
+    const customBtn = container.querySelector("#btn-start-custom") as HTMLButtonElement;
+    fireEvent.click(customBtn);
+    expect(container.querySelector("#resume-banner")).not.toBeNull();
+    expect(customBtn.textContent).toContain("5초 내 다시 선택");
+    fireEvent.click(customBtn);
+    expect(container.querySelector("#char-name")).toHaveTextContent("덮어쓰기신규병");
+    unmount();
+    localStorage.clear();
+
+    // Verify critSuccess (대성공) and critFail (대실패) display in #roll-banner and #recent-log-list
+    const origRand = Math.random;
+    const critEvent = {
+      id: "ev_test_crit_labels",
+      title: "치명 판정 테스트",
+      category: "테스트",
+      text: "판정 확인.",
+      choices: [
+        {
+          label: "[지성 판정] 시도",
+          check: { stat: "Int", diff: 10 },
+          success: { text: "성공했다." },
+          fail: { text: "실패했다." }
+        }
+      ],
+      source: "Test Suite"
+    };
+    let seq = 0;
+    const critProxy = {
+      ...realEngine,
+      advanceQuarter(st: any) {
+        if (seq < 2) {
+          seq++;
+          st.pendingEvent = { ...critEvent, isTimeline: false };
+          return { status: "event", event: st.pendingEvent };
+        }
+        return realEngine.advanceQuarter(st);
+      }
+    };
+    const { container: cCrit } = render(<GameApp engineOverride={critProxy} dataOverride={FULL_DATA} />);
+    startCustomCharacter(cCrit);
+    try {
+      // Force roll = 1 (critSuccess -> 대성공)
+      Math.random = () => 0.0;
+      fireEvent.click(cCrit.querySelector("#btn-step")!);
+      fireEvent.click(cCrit.querySelector(".choice-btn")!);
+      expect(cCrit.querySelector("#roll-banner")?.textContent).toContain("대성공");
+      expect(cCrit.querySelector("#recent-log-list")?.textContent).toContain("대성공");
+
+      // Force roll = 100 (critFail -> 대실패)
+      Math.random = () => 0.999;
+      fireEvent.click(cCrit.querySelector("#btn-step")!);
+      fireEvent.click(cCrit.querySelector(".choice-btn")!);
+      expect(cCrit.querySelector("#roll-banner")?.textContent).toContain("대실패");
+      expect(cCrit.querySelector("#recent-log-list")?.textContent).toContain("대실패");
+    } finally {
+      Math.random = origRand;
+    }
   });
 });

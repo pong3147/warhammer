@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { formatRollOutcomeLabel } from "../../engine/formatters.js";
 
 interface Props {
   logs: any[];
@@ -59,7 +60,7 @@ export default function RecentChronicleList({ logs, onOpenFullChronicle }: Props
               </span>
               {item.meta ? (
                 <span>
-                  d100 {item.meta.roll}/{item.meta.target} {item.meta.success ? "성공" : "실패"}
+                  d100 {item.meta.roll}/{item.meta.target} {formatRollOutcomeLabel(item.meta)}
                 </span>
               ) : null}
             </div>

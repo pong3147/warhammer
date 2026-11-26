@@ -1,3 +1,5 @@
+import { formatRollOutcomeLabel } from "../engine/formatters.js";
+
 export function getLifeChapter(age: number): string {
   if (age <= 5) return "제1장 · 유아기 (0~5세)";
   if (age <= 13) return "제2장 · 아동기 (6~13세)";
@@ -86,7 +88,7 @@ export function buildPlainTextChronicle(charState: any, engine: any, data: any):
       lines.push(`[${chTitle}]`);
     }
     const badge = item.badge ? ` [${item.badge}]` : "";
-    const roll = item.meta ? ` (d100 ${item.meta.roll}/${item.meta.target} ${item.meta.success ? "성공" : "실패"})` : "";
+    const roll = item.meta ? ` (d100 ${item.meta.roll}/${item.meta.target} ${formatRollOutcomeLabel(item.meta)})` : "";
     lines.push(`- ${item.year}, ${item.age}세${badge}${roll}: ${item.text}`);
     if (item.deltaText) lines.push(`  변화: ${item.deltaText}`);
   }

@@ -22,12 +22,18 @@ import StartScreen from "./StartScreen";
 import TimeControlPanel from "./TimeControlPanel";
 import type { StartConfig } from "./types";
 
+export interface NarrativeCounts {
+  events: number;
+  chronicles: number;
+}
+
 export interface GameAppProps {
   engineOverride?: any;
   dataOverride?: any;
+  narrativeCounts?: NarrativeCounts;
 }
 
-export default function GameApp({ engineOverride, dataOverride }: GameAppProps = {}) {
+export default function GameApp({ engineOverride, dataOverride, narrativeCounts }: GameAppProps = {}) {
   const [runtime, setRuntime] = useState<{ engine: any; data: any } | null>(() =>
     engineOverride && dataOverride ? { engine: engineOverride, data: dataOverride } : null
   );
@@ -428,6 +434,9 @@ export default function GameApp({ engineOverride, dataOverride }: GameAppProps =
     clearActiveState();
     setSavedSummary(null);
     showToast("진행 중이던 저장본을 삭제했다.", true);
+    window.setTimeout(() => {
+      startHeadingRef.current?.focus();
+    }, 0);
   }, [showToast]);
 
   const handleNewLife = useCallback(() => {
@@ -667,6 +676,24 @@ export default function GameApp({ engineOverride, dataOverride }: GameAppProps =
     handleStartGame({ mode: "random" });
   }, [handleStartGame]);
 
+  const effectiveNarrativeCounts = useMemo<NarrativeCounts | null>(() => {
+    const d = runtime?.data || dataOverride;
+    if (d && Array.isArray(d.EVENTS) && Array.isArray(d.CHRONICLES)) {
+      return {
+        events: d.EVENTS.length + (Array.isArray(d.TIMELINE) ? d.TIMELINE.length : CORE_DATA.TIMELINE.length),
+        chronicles: d.CHRONICLES.length
+      };
+    }
+    return narrativeCounts || null;
+  }, [runtime, dataOverride, narrativeCounts]);
+
+  const handleStartScreenNotify = useCallback(
+    (msg: string) => {
+      showToast(msg, true);
+    },
+    [showToast]
+  );
+
   return (
     <>
       <div id="sr-live" className="sr-only" aria-live="polite" aria-atomic="true">
@@ -679,9 +706,11 @@ export default function GameApp({ engineOverride, dataOverride }: GameAppProps =
             headingRef={startHeadingRef}
             savedSummary={savedSummary}
             narrativeLoading={narrativeLoading}
+            narrativeCounts={effectiveNarrativeCounts}
             onStart={handleStartGame}
             onResume={handleResumeSaved}
             onDiscardSaved={handleDiscardSaved}
+            onNotify={handleStartScreenNotify}
           />
         ) : viewMode === "chronicle" ? (
           <FullChronicleView

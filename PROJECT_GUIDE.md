@@ -29,7 +29,7 @@ warhammer/
 ├── AGENTS.md                         # AI 에이전트 작업 방향 · 불변 규칙 · 고증/표기 표준 · QA 게이트
 ├── PROJECT_GUIDE.md                  # (본 문서) 아키텍처 · 파일별 수록 현황 · 스키마 · 진행 보고서
 ├── .github/workflows/
-│   ├── qa.yml                        # PR/push 자동 검증 (qa.mjs + audit-health.mjs --lives=100 + typecheck + npm test + astro build + qa:dist)
+│   ├── qa.yml                        # PR·수동 자동 검증 (qa.mjs + audit-health.mjs --lives=100 + typecheck + npm test + astro build + qa:dist)
 │   └── deploy.yml                    # main 브랜치 자동 검증 + GitHub Pages 정적 배포
 ├── scripts/
 │   ├── _loadNodeData.mjs             # Node.js용 ESM 데이터·엔진 공통 로더 (fileURLToPath 크로스플랫폼 ROOT + 0건 로드 즉시 실패 가드)
@@ -38,7 +38,7 @@ warhammer/
 │   └── coverage-report.mjs           # 직군·행성·챕터·연령대·성향·네임드·시대 7축 콘텐츠 밀도 매트릭스
 ├── tests/
 │   ├── setup.ts                      # Testing Library jest-dom 셋업
-│   └── game-a11y.test.tsx            # 행동형 스크린 리더 접근성·포커스·1~16배속·개념 사전·Stage 19-S2·전당 백업 방어 Vitest 스위트 (14개 테스트)
+│   └── game-a11y.test.tsx            # 행동형 스크린 리더 접근성·포커스·1~16배속·개념 사전·Stage 19-S2·전당/저장본 보호·치명 판정 Vitest 스위트 (15개 테스트)
 └── src/
     ├── layouts/
     │   └── BaseLayout.astro          # 공통 HTML 셸 · 병렬 웹폰트 · 스킵 링크 · 상단 내비게이션(4대 메뉴) · 푸터
@@ -831,6 +831,7 @@ warhammer/
 | 항목 | 상태 | 목표 범위 및 세부 명세 |
 | --- | --- | --- |
 | **19-M1. Windows QA 경로 수정 · 0건 가드 · 전당 백업 방어 · 타입체크 · Astro 7 / Vitest 5 업그레이드** | `[완료]` | **① 크로스플랫폼 경로 수정 (`scripts/_loadNodeData.mjs`):** `fileURLToPath(import.meta.url)` 전환으로 Windows `C:\C:\...` 경로 깨짐 해소. **② 0건 로드 즉시 실패 가드 (`scripts/_loadNodeData.mjs`, `scripts/qa.mjs` Gate 1·2·8, `scripts/audit-health.mjs`):** 코어/사건/연대기/CSS/UI/수화 엔트리 청크가 0건이면 즉시 실패 처리해 거짓 양성 차단. **③ 영혼의 전당 백업/로드 스키마 방어 (`src/lib/storage.ts`, `src/components/hall/HallOfSoulsApp.tsx`, `src/engine/createEngine.js`, `tests/game-a11y.test.tsx`):** `sanitizeHallEntry` + 원자적 `applyImportedBackup` + `migrateState` 평문 객체 가드 + `TAG_LABELS` 고유 속성 검사 + 유효 `CORE_DATA` 도감 집계 필터 + Vitest 회귀 테스트 2종 추가(총 14개). **④ 타입체크 표준화 (`package.json`, `tsconfig.json`, `.github/workflows/{qa,deploy}.yml`):** `npm run typecheck`(`astro sync && tsc --noEmit`) 및 `tsconfig.json` `astro/client` 등록으로 클린 체크아웃 단독 `tsc --noEmit` 0오류 확보. **⑤ Astro 7 + `@astrojs/react` 7 + `vitest` 5 업그레이드 (`package.json`, `astro.config.mjs`, `scripts/qa.mjs` Gate 8):** Rust 컴파일러·Vite 8(Rolldown) 백틱 동적 임포트 Gate 8 추적·`compressHTML: true` 인라인 공백 보존·`engines.node >=22.23.4` 선언 및 `npm audit` 취약점 `8 -> 0건` 해소. |
+| **19-M2. 저장본 2단계 보호 · 동적 수록 건수 · 대성공/대실패 표기 · 문서/CI 정리** | `[완료]` | **① 저장본 보호 2단계 재확인 (`StartScreen.tsx`, `GameApp.tsx`):** 진행 중 저장본 존재 시 `#btn-discard-saved`·`#btn-start-random`·`#btn-start-custom`에 5초 2단계 재확인 + `#sr-live` 음성 안내 + 저장 삭제 시 `#start-heading` 포커스 안전 복원 적용. **② 수록 건수 동적 자동화(번들 0KB 누수 유지) (`index.astro`, `GameApp.tsx`, `StartScreen.tsx`):** 코어 수치는 `CODEX_COUNTS`, 분기·역사 사건 및 연대기 수치는 빌드 타임 SSG `index.astro`(`await import("../data/narrative.js")`)에서 계산해 숫자 `narrativeCounts` prop으로 전달(빌드 경고 0건 · Gate 8 격리 유지). **③ d100 `대성공`/`대실패` UI 표기 (`formatters.js`, `ActiveEventPanel.tsx`, `RecentChronicleList.tsx`, `FullChronicleView.tsx`, `chronicleText.ts`):** 추후 콘텐츠 확장을 위해 엔진 `critSuccess`/`critFail` 필드를 보존하면서 판정 배너·실시간/전체 연대기·`.txt` 내보내기에 `대성공`/`대실패` 표기를 일관 반영(밸런스 무변경). **④ 문서·CI 정리 (`README.md`, `.github/workflows/qa.yml`):** `Node.js 22.23.4+` 요구 사양 동기화 및 `qa.yml` `main` 푸시 중복 트리거 제거(`pull_request` + `workflow_dispatch` 전용). |
 
 #### 10.3.1 19-M1 완료 보고서 (달성도 100% · 목표 5대 항목 + 독립 레드팀 리뷰 P1 4건·P2 4건 전량 완료)
 
@@ -853,4 +854,14 @@ warhammer/
      * **`npm test` (`vitest@5.1.2`, `tests/game-a11y.test.tsx`):** **14 / 14 PASS** (5.45s, 전당 백업·`localStorage` 손상 방어 및 P1 4건 회귀 테스트 포함).
      * **`npm run build && npm run qa:dist` (`astro@7.4.13`):** **9페이지 정적 빌드 완료(2.49s, 기존 8.5~14.5s 대비 약 3.5~5.8배 고속화, 0오류·0경고)** + **Gate 8 0오류** (`codexOverviewJS=0KB, narrativeLeaks=0, engineLeaks=0, glossaryProseInGame=0, SSR cards 48/23/91/9/29/28`).
      * **`npm audit`:** **`0 vulnerabilities`** (업그레이드 전 8건: critical 3, high 3, moderate 1, low 1 -> 전량 해소).
+
+#### 10.3.2 19-M2 완료 보고서 (달성도 100% · 4대 개선 전량 완료)
+
+* **구현 내역:**
+  1. **저장본 보호 2단계 재확인 (`src/components/game/StartScreen.tsx`, `src/components/game/GameApp.tsx`):** 진행 중인 저장본(`savedSummary`)이 존재할 때 `#btn-discard-saved`(저장 삭제), `#btn-start-random`(운명 모드), `#btn-start-custom`(지정 출생)에 5초 2단계 재확인 + `#sr-live` 안내를 적용해 오입력으로 인한 무경고 삭제·덮어쓰기를 차단했고, 저장 삭제 후 사라진 버튼 대신 `#start-heading`으로 초점을 안전 복원한다.
+  2. **수록 건수 동적 자동화 & 0KB 번들 격리 (`src/pages/index.astro`, `src/components/game/GameApp.tsx`, `src/components/game/StartScreen.tsx`):** 코어 수치는 `CODEX_COUNTS`로, 분기·역사 사건(699) 및 연대기(796) 수치는 빌드 타임 SSG `index.astro`의 `await import("../data/narrative.js")`로 산출해 숫자 `narrativeCounts` prop으로 전달함으로써 빌드 경고 0건·클라이언트 초기 번들 누수 0KB를 유지했다.
+  3. **d100 `대성공` / `대실패` 일관 표기 (`src/engine/formatters.js`, `ActiveEventPanel.tsx`, `RecentChronicleList.tsx`, `FullChronicleView.tsx`, `src/lib/chronicleText.ts`):** 추후 콘텐츠 확장을 위해 엔진 `critSuccess`/`critFail` 필드를 그대로 유지하면서 공용 `formatRollOutcomeLabel()`로 직전 판정 배너·실시간 기록·전체 기록서·`.txt` 내보내기에 `대성공`/`대실패`를 표기한다(밸런스 무변경).
+  4. **문서·CI 정리 (`README.md`, `.github/workflows/qa.yml`):** 로컬 요구 버전을 `Node.js 22.23.4+`로 갱신하고, `qa.yml`의 중복 `main` 푸시 트리거를 제거(`pull_request` + `workflow_dispatch` 전용)해 `deploy.yml`과의 이중 검증 실행을 해소했다.
+* **검증 결과:** `npm run qa` 6대 게이트 0오류, `npm run audit` 200생애 통과(`crashes=0, softlocks=0`), `npm run typecheck` 0오류, `npm test` **15 / 15 PASS**, `npm run build` 9페이지 **2.79s 0오류·0경고** + `npm run qa:dist` Gate 8 0오류(`narrativeLeaks=0, engineLeaks=0, glossaryProseInGame=0`, `dist/index.html` SSR 메타·시작 화면 수록 건수 `699종·796종` 동적 출력 확인).
+
 
