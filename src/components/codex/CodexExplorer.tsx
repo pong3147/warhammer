@@ -1,9 +1,12 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { CORE_DATA, coreEngine } from "../../data/index.js";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CORE_DATA } from "../../data/core/index.js";
+import { createCoreFormatters } from "../../engine/formatters.js";
 import { groupCareersByTree } from "../../lib/codexMeta";
 import { lexicanumUrl, withBase } from "../../lib/links";
 
 export type CodexSection = "worlds" | "careers" | "chapters" | "timeline" | "characters";
+
+const coreFmt = createCoreFormatters(CORE_DATA);
 
 interface Props {
   section: CodexSection;
@@ -12,37 +15,81 @@ interface Props {
 export default function CodexExplorer({ section }: Props) {
   const [query, setQuery] = useState("");
   const [openTrees, setOpenTrees] = useState<Set<string>>(() => new Set(["civil"]));
+  const [pendingHash, setPendingHash] = useState<string | null>(null);
   const [liveMsg, setLiveMsg] = useState("");
   const didMountRef = useRef(false);
   const seqRef = useRef(0);
   const timerRef = useRef<number | null>(null);
   const q = query.trim().toLowerCase();
 
-  // 해시(#tree-custodes 등)로 진입한 경우 해당 세력 아코디언 자동 개방 후 포커스 이동
-  useEffect(() => {
-    if (section !== "careers" || typeof window === "undefined") return;
-    const hash = window.location.hash.replace(/^#/, "");
-    if (!hash) return;
-    if (hash.startsWith("tree-")) {
-      const treeId = hash.slice("tree-".length);
-      setOpenTrees((prev) => new Set([...prev, treeId]));
-      window.setTimeout(() => {
-        const el = document.getElementById(hash);
-        const summary = el?.querySelector("summary");
-        if (summary instanceof HTMLElement) summary.focus();
-      }, 30);
-    } else {
-      const found = CORE_DATA.CAREERS.find((c: any) => c.id === hash);
-      if (found && found.tree) {
-        setOpenTrees((prev) => new Set([...prev, found.tree]));
-        window.setTimeout(() => {
-          const el = document.getElementById(hash);
-          const h = el?.querySelector("h3");
-          if (h instanceof HTMLElement) h.focus();
-        }, 30);
+  const requestHashFocus = useCallback(
+    (rawHash: string) => {
+      let hash = (rawHash || "").replace(/^#/, "");
+      if (!hash) return;
+      try {
+        hash = decodeURIComponent(hash);
+      } catch {
+        // keep raw hash if malformed
       }
+      if (section === "careers") {
+        if (hash.startsWith("tree-")) {
+          const treeId = hash.slice("tree-".length);
+          setOpenTrees((prev) => new Set([...prev, treeId]));
+          setQuery("");
+          setPendingHash(hash);
+          return;
+        }
+        const found = CORE_DATA.CAREERS.find((c: any) => c.id === hash);
+        if (found && found.tree) {
+          setOpenTrees((prev) => new Set([...prev, found.tree]));
+          setQuery("");
+          setPendingHash(hash);
+        }
+        return;
+      }
+
+      const pool =
+        section === "worlds"
+          ? CORE_DATA.WORLDS
+          : section === "chapters"
+          ? CORE_DATA.CHAPTERS
+          : section === "timeline"
+          ? CORE_DATA.TIMELINE
+          : CORE_DATA.CHARACTERS;
+
+      if (pool.some((item: any) => item.id === hash)) {
+        setQuery("");
+        setPendingHash(hash);
+      }
+    },
+    [section]
+  );
+
+  // 전 5개 코덱스 섹션 해시 진입 및 hashchange 시 필터 해제 · 아코디언 개방 후 대상 <h3>/<summary> 포커스
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    requestHashFocus(window.location.hash);
+    const onHashChange = () => requestHashFocus(window.location.hash);
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, [requestHashFocus]);
+
+  useEffect(() => {
+    if (!pendingHash || typeof document === "undefined") return;
+    const el = document.getElementById(pendingHash);
+    if (!el) return;
+    if (typeof el.scrollIntoView === "function") {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }, [section]);
+    const target =
+      section === "careers" && pendingHash.startsWith("tree-")
+        ? el.querySelector("summary")
+        : el.querySelector("h3") || el;
+    if (target instanceof HTMLElement) {
+      target.focus();
+    }
+    setPendingHash(null);
+  }, [pendingHash, section, query, openTrees]);
 
   const worlds = useMemo(
     () =>
@@ -245,7 +292,7 @@ export default function CodexExplorer({ section }: Props) {
                           <div className="codex-body">
                             <p style={{ marginBottom: "6px" }}>{c.desc}</p>
                             <div style={{ fontSize: "11.5px", color: "var(--gold)" }}>
-                              해금 조건: {coreEngine.describeReq(c.req) || "조건 없음"} · 수명 보정{" "}
+                              해금 조건: {coreFmt.describeReq(c.req) || "조건 없음"} · 수명 보정{" "}
                               {c.lifeBonus >= 0 ? `+${c.lifeBonus}` : c.lifeBonus}년
                             </div>
                           </div>
@@ -282,7 +329,7 @@ export default function CodexExplorer({ section }: Props) {
               const mods = Object.entries(ch.statMods || {})
                 .map(
                   ([k, v]: [string, any]) =>
-                    `${(coreEngine.STAT_META[k] && coreEngine.STAT_META[k].name) || k} ${v > 0 ? `+${v}` : v}`
+                    `${(coreFmt.STAT_META[k] && coreFmt.STAT_META[k].name) || k} ${v > 0 ? `+${v}` : v}`
                 )
                 .join(", ");
               const extra = [
@@ -341,7 +388,7 @@ export default function CodexExplorer({ section }: Props) {
               <article key={t.id} id={t.id} className="codex-card">
                 <div>
                   <h3 tabIndex={-1}>
-                    {coreEngine.formatImperialYear(t.year)} — {t.title}
+                    {coreFmt.formatImperialYear(t.year)} — {t.title}
                   </h3>
                   <div className="codex-en">
                     <span aria-hidden="true">{t.en} · </span>

@@ -30,8 +30,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Verify QA, Fuzz Health, Tests, and Build
-        run: node scripts/qa.mjs && node scripts/audit-health.mjs --lives=100 && npm test && npm run build
+      - name: Verify QA, Fuzz Health, Tests, Build, and Bundle Isolation
+        run: node scripts/qa.mjs && node scripts/audit-health.mjs --lives=100 && npm test && npm run build && node scripts/qa.mjs --only-dist
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

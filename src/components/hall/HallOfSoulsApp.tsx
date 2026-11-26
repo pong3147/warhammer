@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CORE_DATA, coreEngine } from "../../data/index.js";
+import { CORE_DATA } from "../../data/core/index.js";
+import { createCoreFormatters } from "../../engine/formatters.js";
 import {
   applyImportedBackup,
   buildBackupPayload,
@@ -7,6 +8,8 @@ import {
   downloadTextFile,
   loadHall
 } from "../../lib/storage";
+
+const coreFmt = createCoreFormatters(CORE_DATA);
 
 export default function HallOfSoulsApp() {
   const [list, setList] = useState<any[]>([]);
@@ -16,9 +19,18 @@ export default function HallOfSoulsApp() {
   const [toastVisible, setToastVisible] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const backupEngineRef = useRef<any>(null);
   const clearTimerRef = useRef<number | null>(null);
   const toastTimerRef = useRef<number | null>(null);
   const seqRef = useRef(0);
+
+  const getBackupEngine = useCallback(async () => {
+    if (!backupEngineRef.current) {
+      const { createImperiumEngine } = await import("../../engine/createEngine.js");
+      backupEngineRef.current = createImperiumEngine(CORE_DATA);
+    }
+    return backupEngineRef.current;
+  }, []);
 
   const announce = useCallback((msg: string) => {
     if (!msg) return;
@@ -100,34 +112,44 @@ export default function HallOfSoulsApp() {
     };
   }, [list, selectableCareers]);
 
-  const handleExportBackup = () => {
-    const payload = buildBackupPayload(null, coreEngine);
-    const dateStamp = new Date().toISOString().slice(0, 10);
-    downloadTextFile(
-      `imperialis_vita_backup_${dateStamp}.json`,
-      JSON.stringify(payload, null, 2),
-      "application/json;charset=utf-8"
-    );
-    showToast(
-      `저장본 백업을 내보냈다 (영혼 ${payload.hall.length}명${payload.activeState ? ", 진행 중 생애 포함" : ""}).`,
-      true
-    );
+  const handleExportBackup = async () => {
+    try {
+      const eng = await getBackupEngine();
+      const payload = buildBackupPayload(null, eng);
+      const dateStamp = new Date().toISOString().slice(0, 10);
+      downloadTextFile(
+        `imperialis_vita_backup_${dateStamp}.json`,
+        JSON.stringify(payload, null, 2),
+        "application/json;charset=utf-8"
+      );
+      showToast(
+        `저장본 백업을 내보냈다 (영혼 ${payload.hall.length}명${payload.activeState ? ", 진행 중 생애 포함" : ""}).`,
+        true
+      );
+    } catch {
+      showToast("백업 도구를 불러오지 못했다. 잠시 후 다시 시도하라.", true);
+    }
   };
 
   const handleImportFile = (file: File | null) => {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
-      const res = applyImportedBackup(String(reader.result || ""), coreEngine);
-      if (!res.ok) {
-        showToast(res.error || "백업 불러오기에 실패했다.", true);
-        return;
+    reader.onload = async () => {
+      try {
+        const eng = await getBackupEngine();
+        const res = applyImportedBackup(String(reader.result || ""), eng);
+        if (!res.ok) {
+          showToast(res.error || "백업 불러오기에 실패했다.", true);
+          return;
+        }
+        setList(loadHall());
+        showToast(
+          `백업을 불러왔다 (영혼 ${res.restoredHallCount}명${res.restoredActive ? `, 진행 중 생애 '${res.restoredActive.name}' 복원` : ""}).`,
+          true
+        );
+      } catch {
+        showToast("백업 복원 도구를 불러오지 못했다. 잠시 후 다시 시도하라.", true);
       }
-      setList(loadHall());
-      showToast(
-        `백업을 불러왔다 (영혼 ${res.restoredHallCount}명${res.restoredActive ? `, 진행 중 생애 '${res.restoredActive.name}' 복원` : ""}).`,
-        true
-      );
     };
     reader.readAsText(file, "utf-8");
   };
@@ -239,7 +261,7 @@ export default function HallOfSoulsApp() {
                       <li key={c.id}>
                         <strong>{c.name}</strong> ({c.treeName || c.faction} · Tier {c.tier}
                         {c.entryMode === "event" ? " · 발탁 이벤트" : ""}) —{" "}
-                        {coreEngine.describeReq(c.req) || "조건 없음"}
+                        {coreFmt.describeReq(c.req) || "조건 없음"}
                       </li>
                     ))}
                   </ul>
@@ -291,7 +313,7 @@ export default function HallOfSoulsApp() {
                     {stats.missingTimeline.map((t: any) => (
                       <li key={t.id}>
                         <strong>
-                          {coreEngine.formatImperialYear(t.year)} {t.title}
+                          {coreFmt.formatImperialYear(t.year)} {t.title}
                         </strong>{" "}
                         — {t.scope}
                       </li>
@@ -310,7 +332,7 @@ export default function HallOfSoulsApp() {
                   <ul className="hall-hint-list">
                     {stats.missingWorlds.map((w: any) => (
                       <li key={w.id}>
-                        <strong>{w.name}</strong> — {w.worldClass} ({coreEngine.getWorldShortTag(w)})
+                        <strong>{w.name}</strong> — {w.worldClass} ({coreFmt.getWorldShortTag(w)})
                       </li>
                     ))}
                   </ul>
@@ -337,26 +359,26 @@ export default function HallOfSoulsApp() {
                   : [item.homeWorldId]
               )
                 .filter(Boolean)
-                .map((id: string) => coreEngine.getWorld(id).name);
+                .map((id: string) => coreFmt.getWorld(id).name);
               const careerPathNames = (
                 Array.isArray(item.careerHistory) && item.careerHistory.length
                   ? item.careerHistory
                   : [item.careerId]
               )
                 .filter((id: string) => id && id !== "child")
-                .map((id: string) => coreEngine.getCareer(id).name);
+                .map((id: string) => coreFmt.getCareer(id).name);
               const tlNames = (item.seenTimeline || [])
                 .map((id: string) => CORE_DATA.TIMELINE.find((t: any) => t.id === id))
                 .filter(Boolean)
-                .map((t: any) => `${coreEngine.formatImperialYear(t.year)} ${t.title}`);
+                .map((t: any) => `${coreFmt.formatImperialYear(t.year)} ${t.title}`);
               const charNames = (item.metCharacters || [])
-                .map((id: string) => coreEngine.getCharacter(id))
+                .map((id: string) => coreFmt.getCharacter(id))
                 .filter(Boolean)
                 .map((c: any) => c.name);
-              const chap = item.chapterId ? coreEngine.getChapter(item.chapterId) : null;
-              const tagNames = (item.tags || []).map((t: string) => coreEngine.TAG_LABELS[t] || t);
+              const chap = item.chapterId ? coreFmt.getChapter(item.chapterId) : null;
+              const tagNames = (item.tags || []).map((t: string) => coreFmt.TAG_LABELS[t] || t);
               const alignInfo = item.alignment
-                ? coreEngine.getAlignmentInfo({ alignment: item.alignment })
+                ? coreFmt.getAlignmentInfo({ alignment: item.alignment })
                 : null;
 
               return (
@@ -366,8 +388,8 @@ export default function HallOfSoulsApp() {
                       {item.name} ({item.age}세)
                     </h3>
                     <div className="codex-en">
-                      {coreEngine.formatImperialYear(item.birthYear)} ~{" "}
-                      {coreEngine.formatImperialYear(item.deathYear)} · {item.careerTitle}
+                      {coreFmt.formatImperialYear(item.birthYear)} ~{" "}
+                      {coreFmt.formatImperialYear(item.deathYear)} · {item.careerTitle}
                     </div>
                     <div className="codex-body">
                       <p style={{ color: "var(--gold)", marginBottom: "4px" }}>
@@ -382,7 +404,7 @@ export default function HallOfSoulsApp() {
                           )}
                           {item.stats && (
                             <div className="hall-mini-stats">
-                              {Object.values(coreEngine.STAT_META).map((m: any) => (
+                              {Object.values(coreFmt.STAT_META).map((m: any) => (
                                 <span key={m.key} className="hall-mini-stat">
                                   <span>{m.name}</span>
                                   <strong>
@@ -440,7 +462,7 @@ export default function HallOfSoulsApp() {
                     </div>
                   </div>
                   <div className="codex-foot">
-                    <span>출생: {coreEngine.getWorld(item.homeWorldId).name}</span>
+                    <span>출생: {coreFmt.getWorld(item.homeWorldId).name}</span>
                     <span>
                       역사 {(item.seenTimeline || []).length}건 · 인물{" "}
                       {(item.metCharacters || []).length}명

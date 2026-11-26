@@ -1,4 +1,6 @@
 import React from "react";
+import { getContextualGlossaryRefs } from "../../lib/contextualGlossary.js";
+import { withBase } from "../../lib/links";
 
 interface Props {
   state: any;
@@ -15,10 +17,12 @@ function cleanShortTrait(name: string): string {
 
 export default function DossierPanel({ state, engine }: Props) {
   const world = engine.getWorld(state.worldId);
+  const career = engine.getCareer(state.careerId);
   const origin = engine.getOrigin(state.originId);
   const trait = engine.getTrait(state.traitId);
   const chap = state.chapterId ? engine.getChapter(state.chapterId) : null;
   const maxLife = engine.computeLifeExpectancy(state);
+  const glossaryRefs = getContextualGlossaryRefs(state, career, world);
 
   const woundsPct = Math.max(0, Math.min(100, Math.round((state.wounds / Math.max(1, state.maxWounds)) * 100)));
   const faithPct = Math.max(0, Math.min(100, Math.round(state.faith)));
@@ -172,6 +176,32 @@ export default function DossierPanel({ state, engine }: Props) {
           ))
         )}
       </ul>
+
+      {glossaryRefs.length > 0 && (
+        <nav
+          id="dossier-glossary"
+          className="dossier-glossary"
+          aria-labelledby="heading-dossier-glossary"
+        >
+          <h3 id="heading-dossier-glossary" className="sub-panel-title">
+            현재 상황 관련 개념 사전
+          </h3>
+          <ul className="dossier-glossary-list">
+            {glossaryRefs.map((ref) => (
+              <li key={ref.id}>
+                <a
+                  className="dossier-glossary-link"
+                  href={withBase(`/glossary/#${ref.id}`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {ref.label} (새 탭)
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
     </aside>
   );
 }

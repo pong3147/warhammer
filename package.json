@@ -11,8 +11,10 @@
     "test": "vitest run",
     "qa": "node scripts/qa.mjs",
     "qa:deep": "node scripts/qa.mjs --deep",
+    "qa:dist": "node scripts/qa.mjs --only-dist",
     "audit": "node scripts/audit-health.mjs",
-    "verify": "npm run qa && npm run audit && npm test && npm run build"
+    "coverage": "node scripts/coverage-report.mjs",
+    "verify": "npm run qa && npm run audit && npm test && npm run build && npm run qa:dist"
   },
   "dependencies": {
     "@astrojs/react": "^4.2.1",

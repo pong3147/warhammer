@@ -394,4 +394,87 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
     expect(container.querySelector("#sr-live")?.textContent || "").toContain("0건");
     vi.useRealTimers();
   });
+
+  it("auto-focuses target <h3>/<summary> on hash mount and hashchange across all 5 Codex sections", () => {
+    const cases: Array<{ section: "worlds" | "careers" | "chapters" | "timeline" | "characters"; hash: string; selector: string }> = [
+      { section: "worlds", hash: "#terra", selector: "#terra h3" },
+      { section: "careers", hash: "#tree-custodes", selector: "#tree-custodes summary" },
+      { section: "careers", hash: "#custodes_warden", selector: "#custodes_warden h3" },
+      { section: "chapters", hash: "#ultramarines", selector: "#ultramarines h3" },
+      { section: "timeline", hash: "#tl_fall_of_cadia", selector: "#tl_fall_of_cadia h3" },
+      { section: "characters", hash: "#guilliman", selector: "#guilliman h3" }
+    ];
+
+    for (const tc of cases) {
+      window.location.hash = tc.hash;
+      const { container, unmount } = render(<CodexExplorer section={tc.section} />);
+      const target = container.querySelector(tc.selector);
+      expect(target).toBeTruthy();
+      expect(document.activeElement).toBe(target);
+      unmount();
+    }
+
+    // Verify clearing active search filter + hashchange re-focuses target heading
+    window.location.hash = "";
+    const { container } = render(<CodexExplorer section="worlds" />);
+    const search = screen.getByLabelText("코덱스 항목 검색");
+    fireEvent.change(search, { target: { value: "화성" } });
+    expect(container.querySelector("#cadia")).toBeNull();
+
+    act(() => {
+      window.location.hash = "#cadia";
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    });
+    expect(container.querySelector("#cadia h3")).toBeTruthy();
+    expect(document.activeElement).toBe(container.querySelector("#cadia h3"));
+    window.location.hash = "";
+  });
+
+  it("renders 1-2 fixed contextual glossary links in DossierPanel without adding links inside event or career cards", () => {
+    const sampleEvent = {
+      id: "ev_test_no_inline_glossary",
+      title: "테스트 분기 사건",
+      category: "테스트 사건",
+      text: "사건 카드 내부에는 개념 사전 링크가 삽입되지 않아야 한다.",
+      choices: [{ label: "진행", effect: { text: "진행했다." } }],
+      source: "Test"
+    };
+    let fired = false;
+    const engineProxy = {
+      ...realEngine,
+      createCharacter(cfg: any) {
+        const st = realEngine.createCharacter(cfg);
+        st.age = 24;
+        st.worldId = "terra";
+        st.segmentum = "solar";
+        st.careerId = "imperial_navy";
+        return st;
+      },
+      advanceQuarter(st: any, opts?: any) {
+        if (!fired) {
+          fired = true;
+          st.pendingEvent = sampleEvent;
+          return { status: "event", isNewYear: false };
+        }
+        return realEngine.advanceQuarter(st, opts);
+      }
+    };
+
+    const { container } = render(<GameApp engineOverride={engineProxy} dataOverride={FULL_DATA} />);
+    startCustomCharacter(container);
+
+    const dossierNav = container.querySelector("#dossier-glossary");
+    expect(dossierNav).toBeTruthy();
+    const links = Array.from(dossierNav!.querySelectorAll("a.dossier-glossary-link")) as HTMLAnchorElement[];
+    expect(links.length).toBeGreaterThanOrEqual(1);
+    expect(links.length).toBeLessThanOrEqual(2);
+    expect(links[0].getAttribute("href")).toContain("/glossary/#imperial_navy");
+    expect(links[0].getAttribute("target")).toBe("_blank");
+    expect(links[1].getAttribute("href")).toContain("/glossary/#emperor_golden_throne");
+
+    // Verify ZERO glossary links inside event card or autonomous career cards (preserves Tab ergonomics)
+    fireEvent.click(container.querySelector("#btn-step")!);
+    expect(container.querySelector("#active-event-wrap a[href*='/glossary/']")).toBeNull();
+    expect(container.querySelector("#auto-careers-wrap a[href*='/glossary/']")).toBeNull();
+  });
 });

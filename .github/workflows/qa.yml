@@ -31,5 +31,5 @@ jobs:
       - name: Run React Behavioral Accessibility Tests
         run: npm test
 
-      - name: Run Astro Static Production Build
-        run: npm run build
+      - name: Run Astro Static Production Build & Gate 8 Bundle Isolation Check
+        run: npm run build && node scripts/qa.mjs --only-dist
