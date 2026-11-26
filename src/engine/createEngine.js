@@ -743,7 +743,16 @@ export function createImperiumEngine(DATA) {
   }
 
   function migrateState(raw) {
-    if (!raw || typeof raw !== "object" || !raw.id || !raw.stats || !Array.isArray(raw.logs)) {
+    if (
+      !raw ||
+      typeof raw !== "object" ||
+      Array.isArray(raw) ||
+      !raw.id ||
+      !raw.stats ||
+      typeof raw.stats !== "object" ||
+      Array.isArray(raw.stats) ||
+      !Array.isArray(raw.logs)
+    ) {
       return null;
     }
     const st = raw;

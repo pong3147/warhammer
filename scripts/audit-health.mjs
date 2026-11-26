@@ -42,7 +42,21 @@ console.warn = (...args) => {
   warningsCaught.push(args.join(" "));
 };
 
-const { Engine, eventFiles, chronFiles } = await loadNodeImperiumRuntime();
+const { DATA, Engine, coreFiles, eventFiles, chronFiles } = await loadNodeImperiumRuntime();
+
+if (
+  coreFiles.length === 0 ||
+  eventFiles.length === 0 ||
+  chronFiles.length === 0 ||
+  !DATA.EVENTS.length ||
+  !DATA.CHRONICLES.length
+) {
+  console.error(
+    `HEALTH CHECK FAILED (empty runtime dataset: core=${coreFiles.length}, eventFiles=${eventFiles.length}, ` +
+    `chronFiles=${chronFiles.length}, events=${DATA.EVENTS.length}, chronicles=${DATA.CHRONICLES.length}, ROOT=${ROOT})`
+  );
+  process.exit(1);
+}
 
 console.log(`=== IMPERIALIS VITA — RED-TEAM HEALTH & FUZZ REPORT (${FUZZ_LIVES} lives, ESM) ===`);
 console.log(`[Seed] seed=${SEED} (repro: node scripts/audit-health.mjs --lives=${FUZZ_LIVES} --seed=${SEED})`);

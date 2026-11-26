@@ -12,7 +12,8 @@ Warhammer 40,000 인류제국 세계관을 배경으로 한 **Astro + React 아�
   * 의존성 설치: `npm install`
   * 개발 서버: `npm run dev`
   * 정적 빌드 및 미리보기: `npm run build && npm run preview`
-  * 전체 검증 게이트: `npm run verify` (`node scripts/qa.mjs` + `node scripts/audit-health.mjs` + `npm test` + `npm run build`)
+  * 타입 검사: `npm run typecheck` (`astro sync && tsc --noEmit`)
+  * 전체 검증 게이트: `npm run verify` (`qa` + `audit` + `typecheck` + `test` + `build` + `qa:dist`)
   * 심층 7대 게이트 검증: `npm run qa:deep` (`node scripts/qa.mjs --deep`)
   * 콘텐츠 밀도 매트릭스: `node scripts/coverage-report.mjs`
 

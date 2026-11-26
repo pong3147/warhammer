@@ -9,7 +9,7 @@
 
 * **작품명:** `1 / QUADRILLION : IMPERIALIS VITA` (인류제국 생존 시뮬레이터)
 * **장르:** 무작위 출생·생애 연대기 텍스트 시뮬레이션 웹 게임 · 워해머 40k 개념 사전 · 정적 제국 코덱스 (Unofficial Fan Project)
-* **기술 스택 및 배포:** **Astro 5 (SSG) + React 19 (Islands Architecture) + 표준 ESM + Vitest** · GitHub Actions 자동 검증 후 Public GitHub Pages(`https://pong3147.github.io/warhammer/`, `base: "/warhammer"`) 정적 배포
+* **기술 스택 및 배포:** **Astro 7 (SSG · Rust 컴파일러 · Vite 8/Rolldown) + React 19 (Islands Architecture) + 표준 ESM + Vitest 5** · GitHub Actions 자동 검증 후 Public GitHub Pages(`https://pong3147.github.io/warhammer/`, `base: "/warhammer"`) 정적 배포
 * **핵심 영감 및 설계 철학:**
   1. **《80억 분의 1》의 감상 경험 + 워해머 40k TRPG 메커니즘:** 무작위로 인류제국 100만 행성 중 한 곳에 태어나 흘러가는 생애 기록을 감상하되, 일자 진행에 그치지 않고 *Dark Heresy* / *Imperium Maledictum* 기반 **8대 특성치(d100 판정)**와 연간 **삶의 초점(Focus)** 관리로 숨겨진 분기·직군·역사 사건을 해금한다. 기본 1배속 `1년 = 60초`(분기당 20.0초)부터 **16배속(`1년 = 3.75초`)**까지 5단계 배속을 지원한다.
   2. **선택지 원툴 탈피 — 연대기 중심 몰입:** 선택지 분기 사건(699종, 역사 대사건 29종 포함)뿐 아니라, 인류제국 특유의 인간 경시·관료제 부조리·행성 풍토·계급별·3대 도덕 성향(`자비·교조·암흑`)·28인 네임드·M41~M42 거시 전쟁 일상을 담은 **패시브 연대기 로그(796종)**가 본인 신분·생활권·신체 분류에 정확히 맞춰 흘러가며 읽는 재미를 제공한다.
@@ -22,23 +22,23 @@
 
 ```text
 warhammer/
-├── astro.config.mjs                  # Astro SSG 설정 (site/base: "/warhammer", React 아일랜드, Vite chunkLimit 2500kB)
-├── package.json                      # 의존성(Astro 5, React 19, Vitest 3, RTL) 및 verify/qa/audit/test/build 스크립트
-├── tsconfig.json · vitest.config.ts  # TypeScript · jsdom Vitest 테스트 설정
+├── astro.config.mjs                  # Astro 7 SSG 설정 (site/base: "/warhammer", compressHTML: true, React 아일랜드, Vite chunkLimit 2500kB)
+├── package.json                      # 의존성(Astro 7, React 19, Vitest 5, RTL, Node >=22.23.4) 및 verify/qa/audit/typecheck/test/build 스크립트
+├── tsconfig.json · vitest.config.ts  # TypeScript(vitest/globals + astro/client) · jsdom Vitest 테스트 설정
 ├── README.md                         # 사용자용 실행·GitHub Pages 배포·개요 안내서
 ├── AGENTS.md                         # AI 에이전트 작업 방향 · 불변 규칙 · 고증/표기 표준 · QA 게이트
 ├── PROJECT_GUIDE.md                  # (본 문서) 아키텍처 · 파일별 수록 현황 · 스키마 · 진행 보고서
 ├── .github/workflows/
-│   ├── qa.yml                        # PR/push 자동 검증 (qa.mjs + audit-health.mjs --lives=100 + npm test + astro build)
+│   ├── qa.yml                        # PR/push 자동 검증 (qa.mjs + audit-health.mjs --lives=100 + typecheck + npm test + astro build + qa:dist)
 │   └── deploy.yml                    # main 브랜치 자동 검증 + GitHub Pages 정적 배포
 ├── scripts/
-│   ├── _loadNodeData.mjs             # Node.js용 ESM 데이터·엔진 공통 로더 (import.meta.glob 대체)
-│   ├── qa.mjs                        # 상설 자동 QA 검증 스위트 (7대 게이트 + Gate 4G 개념 사전 + Gate 4P 15종 페르소나·타 행성 방문 + --deep 1,500생애 감사)
-│   ├── audit-health.mjs              # 200생애 결정론적 퍼징 · 저장 크기·초인 오염 면역·명예 마감·용량 감시
+│   ├── _loadNodeData.mjs             # Node.js용 ESM 데이터·엔진 공통 로더 (fileURLToPath 크로스플랫폼 ROOT + 0건 로드 즉시 실패 가드)
+│   ├── qa.mjs                        # 상설 자동 QA 검증 스위트 (7대 게이트 + Gate 4G 개념 사전 + Gate 4P 15종 페르소나·타 행성 방문 + Gate 8 dist 격리 + --deep 1,500생애 감사)
+│   ├── audit-health.mjs              # 200생애 결정론적 퍼징 · 0건 가드 · 저장 크기·초인 오염 면역·명예 마감·용량 감시
 │   └── coverage-report.mjs           # 직군·행성·챕터·연령대·성향·네임드·시대 7축 콘텐츠 밀도 매트릭스
 ├── tests/
 │   ├── setup.ts                      # Testing Library jest-dom 셋업
-│   └── game-a11y.test.tsx            # 행동형 스크린 리더 접근성·포커스·1~16배속·개념 사전·Stage 19-S2 Vitest 스위트 (12개 테스트)
+│   └── game-a11y.test.tsx            # 행동형 스크린 리더 접근성·포커스·1~16배속·개념 사전·Stage 19-S2·전당 백업 방어 Vitest 스위트 (14개 테스트)
 └── src/
     ├── layouts/
     │   └── BaseLayout.astro          # 공통 HTML 셸 · 병렬 웹폰트 · 스킵 링크 · 상단 내비게이션(4대 메뉴) · 푸터
@@ -826,6 +826,31 @@ warhammer/
 | **19-B. 코어 파일 크기 감시 확장 및 구조 리팩토링 (2번 확정)** | `[예정]` | `src/data/core/timeline.js`(91.9KB)를 시대별 분할(`src/data/core/timeline/m41_early.js`, `m41_late.js`, `m42_indomitus.js` 등)해 `110KB` 상한 초과를 선제 방지하고 `scripts/qa.mjs`·`audit-health.mjs`의 크기 감시 대상을 코어 데이터(`timeline`/`careers`/`createEngine.js`)까지 확장한다. 아울러 명예 마감·부고 세력 분기를 공용 헬퍼(`resolveFactionEndingKey(state)`)로 리팩토링해(`req.excludeTrees`/`req.maxCareerTier`는 `19-S1`에서 선행 도입) 향후 외계 종족 스타팅 등 대형 확장 기반을 정비한다. |
 | **19-C. 신규 8인 네임드 후일담 연동 및 청취 텔레메트리 확장 (3번 확정)** | `[예정]` | `src/data/events/themes/named.js`의 4대 네임드 후일담 사건(`ev_s4_met_primarchs_echo`, `ev_s4_met_commanders_echo`, `ev_s4_met_shadows_echo`, `ev_s4_met_nemesis_echo`) `anyTags`에 18단계 신규 8인(`met_ravensburg`, `met_macharius`, `met_kaldor_draigo`, `met_morvenn_vahl`, `met_kryptman`, `met_canis_rex`, `met_mortarion`, `met_trazyn`)을 편입하고 단독 조우 `met_<id>` 중복 가드를 일관화한다. 동시에 `tests/game-a11y.test.tsx`·`scripts/audit-health.mjs`에 네임드 스포트라이트·17~18단계 고위 직군 청취 텔레메트리 시나리오를 확장한다. |
 
+### 10.3 크로스플랫폼 QA 가드 · 전당 백업 방어 · 타입체크 · Astro 7 업그레이드 (`19-M1`)
 
+| 항목 | 상태 | 목표 범위 및 세부 명세 |
+| --- | --- | --- |
+| **19-M1. Windows QA 경로 수정 · 0건 가드 · 전당 백업 방어 · 타입체크 · Astro 7 / Vitest 5 업그레이드** | `[완료]` | **① 크로스플랫폼 경로 수정 (`scripts/_loadNodeData.mjs`):** `fileURLToPath(import.meta.url)` 전환으로 Windows `C:\C:\...` 경로 깨짐 해소. **② 0건 로드 즉시 실패 가드 (`scripts/_loadNodeData.mjs`, `scripts/qa.mjs` Gate 1·2·8, `scripts/audit-health.mjs`):** 코어/사건/연대기/CSS/UI/수화 엔트리 청크가 0건이면 즉시 실패 처리해 거짓 양성 차단. **③ 영혼의 전당 백업/로드 스키마 방어 (`src/lib/storage.ts`, `src/components/hall/HallOfSoulsApp.tsx`, `src/engine/createEngine.js`, `tests/game-a11y.test.tsx`):** `sanitizeHallEntry` + 원자적 `applyImportedBackup` + `migrateState` 평문 객체 가드 + `TAG_LABELS` 고유 속성 검사 + 유효 `CORE_DATA` 도감 집계 필터 + Vitest 회귀 테스트 2종 추가(총 14개). **④ 타입체크 표준화 (`package.json`, `tsconfig.json`, `.github/workflows/{qa,deploy}.yml`):** `npm run typecheck`(`astro sync && tsc --noEmit`) 및 `tsconfig.json` `astro/client` 등록으로 클린 체크아웃 단독 `tsc --noEmit` 0오류 확보. **⑤ Astro 7 + `@astrojs/react` 7 + `vitest` 5 업그레이드 (`package.json`, `astro.config.mjs`, `scripts/qa.mjs` Gate 8):** Rust 컴파일러·Vite 8(Rolldown) 백틱 동적 임포트 Gate 8 추적·`compressHTML: true` 인라인 공백 보존·`engines.node >=22.23.4` 선언 및 `npm audit` 취약점 `8 -> 0건` 해소. |
 
+#### 10.3.1 19-M1 완료 보고서 (달성도 100% · 목표 5대 항목 + 독립 레드팀 리뷰 P1 4건·P2 4건 전량 완료)
+
+* **구현 및 독립 읽기 전용 리뷰(`research`) 교정 내역:**
+  1. **Windows 크로스플랫폼 경로 수정 및 0건 로드 가드 (`scripts/_loadNodeData.mjs`, `scripts/qa.mjs`, `scripts/audit-health.mjs`):**
+     * `scripts/_loadNodeData.mjs` 8행의 `new URL(import.meta.url).pathname`을 `fileURLToPath(import.meta.url)`로 교체해 Windows 환경의 경로 이중 드라이브 버그를 해결했다.
+     * `loadNodeImperiumRuntime()`에서 코어·사건·연대기 파일/레코드가 0건이면 즉시 예외를 던지게 하고, `qa.mjs` Gate 1(데이터·`global.css`), Gate 2(`uiFiles.length === 0`), Gate 3(`src/lib/storage.ts` 편입), Gate 8(수화 페이지 엔트리 청크 0건 가드), `audit-health.mjs` 빈 데이터셋 즉시 실패 가드를 추가했다(임시 빈 디렉토리 음성 테스트로 예외 발생 실증).
+  2. **영혼의 전당 백업/로드 스키마 방어 & 레드팀 P1 4건 전량 해소 (`src/lib/storage.ts`, `src/components/hall/HallOfSoulsApp.tsx`, `src/engine/createEngine.js`):**
+     * `sanitizeHallEntry()`를 신설해 `loadHall()`, `saveToHall()`, `applyImportedBackup()` 전 경로에서 필드 타입·범위·배열 여부를 정규화하고, 손상된 백업은 `localStorage` 기록 전 단계에서 원자적으로 검증·차단한다(`skippedHallCount` 토스트·스크린 리더 안내 포함).
+     * 독립 리뷰 P1 4건 전량 교정: ① `grade.rank` 상한 `40 -> 100`자로 상향해 41자 엔드게임 등급(`SENATORUM IMPERIALIS — HIGH LORD OF TERRA`, `IMPERIAL LIVING SAINT — GOLDEN APOTHEOSIS`) 절단 방지, ② `asStringList` 프로토타입 키(`__proto__`/`constructor`/`prototype`) 차단 및 `HallOfSoulsApp` `Object.prototype.hasOwnProperty.call(coreFmt.TAG_LABELS, t)` 적용으로 스크린 리더 프로토타입 누수 차단, ③ `createEngine.js` `migrateState` 평문 객체 `stats` 가드 + `applyImportedBackup` `try/catch` 및 비정상 `activeState`/`prefs` 거짓 성공 차단, ④ `HallOfSoulsApp` 5대 도감 수집 `Set`을 유효 `CORE_DATA` ID로 필터링해 100% 초과 차단 및 카드 푸터·상세 건수 일치(`careerTitle` 빈 값 폴백 포함).
+  3. **Astro 7.4.13 · `@astrojs/react` 7.1.9 · Vitest 5.1.2 업그레이드 & 타입체크 표준화 (`package.json`, `astro.config.mjs`, `tsconfig.json`, `.github/workflows/{qa,deploy}.yml`, `README.md`):**
+     * `astro@^7.4.13`, `@astrojs/react@^7.1.9`, `vitest@^5.1.2`로 업그레이드하고 `engines.node >=22.23.4`를 명시했다(`node_modules` 414 -> 274패키지 경량화, **`npm audit` 취약점 8건 -> 0건**).
+     * Astro 7 기본값 `compressHTML: 'jsx'`로 푸터 인라인 링크 사이 공백이 붙던 현상을 `astro.config.mjs` `compressHTML: true`로 보정하고, Vite 8(Rolldown)의 백틱 동적 임포트(``import(`./...js`)``)에 맞춰 `scripts/qa.mjs` Gate 8 `traceChunks` 정규식과 양성 지연 청크 탐색 검증(`dist/index.html` `narrative`, `dist/hall/index.html` `createEngine`)을 보강했다.
+     * `tsconfig.json` `types`에 `"astro/client"`를 추가하고 `package.json`·CI(`qa.yml`, `deploy.yml`)에 `npm run typecheck`(`astro sync && tsc --noEmit`)를 편입해 `.astro/` 생성 전후 모두 0오류를 확보했다.
+  4. **최종 통합 검증 실측 결과:**
+     * **클린 `npx tsc --noEmit` (`.astro/` 삭제 상태) & `npm run typecheck`:** **0 ERRORS.**
+     * **`npm run qa`:** ALL 6 QA GATES PASSED WITH 0 ERRORS (`102 files` 표기/기호 0건, 300생애 `maxRepeat=2`, `1000q=729.4ms`).
+     * **`npm run qa:deep` (1,500생애):** ALL 7 QA GATES PASSED WITH 0 ERRORS (`1,864 req specs`, `directCareerMatch=91/91`, `maxRepeat=2`, `nihilusMismatch=0`, `childStuck=0`, `reachedCareers=78/91`, `naturalEvents=577/670`, 3대 성향 비교 `humane 39/45 · dogmatic 35/45 · ruthless 34/45`).
+     * **`node scripts/audit-health.mjs --lives=200` (`seed=363749227`):** `crashes=0, softlocks=0, migrateFailures=0, unknownIdWarnings=0, incorruptibleLeaks=0, actions=1,755, travels=869, retireExec=7/7, mortalOver300=0, maxSave=967.5KB <= 2048KB, nearLimit=0`.
+     * **`npm test` (`vitest@5.1.2`, `tests/game-a11y.test.tsx`):** **14 / 14 PASS** (5.45s, 전당 백업·`localStorage` 손상 방어 및 P1 4건 회귀 테스트 포함).
+     * **`npm run build && npm run qa:dist` (`astro@7.4.13`):** **9페이지 정적 빌드 완료(2.49s, 기존 8.5~14.5s 대비 약 3.5~5.8배 고속화, 0오류·0경고)** + **Gate 8 0오류** (`codexOverviewJS=0KB, narrativeLeaks=0, engineLeaks=0, glossaryProseInGame=0, SSR cards 48/23/91/9/29/28`).
+     * **`npm audit`:** **`0 vulnerabilities`** (업그레이드 전 8건: critical 3, high 3, moderate 1, low 1 -> 전량 해소).
 

@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { CORE_DATA } from "../src/data/core/index.js";
 import { GLOSSARY_CATEGORIES, GLOSSARY_TERMS } from "../src/data/glossary.js";
 import { createImperiumEngine } from "../src/engine/createEngine.js";
 
-export const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 export const EVENT_DIR_ORDER = ["careers", "chapters", "worlds", "themes"];
 
 export function collectDirFiles(relDir, exts = [".js"]) {
@@ -55,6 +55,13 @@ export async function loadNodeImperiumRuntime() {
   const chronFiles = sortChronicleFiles(collectDirFiles("src/data/chronicles", [".js"]));
   const coreFiles = collectDirFiles("src/data/core", [".js"]);
 
+  if (coreFiles.length === 0 || eventFiles.length === 0 || chronFiles.length === 0) {
+    throw new Error(
+      `[loadNodeImperiumRuntime] Empty data directory under ROOT=${ROOT} ` +
+      `(core=${coreFiles.length}, events=${eventFiles.length}, chronicles=${chronFiles.length})`
+    );
+  }
+
   const EVENTS = [];
   const eventSourceByIndex = [];
   for (const rel of eventFiles) {
@@ -75,6 +82,13 @@ export async function loadNodeImperiumRuntime() {
       chronSourceByIndex.push(rel);
       CHRONICLES.push(item);
     }
+  }
+
+  if (EVENTS.length === 0 || CHRONICLES.length === 0) {
+    throw new Error(
+      `[loadNodeImperiumRuntime] Loaded 0 records under ROOT=${ROOT} ` +
+      `(EVENTS=${EVENTS.length}, CHRONICLES=${CHRONICLES.length})`
+    );
   }
 
   const DATA = {

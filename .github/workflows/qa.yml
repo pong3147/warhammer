@@ -28,6 +28,9 @@ jobs:
       - name: Run Red-Team Health & Fuzz Check (100 lives)
         run: node scripts/audit-health.mjs --lives=100
 
+      - name: Run TypeScript Typecheck (astro sync + tsc)
+        run: npm run typecheck
+
       - name: Run React Behavioral Accessibility Tests
         run: npm test
 

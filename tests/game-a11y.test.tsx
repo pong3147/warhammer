@@ -10,6 +10,7 @@ import { CORE_DATA } from "../src/data/core/index.js";
 import { EVENTS, CHRONICLES } from "../src/data/narrative.js";
 import { GLOSSARY_CATEGORIES, GLOSSARY_TERMS } from "../src/data/glossary.js";
 import { createImperiumEngine } from "../src/engine/createEngine.js";
+import { applyImportedBackup, loadHall, STORAGE_KEY } from "../src/lib/storage";
 
 const FULL_DATA = { ...CORE_DATA, EVENTS, CHRONICLES };
 const realEngine = createImperiumEngine(FULL_DATA);
@@ -613,5 +614,123 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
     startCustomCharacter(c2);
     expect(c2.querySelector("#sel-travel-world")).toBeNull();
     expect(c2.querySelector("#auto-travel-wrap")?.textContent || "").toContain("수동 이동 잠금");
+  });
+
+  it("Stage 19-M1: sanitizes malformed Hall backup & localStorage entries without crashing HallOfSoulsApp", () => {
+    // 1. All-corrupt hall-only backup must be rejected without touching storage
+    const allBadRes = applyImportedBackup(
+      JSON.stringify({
+        hall: [null, 42, { id: "missing_name" }, { id: "obj_name", name: { bad: true } }]
+      }),
+      realEngine
+    );
+    expect(allBadRes.ok).toBe(false);
+    expect(allBadRes.skippedHallCount).toBe(4);
+    expect(loadHall()).toHaveLength(0);
+
+    // 2. Mixed valid + malformed backup keeps sanitized valid entries and skips broken ones
+    const mixedPayload = JSON.stringify({
+      hall: [
+        { id: "bad_obj_name", name: { nested: 1 }, seenTimeline: "broken" },
+        {
+          id: "soul_valid_1",
+          name: "티투스 발레리우스",
+          age: "47",
+          birthYear: 952,
+          deathYear: 999,
+          homeWorldId: "cadia",
+          visitedWorlds: ["cadia", 999, null],
+          careerId: "astra_militarum",
+          careerHistory: "not-an-array",
+          careerTitle: "아스트라 밀리타룸",
+          seenTimeline: "corrupted-string",
+          metCharacters: { broken: true },
+          tags: 12345,
+          stats: { WS: 52, BS: "nan", Inf: { bad: 1 } },
+          grade: "corrupted-grade"
+        }
+      ]
+    });
+    const mixedRes = applyImportedBackup(mixedPayload, realEngine);
+    expect(mixedRes.ok).toBe(true);
+    expect(mixedRes.restoredHallCount).toBe(1);
+    expect(mixedRes.skippedHallCount).toBe(1);
+
+    // 3. Direct corrupted localStorage data is also sanitized on loadHall() and renders safely
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify([
+        ...loadHall(),
+        { id: "bad_direct", name: ["array-name"], tags: "oops" },
+        { id: "soul_legacy_2", name: "카스텔란 로렌", age: 88, homeWorldId: "terra", careerId: "inquisitor" }
+      ])
+    );
+
+    const { container } = render(<HallOfSoulsApp />);
+    const cards = container.querySelectorAll("#hall-list .codex-card");
+    expect(cards).toHaveLength(2);
+    expect(container.textContent).toContain("티투스 발레리우스 (47세)");
+    expect(container.textContent).toContain("카스텔란 로렌 (88세)");
+    expect(container.textContent).toContain("이단심문관");
+    expect(container.textContent).not.toContain("NaN");
+  });
+
+  it("Stage 19-M1 P1 regressions: preserves 41-char endgame ranks, blocks prototype tag leakage, rejects malformed activeState/prefs, and clamps Codex counts to valid IDs", () => {
+    // P1-3: non-object prefs/activeState or broken activeState must return ok:false (never false-positive ok:true)
+    expect(applyImportedBackup(JSON.stringify({ activeState: 123 }), realEngine).ok).toBe(false);
+    expect(applyImportedBackup(JSON.stringify({ prefs: "garbage" }), realEngine).ok).toBe(false);
+    expect(applyImportedBackup(JSON.stringify({ activeState: { bad: true } }), realEngine).ok).toBe(false);
+
+    // P1-3: valid hall + malformed activeState (string stats) must NOT throw uncaught TypeError
+    const mixedActiveRes = applyImportedBackup(
+      JSON.stringify({
+        hall: [
+          {
+            id: "soul_high_lord",
+            name: "아우렐리우스 하이로드",
+            age: 312,
+            birthYear: "687",
+            deathYear: "999",
+            homeWorldId: "terra",
+            visitedWorlds: ["terra", "fake_world_1", "fake_world_2"],
+            careerId: "high_lord_administratum",
+            careerHistory: ["high_lord_administratum", "fake_career_1"],
+            careerTitle: "테라의 하이 로드",
+            chapterId: "fake_chapter_x",
+            seenTimeline: ["tl_fall_of_cadia", "fake_tl_1", "fake_tl_2"],
+            metCharacters: ["guilliman", "fake_char_1"],
+            tags: ["toString", "__proto__", "constructor", "high_lord_terra"],
+            grade: {
+              rank: "SENATORUM IMPERIALIS — HIGH LORD OF TERRA",
+              title: "테라의 하이 로드",
+              score: "950"
+            }
+          }
+        ],
+        activeState: { id: "broken_active", name: "손상자", alive: true, stats: "broken", logs: [] }
+      }),
+      realEngine
+    );
+    expect(mixedActiveRes.ok).toBe(true);
+    expect(mixedActiveRes.restoredActive).toBeNull();
+    expect(mixedActiveRes.restoredHallCount).toBe(1);
+
+    // P1-1: 41-char endgame rank must NOT be truncated
+    const stored = loadHall();
+    expect(stored).toHaveLength(1);
+    expect(stored[0].grade?.rank).toBe("SENATORUM IMPERIALIS — HIGH LORD OF TERRA");
+    expect(stored[0].birthYear).toBe(687);
+    expect(stored[0].grade?.score).toBe(950);
+
+    // P1-2 & P1-4: render HallOfSoulsApp -> no Object.prototype leakage, valid-only Codex totals & matching footer counts
+    const { container } = render(<HallOfSoulsApp />);
+    const fullText = container.textContent || "";
+    expect(fullText).not.toContain("native code");
+    expect(fullText).not.toContain("[object Object]");
+    expect(fullText).toContain("테라의 하이 로드");
+    // Only 1 real world (terra), 1 real career, 0 real chapters, 1 real timeline, 1 real character
+    expect(fullText).toContain(`1 / ${CORE_DATA.WORLDS.length}`);
+    expect(fullText).toContain(`0 / ${CORE_DATA.CHAPTERS.length}`);
+    expect(fullText).toContain("역사 1건 · 인물 1명");
   });
 });

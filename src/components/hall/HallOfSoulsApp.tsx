@@ -6,13 +6,14 @@ import {
   buildBackupPayload,
   clearHall,
   downloadTextFile,
-  loadHall
+  loadHall,
+  type HallEntry
 } from "../../lib/storage";
 
 const coreFmt = createCoreFormatters(CORE_DATA);
 
 export default function HallOfSoulsApp() {
-  const [list, setList] = useState<any[]>([]);
+  const [list, setList] = useState<HallEntry[]>([]);
   const [clearArmed, setClearArmed] = useState(false);
   const [liveMsg, setLiveMsg] = useState("");
   const [toastMsg, setToastMsg] = useState("");
@@ -62,24 +63,45 @@ export default function HallOfSoulsApp() {
     []
   );
 
+  const validIdSets = useMemo(
+    () => ({
+      worlds: new Set(CORE_DATA.WORLDS.map((w: any) => w.id)),
+      careers: new Set(selectableCareers.map((c: any) => c.id)),
+      chapters: new Set(CORE_DATA.CHAPTERS.map((ch: any) => ch.id)),
+      timeline: new Set(CORE_DATA.TIMELINE.map((t: any) => t.id)),
+      chars: new Set(CORE_DATA.CHARACTERS.map((c: any) => c.id))
+    }),
+    [selectableCareers]
+  );
+
   const stats = useMemo(() => {
     const uniqueWorlds = new Set(
       list
         .flatMap((x) =>
           Array.isArray(x.visitedWorlds) && x.visitedWorlds.length ? x.visitedWorlds : [x.homeWorldId]
         )
-        .filter(Boolean)
+        .filter((id) => validIdSets.worlds.has(id))
     );
     const uniqueCareers = new Set(
       list
         .flatMap((x) =>
           Array.isArray(x.careerHistory) && x.careerHistory.length ? x.careerHistory : [x.careerId]
         )
-        .filter((id) => id && id !== "child")
+        .filter((id) => id && id !== "child" && validIdSets.careers.has(id))
     );
-    const uniqueChapters = new Set(list.map((x) => x.chapterId).filter(Boolean));
-    const uniqueTimeline = new Set(list.flatMap((x) => x.seenTimeline || []));
-    const uniqueChars = new Set(list.flatMap((x) => x.metCharacters || []));
+    const uniqueChapters = new Set(
+      list.map((x) => x.chapterId).filter((id): id is string => Boolean(id) && validIdSets.chapters.has(id))
+    );
+    const uniqueTimeline = new Set(
+      list
+        .flatMap((x) => (Array.isArray(x.seenTimeline) ? x.seenTimeline : []))
+        .filter((id) => validIdSets.timeline.has(id))
+    );
+    const uniqueChars = new Set(
+      list
+        .flatMap((x) => (Array.isArray(x.metCharacters) ? x.metCharacters : []))
+        .filter((id) => validIdSets.chars.has(id))
+    );
 
     const totalTargets =
       CORE_DATA.WORLDS.length +
@@ -143,8 +165,9 @@ export default function HallOfSoulsApp() {
           return;
         }
         setList(loadHall());
+        const skippedNote = res.skippedHallCount ? `, 손상 항목 ${res.skippedHallCount}건 제외` : "";
         showToast(
-          `백업을 불러왔다 (영혼 ${res.restoredHallCount}명${res.restoredActive ? `, 진행 중 생애 '${res.restoredActive.name}' 복원` : ""}).`,
+          `백업을 불러왔다 (영혼 ${res.restoredHallCount}명${res.restoredActive ? `, 진행 중 생애 '${res.restoredActive.name}' 복원` : ""}${skippedNote}).`,
           true
         );
       } catch {
@@ -367,16 +390,22 @@ export default function HallOfSoulsApp() {
               )
                 .filter((id: string) => id && id !== "child")
                 .map((id: string) => coreFmt.getCareer(id).name);
-              const tlNames = (item.seenTimeline || [])
+              const seenTimeline = Array.isArray(item.seenTimeline) ? item.seenTimeline : [];
+              const metCharacters = Array.isArray(item.metCharacters) ? item.metCharacters : [];
+              const tags = Array.isArray(item.tags) ? item.tags : [];
+              const tlNames = seenTimeline
                 .map((id: string) => CORE_DATA.TIMELINE.find((t: any) => t.id === id))
                 .filter(Boolean)
                 .map((t: any) => `${coreFmt.formatImperialYear(t.year)} ${t.title}`);
-              const charNames = (item.metCharacters || [])
+              const charNames = metCharacters
                 .map((id: string) => coreFmt.getCharacter(id))
                 .filter(Boolean)
                 .map((c: any) => c.name);
               const chap = item.chapterId ? coreFmt.getChapter(item.chapterId) : null;
-              const tagNames = (item.tags || []).map((t: string) => coreFmt.TAG_LABELS[t] || t);
+              const tagNames = tags.map((t: string) =>
+                Object.prototype.hasOwnProperty.call(coreFmt.TAG_LABELS, t) ? coreFmt.TAG_LABELS[t] : t
+              );
+              const careerDisplay = item.careerTitle || coreFmt.getCareer(item.careerId).name;
               const alignInfo = item.alignment
                 ? coreFmt.getAlignmentInfo({ alignment: item.alignment })
                 : null;
@@ -389,11 +418,11 @@ export default function HallOfSoulsApp() {
                     </h3>
                     <div className="codex-en">
                       {coreFmt.formatImperialYear(item.birthYear)} ~{" "}
-                      {coreFmt.formatImperialYear(item.deathYear)} · {item.careerTitle}
+                      {coreFmt.formatImperialYear(item.deathYear)} · {careerDisplay}
                     </div>
                     <div className="codex-body">
                       <p style={{ color: "var(--gold)", marginBottom: "4px" }}>
-                        {item.grade ? item.grade.title : ""}
+                        {item.grade && item.grade.title ? item.grade.title : ""}
                       </p>
                       <p style={{ fontSize: "12px", color: "var(--text-sub)" }}>{item.deathCause}</p>
                       <details className="hall-detail">
@@ -402,13 +431,13 @@ export default function HallOfSoulsApp() {
                           {item.grade && item.grade.verdict && (
                             <p className="hall-verdict">{item.grade.verdict}</p>
                           )}
-                          {item.stats && (
+                          {item.stats && typeof item.stats === "object" && (
                             <div className="hall-mini-stats">
                               {Object.values(coreFmt.STAT_META).map((m: any) => (
                                 <span key={m.key} className="hall-mini-stat">
                                   <span>{m.name}</span>
                                   <strong>
-                                    {item.stats[m.key] !== undefined ? item.stats[m.key] : "-"}
+                                    {item.stats && item.stats[m.key] !== undefined ? item.stats[m.key] : "-"}
                                   </strong>
                                 </span>
                               ))}
@@ -464,8 +493,7 @@ export default function HallOfSoulsApp() {
                   <div className="codex-foot">
                     <span>출생: {coreFmt.getWorld(item.homeWorldId).name}</span>
                     <span>
-                      역사 {(item.seenTimeline || []).length}건 · 인물{" "}
-                      {(item.metCharacters || []).length}명
+                      역사 {tlNames.length}건 · 인물 {charNames.length}명
                     </span>
                   </div>
                 </article>

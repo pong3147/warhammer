@@ -3,6 +3,9 @@
   "version": "2.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.23.4"
+  },
   "description": "1 / QUADRILLION : IMPERIALIS VITA — Warhammer 40k Imperium of Man Life Simulator (Astro + React Islands)",
   "scripts": {
     "dev": "astro dev",
@@ -14,11 +17,12 @@
     "qa:dist": "node scripts/qa.mjs --only-dist",
     "audit": "node scripts/audit-health.mjs",
     "coverage": "node scripts/coverage-report.mjs",
-    "verify": "npm run qa && npm run audit && npm test && npm run build && npm run qa:dist"
+    "typecheck": "astro sync && tsc --noEmit",
+    "verify": "npm run qa && npm run audit && npm run typecheck && npm test && npm run build && npm run qa:dist"
   },
   "dependencies": {
-    "@astrojs/react": "^4.2.1",
-    "astro": "^5.5.0",
+    "@astrojs/react": "^7.1.9",
+    "astro": "^7.4.13",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -30,6 +34,6 @@
     "@types/react-dom": "^19.0.4",
     "jsdom": "^26.0.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.9"
+    "vitest": "^5.1.2"
   }
 }

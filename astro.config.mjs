@@ -4,6 +4,7 @@ import react from "@astrojs/react";
 export default defineConfig({
   site: "https://pong3147.github.io",
   base: "/warhammer",
+  compressHTML: true,
   integrations: [react()],
   build: {
     assets: "_astro"

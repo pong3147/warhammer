@@ -78,12 +78,13 @@ function runDistBundleGate(coreData, glossaryTerms) {
       visited.add(rel);
       const code = fs.readFileSync(abs, "utf8");
       // Static imports: from"./foo.js" or import"./foo.js"
-      for (const m of code.matchAll(/(?:from\s*|import\s*)["'](\.\/[^"']+\.js)["']/g)) {
+      for (const m of code.matchAll(/(?:from\s*|import\s*)["'`](\.\/[^"'`]+\.js)["'`]/g)) {
         const nextRel = path.posix.normalize(path.posix.join(path.posix.dirname(rel), m[1]));
         if (!visited.has(nextRel)) queue.push(nextRel);
       }
       if (includeDynamic) {
-        for (const m of code.matchAll(/import\s*\(\s*["'](\.\/[^"']+\.js)["']\s*\)/g)) {
+        // Vite 8 / Rolldown emits backtick literals in dynamic imports: import(`./chunk.js`)
+        for (const m of code.matchAll(/import\s*\(\s*["'`](\.\/[^"'`]+\.js)["'`]\s*\)/g)) {
           const nextRel = path.posix.normalize(path.posix.join(path.posix.dirname(rel), m[1]));
           if (!visited.has(nextRel)) queue.push(nextRel);
         }
@@ -140,6 +141,9 @@ function runDistBundleGate(coreData, glossaryTerms) {
   for (const rel of nonGamePages) {
     const htmlSrc = readRel(rel);
     const entries = extractEntryChunks(htmlSrc);
+    if (entries.length === 0) {
+      fail(8, `${rel} had 0 traced entry chunks (check Astro island HTML attributes in extractEntryChunks)`);
+    }
     const staticGraph = traceChunks(entries, { includeDynamic: false });
     const fullGraph = traceChunks(entries, { includeDynamic: true });
 
@@ -149,10 +153,14 @@ function runDistBundleGate(coreData, glossaryTerms) {
     }
 
     if (rel === "dist/hall/index.html") {
-      // Hall must NOT eagerly load createEngine.js in its static initial graph
+      // Hall must NOT eagerly load createEngine.js in its static initial graph, and SHOULD resolve it dynamically
       const eagerEngine = staticGraph.filter((c) => engineChunks.has(c));
       if (eagerEngine.length) {
         fail(8, `${rel} eagerly bundles simulation engine chunk(s): ${eagerEngine.join(", ")}`);
+      }
+      const lazyEngine = fullGraph.filter((c) => engineChunks.has(c));
+      if (lazyEngine.length === 0) {
+        fail(8, `${rel} dynamic import tracer failed to detect lazy createEngine chunk (check Rolldown/Vite output syntax)`);
       }
     } else {
       // Glossary and Codex pages must NOT reference createEngine.js at all (static or dynamic)
@@ -163,12 +171,20 @@ function runDistBundleGate(coreData, glossaryTerms) {
     }
   }
 
-  // 3. Main game page (/) must keep narrative chunk lazy (not in static graph) and must NOT bundle glossary prose
+  // 3. Main game page (/) must keep narrative chunk lazy (not in static graph, present in dynamic graph) and must NOT bundle glossary prose
   const gameEntries = extractEntryChunks(readRel("dist/index.html"));
+  if (gameEntries.length === 0) {
+    fail(8, "dist/index.html had 0 traced entry chunks (check Astro island HTML attributes in extractEntryChunks)");
+  }
   const gameStaticGraph = traceChunks(gameEntries, { includeDynamic: false });
+  const gameFullGraph = traceChunks(gameEntries, { includeDynamic: true });
   const gameEagerNarrative = gameStaticGraph.filter((c) => narrativeChunks.has(c));
   if (gameEagerNarrative.length) {
     fail(8, `dist/index.html eagerly loads narrative chunk(s) instead of lazy-loading: ${gameEagerNarrative.join(", ")}`);
+  }
+  const gameLazyNarrative = gameFullGraph.filter((c) => narrativeChunks.has(c));
+  if (gameLazyNarrative.length === 0) {
+    fail(8, "dist/index.html dynamic import tracer failed to detect lazy narrative chunk (check Rolldown/Vite output syntax)");
   }
   const gameGlossaryLeak = gameStaticGraph.filter((c) => glossaryDataChunks.has(c));
   if (gameGlossaryLeak.length) {
@@ -226,6 +242,10 @@ console.log(
 const runtime = await loadNodeImperiumRuntime();
 const { DATA, Engine, coreFiles, eventFiles, chronFiles, eventSourceByIndex, chronSourceByIndex } = runtime;
 
+if (coreFiles.length === 0) fail(1, `No core data files found under ${path.join(ROOT, "src/data/core")}`);
+if (eventFiles.length === 0 || DATA.EVENTS.length === 0) fail(1, `No event data loaded (files=${eventFiles.length}, events=${DATA.EVENTS.length})`);
+if (chronFiles.length === 0 || DATA.CHRONICLES.length === 0) fail(1, `No chronicle data loaded (files=${chronFiles.length}, chronicles=${DATA.CHRONICLES.length})`);
+
 const EVENT_SIZE_WARN_KB = 110;
 const EVENT_LINE_WARN = 2200;
 const CHRON_SIZE_WARN_KB = 70;
@@ -251,7 +271,9 @@ for (const s of [...eventFiles, ...chronFiles]) {
 }
 
 const cssPath = fs.existsSync(path.join(ROOT, "src/styles/global.css")) ? "src/styles/global.css" : null;
-if (cssPath) {
+if (!cssPath) {
+  fail(1, `Missing required stylesheet src/styles/global.css (ROOT=${ROOT})`);
+} else {
   const cssSrc = readRel(cssPath);
   if (/@import\s+url\(/i.test(cssSrc)) {
     fail(1, `Blocking @import still present in ${cssPath} (use <link> in BaseLayout.astro)`);
@@ -273,6 +295,9 @@ const uiFiles = [
 ];
 
 let srLiveCount = 0;
+if (uiFiles.length === 0) {
+  fail(2, `No Astro/React UI files found under ${path.join(ROOT, "src")} (ROOT=${ROOT})`);
+}
 for (const f of uiFiles) {
   const src = readRel(f);
   // Single-letter keyboard shortcut ban (only Escape allowed)
@@ -286,7 +311,7 @@ for (const f of uiFiles) {
   const liveMatches = src.match(/id=["']sr-live["']/g);
   if (liveMatches) srLiveCount += liveMatches.length;
 }
-if (uiFiles.length > 0 && srLiveCount === 0) {
+if (srLiveCount === 0) {
   fail(2, "Missing #sr-live polite live region in src/ UI components");
 }
 console.log(`[Gate 2] Static UI a11y verified (${uiFiles.length} Astro/React files, #sr-live declarations=${srLiveCount}).`);
@@ -327,6 +352,7 @@ const scanFiles = [
   "src/engine/formatters.js",
   "src/engine/createEngine.js",
   "src/lib/contextualGlossary.js",
+  "src/lib/storage.ts",
   ...uiFiles
 ].filter((f) => fs.existsSync(path.join(ROOT, f)));
 
