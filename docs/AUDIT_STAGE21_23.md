@@ -87,7 +87,7 @@
 
 ### 2.3 `[P2]` 표기 통일 · 오탈자 · UX/문서 다듬기
 
-- [x] **`[P2-01]` 비표준 표기 및 오탈자 일괄 교정:** `코지테이터`, `플라즈마`, `겔러 필드`, `독한 리카프`, `육성 대화`, `검은 함선`, `이를 악물고`, `"그대"`, `낙하산 줄이`, `선봉 차량의`, 메타 괄호 제거, `손에 쥐여 있었다`, `야만 행성`, `이름을 높였다`, `강철 대들보`, `유전적 특이점`, `철필`, `메디카에`, `오크 노브`/`초파`, `황제의 발톱`, `Geller Field Lore`, `외계 둥지` 전량 통일 완료 (`travel.js`·`childhood*.js`·`chronicles/worlds.js` 레거시 포함).
+- [x] **`[P2-01]` 비표준 표기 및 오탈자 일괄 교정:** `코지테이터`, `플라즈마`, `겔러 필드`, `독한 리카프`, `육성 대화`, `검은 함선`, `이를 악물고`, `"그대"`, `낙하산 줄이`, `선봉 차량의`, 메타 괄호 제거, `손에 쥐여 있었다`, `야만 행성`, `이름을 높였다`, `강철 대들보`, `유전적 특이점`, `철필`, `메디카에`, `오크 놉`/`메가놉`/`초파`*(나무위키 `놉(워해머 40,000)`·`메가놉` 기준 전 코퍼스 8파일 28곳 일괄 교정 및 `AGENTS.md` §5.1 · `qa.mjs` Gate 3 등록)*, `황제의 발톱`, `Geller Field Lore`, `외계 둥지` 전량 통일 완료 (`travel.js`·`childhood*.js`·`chronicles/worlds.js` 레거시 포함).
 - [x] **`[P2-02]` UI 접근성 미세 다듬기:** `ActiveEventPanel.tsx` 보유/면역 예고 필터, `ObituaryModal.tsx` `aria-labelledby="obit-rank obit-title"`, `DossierPanel.tsx` `<dl>` 직계 `<dt>`/`<dd>` 완료.
 - [x] **`[P2-03]` 출생 조합 고증 & 문서 동기화:** `navigator_house` 양립 불가 자질 제외(`blank`/`omega_pariah`/`abhuman_*`/`psyker`/`alpha_plus_psyker`), `worlds.js`·`faith_shadow.js` 주석, `glossary.js` 게임 시스템 2항목, `PROJECT_GUIDE.md`·`README.md`·본 문서 동기화 완료.
 

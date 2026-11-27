@@ -125,7 +125,7 @@ export const TIMELINE_M41_LATE = [
           addTags: ["armageddon_hero", "met_yarrick"]
         },
         fail: {
-          text: "오크 노브의 초파에 베여 쓰러졌으나, 하늘에서 강하한 단테와 블러드 엔젤의 구원으로 겨우 목숨을 건졌다.",
+          text: "오크 놉의 초파에 베여 쓰러졌으나, 하늘에서 강하한 단테와 블러드 엔젤의 구원으로 겨우 목숨을 건졌다.",
           wounds: -30,
           stats: { T: 3, WP: 4 },
           addTags: ["met_dante"]

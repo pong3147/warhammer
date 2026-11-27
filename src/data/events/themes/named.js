@@ -927,7 +927,7 @@ export default [
           addTags: ["met_ghazghkull"]
         },
         fail: {
-          text: "철수 도중 오크 노브 무리의 추격에 큰 상처를 입었으나 끝내 포위망을 빠져나왔다.",
+          text: "철수 도중 오크 놉 무리의 추격에 큰 상처를 입었으나 끝내 포위망을 빠져나왔다.",
           wounds: -22,
           stats: { Ag: 3 },
           addTags: ["met_ghazghkull"]
