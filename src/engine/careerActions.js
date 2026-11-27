@@ -18,6 +18,8 @@ export function createCareerActionsModule(deps) {
     addLog,
     formatDeltaText,
     isIncorruptibleState,
+    scalePositiveCorruption,
+    scaleWoundDamage,
     canRetireHonorably,
     createHonorableEndingEvent,
     evaluateTravelAttempt
@@ -74,7 +76,11 @@ export function createCareerActionsModule(deps) {
 
   function canUsePenance(state) {
     if (state.age < 14) return { ok: false, reason: "14세 이상부터 성당 정화 고행을 수행할 수 있다." };
-    if (state.corruption <= 0) return { ok: false, reason: "현재 영혼에 오염 흔적이 없다." };
+    const hasCurableTrauma =
+      state.tags.includes("shell_shocked") || state.tags.includes("warp_scarred");
+    if (state.corruption <= 0 && !hasCurableTrauma) {
+      return { ok: false, reason: "현재 영혼에 오염 흔적이나 정화할 정신적 상흔이 없다." };
+    }
     if (state.tags.includes("heretic")) return { ok: false, reason: "이미 이단자로 낙인찍혀 제국 성당에 출입할 수 없다." };
     const world = getWorld(state.worldId);
     if (world.tags.includes("feral")) return { ok: false, reason: "야만 행성에는 정식 국교 성당이 없다." };
@@ -456,23 +462,34 @@ export function createCareerActionsModule(deps) {
           }
         }
       }
+      let appliedWounds = eff.wounds || 0;
       if (eff.wounds) {
-        const floor = eff.wounds < 0 ? Math.min(state.wounds, 5) : 1;
-        state.wounds = clamp(state.wounds + eff.wounds, floor, state.maxWounds);
+        appliedWounds = eff.wounds < 0 && scaleWoundDamage ? scaleWoundDamage(state, eff.wounds) : eff.wounds;
+        const floor = appliedWounds < 0 ? Math.min(state.wounds, 5) : 1;
+        state.wounds = clamp(state.wounds + appliedWounds, floor, state.maxWounds);
       }
       if (eff.faith) state.faith = clamp(state.faith + eff.faith, 0, 100);
-      let blockedCorr = false;
+      let appliedCorr = eff.corruption || 0;
       if (eff.corruption) {
-        if (eff.corruption > 0 && isIncorruptibleState(state)) {
-          blockedCorr = true;
+        if (eff.corruption > 0) {
+          appliedCorr = scalePositiveCorruption
+            ? scalePositiveCorruption(state, eff.corruption)
+            : (isIncorruptibleState(state) ? 0 : eff.corruption);
+          if (appliedCorr > 0) {
+            state.corruption = clamp(state.corruption + appliedCorr, 0, 99);
+          }
         } else {
           state.corruption = clamp(state.corruption + eff.corruption, 0, 99);
         }
       }
       if (eff.align) applyAlignDelta(state, eff.align);
-      const effForDelta = (appliedStats || blockedCorr)
-        ? Object.assign({}, eff, appliedStats ? { stats: appliedStats } : null, blockedCorr ? { corruption: 0 } : null)
-        : eff;
+      const effForDelta = Object.assign(
+        {},
+        eff,
+        appliedStats ? { stats: appliedStats } : null,
+        eff.wounds ? { wounds: appliedWounds } : null,
+        eff.corruption ? { corruption: appliedCorr } : null
+      );
       addLog(state, act.logText, "success", null, {
         badge: "직군 고유 행동",
         deltaText: formatDeltaText(effForDelta)
@@ -550,24 +567,34 @@ export function createCareerActionsModule(deps) {
       if (!chk.ok) return { ok: false, msg: chk.reason };
 
       state.lastPenanceYear = state.year;
+      const prevCorr = state.corruption;
       state.corruption = clamp(state.corruption - 14, 0, 100);
+      const corrDiff = state.corruption - prevCorr;
       state.faith = clamp(state.faith + 7, 0, 100);
-      state.wounds = clamp(state.wounds - 7, 5, state.maxWounds);
-      let deltaText = "오염 -14 · 신앙 +7 · 생명력 -7";
+      const woundLoss = scaleWoundDamage ? scaleWoundDamage(state, -7) : -7;
+      state.wounds = clamp(state.wounds + woundLoss, 5, state.maxWounds);
+      const deltaParts = [];
+      if (corrDiff < 0) deltaParts.push(`오염 ${corrDiff}`);
+      deltaParts.push("신앙 +7", `생명력 ${woundLoss}`);
       if (normalizeAlignment(state).ruthless > 0) {
         applyAlignDelta(state, { ruthless: -3, dogmatic: 1 });
-        deltaText += " · 암흑 -3 · 교조 +1";
+        deltaParts.push("암흑 -3", "교조 +1");
       }
+      const healedNames = [];
       for (const [tagKey, label] of [["shell_shocked", "포탄 충격"], ["warp_scarred", "워프 흉터"]]) {
         const idx = state.tags.indexOf(tagKey);
         if (idx !== -1) {
           state.tags.splice(idx, 1);
-          deltaText += ` · 특성 치유: ${label}`;
+          deltaParts.push(`특성 치유: ${label}`);
+          healedNames.push(label);
         }
       }
-      addLog(state, "성당에서 혹독한 고행과 참회 기도를 올려 워프 오염을 정화했다.", "event", null, {
+      const logMsg = corrDiff < 0
+        ? "성당에서 혹독한 고행과 참회 기도를 올려 워프 오염을 정화했다."
+        : `성당에서 혹독한 고행과 참회 기도를 올려 ${healedNames.join("·")}의 상흔을 씻어냈다.`;
+      addLog(state, logMsg, "event", null, {
         badge: "정화 고행",
-        deltaText
+        deltaText: deltaParts.join(" · ")
       });
       return { ok: true };
     }

@@ -63,6 +63,10 @@ console.log(`[Seed] seed=${SEED} (repro: node scripts/audit-health.mjs --lives=$
 
 let crashes = 0;
 let softlocks = 0;
+let emptyChoiceOutcomes = 0;
+let silentChoiceResolutions = 0;
+let standardLives = 0;
+let grimdarkLives = 0;
 let migrateFailures = 0;
 let incorruptibleCorrupted = 0;
 let actionsExecuted = 0;
@@ -105,7 +109,10 @@ const sampleNewLogs = (st, prevTop) => {
 
 for (let i = 0; i < FUZZ_LIVES; i++) {
   try {
-    let st = Engine.createCharacter({ mode: "random" });
+    const difficulty = i % 2 === 0 ? "standard" : "grimdark";
+    if (difficulty === "grimdark") grimdarkLives++;
+    else standardLives++;
+    let st = Engine.createCharacter({ mode: "random", difficulty });
     const focusKeys = Object.keys(Engine.FOCUSES);
     st.focus = focusKeys[Math.floor(Math.random() * focusKeys.length)];
     let testedRetireAt500 = false;
@@ -164,7 +171,10 @@ for (let i = 0; i < FUZZ_LIVES; i++) {
         const clone = Engine.migrateState(JSON.parse(JSON.stringify(st)));
         const openRes = Engine.performAction(clone, "retire_honorable");
         if (openRes && openRes.ok && clone.pendingEvent && clone.pendingEvent.isHonorableEnding) {
-          Engine.resolvePendingChoice(clone, 0);
+          const prevCloneTop = (clone.logs && clone.logs[0]) || null;
+          const retRes = Engine.resolvePendingChoice(clone, 0);
+          if (!retRes || !retRes.outcome) emptyChoiceOutcomes++;
+          if ((clone.logs && clone.logs[0]) === prevCloneTop) silentChoiceResolutions++;
           if (!clone.alive && clone.finalGrade && clone.finalGrade.rank) {
             age500RetireExecutedOK++;
           } else {
@@ -220,7 +230,13 @@ for (let i = 0; i < FUZZ_LIVES; i++) {
         }
         const prevTop = (st.logs && st.logs[0]) || null;
         const chosen = validIdx[Math.floor(Math.random() * validIdx.length)];
-        Engine.resolvePendingChoice(st, chosen);
+        const choiceRes = Engine.resolvePendingChoice(st, chosen);
+        if (!choiceRes || !choiceRes.outcome) {
+          emptyChoiceOutcomes++;
+        }
+        if ((st.logs && st.logs[0]) === prevTop) {
+          silentChoiceResolutions++;
+        }
         sampleNewLogs(st, prevTop);
       }
 
@@ -247,7 +263,10 @@ for (let i = 0; i < FUZZ_LIVES; i++) {
           clone.pendingEvent = null;
           const openRes = Engine.performAction(clone, "retire_honorable");
           if (openRes && openRes.ok && clone.pendingEvent) {
-            Engine.resolvePendingChoice(clone, 0);
+            const prevCloneTop = (clone.logs && clone.logs[0]) || null;
+            const retRes = Engine.resolvePendingChoice(clone, 0);
+            if (!retRes || !retRes.outcome) emptyChoiceOutcomes++;
+            if ((clone.logs && clone.logs[0]) === prevCloneTop) silentChoiceResolutions++;
             if (!clone.alive && clone.finalGrade) age500RetireExecutedOK++;
             else age500RetireFailed++;
           } else {
@@ -322,7 +341,8 @@ const avgLogChars = logCharSamples ? (logCharSum / logCharSamples).toFixed(1) : 
 const saveCapExceeded = maxJsonBytes > MAX_SAVE_BYTES;
 
 console.log(
-  `[Fuzz] lives=${FUZZ_LIVES}, crashes=${crashes}, softlocks=${softlocks}, ` +
+  `[Fuzz] lives=${FUZZ_LIVES} (standard=${standardLives}, grimdark=${grimdarkLives}), crashes=${crashes}, ` +
+  `softlocks=${softlocks}, emptyOutcomes=${emptyChoiceOutcomes}, silentChoices=${silentChoiceResolutions}, ` +
   `migrateFailures=${migrateFailures}, unknownIdWarnings=${warningsCaught.length}, ` +
   `incorruptibleLeaks=${incorruptibleCorrupted}, actions=${actionsExecuted}, travels=${travelsAttempted}`
 );
@@ -361,6 +381,8 @@ console.log(`[Size Watch] nearLimit=${nearLimit.length}${nearLimit.length ? " ->
 const hardFailures = [];
 if (crashes > 0) hardFailures.push(`crashes=${crashes}`);
 if (softlocks > 0) hardFailures.push(`softlocks=${softlocks}`);
+if (emptyChoiceOutcomes > 0) hardFailures.push(`emptyOutcomes=${emptyChoiceOutcomes}`);
+if (silentChoiceResolutions > 0) hardFailures.push(`silentChoices=${silentChoiceResolutions}`);
 if (migrateFailures > 0) hardFailures.push(`migrateFailures=${migrateFailures}`);
 if (warningsCaught.length > 0) hardFailures.push(`unknownIdWarnings=${warningsCaught.length}`);
 if (incorruptibleCorrupted > 0) hardFailures.push(`incorruptibleLeaks=${incorruptibleCorrupted}`);
@@ -380,7 +402,8 @@ if (hardFailures.length > 0) {
   process.exit(1);
 }
 console.log(
-  `HEALTH CHECK PASSED (seed=${SEED}, 0 crashes, 0 softlocks, 0 migrate failures, 0 unknown-ID warnings, ` +
+  `HEALTH CHECK PASSED (seed=${SEED}, standard=${standardLives}, grimdark=${grimdarkLives}, 0 crashes, 0 softlocks, ` +
+  `0 emptyOutcomes, 0 silentChoices, 0 migrate failures, 0 unknown-ID warnings, ` +
   `0 incorruptible leaks, retireExec=${age500RetireExecutedOK}/${age500Plus}, maxSpotlight=${maxSpotlightCards}, ` +
   `apexProbes=${apexProbesOK}/${apexSpecs.length}, maxSave=${maxJsonKB}KB<=2048KB).`
 );

@@ -1,4 +1,4 @@
-// 분기 사건 — 그림다크 난이도 전용: 가드맨 15시간 생존 억까 팩 (10종)
+// 분기 사건 — 그림다크 난이도 전용: 가드맨 15시간 생존 불운·부조리 팩 (10종)
 export default [
   {
     id: "ev_s22_guard_01",
@@ -10,14 +10,17 @@ export default [
       difficulty: "grimdark",
       minAge: 16,
       anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 보병 계열",
+    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 보병 계열 · 크리그/야만 행성 제외",
     weight: 30,
     text: "전선의 지형도조차 펼쳐 보지 않은 귀족 출신 대위가 붉은 포도주를 비운 뒤 개활지 정면의 적 중화기 벙커를 향해 총검 돌격을 명령했다. 비가 쏟아지는 진흙탕 너머로 4연장 스터버 교차 화망이 번득이고, 후방에서는 헌병대가 물러서는 자를 겨누고 있다.",
     choices: [
       {
-        label: "[근접 판정] 포화의 사각지대로 몸을 날려 중화기 벙커 총안에 파편 수류탄을 꽂아 넣는다",
+        label: "[백병 판정] 포화의 사각지대로 몸을 날려 중화기 벙커 총안에 파편 수류탄을 꽂아 넣는다",
         check: { stat: "WS", diff: -12 },
         critSuccess: {
           text: "탄막의 미세한 틈을 뚫고 벙커 입구까지 단숨에 내달렸다! 터져 나간 총안 사이로 적 사수들을 제압하자, 숱한 사선을 뚫고 살아남은 백전의 생존자라는 평판이 전선에 퍼졌다.",
@@ -75,9 +78,12 @@ export default [
       difficulty: "grimdark",
       minAge: 16,
       anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 보병 계열",
+    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 보병 계열 · 크리그/야만 행성 제외",
     weight: 30,
     text: "적의 야간 기습이 임박해 탄약 상자를 뜯었더니, 안에 든 것은 300년 전 봉건 행성용 철제 화살촉과 누전으로 부풀어 오른 불량 라스건 전지팩뿐이었다. 병참 서류상으로는 이미 최상급 보급이 완료된 것으로 처리되어 있다.",
     choices: [
@@ -136,9 +142,12 @@ export default [
       difficulty: "grimdark",
       minAge: 16,
       anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant", "tempestus_scion"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 전선 직군",
+    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 전선 직군 · 크리그/야만 행성 제외",
     weight: 30,
     text: "복스 통신망의 좌표 오기입으로 아군 후방 바실리스크 포병대가 그대의 소대가 지키는 참호 구역에 어스셰이커 포탄을 쏟아붓기 시작했다! 대지가 뒤집히고 흙벽이 무너지는 가운데 2차 일제 사격 카운트다운이 시작되었다.",
     choices: [
@@ -200,9 +209,12 @@ export default [
       difficulty: "grimdark",
       minAge: 16,
       anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 보병 계열",
+    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 보병 계열 · 크리그/야만 행성 제외",
     weight: 30,
     text: "인접 징집병 소대가 적의 기갑 공세에 무너져 도주하자, 검은 코트를 휘날리며 나타난 커미사르가 진흙탕 속에서 살아남은 그대의 분대까지 비겁한 도주병으로 몰아세웠다. 볼트 피스톨의 해머가 당겨지는 소리가 귓전을 때린다.",
     choices: [
@@ -262,11 +274,14 @@ export default [
       difficulty: "grimdark",
       minAge: 16,
       anyCareers: ["astra_militarum", "militarum_sergeant", "tempestus_scion"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 강하·보병 직군",
+    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 강하·보병 직군 · 크리그/야만 행성 제외",
     weight: 30,
-    text: "고공 강하를 위해 발키리 수송선의 해치가 열리자마자 적의 히드라 대공포 화망이 편대를 찢어 놓았다! 옆 좌석의 병사들이 파편에 휩쓸려 떨어져 나가고 수송선 우측 엔진이 폭발하며 기체가 나선형으로 추락하기 시작한다.",
+    text: "고공 강하를 위해 발키리 수송선의 해치가 열리자마자 반역군의 히드라 대공포 화망이 편대를 찢어 놓았다! 옆 좌석의 병사들이 파편에 휩쓸려 떨어져 나가고 수송선 우측 엔진이 폭발하며 기체가 나선형으로 추락하기 시작한다.",
     choices: [
       {
         label: "[민첩 판정] 불타는 동체에서 비상 강하 와이어를 걷어차고 포화 한복판으로 뛰어내린다",
@@ -288,7 +303,7 @@ export default [
           addTags: ["crippled_limb"]
         },
         critFail: {
-          text: "강하 도중 피어오른 대공포 파편 구름에 낙하산 삭이 모조리 끊어지며 불타는 폐허 위로 추락했다.",
+          text: "강하 도중 피어오른 대공포 파편 구름에 낙하산 줄이 모조리 끊어지며 불타는 폐허 위로 추락했다.",
           instantDeath: "궤도 강하 중 적 대공 포화 직격으로 추락사"
         }
       },
@@ -312,7 +327,7 @@ export default [
         }
       }
     ],
-    source: "Codex: Tempestus Scions / Imperial Armour"
+    source: "Codex: Militarum Tempestus / Imperial Armour"
   },
   {
     id: "ev_s22_guard_06",
@@ -324,9 +339,10 @@ export default [
       difficulty: "grimdark",
       minAge: 16,
       anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant", "tempestus_scion"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 전선 직군",
+    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 전선 직군 · 야만 행성 제외",
     weight: 30,
     text: "적이 살포한 황록색 부식성 독가스 구름이 참호 바닥을 타고 밀려들어 왔다. 설상가상으로 흙벽이 무너지며 날아든 목재 파편에 방독면 정화 필터가 깨져 매캐한 독기가 목구멍을 태우기 시작한다.",
     choices: [
@@ -355,9 +371,9 @@ export default [
         }
       },
       {
-        label: "잔해 아래 깔려 신음하는 전우의 온전한 방독면 필터를 강제로 떼어 내어 내 면갑에 끼우고 빠져나온다",
+        label: "잔해 아래 깔려 기동이 불가능한 전우의 온전한 방독면 필터를 떼어 내어 내 면갑에 끼우고 빠져나온다",
         effect: {
-          text: "덕분에 독가스는 피했으나, 살아 돌아온 참호에서 그대의 손에 묻은 전우의 혈흔을 본 자들이 냉혈한이라 손가락질한다.",
+          text: "덕분에 독가스는 피했으나, 아직 숨이 붙어 있던 전우를 외면한 냉혹한 처사가 전선에 알려져 악명 높은 냉혈한이라는 평판이 따라붙는다.",
           wounds: -10,
           stats: { Fel: -3, Inf: -2 },
           addTags: ["notorious_ruthless"],
@@ -386,9 +402,12 @@ export default [
       difficulty: "grimdark",
       minAge: 16,
       anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 보병 계열",
+    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 보병 계열 · 크리그/야만 행성 제외",
     weight: 30,
     text: "사령부의 철수 명령을 받고 짐을 싸던 찰나, 궤도 상공의 연대 지휘부가 작전 계획을 번복하며 '증원군이 도착할 때까지 현 진지를 사수하라'는 명령을 내렸다. 그러나 지평선 너머로 보이는 것은 아군 증원이 아니라 포위망을 좁히는 적 기갑대다.",
     choices: [
@@ -396,7 +415,7 @@ export default [
         label: "[사격 판정] 탄약 상자를 끌어모아 과충전 일제 사격으로 적 선봉 장갑차의 관측창을 꿰뚫고 시간을 번다",
         check: { stat: "BS", diff: -12 },
         critSuccess: {
-          text: "불꽃을 뿜는 라스건 연사로 적 선봉차량의 기동력을 끊어 놓았다! 기적적으로 도착한 아군 기갑대 앞에 백전의 생존자로 서게 되었다.",
+          text: "불꽃을 뿜는 라스건 연사로 적 선봉 차량의 기동력을 끊어 놓았다! 기적적으로 도착한 아군 기갑대 앞에 백전의 생존자로 서게 되었다.",
           stats: { BS: 7, WP: 4, Inf: 5 },
           addTags: ["battle_hardened"]
         },
@@ -449,9 +468,12 @@ export default [
       difficulty: "grimdark",
       minAge: 16,
       anyCareers: ["astra_militarum", "militarum_sergeant", "tempestus_scion"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 중화기·정예 직군",
+    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 중화기·정예 직군 · 크리그/야만 행성 제외",
     weight: 30,
     text: "적의 중장갑 수송차가 참호 흉벽을 들이받기 직전, 분대에서 유일한 대전차 화기인 플라즈마 건의 냉각 코일이 붉게 달아오르며 경고음을 뿜고 있다. 한 발만 잘못 당기면 사수부터 푸른 태양의 불길에 증발할 판이다.",
     choices: [
@@ -512,9 +534,10 @@ export default [
       difficulty: "grimdark",
       minAge: 16,
       anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant", "tempestus_scion"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 전선 직군",
+    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 전선 직군 · 야만 행성 제외",
     weight: 30,
     text: "야간 정찰 임무 중 사령부가 지급한 구식 지도에 따라 수풀을 건너던 찰나, 발밑에서 철제 신관이 눌리는 '찰칵' 소리가 울렸다. 10년 전 다른 연대가 매설하고 기록을 잃어버린 아군 대인 지뢰밭 한복판에 들어선 것이다.",
     choices: [
@@ -543,12 +566,12 @@ export default [
         }
       },
       {
-        label: "지뢰 신관의 무게를 지탱하기 위해 끌고 오던 보급 노새와 탄약 상자를 발판 삼아 밀어 넣고 기어 나온다",
+        label: "지뢰 신관의 무게를 지탱하기 위해 끌고 오던 보급 짐승과 탄약 상자를 발판 삼아 밀어 넣고 기어 나온다",
         effect: {
-          text: "귀중한 탄약과 짐승을 잃고 간신히 목숨을 건졌으나, 분실한 보급품 목록이 고스란히 급여 압류 빚으로 청구되었다.",
+          text: "귀중한 탄약과 보급 짐승을 지뢰 기폭 미끼로 희생시켜 간신히 지뢰밭을 빠져나왔다. 목숨은 부지했으나 보급품 무단 폐기에 대한 군율 문책과 냉혹한 평판이 남았다.",
           wounds: -12,
-          stats: { Inf: -2 },
-          addTags: ["imperial_debt"],
+          stats: { Inf: -3 },
+          addTags: ["notorious_ruthless"],
           align: { ruthless: 5 }
         }
       },
@@ -573,14 +596,17 @@ export default [
       difficulty: "grimdark",
       minAge: 16,
       anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 보병 계열",
+    reqLabel: "그림다크 모드 · 16세 이상 · 제국군 보병 계열 · 크리그/야만 행성 제외",
     weight: 30,
-    text: "첫 투입 후 정확히 15시간이 지나는 새벽 안개 속에서 궤도 지원도 끊긴 반파 참호를 향해 수백 명의 오크 보이즈가 함성을 지르며 밀려들었다. 탄약은 10발 남짓, 사방에서 도끼와 초퍼가 흉벽을 찍어 내린다.",
+    text: "첫 투입 후 정확히 15시간이 지나는 새벽 안개 속에서 궤도 지원도 끊긴 반파 참호를 향해 수백 명의 오크 보이즈가 함성을 지르며 밀려들었다. 탄약은 10발 남짓, 사방에서 도끼와 초파가 흉벽을 찍어 내린다.",
     choices: [
       {
-        label: "[근접 판정] 라스건에 총검을 단단히 꽂고 흉벽을 넘어오는 오크의 목을 향해 최후의 백병전을 건다",
+        label: "[백병 판정] 라스건에 총검을 단단히 꽂고 흉벽을 넘어오는 오크의 목을 향해 최후의 백병전을 건다",
         check: { stat: "WS", diff: -13 },
         critSuccess: {
           text: "짐승 같은 괴력의 공세를 총검술로 흘려보내며 오크 선두를 찔러 눕혔다! 15시간의 마의 벽을 뚫고 살아남은 진정한 백전의 생존자가 되었다.",
@@ -600,7 +626,7 @@ export default [
           addTags: ["crippled_limb"]
         },
         critFail: {
-          text: "초퍼를 휘두르며 들이닥친 오크 놉의 일격에 플래크 흉갑째 두 동강 나며 15시간의 문턱을 넘지 못했다.",
+          text: "초파를 휘두르며 들이닥친 오크 노브의 일격에 플래크 흉갑째 두 동강 나며 15시간의 문턱을 넘지 못했다.",
           instantDeath: "고립된 참호에서 오크 기습 백병전 도중 전사"
         }
       },

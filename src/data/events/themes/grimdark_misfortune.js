@@ -1,4 +1,4 @@
-// 분기 사건 — 그림다크 난이도 전용 제국 관료제·계급 장벽·마녀사냥 억까 팩 (10종)
+// 분기 사건 — 그림다크 난이도 전용 제국 관료제·계급 장벽·마녀사냥 불운·부조리 팩 (10종)
 export default [
   {
     id: "ev_s22_theme_01",
@@ -11,13 +11,14 @@ export default [
       minAge: 16,
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 난이도 · 16세 이상 · 크리그/초인/악마 제외",
+    reqLabel: "그림다크 난이도 · 16세 이상 · 3티어 이하 · 크리그/야만 행성/초인/악마 제외",
     weight: 28,
-    text: "아드미니스트라툼 하위 서기청의 깃펜 오타 하나로 당신은 이미 세 달 전 역병으로 사망해 화장된 시체로 전산 처리되었다. 거주 패찰과 식량 배급표가 일괄 정지되었고, 구역 집행관들은 장부에 없는 유령이 배급을 축낸다며 당장 퇴거하지 않으면 불법 점거로 처형하겠다고 들이닥쳤다.",
+    text: "아드미니스트라툼 하위 서기청의 깃펜 오타 하나로 그대는 이미 세 달 전 역병으로 사망해 화장된 시체로 전산 처리되었다. 거주 패찰과 식량 배급표가 일괄 정지되었고, 구역 집행관들은 장부에 없는 유령이 배급을 축낸다며 당장 퇴거하지 않으면 불법 점거로 처형하겠다고 들이닥쳤다.",
     choices: [
       {
         label: "[지성 판정] 서기청 지하 문서고를 뒤져 오기 정정 인장과 생존 증명을 받아 낸다",
@@ -78,15 +79,17 @@ export default [
       minAge: 16,
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 난이도 · 16세 이상 · 크리그/초인/악마 제외",
+    reqLabel: "그림다크 난이도 · 16세 이상 · 3티어 이하 · 크리그/야만 행성/초인/악마 제외",
     weight: 28,
-    text: "행성 총독부의 십일조 징발관이 성계 할당량을 맞추지 못하자, 이미 세금을 완납한 당신의 구역에 이중 징발 영장을 발부했다. 중무장한 징발대원들이 문 앞을 가로막고 곡물과 금속, 심지어 징집 인원까지 내놓으라며 총구를 들이대고 있다.",
+    text: "행성 총독부의 십일조 징발관이 성계 할당량을 맞추지 못하자, 이미 세금을 완납한 그대의 구역에 이중 징발 영장을 발부했다. 중무장한 징발대원들이 문 앞을 가로막고 곡물과 금속, 심지어 징집 인원까지 내놓으라며 총구를 들이대고 있다.",
     choices: [
       {
-        label: "[친교 판정] 완납 영수증 사본을 흔들며 징발대 지휘관의 체면과 군율을 건드린다",
+        label: "[교섭 판정] 완납 영수증 사본을 흔들며 징발대 지휘관의 체면과 군율을 건드린다",
         check: { stat: "Fel", diff: -10 },
         critSuccess: {
           text: "차분하면서도 서슬 퍼런 어조로 총독부 감사관의 이름을 거론하자 징발대 지휘관이 한 발 물러섰다. 이중 징발의 책임을 피하려던 지휘관은 서둘러 대열을 물렸다.",
@@ -142,19 +145,21 @@ export default [
       minAge: 16,
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["cloistered", "military", "mechanicus", "void"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
-      maxCareerTier: 3,
+      maxCareerTier: 2,
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 난이도 · 16세 이상 · 크리그/초인/악마 제외",
+    reqLabel: "그림다크 난이도 · 16세 이상 · 2티어 이하 민간 영역 · 크리그/야만 행성/초인/악마 제외",
     weight: 28,
-    text: "노후한 팩토룸의 고압 증기 밸브가 굉음과 함께 파열되며 작업장 일대가 끓는 기름과 쇳조각으로 뒤덮였다. 정작 기계 교리 점검을 게을리한 감독관과 엔지니어들은 책임을 피하기 위해 현장 작업자인 당신을 서비터 개조 명단에 올리려 든다.",
+    text: "노후한 팩토룸의 고압 증기 밸브가 굉음과 함께 파열되며 작업장 일대가 끓는 기름과 쇳조각으로 뒤덮였다. 정작 기계 교리 점검을 게을리한 감독관과 엔지니어들은 책임을 피하기 위해 현장 작업자인 그대를 서비터 개조 명단에 올리려 든다.",
     choices: [
       {
         label: "[강인 판정] 끓어오르는 증기를 뚫고 수동 차단 레버를 내려 추가 붕괴를 막는다",
         check: { stat: "T", diff: -10 },
         critSuccess: {
-          text: "살이 익어 가는 고통을 이악물고 견디며 붉게 달아오른 강철 레버를 끝내 꺾어 내렸다. 기계령의 폭주를 막아 낸 공로가 인정되어 서비터 징발은커녕 강철 같은 담력을 증명했다.",
+          text: "살이 익어 가는 고통을 이를 악물고 견디며 붉게 달아오른 강철 레버를 끝내 꺾어 내렸다. 기계령의 폭주를 막아 낸 공로가 인정되어 서비터 징발은커녕 강철 같은 담력을 증명했다.",
           stats: { T: 5, WP: 4 },
           addTags: ["iron_nerves"],
           align: { humane: 5 }
@@ -208,12 +213,14 @@ export default [
       minAge: 16,
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 난이도 · 16세 이상 · 크리그/초인/악마 제외",
+    reqLabel: "그림다크 난이도 · 16세 이상 · 3티어 이하 · 크리그/야만 행성/초인/악마 제외",
     weight: 28,
-    text: "배급 다툼 끝에 원한을 품은 이웃이 당신의 거처에서 기괴한 이단 부적이 나왔다고 국교 감시단에게 밀고했다. 한밤중에 횃불과 쇠스랑을 든 마녀사냥 군중과 감시단원들이 문을 두드리며 당장 이단자를 끌어내라고 아우성친다.",
+    text: "배급 다툼 끝에 원한을 품은 이웃이 그대의 거처에서 기괴한 이단 부적이 나왔다고 국교 감시단에게 밀고했다. 한밤중에 횃불과 쇠스랑을 든 마녀사냥 군중과 감시단원들이 문을 두드리며 당장 이단자를 끌어내라고 아우성친다.",
     choices: [
       {
         label: "[의지 판정] 횃불 앞에서 한 치의 흔들림 없이 제국 교리와 신앙을 암송해 결백을 입증한다",
@@ -273,22 +280,26 @@ export default [
     req: {
       difficulty: "grimdark",
       minAge: 16,
+      anyWorldTags: ["hive"],
+      minSocialTier: "common",
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 난이도 · 16세 이상 · 크리그/초인/악마 제외",
+    reqLabel: "그림다크 난이도 · 16세 이상 · 하이브 월드 · 일반 시민 이상 · 3티어 이하 · 크리그/야만 행성/초인/악마 제외",
     weight: 28,
-    text: "상층 스파이어의 연회장에서 대귀족의 측근이 붉은 거품을 물고 쓰러졌다. 암살의 여파로 연회장이 아수라장이 된 가운데, 하객들과 가문 경비대의 의심 어린 시선이 가장 만만한 외부인인 당신에게 쏠린다.",
+    text: "상층 스파이어의 연회장에서 대귀족의 측근이 붉은 거품을 물고 쓰러졌다. 암살의 여파로 연회장이 아수라장이 된 가운데, 하객들과 가문 경비대의 의심 어린 시선이 가장 만만한 외부인인 그대에게 쏠린다.",
     choices: [
       {
         label: "[지성 판정] 잔의 찌꺼기와 시종들의 미세한 동선을 훑어 진짜 독살범을 지목한다",
         check: { stat: "Int", diff: -10 },
         critSuccess: {
-          text: "수정 잔 바닥에 남은 미량의 침전물과 구석으로 물러나는 시종의 소매를 단번에 포착했다. 치명적 음모를 현장에서 뒤집은 눈썰미로 연회장의 인정을 받았다.",
+          text: "수정 잔 바닥에 남은 미량의 침전물과 구석으로 물러나는 시종의 소매를 단번에 포착했다. 치명적 음모를 현장에서 간파한 예리한 관찰안이 연회장의 인정을 받았다.",
           stats: { Int: 5, Inf: 4 },
-          addTags: ["battle_hardened"],
+          addTags: ["tactician_eye"],
           align: { ruthless: 5 }
         },
         success: {
@@ -337,9 +348,15 @@ export default [
     req: {
       difficulty: "grimdark",
       minAge: 16,
-      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["civilian", "heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      maxCareerTier: 3,
+      excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 난이도 · 16세 이상 · 초인/악마 제외",
+    reqLabel: "그림다크 난이도 · 16세 이상 · 성간·비민간 영역 · 3티어 이하 · 크리그/야만 행성/초인/악마/이단 제외",
     weight: 28,
     text: "이마테리움을 항해하던 수송함의 겔러 필드가 단 0.3초 동안 깜빡였다. 그 짧은 틈으로 스며든 비현실의 냉기가 선실 벽면을 뒤틀고, 곁에 있던 승무원 몇몇이 눈을 뒤집은 채 광기에 휩싸여 동료를 향해 달려들기 시작했다.",
     choices: [
@@ -392,7 +409,7 @@ export default [
         }
       }
     ],
-    source: "Rogue Trader: Edge of the Abyss / Gellar Field Lore"
+    source: "Rogue Trader: Edge of the Abyss / Geller Field Lore"
   },
   {
     id: "ev_s22_theme_07",
@@ -405,13 +422,15 @@ export default [
       minAge: 16,
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeTrees: ["arbites", "inquisition", "sororitas", "commissariat", "imperial_knight", "officio_assassinorum"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 난이도 · 16세 이상 · 크리그/초인/악마 제외",
+    reqLabel: "그림다크 난이도 · 16세 이상 · 3티어 이하 · 치안/심문/교단/기사/암살청·크리그/야만 행성/초인/악마 제외",
     weight: 28,
-    text: "야간 폭동을 진압하던 아르비테스 및 치안대가 교대 귀가 중이던 당신을 반란 선동자로 오인해 포위했다. 해명할 틈도 없이 전류가 흐르는 쇼크 마울과 방패가 사방에서 좁혀 들어온다.",
+    text: "야간 폭동을 진압하던 아르비테스 및 치안대가 교대 귀가 중이던 그대를 반란 선동자로 오인해 포위했다. 해명할 틈도 없이 전류가 흐르는 쇼크 마울과 방패가 사방에서 좁혀 들어온다.",
     choices: [
       {
         label: "[민첩 판정] 방패 틈새를 파고들어 좁은 환기 통로로 몸을 날려 추적을 따돌린다",
@@ -471,16 +490,18 @@ export default [
       minAge: 16,
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeTrees: ["ecclesiarchy", "sororitas", "inquisition", "arbites", "commissariat", "officio_assassinorum"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 난이도 · 16세 이상 · 크리그/초인/악마 제외",
+    reqLabel: "그림다크 난이도 · 16세 이상 · 3티어 이하 · 국교/교단/심문/치안/암살청·크리그/야만 행성/초인/악마 제외",
     weight: 28,
-    text: "구역 예배당의 탐욕스러운 고해사가 당신의 가계에 불경의 흔적이 보인다는 억지 트집을 잡았다. 당장 거액의 속죄 헌금을 바치고 면죄부를 사지 않으면 이단 심문 목록에 이름을 올리겠다는 노골적인 협박이다.",
+    text: "구역 예배당의 탐욕스러운 고해사가 그대의 가계에 불경의 흔적이 보인다는 억지 트집을 잡았다. 당장 거액의 속죄 헌금을 바치고 면죄부를 사지 않으면 이단 심문 목록에 이름을 올리겠다는 노골적인 협박이다.",
     choices: [
       {
-        label: "[친교 판정] 예배당 신도들 앞에서 고해사의 헌금 착복 의혹을 신앙의 이름으로 역공한다",
+        label: "[교섭 판정] 예배당 신도들 앞에서 고해사의 헌금 착복 의혹을 신앙의 이름으로 역공한다",
         check: { stat: "Fel", diff: -10 },
         critSuccess: {
           text: "성전의 구절을 인용하며 가난한 신도들의 고혈을 짜내는 자야말로 황제의 수치라고 일갈했다. 웅성거리는 신도들 앞에서 체면이 구겨진 고해사는 황급히 자리를 피했다.",
@@ -537,12 +558,15 @@ export default [
     req: {
       difficulty: "grimdark",
       minAge: 16,
+      anyWorldTags: ["hive"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 난이도 · 16세 이상 · 크리그/초인/악마 제외",
+    reqLabel: "그림다크 난이도 · 16세 이상 · 하이브 월드 · 3티어 이하 · 크리그/야만 행성/초인/악마 제외",
     weight: 28,
     text: "상층 스파이어의 공업 폐수가 하층 거주 구역의 정수 시설로 역류해 독한 악취와 역병이 번지기 시작했다. 그러나 귀족 당국은 시설을 수리하는 대신 오염이 위로 올라오지 못하게 하층 구역 승강기와 방벽을 통째로 봉쇄해 버렸다.",
     choices: [
@@ -604,18 +628,20 @@ export default [
       minAge: 16,
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned"]
     },
-    reqLabel: "그림다크 난이도 · 16세 이상 · 크리그/초인/악마 제외",
+    reqLabel: "그림다크 난이도 · 16세 이상 · 3티어 이하 · 크리그/야만 행성/초인/악마 제외",
     weight: 28,
-    text: "직속 상급자가 보급 물자와 공금을 빼돌린 채 성계 밖으로 도주하자, 제국 감사청은 실무 서류에 마지막으로 서명한 당신에게 모든 횡령 죄목과 변상 책임을 뒤집어씌웠다. 당장 결백을 입증하지 못하면 전 재산 압류와 처형이 기다린다.",
+    text: "직속 상급자가 보급 물자와 공금을 빼돌린 채 성계 밖으로 도주하자, 제국 감사청은 실무 서류에 마지막으로 서명한 그대에게 모든 횡령 죄목과 변상 책임을 뒤집어씌웠다. 당장 결백을 입증하지 못하면 전 재산 압류와 처형이 기다린다.",
     choices: [
       {
         label: "[지성 판정] 위조된 결재 인장과 화물선 출항 기록의 시차를 대조해 조작을 폭로한다",
         check: { stat: "Int", diff: -12 },
         critSuccess: {
-          text: "상급자가 도주 전 남긴 시간대별 출항 로그와 인장 마모도를 완벽히 대조해 냈다. 감사청은 당신의 무고함을 인정했을 뿐 아니라 명석한 언변과 논리에 깊은 인상을 받았다.",
+          text: "상급자가 도주 전 남긴 시간대별 출항 로그와 인장 마모도를 완벽히 대조해 냈다. 감사청은 그대의 무고함을 인정했을 뿐 아니라 명석한 언변과 논리에 깊은 인상을 받았다.",
           stats: { Int: 6, Inf: 4 },
           addTags: ["silver_tongue"],
           align: { ruthless: 5 }

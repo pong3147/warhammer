@@ -74,7 +74,7 @@ export function isCareerTransitionBlockedPure(tags, curCareer, targetCareer, ali
     hasTag("living_saint");
   if (hasTag("assassin") && targetCareer.tree !== "officio_assassinorum" && targetCareer.tree !== "chaos") return true;
   if (hasTag("living_saint") && targetCareer.tree !== "living_saint") return true;
-  if (hasTag("navigator") && ["astartes", "grey_knights", "custodes", "sororitas"].includes(targetCareer.tree)) return true;
+  if (hasTag("navigator") && ["astartes", "grey_knights", "custodes", "sororitas", "psyker"].includes(targetCareer.tree)) return true;
   if (curCareer.id !== "child" && curIsTranshuman && !targetCareer.isTranshuman && targetCareer.tree !== "chaos") return true;
   if (isIncorruptibleTags(tags) && targetCareer.tree === "chaos") return true;
   if (
@@ -89,6 +89,7 @@ export function isManualCareerAllowedPure(tags, curCareer, targetCareer) {
   if (!curCareer || !targetCareer || !targetCareer.selectable) return false;
   if (targetCareer.entryMode === "event") return false;
   if (curCareer.id === targetCareer.id) return false;
+  if (isCareerTransitionBlockedPure(tags, curCareer, targetCareer)) return false;
   const hasTag = (t) => (tags instanceof Set ? tags.has(t) : Array.isArray(tags) && tags.includes(t));
   // 비구속 초년·민간·방위군 신분은 자격이 열리는 모든 open 직군에 자유 지원 가능
   if (UNBOUND_CAREERS.has(curCareer.id)) {
@@ -590,9 +591,13 @@ export function createCareerRulesModule(deps) {
     if (picked.trialCheck) {
       const tc = picked.trialCheck;
       const statMeta = STAT_META[tc.stat] || { name: tc.stat };
+      const checkObj = { stat: tc.stat, diff: tc.diff || 0 };
+      if (tc.geneseedTrial || picked.tree === "astartes" || picked.tree === "grey_knights") {
+        checkObj.geneseedTrial = true;
+      }
       choices.push({
         label: `[시련 도전 · ${statMeta.name} 판정] ${tc.title}에 응해 ${nextTitle} 직위에 도전한다`,
-        check: { stat: tc.stat, diff: tc.diff || 0 },
+        check: checkObj,
         success: {
           acceptCareerOffer: picked.id,
           text: `[${tc.title}] 시련을 돌파하고 마침내 [${nextTitle}] 직위에 취임했다!`

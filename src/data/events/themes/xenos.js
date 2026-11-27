@@ -8,12 +8,14 @@ export default [
       minAge: 16,
       anyTags: ["militarum", "imperial_military", "astartes", "sororitas", "mechanicus"],
       excludeWorlds: ["terra", "mars"],
+      excludeWorldTags: ["feral"],
+      excludeBodyClasses: ["dreadnought"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
-        "custodes", "grey_knight", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
+        "custodes", "grey_knight", "dreadnought", "living_saint", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
       ]
     },
-    reqLabel: "16세 이상 · 제국 군사·전투 직군",
+    reqLabel: "16세 이상 · 제국 군사·전투 직군 · 테라·화성·야만 행성·드레드노트 제외",
     weight: 17,
     text: "지평선 너머로 귀청이 터질 듯한 '와아아아!' 함성과 함께 녹색 오크 보이즈 무리가 붉은 트럭을 몰고 쇄도해 온다! 흙먼지 너머로 낡은 기관총 탄환이 빗발처럼 쏟아지며 아군 화기의 총열이 뜨겁게 달아오른다. 덩치 큰 오크 노브가 초파를 치켜들며 방어선의 중앙을 향해 돌진한다.",
     choices: [
@@ -32,10 +34,20 @@ export default [
           text: "정확한 집중 사격으로 지휘관 오크의 머리를 날려 버렸다! 지휘 체계를 잃은 오크들이 서로 싸우며 무너졌다.",
           stats: { BS: 5, Inf: 4, WP: 3 }
         },
+        critSuccess: {
+          text: "연속 정밀 사격으로 노브와 트럭 운전수를 동시에 관통해 돌격 대열을 통째로 전복시켰다.",
+          stats: { BS: 7, Inf: 6, WP: 4 },
+          addTags: ["deadeye_marksman"]
+        },
         fail: {
           text: "오크 슈타의 난사에 어깨를 관통당했으나 간신히 전선을 유지했다.",
           wounds: -22,
           stats: { T: 2 }
+        },
+        critFail: {
+          text: "오크 중화기의 유탄 파편이 팔과 다리를 강타해 영구적인 관절 손상을 남겼다.",
+          wounds: -30,
+          addTags: ["crippled_limb"]
         }
       },
       {
@@ -44,6 +56,11 @@ export default [
         success: {
           text: "피와 포자가 튀는 백병전 끝에 오크 무리를 궤멸시켰다! 연대의 사기가 하늘을 찔렀다.",
           stats: { WS: 6, T: 4, WP: 4, Inf: 5 }
+        },
+        critSuccess: {
+          text: "거구의 오크 노브들의 맹공을 모두 흘려 넘기며 단칼에 도륙해 전선 최고의 검술가로 이름을 떨쳤다.",
+          stats: { WS: 8, T: 5, WP: 5, Inf: 7 },
+          addTags: ["blade_master"]
         },
         fail: {
           text: "괴력을 지닌 오크의 초파에 깊은 상처를 입고 야전 병원으로 실려 갔다.",
@@ -75,26 +92,63 @@ export default [
       minYear: 745,
       anyTags: ["militarum", "astartes", "sororitas", "inquisition_agent", "inquisitor", "mechanicus"],
       excludeWorlds: ["terra", "mars"],
+      excludeWorldTags: ["feral"],
+      excludeBodyClasses: ["dreadnought"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
-        "custodes", "grey_knight", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
+        "custodes", "grey_knight", "dreadnought", "living_saint", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
       ]
     },
-    reqLabel: "745.M41 이후 · 16세 이상 · 전투·수사·기계교 직군",
+    reqLabel: "745.M41 이후 · 16세 이상 · 전투·수사·기계교 직군 · 비야만 행성·드레드노트 제외",
     weight: 14,
     text: "행성 궤도 경계망이 정적으로 먹통이 되며 워프의 그림자가 성계 전체에 내려앉았다. 대기권을 가르고 추락한 거대한 생체 포자낭이 하층 부두 구획에 꽂히더니, 갈라진 육벽 사이로 네 팔을 번뜩이는 타이라니드 진스틸러 선봉 무리가 쏟아져 나온다! 놈들이 하이브 함대의 유도 신호를 퍼뜨리기 전에 교두보를 끊어야 한다.",
     choices: [
       {
         label: "[민첩 판정] 천장 철골을 타고 사각지대로 돌아 들어가 화염방사기와 볼터로 생체 포자낭을 집중 파괴한다",
+        req: { excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"] },
         check: { stat: "Ag", diff: -5 },
         success: {
           text: "진스틸러 무리의 급습을 피해 포자낭을 불태우고 하이브 함대 침공 경보를 제때 발신했다!",
           stats: { Ag: 5, BS: 4, Inf: 6 }
         },
+        critSuccess: {
+          text: "생체 포자 폭풍 속에서도 한 치의 빈틈없이 포자낭을 소각하고 진스틸러 선봉을 전멸시켰다.",
+          stats: { Ag: 7, BS: 5, Inf: 7 },
+          addTags: ["battle_hardened"]
+        },
         fail: {
           text: "진스틸러의 예리한 발톱에 옆구리를 깊게 베였으나 지원 부대 덕분에 생존했다.",
           wounds: -28,
           stats: { T: 3 }
+        },
+        critFail: {
+          text: "포자낭의 맹독성 산성 가스를 정면으로 들이마시며 쓰러졌다. 목숨은 건졌으나 폐에 만성적인 독소 손상이 남았다.",
+          wounds: -32,
+          addTags: ["chronic_toxins"]
+        }
+      },
+      {
+        label: "[민첩 판정] 초인의 다중 폐로 독성 포자를 버텨 내며 생체 포자낭에 직격 소각 강습을 감행한다",
+        req: { anyBodyClasses: ["transhuman"] },
+        check: { stat: "Ag", diff: -5 },
+        success: {
+          text: "유독 포자 안개를 뚫고 생체 포자낭을 볼터와 소이탄으로 완파하며 하이브 함대의 신호를 끊었다!",
+          stats: { Ag: 5, BS: 4, Inf: 6 }
+        },
+        critSuccess: {
+          text: "포자 폭풍 속에서도 한 치의 오차 없이 포자낭과 진스틸러 선봉 무리를 단숨에 섬멸했다.",
+          stats: { Ag: 7, BS: 5, Inf: 7 },
+          addTags: ["battle_hardened"]
+        },
+        fail: {
+          text: "진스틸러의 예리한 발톱에 세라마이트 장갑이 찢기며 깊은 외상을 입었으나 끝내 교두보를 무너뜨렸다.",
+          wounds: -28,
+          stats: { T: 3 }
+        },
+        critFail: {
+          text: "고압 생체 산성액과 진스틸러의 연격에 장갑이 크게 파손되며 중상을 입었으나, 초인의 강화 장기가 맹독만큼은 끝내 걸러 냈다.",
+          wounds: -32,
+          stats: { T: 2 }
         }
       },
       {
@@ -103,6 +157,12 @@ export default [
         success: {
           text: "공포에 질린 대원들을 진정시켜 완벽한 교차 사격으로 외계 선봉 무리를 섬멸했다.",
           stats: { WP: 5, Fel: 4, Inf: 5 }
+        },
+        critSuccess: {
+          text: "하이브 마인드의 정신 중압감마저 정면으로 뚫어 내며 부대 전체를 철벽처럼 통솔했다.",
+          stats: { WP: 7, Fel: 5, Inf: 7 },
+          removeTags: ["shell_shocked"],
+          addTags: ["iron_nerves"]
         },
         fail: {
           text: "압도적인 정신적 중압감에 판단이 한 박자 늦어져 진스틸러의 돌격에 큰 부상을 입었다.",
@@ -120,6 +180,7 @@ export default [
       minAge: 20,
       excludeWorlds: ["terra", "mars", "krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: [
         "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
         "sororitas", "canoness", "commissar", "lord_commissar", "commissar_general",
@@ -128,7 +189,7 @@ export default [
       ],
       or: [{ anyCareers: ["rogue_trader", "inquisitor"] }, { stats: { Fel: 48, Inf: 45 } }]
     },
-    reqLabel: "20세 이상 · 로그 트레이더·이단심문관 또는 교섭 48 이상과 권위 45 이상",
+    reqLabel: "20세 이상 · 로그 트레이더·이단심문관 또는 교섭 48 이상과 권위 45 이상 · 비야만 행성",
     weight: 15,
     text: "성계 외곽 소행성대에서 아엘다리 커세어 선장이 비밀 회동을 제안해 왔다. 황제의 법은 무역 영장이나 심문관의 특권이 없는 자의 외계인 접촉을 극형에 처할 이단으로 규정하지만, 저들이 내민 고대 성간 항로도와 외계 유물은 좀처럼 거부하기 어렵다. 공허 너머 정지해 있는 날렵한 외계 순양함이 그대의 답을 기다린다.",
     choices: [
@@ -192,13 +253,14 @@ export default [
       minAge: 16,
       minYear: 897,
       anyTags: ["militarum", "imperial_military", "astartes", "custodes", "sororitas", "mechanicus", "inquisition_agent", "inquisitor", "rogue_trader"],
-      excludeWorlds: ["terra", "mars"],
+      excludeWorlds: ["terra", "mars", "voidborn"],
+      excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
       ]
     },
-    reqLabel: "897.M41 이후 · 16세 이상 · 군사·기계교·심문소·초인·로그 트레이더",
+    reqLabel: "897.M41 이후 · 16세 이상 · 군사·기계교·심문소·초인·로그 트레이더 · 비야만 행성",
     weight: 16,
     text: "변방 사막 유적의 봉인된 석실에 진입한 순간, 6천만 년 동안 잠들어 있던 흑요석 관곽들이 섬뜩한 에메랄드빛으로 점화되었다! 정지장에서 깨어난 네크론 군주와 불멸자 호위대가 차가운 녹색 차원문을 등지고 무음의 대열을 펼친다. 치명적인 가우스 화기가 일제히 장전되며 석실의 공기에서 강렬한 금속 냄새가 번진다.",
     choices: [
@@ -242,12 +304,12 @@ export default [
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
       excludeTags: [
-        "custodes", "grey_knight", "dreadnought",
+        "astartes", "transhuman", "custodes", "grey_knight", "living_saint", "dreadnought",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
       ]
     },
-    reqLabel: "742.M41 이후 · 15세 이상 · 울티마 세그멘툼 · 비야만 행성",
+    reqLabel: "742.M41 이후 · 15세 이상 · 울티마 세그멘툼 · 필멸자 · 비야만 행성",
     weight: 14,
     text: "밀수선을 타고 정교하게 인쇄된 외계어와 로우 고딕 병기 전단이 항구 구역에 나돌고 있다. '배고픔과 채찍뿐인 썩은 제국을 떠나, 타우 제국의 대의 아래 깨끗한 식량과 첨단 의료를 누리라!'는 문구가 시민들을 흔들자 커미사르와 아르비테스가 즉각 소지자 색출에 나섰다.",
     choices: [
@@ -349,15 +411,16 @@ export default [
     category: "전투",
     req: {
       minAge: 15,
-      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: [
         "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
       ]
     },
-    reqLabel: "15세 이상 · 테라·화성·크리그 제외 · 필멸자",
+    reqLabel: "15세 이상 · 테라·화성·크리그·함선·야만 행성 제외 · 필멸자",
     weight: 14,
     text: "해 질 녘 구름을 찢고 열린 보랏빛 균열 너머로 칼날 달린 드루카리 리버 제트바이크와 위치 컬트 사냥꾼들이 광장으로 쏟아져 내렸다! 저들은 도시를 점령하려는 것이 아니라, 코모라 투기장의 유흥거리로 삼을 산 포로를 그물과 갈고리로 낚아채려 한다. 비명이 메아리치는 골목 위로 가시 돋친 강습정이 낮게 선회한다.",
     choices: [
@@ -475,7 +538,7 @@ export default [
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
       excludeTags: [
-        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "astartes", "transhuman", "custodes", "grey_knight", "living_saint", "dreadnought",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
         "cardinal", "canoness", "lord_inquisitor"
@@ -538,7 +601,7 @@ export default [
       minAge: 18,
       minYear: 742,
       anySegmenta: ["ultima"],
-      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
       excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
@@ -593,7 +656,7 @@ export default [
     once: true,
     req: {
       minAge: 16,
-      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
       excludeWorldTags: ["feral"],
       excludeTags: [
         "custodes", "grey_knight", "dreadnought",
@@ -601,7 +664,7 @@ export default [
         "high_lord_terra", "warmaster", "sector_lord"
       ]
     },
-    reqLabel: "16세 이상 · 제국 변경 · 테라·화성·크리그 제외",
+    reqLabel: "16세 이상 · 제국 변경 지상 항구 · 테라·화성·크리그·함선 제외",
     weight: 28,
     alignBias: "humane",
     text: "행성 우주항의 전력망이 일순간 암전되더니, 궤도에서 강하한 칠흑의 드루카리 카발 강습정들이 정박장을 포위했다! 차가운 그림자 속에서 쇠사슬을 끌고 걸어 나온 카발 전사들이 격납고 노동자들을 통째로 노예선에 싣기 위해 학살극을 벌인다. 공포에 질린 군중 사이로 암흑 광선 포화가 탐조등을 하나씩 지워 나간다.",
@@ -654,7 +717,7 @@ export default [
     once: true,
     req: {
       minAge: 20,
-      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
       excludeWorldTags: ["feral"],
       excludeTags: [
         "custodes", "grey_knight", "dreadnought",
@@ -662,7 +725,7 @@ export default [
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
       ]
     },
-    reqLabel: "20세 이상 · 제국 전역 · 테라·화성·크리그·야만 행성 제외",
+    reqLabel: "20세 이상 · 제국 전역 · 테라·화성·크리그·함선·야만 행성 제외",
     weight: 24,
     text: "실종자 수색 끝에 폐쇄된 지하 도축장 깊숙한 곳에서 섬뜩한 유리 배양관들과 기괴한 수술 기구가 늘어선 드루카리 호문쿨루스의 비밀 실험실을 발견했다. 뼈로 만든 가면을 쓴 외계 외과의는 황홀한 웃음을 흘리며, 아군 포로를 돌려주는 대가로 그대의 생명력이나 비밀 표본을 요구한다. 어둠 속에서 살점이 뒤틀린 그로테스크 경호 괴물들이 쇠사슬을 흔들며 길을 막아선다.",
     choices: [
@@ -715,14 +778,15 @@ export default [
     req: {
       minAge: 18,
       minYear: 897,
-      excludeWorlds: ["terra", "mars", "voidborn"],
+      excludeWorlds: ["terra", "mars", "macragge", "ophelia7", "baal", "fenris", "nocturne", "cadia", "krieg", "voidborn"],
+      excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "custodes", "grey_knight", "dreadnought",
         "high_lord_terra", "warmaster", "sector_lord"
       ]
     },
-    reqLabel: "897.M41 이후 · 18세 이상 · 행성 지하 채굴 지대",
+    reqLabel: "897.M41 이후 · 18세 이상 · 변경·공업 행성 지하 채굴 지대",
     weight: 28,
     text: "대규모 심층 광산의 지반이 굉음과 함께 갈라지더니, 행성 지하 전체를 감싸고 있던 거대한 고대 금속 회랑이 에메랄드빛으로 깨어났다! 지표가 흔들리는 가운데 채굴 기지의 수직 갱도를 타고 무수한 스캐럽 군체와 살아 있는 금속 해골 전사들이 떼를 지어 쏟아져 오른다. 방어선 앞 장갑차가 녹색 가우스 광선에 닿자 원자 단위로 벗겨지며 흔적도 없이 사라졌다.",
     choices: [
@@ -831,14 +895,15 @@ export default [
     once: true,
     req: {
       minAge: 18,
-      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
+      excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "custodes", "grey_knight", "dreadnought",
         "high_lord_terra", "warmaster", "sector_lord"
       ]
     },
-    reqLabel: "18세 이상 · 제국 전역 · 테라·화성·크리그 제외",
+    reqLabel: "18세 이상 · 제국 전역 · 테라·화성·크리그·함선·야만 행성 제외",
     weight: 26,
     text: "안개 속에서 정교한 레이스본 갑주를 걸친 아엘다리 크래프트월드 파시어와 호위대가 홀연히 나타났다. 오만한 외계 예언자는 공명하는 목소리로 '인류여, 오늘 밤 동쪽 발전소를 멈추지 않으면 열흘 뒤 악마가 이 성계를 삼킬 것이다'라는 난해한 경고를 던지고는 침묵한다. 호위 전사들의 수리검 화기가 미세한 광채를 띤 채 그대의 다음 움직임을 주시하고 있다.",
     choices: [

@@ -3,6 +3,7 @@ export function runPersonaAuditGate({ DATA, Engine, fail }) {
   const makePersonaState = (opts) => {
     const st = Engine.createCharacter({
       mode: "custom",
+      difficulty: opts.difficulty || "standard",
       worldId: opts.worldId,
       originId: opts.originId,
       traitId: opts.traitId || "none",
@@ -57,91 +58,96 @@ export function runPersonaAuditGate({ DATA, Engine, fail }) {
     { id: "daemon_prince", label: "데몬 프린스", ages: [150], expected: { socialTier: "apex", lifeRealm: "heretic", bodyClass: "daemonic" }, cfg: { worldId: "necromunda", originId: "underhive_scum", careerId: "daemon_prince", corruption: 95, faith: 0, tags: ["heretic", "chaos_aligned", "mark_khorne", "daemon_prince", "transhuman"], stats: { WS: 95, T: 92, WP: 88, Inf: 85 } }, ban: DP_BAN, visitWorlds: ["krieg", "catachan"] }
   ];
 
+  const difficulties = ["standard", "grimdark"];
   let totalCollisions = 0;
   let minPersonaPool = 999;
-  for (const p of personas) {
-    const matchedChronIds = new Set();
-    for (const age of p.ages) {
-      const st = makePersonaState({ ...p.cfg, age });
-      const strat = Engine.getStratification(st);
-      if (
-        strat.socialTier !== p.expected.socialTier ||
-        strat.lifeRealm !== p.expected.lifeRealm ||
-        strat.bodyClass !== p.expected.bodyClass
-      ) {
-        fail("4P", `Persona ${p.id}(age ${age}) stratification mismatch: got ${JSON.stringify(strat)}, expected ${JSON.stringify(p.expected)}`);
-      }
-      for (const ch of DATA.CHRONICLES) {
-        if (!Engine.checkReq(st, ch.req)) continue;
-        matchedChronIds.add(ch.id);
-        const rawText = p.clean ? p.clean(ch.text || "") : (ch.text || "");
-        const m = rawText.match(p.ban);
-        if (m) {
-          totalCollisions++;
-          fail("4P", `Persona ${p.id}(age ${age}) leaked chronicle ${ch.id} [matched "${m[0]}"]`);
+  for (const difficulty of difficulties) {
+    for (const p of personas) {
+      const matchedChronIds = new Set();
+      for (const age of p.ages) {
+        const st = makePersonaState({ ...p.cfg, age, difficulty });
+        const strat = Engine.getStratification(st);
+        if (
+          strat.socialTier !== p.expected.socialTier ||
+          strat.lifeRealm !== p.expected.lifeRealm ||
+          strat.bodyClass !== p.expected.bodyClass
+        ) {
+          fail("4P", `Persona ${p.id}(${difficulty}, age ${age}) stratification mismatch: got ${JSON.stringify(strat)}, expected ${JSON.stringify(p.expected)}`);
         }
-      }
-      for (const ev of DATA.EVENTS) {
-        if (!Engine.checkReq(st, ev.req)) continue;
-        const parts = [ev.title || "", ev.text || ""];
-        for (const ch of ev.choices || []) {
-          if (ch.req && !Engine.checkReq(st, ch.req)) continue;
-          parts.push(ch.label || "");
-          for (const o of [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail]) {
-            if (o && o.text) parts.push(o.text);
-          }
-        }
-        const rawText = p.clean ? p.clean(parts.join(" ")) : parts.join(" ");
-        const m = rawText.match(p.ban);
-        if (m) {
-          totalCollisions++;
-          fail("4P", `Persona ${p.id}(age ${age}) leaked event ${ev.id} [matched "${m[0]}"]`);
-        }
-      }
-      for (const vw of p.visitWorlds || []) {
-        const vst = makePersonaState({ ...p.cfg, age });
-        vst.worldId = vw;
         for (const ch of DATA.CHRONICLES) {
-          if (!Engine.checkReq(vst, ch.req)) continue;
+          if (!Engine.checkReq(st, ch.req)) continue;
+          matchedChronIds.add(ch.id);
           const rawText = p.clean ? p.clean(ch.text || "") : (ch.text || "");
           const m = rawText.match(p.ban);
           if (m) {
             totalCollisions++;
-            fail("4P", `Persona ${p.id}(visiting ${vw}) leaked chronicle ${ch.id} [matched "${m[0]}"]`);
+            fail("4P", `Persona ${p.id}(${difficulty}, age ${age}) leaked chronicle ${ch.id} [matched "${m[0]}"]`);
           }
         }
         for (const ev of DATA.EVENTS) {
-          if (!Engine.checkReq(vst, ev.req)) continue;
-          const rawText = p.clean ? p.clean(`${ev.title || ""} ${ev.text || ""}`) : `${ev.title || ""} ${ev.text || ""}`;
+          if (!Engine.checkReq(st, ev.req)) continue;
+          const parts = [ev.title || "", ev.text || ""];
+          for (const ch of ev.choices || []) {
+            if (ch.req && !Engine.checkReq(st, ch.req)) continue;
+            parts.push(ch.label || "");
+            for (const o of [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail]) {
+              if (o && o.text) parts.push(o.text);
+            }
+          }
+          const rawText = p.clean ? p.clean(parts.join(" ")) : parts.join(" ");
           const m = rawText.match(p.ban);
           if (m) {
             totalCollisions++;
-            fail("4P", `Persona ${p.id}(visiting ${vw}) leaked event ${ev.id} [matched "${m[0]}"]`);
+            fail("4P", `Persona ${p.id}(${difficulty}, age ${age}) leaked event ${ev.id} [matched "${m[0]}"]`);
+          }
+        }
+        for (const vw of p.visitWorlds || []) {
+          const vst = makePersonaState({ ...p.cfg, age, difficulty });
+          vst.worldId = vw;
+          for (const ch of DATA.CHRONICLES) {
+            if (!Engine.checkReq(vst, ch.req)) continue;
+            const rawText = p.clean ? p.clean(ch.text || "") : (ch.text || "");
+            const m = rawText.match(p.ban);
+            if (m) {
+              totalCollisions++;
+              fail("4P", `Persona ${p.id}(${difficulty}, visiting ${vw}) leaked chronicle ${ch.id} [matched "${m[0]}"]`);
+            }
+          }
+          for (const ev of DATA.EVENTS) {
+            if (!Engine.checkReq(vst, ev.req)) continue;
+            const rawText = p.clean ? p.clean(`${ev.title || ""} ${ev.text || ""}`) : `${ev.title || ""} ${ev.text || ""}`;
+            const m = rawText.match(p.ban);
+            if (m) {
+              totalCollisions++;
+              fail("4P", `Persona ${p.id}(${difficulty}, visiting ${vw}) leaked event ${ev.id} [matched "${m[0]}"]`);
+            }
           }
         }
       }
-    }
-    const poolSize = matchedChronIds.size;
-    if (poolSize < minPersonaPool) minPersonaPool = poolSize;
-    if (poolSize < 8) {
-      fail("4P", `Persona ${p.id} (${p.label}) chronicle pool < 8 (got ${poolSize})`);
+      const poolSize = matchedChronIds.size;
+      if (poolSize < minPersonaPool) minPersonaPool = poolSize;
+      if (poolSize < 8) {
+        fail("4P", `Persona ${p.id} (${p.label}, ${difficulty}) chronicle pool < 8 (got ${poolSize})`);
+      }
     }
   }
 
   // Adult elite/cloistered snapshot must never trigger common-worker servitor event
   const servEv = DATA.EVENTS.find((e) => e.id === "ev_absurd_servitor_sentence");
   if (servEv) {
-    const adultElites = [
-      makePersonaState({ worldId: "necromunda", originId: "planetary_noble", age: 25, careerId: "administratum" }),
-      makePersonaState({ worldId: "ophelia7", originId: "schola_progenium", age: 24, gender: "female", careerId: "adepta_sororitas", tags: ["sororitas"] }),
-      makePersonaState({ worldId: "generic_knight", originId: "knight_house", age: 26, careerId: "knight_scion", tags: ["imperial_knight"] })
-    ];
-    for (const st of adultElites) {
-      if (Engine.checkReq(st, servEv.req)) {
-        totalCollisions++;
-        fail("4P", `Adult elite/cloistered (${st.originId}/${st.careerId}) leaked ev_absurd_servitor_sentence`);
+    for (const difficulty of difficulties) {
+      const adultElites = [
+        makePersonaState({ worldId: "necromunda", originId: "planetary_noble", age: 25, careerId: "administratum", difficulty }),
+        makePersonaState({ worldId: "ophelia7", originId: "schola_progenium", age: 24, gender: "female", careerId: "adepta_sororitas", tags: ["sororitas"], difficulty }),
+        makePersonaState({ worldId: "generic_knight", originId: "knight_house", age: 26, careerId: "knight_scion", tags: ["imperial_knight"], difficulty })
+      ];
+      for (const st of adultElites) {
+        if (Engine.checkReq(st, servEv.req)) {
+          totalCollisions++;
+          fail("4P", `Adult elite/cloistered (${st.originId}/${st.careerId}, ${difficulty}) leaked ev_absurd_servitor_sentence`);
+        }
       }
     }
   }
-  console.log(`[Gate 4P] ${personas.length}-persona + cross-world/adult-elite stratification & forbidden-leak audit complete (collisions=${totalCollisions}, minChroniclePool=${minPersonaPool} >= 8).`);
+  console.log(`[Gate 4P] ${personas.length}-persona x 2 modes (standard+grimdark) + cross-world/adult-elite stratification & forbidden-leak audit complete (collisions=${totalCollisions}, minChroniclePool=${minPersonaPool} >= 8).`);
 }

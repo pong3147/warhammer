@@ -36,11 +36,17 @@ import {
 import { createCareerActionsModule } from "./careerActions.js";
 import {
   ACQUIRED_TRAIT_EFFECTS,
+  ANOMALY_TAG_EFFECTS,
   getAcquiredTraits,
+  getAwakenedAnomalies,
   getSpecialtyStatSet,
   getStatCap,
-  getAllStatCaps
+  getAllStatCaps,
+  scalePositiveCorruption,
+  scaleWoundDamage,
+  isTraitImmune as isTraitImmunePure
 } from "./statCaps.js";
+import { createDynamicCentenarianEvent } from "./centenarianOps.js";
 
 export function createImperiumEngine(DATA) {
   function warnUnknownId(kind, id) {
@@ -295,17 +301,26 @@ export function createImperiumEngine(DATA) {
     // 모성 · 선천 자질 · 후천 특성 판정 보정
     if (homeWorld) {
       if (homeWorld.id === "krieg" && statKey === "WP") {
-        modifiers.push({ label: "비타-움의 무감각", value: 4 });
+        modifiers.push({ label: "비타-움의 무감각", value: 5 });
       } else if (homeWorld.id === "cadia" && statKey === "WP") {
-        modifiers.push({ label: "카디아는 버틴다", value: 4 });
+        modifiers.push({ label: "카디아는 버틴다", value: 6 });
       } else if (homeWorld.id === "tanith" && (statKey === "Ag" || statKey === "BS")) {
-        modifiers.push({ label: "유령의 발걸음", value: 3 });
+        modifiers.push({ label: "유령의 발걸음", value: 5 });
       } else if (homeWorld.id === "voidborn" && (statKey === "Int" || statKey === "Ag")) {
-        modifiers.push({ label: "성간 항해의 감각", value: 3 });
+        modifiers.push({ label: "성간 항해의 감각", value: 6 });
+      } else if (homeWorld.id === "vostroya" && statKey === "BS") {
+        modifiers.push({ label: "장자의 가보 화기", value: 3 });
       }
     }
     if (tags.includes("ratling") && (statKey === "BS" || statKey === "Ag")) {
-      modifiers.push({ label: "래틀링 감각", value: 4 });
+      modifiers.push({ label: "래틀링 감각", value: 6 });
+    }
+    if (
+      check &&
+      check.geneseedTrial &&
+      (tags.includes("geneseed_compatible") || (state && state.traitId === "geneseed_compatible"))
+    ) {
+      modifiers.push({ label: "진시드 적합", value: 8 });
     }
     for (let i = 0; i < tags.length; i++) {
       const at = ACQUIRED_TRAIT_EFFECTS[tags[i]];
@@ -454,7 +469,12 @@ export function createImperiumEngine(DATA) {
       if (!TRAIT_BY_ID.has(config.traitId)) warnUnknownId("traitId", config.traitId);
       trait = getTrait(config.traitId);
     } else {
-      trait = pickWeighted(DATA.TRAITS, "weight");
+      let eligibleTraits = DATA.TRAITS;
+      if (origin && origin.id === "navigator_house") {
+        const blocked = new Set(["blank", "omega_pariah", "abhuman_ogryn", "abhuman_ratling", "psyker", "alpha_plus_psyker"]);
+        eligibleTraits = DATA.TRAITS.filter((t) => !blocked.has(t.id));
+      }
+      trait = pickWeighted(eligibleTraits, "weight");
     }
 
     // 6. 8대 고증 특성치 생성 (Dark Heresy 2d10+18 스타일 + 보정)
@@ -531,6 +551,8 @@ export function createImperiumEngine(DATA) {
       lastCareerActionYear: -999,
       lastCareerOfferYear: -999,
       lastCareerChangeYear: -999,
+      lastCentenarianOpYear: -999,
+      recentCentenarianOps: [],
       careerRetryAfter: {},
       declinedCareers: {},
       tags,
@@ -601,16 +623,27 @@ export function createImperiumEngine(DATA) {
       const curW = getWorld(st.worldId);
       st.segmentum = curW.segmentum === "random" ? "solar" : curW.segmentum;
     }
-    if (!FOCUSES[st.focus]) st.focus = "survival";
+    if (typeof st.focus !== "string" || !Object.prototype.hasOwnProperty.call(FOCUSES, st.focus)) {
+      st.focus = "survival";
+    }
     st.difficulty = st.difficulty === "grimdark" ? "grimdark" : "standard";
-    st.quarter = clamp(Number(st.quarter) || 1, 1, 3);
-    st.age = Math.max(0, Number(st.age) || 0);
-    st.birthYear = Number.isFinite(st.birthYear) ? st.birthYear : 980;
-    st.year = Number.isFinite(st.year) ? st.year : st.birthYear + st.age;
-    st.maxWounds = Math.max(50, Number(st.maxWounds) || 100);
-    st.wounds = clamp(Number.isFinite(st.wounds) ? st.wounds : st.maxWounds, 0, st.maxWounds);
-    st.faith = clamp(Number.isFinite(st.faith) ? st.faith : 50, 0, 100);
-    st.corruption = clamp(Number.isFinite(st.corruption) ? st.corruption : 0, 0, 100);
+    const finiteNum = (v) => (v !== null && v !== "" && typeof v !== "boolean" ? Number(v) : NaN);
+    const qNum = finiteNum(st.quarter);
+    st.quarter = Number.isFinite(qNum) ? clamp(Math.floor(qNum), 1, 3) : 1;
+    const ageNum = finiteNum(st.age);
+    st.age = Number.isFinite(ageNum) ? clamp(Math.floor(ageNum), 0, 5000) : 0;
+    const birthYearNum = finiteNum(st.birthYear);
+    st.birthYear = Number.isFinite(birthYearNum) ? Math.floor(birthYearNum) : 980;
+    const yearNum = finiteNum(st.year);
+    st.year = Number.isFinite(yearNum) ? Math.floor(yearNum) : st.birthYear + st.age;
+    const maxWNum = finiteNum(st.maxWounds);
+    st.maxWounds = Number.isFinite(maxWNum) ? clamp(Math.round(maxWNum), 50, 500) : 100;
+    const woundsNum = finiteNum(st.wounds);
+    st.wounds = Number.isFinite(woundsNum) ? clamp(Math.round(woundsNum), 0, st.maxWounds) : st.maxWounds;
+    const faithNum = finiteNum(st.faith);
+    st.faith = Number.isFinite(faithNum) ? clamp(Math.round(faithNum), 0, 100) : 50;
+    const corrNum = finiteNum(st.corruption);
+    st.corruption = Number.isFinite(corrNum) ? clamp(Math.round(corrNum), 0, 100) : 0;
     st.alignment = normalizeAlignment(st);
 
     for (const key of Object.keys(STAT_META)) {
@@ -618,9 +651,12 @@ export function createImperiumEngine(DATA) {
       else st.stats[key] = clamp(Math.round(st.stats[key]), 5, 100);
     }
 
-    st.extraLifeBonus = Number(st.extraLifeBonus) || 0;
-    st.rejuvenatCount = Number(st.rejuvenatCount) || 0;
-    st.augmeticsCount = Number(st.augmeticsCount) || 0;
+    const extraLifeNum = finiteNum(st.extraLifeBonus);
+    st.extraLifeBonus = Number.isFinite(extraLifeNum) ? clamp(Math.round(extraLifeNum), -100, 3000) : 0;
+    const rejNum = finiteNum(st.rejuvenatCount);
+    st.rejuvenatCount = Number.isFinite(rejNum) ? clamp(Math.floor(rejNum), 0, 10) : 0;
+    const augNum = finiteNum(st.augmeticsCount);
+    st.augmeticsCount = Number.isFinite(augNum) ? clamp(Math.floor(augNum), 0, 10) : 0;
     st.lastRejuvenatAge = Number.isFinite(st.lastRejuvenatAge) ? st.lastRejuvenatAge : -99;
     st.lastAugmeticsAge = Number.isFinite(st.lastAugmeticsAge) ? st.lastAugmeticsAge : -99;
     st.lastPenanceYear = Number.isFinite(st.lastPenanceYear) ? st.lastPenanceYear : -999;
@@ -628,6 +664,8 @@ export function createImperiumEngine(DATA) {
     st.lastCareerActionYear = Number.isFinite(st.lastCareerActionYear) ? st.lastCareerActionYear : -999;
     st.lastCareerOfferYear = Number.isFinite(st.lastCareerOfferYear) ? st.lastCareerOfferYear : -999;
     st.lastCareerChangeYear = Number.isFinite(st.lastCareerChangeYear) ? st.lastCareerChangeYear : -999;
+    st.lastCentenarianOpYear = Number.isFinite(st.lastCentenarianOpYear) ? st.lastCentenarianOpYear : -999;
+    if (!Array.isArray(st.recentCentenarianOps)) st.recentCentenarianOps = [];
     if (!st.careerRetryAfter || typeof st.careerRetryAfter !== "object" || Array.isArray(st.careerRetryAfter)) st.careerRetryAfter = {};
     if (!st.declinedCareers || typeof st.declinedCareers !== "object" || Array.isArray(st.declinedCareers)) st.declinedCareers = {};
     if (!st.eventCounts || typeof st.eventCounts !== "object" || Array.isArray(st.eventCounts)) st.eventCounts = {};
@@ -647,14 +685,21 @@ export function createImperiumEngine(DATA) {
       (entry) => entry && typeof entry === "object" && !Array.isArray(entry) && typeof entry.text === "string"
     );
 
-    if (
-      st.pendingEvent &&
-      (typeof st.pendingEvent !== "object" ||
+    if (st.pendingEvent) {
+      if (
+        typeof st.pendingEvent !== "object" ||
         Array.isArray(st.pendingEvent) ||
-        !Array.isArray(st.pendingEvent.choices) ||
-        st.pendingEvent.choices.length === 0)
-    ) {
-      st.pendingEvent = null;
+        !Array.isArray(st.pendingEvent.choices)
+      ) {
+        st.pendingEvent = null;
+      } else {
+        st.pendingEvent.choices = st.pendingEvent.choices.filter(
+          (ch) => ch && typeof ch === "object" && !Array.isArray(ch) && typeof ch.label === "string"
+        );
+        if (st.pendingEvent.choices.length === 0) {
+          st.pendingEvent = null;
+        }
+      }
     }
     if (
       st.lastRoll &&
@@ -739,6 +784,10 @@ export function createImperiumEngine(DATA) {
 
   function isIncorruptibleState(state) {
     return isIncorruptibleTags(state && state.tags);
+  }
+
+  function isTraitImmune(state, traitTag) {
+    return isTraitImmunePure(state, traitTag, getCareer);
   }
 
   const endingsMod = createEndingsModule({
@@ -831,17 +880,21 @@ export function createImperiumEngine(DATA) {
       state.maxWounds += outcome.woundsBonus;
       state.wounds = clamp(state.wounds + outcome.woundsBonus, 1, state.maxWounds);
     }
+    let appliedOutcomeWounds = outcome.wounds || 0;
     if (outcome.wounds) {
-      state.wounds = clamp(state.wounds + outcome.wounds, 0, state.maxWounds);
+      appliedOutcomeWounds = outcome.wounds < 0 ? scaleWoundDamage(state, outcome.wounds) : outcome.wounds;
+      state.wounds = clamp(state.wounds + appliedOutcomeWounds, 0, state.maxWounds);
     }
     if (outcome.faith) {
       state.faith = clamp(state.faith + outcome.faith, 0, 100);
     }
-    let blockedOutcomeCorr = false;
+    let appliedOutcomeCorr = outcome.corruption || 0;
     if (outcome.corruption) {
-      const incorruptible = isIncorruptibleState(state);
-      if (incorruptible && outcome.corruption > 0) {
-        blockedOutcomeCorr = true;
+      if (outcome.corruption > 0) {
+        appliedOutcomeCorr = scalePositiveCorruption(state, outcome.corruption);
+        if (appliedOutcomeCorr > 0) {
+          state.corruption = clamp(state.corruption + appliedOutcomeCorr, 0, 100);
+        }
       } else {
         state.corruption = clamp(state.corruption + outcome.corruption, 0, 100);
       }
@@ -861,9 +914,8 @@ export function createImperiumEngine(DATA) {
     }
     const addedTagsForDelta = [];
     if (outcome.addTags) {
-      const homeWorldId = state.homeWorldId || state.worldId;
       for (const t of outcome.addTags) {
-        if (t === "shell_shocked" && homeWorldId === "krieg") continue;
+        if (isTraitImmune(state, t, getCareer)) continue;
         if (!state.tags.includes(t)) {
           state.tags.push(t);
           if (ACQUIRED_TRAIT_EFFECTS[t]) addedTagsForDelta.push(t);
@@ -987,7 +1039,8 @@ export function createImperiumEngine(DATA) {
       {},
       outcome,
       appliedOutcomeStats ? { stats: appliedOutcomeStats } : null,
-      blockedOutcomeCorr ? { corruption: 0 } : null,
+      outcome.wounds ? { wounds: appliedOutcomeWounds } : null,
+      outcome.corruption ? { corruption: appliedOutcomeCorr } : null,
       { addTags: addedTagsForDelta, removeTags: removedTagsForDelta }
     );
     const deltaText = formatDeltaText(acceptedJoinEff || outcomeForDelta);
@@ -1119,18 +1172,22 @@ export function createImperiumEngine(DATA) {
         }
       }
     }
+    let appliedChronWounds = eff.wounds || 0;
     if (eff.wounds) {
-      const floor = eff.wounds < 0 ? Math.min(state.wounds, 5) : 0;
-      state.wounds = clamp(state.wounds + eff.wounds, floor, state.maxWounds);
+      appliedChronWounds = eff.wounds < 0 ? scaleWoundDamage(state, eff.wounds) : eff.wounds;
+      const floor = appliedChronWounds < 0 ? Math.min(state.wounds, 5) : 0;
+      state.wounds = clamp(state.wounds + appliedChronWounds, floor, state.maxWounds);
     }
     if (eff.faith) {
       state.faith = clamp(state.faith + eff.faith, 0, 100);
     }
-    let blockedChronCorr = false;
+    let appliedChronCorr = eff.corruption || 0;
     if (eff.corruption) {
-      const incorruptible = isIncorruptibleState(state);
-      if (incorruptible && eff.corruption > 0) {
-        blockedChronCorr = true;
+      if (eff.corruption > 0) {
+        appliedChronCorr = scalePositiveCorruption(state, eff.corruption);
+        if (appliedChronCorr > 0) {
+          state.corruption = clamp(state.corruption + appliedChronCorr, 0, 99);
+        }
       } else {
         state.corruption = clamp(state.corruption + eff.corruption, 0, 99);
       }
@@ -1153,12 +1210,12 @@ export function createImperiumEngine(DATA) {
       {},
       eff,
       appliedStats ? { stats: appliedStats } : null,
-      blockedChronCorr ? { corruption: 0 } : null,
-      removedChronTags.length ? { removeTags: removedChronTags } : null
+      eff.wounds ? { wounds: appliedChronWounds } : null,
+      eff.corruption ? { corruption: appliedChronCorr } : null,
+      { removeTags: removedChronTags }
     );
     const deltaText = formatDeltaText(effForDelta);
-    const effectiveCorr = blockedChronCorr ? 0 : (eff.corruption || 0);
-    const kind = (eff.wounds && eff.wounds < 0) || effectiveCorr > 0
+    const kind = (appliedChronWounds < 0) || appliedChronCorr > 0
       ? "chronicle-grim"
       : "chronicle";
 
@@ -1224,7 +1281,12 @@ export function createImperiumEngine(DATA) {
           if (!state.tags.includes("imperial_knight")) state.tags.push("imperial_knight");
           if (!state.tags.includes("imperial_military")) state.tags.push("imperial_military");
           addLog(state, "14세가 되어 기사 가문의 종자 서약을 올리고 아미저 보행 병기의 헬름 메카니쿰 훈련에 돌입했다.", "career", null, { badge: "직무 편입" });
-        } else if (state.tags.includes("mechanicus_blood")) {
+        } else if (
+          state.tags.includes("mechanicus_blood") &&
+          !state.tags.includes("abhuman") &&
+          !state.tags.includes("psyker") &&
+          !state.tags.includes("navigator")
+        ) {
           state.careerId = "skitarii";
           state.lastCareerChangeYear = state.year;
           state.careerHistory.push("skitarii");
@@ -1258,7 +1320,14 @@ export function createImperiumEngine(DATA) {
           gradCareerId = "chaos_cultist";
           gradMsg = "이미 이단 낙인이 찍혀 정규 제국 기관 입단이 막히자 지하 카오스 밀교단에 몸을 의탁했다.";
         } else if (state.tags.includes("schola")) {
-          if (state.faith >= 55 && state.stats.WP >= 38 && !state.tags.includes("abhuman")) {
+          if (
+            state.faith >= 55 &&
+            state.stats.WP >= 38 &&
+            !state.tags.includes("abhuman") &&
+            !state.tags.includes("psyker") &&
+            !state.tags.includes("navigator") &&
+            !state.tags.includes("mutant_sanctioned")
+          ) {
             gradCareerId = "ecclesiarchy_priest";
             gradMsg = "스콜라 프로제니움 신학 과정을 우수한 성적으로 수료해 에클레시아키 사제로 서품되었다.";
           } else if (state.stats.Int >= 38 && !state.tags.includes("abhuman")) {
@@ -1308,6 +1377,7 @@ export function createImperiumEngine(DATA) {
       const lifeExp = computeLifeExpectancy(state);
       let baseNaturalHeal = state.age <= lifeExp * 0.72 ? 3 : 0;
       if (state.tags.includes("geneseed_compatible") && state.age <= lifeExp * 0.85) baseNaturalHeal += 1;
+      if (homeWorld.id === "necromunda" && state.age <= lifeExp * 0.8) baseNaturalHeal += 1;
       if (state.tags.includes("chronic_toxins")) baseNaturalHeal = Math.max(0, baseNaturalHeal - 1);
       let focusHeal = focus.woundsDelta || 0;
       if (focusHeal > 0) {
@@ -1318,18 +1388,14 @@ export function createImperiumEngine(DATA) {
       const faithGain = (focus.faithDelta || 0) + (homeWorld.id === "ophelia7" && (focus.faithDelta || 0) > 0 ? 1 : 0);
       state.faith = clamp(state.faith + faithGain, 0, 100);
       const rawCorrDelta = (focus.corruptionDelta || 0) + (state.tags.includes("warp_scarred") ? 1 : 0);
-      const incorruptible = isIncorruptibleState(state);
       if (rawCorrDelta > 0) {
-        if (!incorruptible) {
-          let effCorrDelta = state.age < 12 ? Math.min(rawCorrDelta, 2) : rawCorrDelta;
-          if (state.tags.includes("omega_pariah")) effCorrDelta = Math.floor(effCorrDelta * 0.15);
-          else if (state.tags.includes("blank")) effCorrDelta = Math.floor(effCorrDelta * 0.5);
-          if (state.tags.includes("heretic") || state.tags.includes("chaos_aligned")) {
-            if (state.corruption >= 92) effCorrDelta = 0;
-            else if (state.corruption >= 80) effCorrDelta = Math.min(effCorrDelta, 2);
-          }
-          if (effCorrDelta > 0) state.corruption = clamp(state.corruption + effCorrDelta, 0, 100);
+        const cappedRaw = state.age < 12 ? Math.min(rawCorrDelta, 2) : rawCorrDelta;
+        let effCorrDelta = scalePositiveCorruption(state, cappedRaw);
+        if (state.tags.includes("heretic") || state.tags.includes("chaos_aligned")) {
+          if (state.corruption >= 92) effCorrDelta = 0;
+          else if (state.corruption >= 80) effCorrDelta = Math.min(effCorrDelta, 2);
         }
+        if (effCorrDelta > 0) state.corruption = clamp(state.corruption + effCorrDelta, 0, 100);
       } else if (rawCorrDelta < 0) {
         state.corruption = clamp(state.corruption + rawCorrDelta, 0, 100);
       }
@@ -1350,6 +1416,7 @@ export function createImperiumEngine(DATA) {
       const nihilusHaz = state.tags.includes("imperial_nihilus") ? 0.008 : 0;
       let perkHazMult = 1.0;
       if (homeWorld.id === "catachan" && ((world.tags && (world.tags.includes("death") || world.tags.includes("feral"))))) perkHazMult *= 0.5;
+      if (homeWorld.id === "armageddon") perkHazMult *= 0.85;
       if (state.tags.includes("battle_hardened")) perkHazMult *= 0.75;
       if (state.tags.includes("saint_spark") && state.faith >= 70) perkHazMult *= 0.8;
       const diffHazMult =
@@ -1367,7 +1434,8 @@ export function createImperiumEngine(DATA) {
       );
 
       if (Math.random() < totalHazard * 2.0) {
-        const dmg = randInt(5, 13);
+        const rawDmg = randInt(5, 13);
+        const dmg = -scaleWoundDamage(state, -rawDmg);
         state.wounds = clamp(state.wounds - dmg, 0, state.maxWounds);
         addLog(state, `${world.name}의 가혹한 환경과 직무 위험 속에 부상·질환을 입었다.`, "danger", null, {
           badge: "환경 위험",
@@ -1544,6 +1612,19 @@ export function createImperiumEngine(DATA) {
       }
     }
 
+    // 2.2순위: 100세+ 초장수자 전용 동적 순찰 · 유물 회수 · 패권 작전 풀
+    if (state.age >= 100 && Math.random() < 0.25) {
+      const centEv = createDynamicCentenarianEvent(state, reqCtx, {
+        getWorld,
+        getCareer,
+        isIncorruptibleState
+      });
+      if (centEv) {
+        state.pendingEvent = centEv;
+        return { status: "event", event: state.pendingEvent };
+      }
+    }
+
     // 2.5순위: 업무 특성 및 계급에 따른 강제 파견 / 작전 배치 / 성간 이주 기회
     const curCareerObj = getCareer(state.careerId);
     const isForcedDuty = curCareerObj.transitTier === "forced" || curCareerObj.transitTier === "astartes_scout";
@@ -1588,6 +1669,8 @@ export function createImperiumEngine(DATA) {
     addLog,
     formatDeltaText,
     isIncorruptibleState,
+    scalePositiveCorruption,
+    scaleWoundDamage,
     canRetireHonorably,
     createHonorableEndingEvent,
     evaluateTravelAttempt
@@ -1694,30 +1777,40 @@ export function createImperiumEngine(DATA) {
     }
     if (canUsePenance(state).ok) {
       const hasRuthless = normalizeAlignment(state).ruthless > 0;
+      const penHeal = [];
+      if (state.tags.includes("shell_shocked")) penHeal.push("포탄 충격");
+      if (state.tags.includes("warp_scarred")) penHeal.push("워프 흉터");
+      const corrPart = state.corruption > 0 ? "오염 -14, " : "";
+      const healPart = penHeal.length ? `, ${penHeal.join("·")} 치유` : "";
       actions.push({
         id: "penance",
         name: "성당 고해와 정화 의식",
         desc: hasRuthless
-          ? "오염 -14, 신앙 +7, 암흑 -3, 교조 +1 (생명력 -7, 재사용 3년)"
-          : "오염 -14, 신앙 +7 (생명력 -7, 재사용 3년)",
+          ? `${corrPart}신앙 +7, 암흑 -3, 교조 +1${healPart} (생명력 -7, 재사용 3년)`
+          : `${corrPart}신앙 +7${healPart} (생명력 -7, 재사용 3년)`,
         btnLabel: "정화 고행 수행"
       });
     }
     const augChk = canUseAugmetics(state);
     if (augChk.ok) {
+      const augHeal = [];
+      if (state.tags.includes("crippled_limb")) augHeal.push("불구");
+      if (state.tags.includes("chronic_toxins")) augHeal.push("만성 독소");
+      const augHealPart = augHeal.length ? `, ${augHeal.join("·")} 치유` : "";
       actions.push({
         id: "augmetics",
         name: `기계교 의체 개조 (${state.augmeticsCount}/3)`,
-        desc: `강인 +5, 백병 +3, 지성 +3, 기대수명 +18년 (${augChk.isMech ? "기계교 의례 · 무료" : "권위 -" + augChk.infCost + " 소모"}, 교섭 -2)`,
+        desc: `강인 +5, 백병 +3, 지성 +3, 기대수명 +18년${augHealPart} (${augChk.isMech ? "기계교 의례 · 무료" : "권위 -" + augChk.infCost + " 소모"}, 교섭 -2)`,
         btnLabel: "의체 시술 받기"
       });
     }
     const rejChk = canUseRejuvenat(state);
     if (rejChk.ok) {
+      const rejHealPart = state.tags.includes("chronic_toxins") ? " · 만성 독소 치유" : "";
       actions.push({
         id: "rejuvenat",
         name: `리주버냇 수명 연장 시술 (${state.rejuvenatCount}/3)`,
-        desc: `권위 -${rejChk.infCost} 소모 · 기대수명 +55년 · 생명력 +30 회복`,
+        desc: `권위 -${rejChk.infCost} 소모 · 기대수명 +55년 · 생명력 +30 회복${rejHealPart}`,
         btnLabel: "수명 연장 신청"
       });
     }
@@ -1758,6 +1851,7 @@ export function createImperiumEngine(DATA) {
     FACTION_ENDING_KEYS,
     STAT_META,
     ACQUIRED_TRAIT_EFFECTS,
+    ANOMALY_TAG_EFFECTS,
     FOCUSES,
     ERA_PRESETS,
     TAG_LABELS,
@@ -1769,6 +1863,8 @@ export function createImperiumEngine(DATA) {
     getStatCap: (state, statKey) => getStatCap(state, statKey, { getWorld, getCareer, getTrait }),
     getAllStatCaps: (state) => getAllStatCaps(state, { getWorld, getCareer, getTrait }),
     getAcquiredTraits,
+    getAwakenedAnomalies,
+    isTraitImmune: (state, traitTag) => isTraitImmune(state, traitTag, getCareer),
     applyDiminishedStatGain,
     computeCheckPreview,
     isUnboundCareer,

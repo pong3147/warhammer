@@ -2,6 +2,7 @@ import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import GameApp from "../src/components/game/GameApp";
+import FullChronicleView from "../src/components/game/FullChronicleView";
 import HallOfSoulsApp from "../src/components/hall/HallOfSoulsApp";
 import GlossaryExplorer from "../src/components/glossary/GlossaryExplorer";
 import CodexExplorer from "../src/components/codex/CodexExplorer";
@@ -10,6 +11,7 @@ import { CORE_DATA } from "../src/data/core/index.js";
 import { EVENTS, CHRONICLES } from "../src/data/narrative.js";
 import { GLOSSARY_CATEGORIES, GLOSSARY_TERMS } from "../src/data/glossary.js";
 import { createImperiumEngine } from "../src/engine/createEngine.js";
+import { CENTENARIAN_OP_POOLS, createDynamicCentenarianEvent } from "../src/engine/centenarianOps.js";
 import { ACTIVE_SAVE_KEY, applyImportedBackup, loadHall, saveActiveState, STORAGE_KEY } from "../src/lib/storage";
 
 const FULL_DATA = { ...CORE_DATA, EVENTS, CHRONICLES };
@@ -1396,6 +1398,337 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
 
     unmount();
     localStorage.clear();
+  });
+
+  it("Stage 23: triggers centenarianOps for 100+ characters across all 3 pools with 4-year cooldown and migrateState compatibility", () => {
+    const engine = createImperiumEngine(FULL_DATA);
+    const base = engine.createCharacter({ mode: "custom", eraId: "armageddon", worldId: "macragge" });
+    delete base.lastCentenarianOpYear;
+    delete base.recentCentenarianOps;
+    const migrated = engine.migrateState(base);
+    expect(migrated.lastCentenarianOpYear).toBe(-999);
+    expect(migrated.recentCentenarianOps).toEqual([]);
+
+    const helpers = {
+      getWorld: engine.getWorld,
+      getCareer: engine.getCareer,
+      isIncorruptibleState: () => false
+    };
+
+    // Under 100 returns null
+    expect(createDynamicCentenarianEvent({ ...migrated, age: 99 }, null, helpers)).toBeNull();
+
+    // 1. Transhuman 100+
+    const astartes = { ...migrated, age: 120, year: 1100, careerId: "astartes_brother", tags: ["astartes", "transhuman"] };
+    const ev1 = createDynamicCentenarianEvent(astartes, null, helpers);
+    expect(ev1).not.toBeNull();
+    expect(ev1.isDynamicCentenarian).toBe(true);
+    expect(ev1.choices.some((ch: { req?: unknown }) => !ch.req)).toBe(true);
+    // 4-year cooldown blocks immediate re-trigger
+    expect(createDynamicCentenarianEvent({ ...astartes, year: 1102 }, null, helpers)).toBeNull();
+
+    // 2. Mortal elder 100+
+    const elder = { ...migrated, age: 105, year: 1085, careerId: "administratum", tags: ["rejuvenat"] };
+    const ev2 = createDynamicCentenarianEvent(elder, null, helpers);
+    expect(ev2).not.toBeNull();
+    expect(ev2.choices.some((ch: { req?: unknown }) => !ch.req)).toBe(true);
+
+    // 3. Chaos immortal 100+
+    const chaos = { ...migrated, age: 150, year: 1130, careerId: "daemon_prince", tags: ["heretic", "chaos_aligned", "daemon_prince"] };
+    const ev3 = createDynamicCentenarianEvent(chaos, null, helpers);
+    expect(ev3).not.toBeNull();
+    expect(ev3.choices.some((ch: { req?: unknown }) => !ch.req)).toBe(true);
+  });
+
+  it("Stage 23.5 (#25): resolves centenarianOps Choice 0 cleanly across all 14 templates, enforces eligibility guards, and blocks stale #sr-live announcements", () => {
+    const engine = createImperiumEngine(FULL_DATA);
+    const statPrefixRe = /^\[(백병|사격|강인|민첩|지성|의지|교섭|권위) 판정\]/;
+    const demoCtx = {
+      worldName: "마크라그",
+      isChaos: false,
+      isDreadnought: false,
+      isGreyKnight: false,
+      isCustodes: false,
+      isLivingSaint: false,
+      isTranshuman: true,
+      isTerraOrMars: false,
+      careerTier: 4,
+      isOgryn: false,
+      isAssassin: false,
+      isInNihilus: false,
+      isVoidCapable: true,
+      isMechanicus: true,
+      hasRejuvenat: true,
+      hasBionic: true,
+      isKrieg: false,
+      isFeral: false,
+      incorruptible: false
+    };
+
+    for (const pool of Object.values(CENTENARIAN_OP_POOLS)) {
+      for (const op of pool) {
+        const st = engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "imperial_citizen", traitId: "none", eraId: "indomitus", gender: "male" });
+        st.age = 135;
+        st.year = 1133;
+        const built = op.build(st, demoCtx);
+        expect(statPrefixRe.test(built.choices[0].label)).toBe(true);
+        if (op.id === "dyn_cent_daemon_forge") {
+          expect(built.text).toContain("다크 메카니쿰");
+          expect(built.text).not.toContain("워프석");
+        }
+        const prevTop = st.logs[0];
+        st.pendingEvent = { id: op.id, title: op.title, text: built.text, choices: built.choices, source: built.source };
+        const res = engine.resolvePendingChoice(st, 0);
+        expect(res).toBeTruthy();
+        expect(res.outcome).toBeTruthy();
+        expect(st.logs[0]).not.toBe(prevTop);
+      }
+    }
+
+    // saint_vessel (unascended) must NOT enter TRANSHUMAN_OPS; Custodes excluded from neophyte/space_hulk/ordo_joint
+    const helpers = {
+      getWorld: engine.getWorld,
+      getCareer: engine.getCareer,
+      isIncorruptibleState: () => false
+    };
+    const vessel = engine.createCharacter({ mode: "custom", worldId: "ophelia7", originId: "ecclesiarchy_novice", traitId: "none", eraId: "indomitus", gender: "female" });
+    vessel.age = 112;
+    vessel.year = 1110;
+    vessel.careerId = "saint_vessel";
+    vessel.tags.push("saint_vessel", "rejuvenat");
+    const vesselEv = createDynamicCentenarianEvent(vessel, null, helpers);
+    const transIds = new Set(CENTENARIAN_OP_POOLS.transhuman.map((o: any) => o.id));
+    expect(vesselEv).not.toBeNull();
+    expect(transIds.has(vesselEv.id)).toBe(false);
+
+    const custBlocked = new Set(["dyn_cent_neophyte_drill", "dyn_cent_space_hulk", "dyn_cent_ordo_joint"]);
+    for (let i = 0; i < 15; i++) {
+      const cust = engine.createCharacter({ mode: "custom", worldId: "terra", originId: "terra_high_blood", traitId: "none", eraId: "indomitus", gender: "male" });
+      cust.age = 240;
+      cust.year = 1238;
+      cust.careerId = "adeptus_custodes";
+      cust.tags.push("custodes", "transhuman");
+      const cev = createDynamicCentenarianEvent(cust, null, { ...helpers, isIncorruptibleState: () => true });
+      if (cev) expect(custBlocked.has(cev.id)).toBe(false);
+    }
+
+    // GameApp handleChooseEvent prevTopLog guard prevents re-announcing old log on silent/no-op choice
+    let fired = false;
+    const noopProxy = {
+      ...engine,
+      advanceQuarter(st: any, opts?: any) {
+        if (!fired) {
+          fired = true;
+          st.pendingEvent = {
+            id: "ev_noop_guard",
+            title: "무음 가드 테스트",
+            category: "테스트",
+            text: "가드 검증.",
+            choices: [{ label: "무음 선택지" }]
+          };
+          return { status: "event", isNewYear: false };
+        }
+        return engine.advanceQuarter(st, opts);
+      },
+      resolvePendingChoice(st: any) {
+        st.pendingEvent = null;
+        return { outcome: null };
+      }
+    };
+    const { container, unmount } = render(<GameApp engineOverride={noopProxy} dataOverride={FULL_DATA} />);
+    startCustomCharacter(container);
+    const initialBirthText = container.querySelector("#recent-log-list li")?.textContent || "";
+    fireEvent.click(container.querySelector("#btn-step")!);
+    fireEvent.click(container.querySelector(".choice-btn")!);
+    expect(container.querySelector("#sr-live")?.textContent || "").not.toContain(initialBirthText.slice(0, 12));
+    unmount();
+    localStorage.clear();
+  });
+
+  it("Stage 23.5 (#26): unlocks zero-corruption penance for mental trauma and enforces immunity, corruption attenuation, Ogryn durability, and geneseed trial bonus", () => {
+    const engine = createImperiumEngine(FULL_DATA);
+
+    // 1. Penance at corruption === 0 heals shell_shocked & appears in contextual action description
+    const st = engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+    st.age = 28;
+    st.year = 960;
+    st.careerId = "administratum";
+    st.corruption = 0;
+    expect(engine.performAction(st, "penance").ok).toBe(false);
+    st.tags.push("shell_shocked");
+    const opts = engine.getContextualOptions(st);
+    const penOpt = opts.actions.find((a: any) => a.id === "penance");
+    expect(penOpt).toBeTruthy();
+    expect(penOpt.desc).toContain("포탄 충격");
+    const penRes = engine.performAction(st, "penance");
+    expect(penRes.ok).toBe(true);
+    expect(st.tags.includes("shell_shocked")).toBe(false);
+
+    // 2. Superhuman/Krieg shell_shocked immunity + Blank/Omega/Ophelia7 corruption attenuation & warp_scarred immunity
+    const krieg = engine.createCharacter({ mode: "custom", worldId: "krieg", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+    expect(engine.isTraitImmune(krieg, "shell_shocked")).toBe(true);
+    const blank = engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "blank", eraId: "armageddon", gender: "female" });
+    expect(engine.isTraitImmune(blank, "warp_scarred")).toBe(true);
+    blank.corruption = 0;
+    blank.pendingEvent = {
+      id: "ev_blank_corr",
+      title: "워프 노출",
+      choices: [{ label: "견딘다", effect: { text: "견뎠다.", corruption: 20, addTags: ["warp_scarred"] } }]
+    };
+    engine.resolvePendingChoice(blank, 0);
+    expect(blank.corruption).toBe(10);
+    expect(blank.tags.includes("warp_scarred")).toBe(false);
+
+    // 3. Ogryn 20% wound reduction & geneseed_compatible +8% trialCheck bonus
+    const ogryn = engine.createCharacter({ mode: "custom", worldId: "generic_civilised", originId: "imperial_citizen", traitId: "abhuman_ogryn", eraId: "armageddon", gender: "male" });
+    ogryn.wounds = 100;
+    ogryn.maxWounds = 100;
+    ogryn.pendingEvent = {
+      id: "ev_ogryn_hit",
+      title: "타격",
+      choices: [{ label: "버틴다", effect: { text: "버텼다.", wounds: -25 } }]
+    };
+    engine.resolvePendingChoice(ogryn, 0);
+    expect(ogryn.wounds).toBe(80);
+
+    const gs = engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "imperial_citizen", traitId: "geneseed_compatible", eraId: "armageddon", gender: "male" });
+    gs.stats.T = 40;
+    const gsPrev = engine.computeCheckPreview(gs, { stat: "T", diff: 0, geneseedTrial: true });
+    expect(gsPrev.modifiers.some((m: any) => m.label === "진시드 적합" && m.value === 8)).toBe(true);
+  });
+
+  it("Stage 23.5 (#27): verifies chronicle-grim filter, awakened anomalies & clean <dl>, trait preview filtering, StartScreen radio a11y, ObituaryModal label, Hall milestones/24-tag cap, and Codex hash focus guard", () => {
+    const engine = createImperiumEngine(FULL_DATA);
+
+    // 1. FullChronicleView puts chronicle-grim under daily ("일상 · 부조리"), not major ("중대 사건 · 전직")
+    const fcState = engine.createCharacter({ mode: "custom", worldId: "necromunda", originId: "underhive_scum", traitId: "none", eraId: "armageddon", gender: "male" });
+    fcState.logs = [
+      { year: "981.M41 상반기", age: 20, text: "암울한 그림다크 부조리 기록", kind: "chronicle-grim", badge: "암울한 일상" },
+      { year: "981.M41 중반기", age: 20, text: "중대 분기 사건 기록", kind: "event", badge: "사건" }
+    ];
+    const { container: fcContainer, unmount: fcUnmount } = render(
+      <FullChronicleView
+        state={fcState}
+        engine={engine}
+        onCopyChronicle={() => {}}
+        onExportTxt={() => {}}
+        onBackToGame={() => {}}
+        onAnnounce={() => {}}
+      />
+    );
+    fireEvent.click(fcContainer.querySelector('button[data-flfilter="chronicle"]')!);
+    expect(fcContainer.textContent).toContain("암울한 그림다크 부조리 기록");
+    expect(fcContainer.textContent).not.toContain("중대 분기 사건 기록");
+    fireEvent.click(fcContainer.querySelector('button[data-flfilter="major"]')!);
+    expect(fcContainer.textContent).not.toContain("암울한 그림다크 부조리 기록");
+    expect(fcContainer.textContent).toContain("중대 분기 사건 기록");
+    fcUnmount();
+
+    // 2. StartScreen static per-radio aria-describedby & non-slang copy + DossierPanel awakened anomaly & clean <dl> + ActiveEventPanel owned/immune trait preview filter + ObituaryModal aria-labelledby
+    const traitFilterEvent = {
+      id: "ev_s235_preview_filter",
+      title: "특성 예고 필터 검증",
+      category: "테스트",
+      text: "미보유 치유와 면역 각인은 예고에서 숨겨져야 한다.",
+      choices: [
+        {
+          label: "[의지 판정] 시련에 맞선다",
+          check: { stat: "WP", diff: 0 },
+          success: { text: "성공.", removeTags: ["shell_shocked"], addTags: ["iron_nerves"] },
+          fail: { text: "실패.", addTags: ["shell_shocked"] }
+        },
+        {
+          label: "물러선다",
+          effect: { text: "사망 테스트.", instantDeath: "테스트 종료" }
+        }
+      ],
+      source: "Test Suite"
+    };
+    let evFired = false;
+    const uiProxy = {
+      ...engine,
+      createCharacter(cfg: any) {
+        const st = engine.createCharacter({ ...cfg, worldId: "krieg" });
+        st.tags.push("savant_genius");
+        return st;
+      },
+      advanceQuarter(st: any, opts?: any) {
+        if (!evFired) {
+          evFired = true;
+          st.pendingEvent = traitFilterEvent;
+          return { status: "event", isNewYear: false };
+        }
+        return engine.advanceQuarter(st, opts);
+      }
+    };
+    const { container: gContainer, unmount: gUnmount } = render(<GameApp engineOverride={uiProxy} dataOverride={FULL_DATA} />);
+    expect(gContainer.querySelector("#rad-diff-standard")).toHaveAttribute("aria-describedby", "difficulty-desc-standard");
+    expect(gContainer.querySelector("#rad-diff-grimdark")).toHaveAttribute("aria-describedby", "difficulty-desc-grimdark");
+    expect(gContainer.textContent).toContain("공략형 불운·부조리 사건");
+    expect(gContainer.textContent).not.toContain("억까");
+
+    startCustomCharacter(gContainer);
+    // DossierPanel: awakened anomaly shown + <dl id="stats-grid"> stat-item has direct <dt>/<dd> children
+    expect(gContainer.querySelector("#trait-perks-list")?.textContent).toContain("후천 각성 특이점: 전략·지성 사반트");
+    const firstStatItem = gContainer.querySelector("#stats-grid .stat-item")!;
+    expect(firstStatItem.children[0]?.tagName).toBe("DT");
+    expect(firstStatItem.children[1]?.tagName).toBe("DD");
+
+    // ActiveEventPanel: Krieg character does NOT own shell_shocked AND is immune to shell_shocked
+    fireEvent.click(gContainer.querySelector("#btn-step")!);
+    const c0Text = gContainer.querySelectorAll(".choice-btn")[0]?.textContent || "";
+    expect(c0Text).toContain("성공 시 특성 획득: 강철의 신경");
+    expect(c0Text).not.toContain("성공 시 특성 치유: 포탄 충격");
+    expect(c0Text).not.toContain("실패 시 특성 획득: 포탄 충격");
+    expect(c0Text).not.toContain("포탄 충격");
+
+    // ObituaryModal aria-labelledby includes #obit-rank and #obit-title
+    fireEvent.click(gContainer.querySelectorAll(".choice-btn")[1]);
+    expect(gContainer.querySelector("#obit-backdrop[role='dialog']")).toHaveAttribute("aria-labelledby", "obit-rank obit-title");
+    gUnmount();
+    localStorage.clear();
+
+    // 3. HallOfSoulsApp: saint_vessel excluded from apex_transcendent & storage.ts preserves up to 24 tags
+    const tags24 = Array.from({ length: 24 }, (_, i) => `tag_${i + 1}`);
+    const imp = applyImportedBackup(
+      JSON.stringify({
+        hall: [{
+          id: "soul_vessel_24",
+          name: "미승천 성녀 후보",
+          age: 55,
+          birthYear: 940,
+          deathYear: 995,
+          homeWorldId: "ophelia7",
+          careerId: "saint_vessel",
+          careerHistory: ["child", "ecclesiarchy_priest", "saint_vessel"],
+          careerTitle: "성인의 그릇",
+          tags: tags24
+        }]
+      }),
+      engine
+    );
+    expect(imp.ok).toBe(true);
+    expect(loadHall()[0].tags).toHaveLength(24);
+    const { container: hContainer, unmount: hUnmount } = render(<HallOfSoulsApp />);
+    const apexItem = Array.from(hContainer.querySelectorAll(".hall-hint-list li")).find((el) =>
+      (el.textContent || "").includes("초월적 존재")
+    );
+    expect(apexItem).toBeTruthy();
+    expect(apexItem?.textContent).toContain("[미달성]");
+    hUnmount();
+    localStorage.clear();
+
+    // 4. CodexExplorer does NOT steal focus on initial hash mount when user focus is already elsewhere
+    const externalBtn = document.createElement("button");
+    externalBtn.textContent = "외부 초점 버튼";
+    document.body.appendChild(externalBtn);
+    externalBtn.focus();
+    window.location.hash = "#terra";
+    const { unmount: cUnmount } = render(<CodexExplorer section="worlds" />);
+    expect(document.activeElement).toBe(externalBtn);
+    cUnmount();
+    window.location.hash = "";
+    externalBtn.remove();
   });
 });
 

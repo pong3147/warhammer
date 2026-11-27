@@ -26,6 +26,7 @@ export default function DossierPanel({ state, engine }: Props) {
   const glossaryRefs = getContextualGlossaryRefs(state, career, world);
   const statCaps = engine.getAllStatCaps ? engine.getAllStatCaps(state) : null;
   const acquiredTraits = engine.getAcquiredTraits ? engine.getAcquiredTraits(state) : [];
+  const awakenedAnomalies = engine.getAwakenedAnomalies ? engine.getAwakenedAnomalies(state) : [];
 
   const woundsPct = Math.max(0, Math.min(100, Math.round((state.wounds / Math.max(1, state.maxWounds)) * 100)));
   const faithPct = Math.max(0, Math.min(100, Math.round(state.faith)));
@@ -154,18 +155,16 @@ export default function DossierPanel({ state, engine }: Props) {
           const pct = Math.min(100, Math.round((val / Math.max(1, cap)) * 100));
           return (
             <div key={m.key} className="stat-item" title={`${m.desc} (현재 계급·체질 상한 ${cap})`}>
-              <div className="stat-top">
-                <dt className="stat-key">
-                  {m.name}
-                  <span aria-hidden="true"> ({m.key})</span>
-                </dt>
-                <dd className="stat-num">
-                  {val} / {cap}
-                </dd>
-              </div>
-              <div className="stat-mini-bar" aria-hidden="true">
+              <dt className="stat-key">
+                {m.name}
+                <span aria-hidden="true"> ({m.key})</span>
+              </dt>
+              <dd className="stat-num">
+                {val} / {cap}
+              </dd>
+              <dd className="stat-mini-bar" aria-hidden="true">
                 <div className="stat-mini-fill" style={{ width: `${pct}%` }} />
-              </div>
+              </dd>
             </div>
           );
         })}
@@ -183,6 +182,11 @@ export default function DossierPanel({ state, engine }: Props) {
             <strong>선천 재능</strong>: {trait.talent.name} — {trait.talent.desc}
           </li>
         )}
+        {awakenedAnomalies.map((an: any) => (
+          <li key={an.key} className="trait-perk-item positive">
+            <strong>후천 각성 특이점</strong>: {an.name} — {an.summary}
+          </li>
+        ))}
         {acquiredTraits.map((at: any) => (
           <li
             key={at.key}

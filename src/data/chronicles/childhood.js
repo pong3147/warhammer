@@ -575,7 +575,7 @@ export default [
     badge: "포지 보육 구역",
     priority: 3,
     req: { minAge: 1, maxAge: 5, anyWorldTags: ["forge", "mechanicus"] },
-    text: "유독성 철가루를 거르는 미세 여과 마스크를 씌운 채 첫 보행 검사를 통과했다. 코기타토르가 '노동 적성 양호' 코드를 출력했다.",
+    text: "유독성 철가루를 거르는 미세 여과 마스크를 씌운 채 첫 보행 검사를 통과했다. 코지테이터가 '노동 적성 양호' 코드를 출력했다.",
     effect: { stats: { Int: 1 } }
   },
   {

@@ -21,17 +21,12 @@ import {
 } from "../src/lib/contextualGlossary.js";
 import { CORE_DATA } from "../src/data/core/index.js";
 import { GLOSSARY_TERMS } from "../src/data/glossary.js";
-import {
-  UNBOUND_CAREERS,
-  CLOSED_VOW_TREES,
-  isUnboundCareer,
-  isClosedVowCrossBlocked,
-  isCareerTransitionBlockedPure,
-  isManualCareerAllowedPure,
-  evaluateDynamicOfferEligibilityPure
-} from "../src/engine/careerRules.js";
+import { isClosedVowCrossBlocked } from "../src/engine/careerRules.js";
+import { CENTENARIAN_OP_POOLS } from "../src/engine/centenarianOps.js";
+import { createTravelModule } from "../src/engine/travel.js";
 import { runDistBundleGate } from "./qa/distGate.mjs";
 import { runPersonaAuditGate } from "./qa/personaGate.mjs";
+import { runCareerAuditGate } from "./qa/careerGate.mjs";
 
 const DEEP_MODE = process.argv.includes("--deep");
 const CHECK_DIST = process.argv.includes("--check-dist");
@@ -146,8 +141,8 @@ let srLiveCount = 0;
 if (uiFiles.length === 0) {
   fail(2, `No Astro/React UI files found under ${path.join(ROOT, "src")} (ROOT=${ROOT})`);
 }
-const FORBIDDEN_STATIC_ENGINE_RE = /\bfrom\s+["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel|statCaps)\.js["']/;
-const FORBIDDEN_DYNAMIC_ENGINE_RE = /\bimport\s*\(\s*["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel|statCaps)\.js["']\s*\)/;
+const FORBIDDEN_STATIC_ENGINE_RE = /\bfrom\s+["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel|statCaps|centenarianOps)\.js["']/;
+const FORBIDDEN_DYNAMIC_ENGINE_RE = /\bimport\s*\(\s*["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel|statCaps|centenarianOps)\.js["']\s*\)/;
 for (const f of uiFiles) {
   const src = readRel(f);
   // Single-letter keyboard shortcut ban (only Escape allowed)
@@ -224,7 +219,8 @@ const forbiddenTerms = [
   /크리그 데스 코어/g,
   /발할란 빙하/g,
   /보스트로얀 장자/g,
-  /타니스 제1유일/g
+  /타니스 제1유일/g,
+  /\[(친교|사교|영향|근접)\s*판정\]/g
 ];
 const forbiddenSymbols = /[★↗←✓↑↓]/g;
 
@@ -378,6 +374,8 @@ const charIds = new Set(DATA.CHARACTERS.map((c) => c.id));
 const segIds = new Set(Object.keys(DATA.SEGMENTA));
 const focusIds = new Set(Object.keys(Engine.FOCUSES));
 const tagLabels = Engine.TAG_LABELS;
+const worldTagLabels = DATA.WORLD_TAG_LABELS || {};
+const validStatKeys = new Set(Object.keys(Engine.STAT_META || {}));
 
 const producedTags = new Set([
   "imperial_nihilus",
@@ -439,6 +437,8 @@ function validateReq(req, owner) {
   (req.anyHomeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown homeWorld "${w}" in ${owner}`); });
   (req.excludeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown excludeWorld "${w}" in ${owner}`); });
   (req.excludeHomeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown excludeHomeWorld "${w}" in ${owner}`); });
+  (req.anyWorldTags || []).forEach((wt) => { if (!worldTagLabels[wt]) fail(4, `Unknown anyWorldTag "${wt}" in ${owner}`); });
+  (req.excludeWorldTags || []).forEach((wt) => { if (!worldTagLabels[wt]) fail(4, `Unknown excludeWorldTag "${wt}" in ${owner}`); });
   (req.anyCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown career "${c}" in ${owner}`); });
   (req.anyPastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown pastCareer "${c}" in ${owner}`); });
   (req.excludePastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown excludePastCareer "${c}" in ${owner}`); });
@@ -505,6 +505,74 @@ for (const c of DATA.CAREERS) {
   }
 }
 
+function validateEventChoices(ev, owner) {
+  if (!ev || typeof ev !== "object") {
+    fail(4, `Invalid event object in ${owner}`);
+    return;
+  }
+  const choices = Array.isArray(ev.choices) ? ev.choices : [];
+  if (choices.length === 0) {
+    fail(5, `Event ${owner} has 0 choices`);
+    return;
+  }
+  if (choices.filter((ch) => !ch.req).length === 0) {
+    fail(5, `Softlock risk (0 unconditional choices) in ${owner}`);
+  }
+  for (let ci = 0; ci < choices.length; ci++) {
+    const ch = choices[ci];
+    const chOwner = `${owner}:choice[${ci}]`;
+    validateReq(ch.req, chOwner);
+    if (ch.req && !Engine.describeReq(ch.req)) {
+      fail(4, `Empty describeReq on choice in ${chOwner}`);
+    }
+    if (ch.outcome !== undefined) {
+      fail(4, `Choice in ${chOwner} uses dead field "outcome" (engine reads "effect" or "success"/"fail")`);
+    }
+    if (ch.check) {
+      if (!validStatKeys.has(ch.check.stat)) {
+        fail(4, `Invalid check.stat "${ch.check.stat}" in ${chOwner}`);
+      }
+      for (const nestedKey of ["success", "fail", "critSuccess", "critFail"]) {
+        if (ch.check[nestedKey] !== undefined) {
+          fail(4, `Nested ch.check.${nestedKey} in ${chOwner} (must be sibling of check on choice object)`);
+        }
+      }
+      if (!ch.success || !ch.fail) {
+        fail(4, `Checked choice in ${chOwner} missing required success/fail outcome`);
+      }
+    } else if (!ch.effect && !ch.success) {
+      fail(4, `Unchecked choice in ${chOwner} missing effect/success outcome`);
+    }
+    if ((ch.critSuccess || ch.critFail) && !ch.check) {
+      fail(4, `Choice in ${chOwner} defines critSuccess/critFail without a d100 check`);
+    }
+    [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail].forEach((o) => {
+      if (!o) return;
+      if (typeof o.text !== "string" || !o.text.trim()) {
+        fail(4, `Missing or empty outcome.text in ${chOwner}`);
+      }
+      if (o.stats) {
+        for (const sk of Object.keys(o.stats)) {
+          if (!validStatKeys.has(sk)) fail(4, `Unknown outcome.stats key "${sk}" in ${chOwner}`);
+        }
+      }
+      if (o.forceCareer && !careerIds.has(o.forceCareer)) fail(4, `Unknown forceCareer "${o.forceCareer}" in ${chOwner}`);
+      if (o.moveWorld && !worldIds.has(o.moveWorld)) fail(4, `Unknown moveWorld "${o.moveWorld}" in ${chOwner}`);
+      if (o.align) validateAlignObj(o.align, `${chOwner}:outcome.align`, true);
+      (o.addTags || []).forEach((t) => {
+        if (!t.startsWith("met_") && !t.startsWith("chapter_") && !tagLabels[t]) {
+          fail(4, `Missing TAG_LABELS for added tag "${t}" in ${chOwner}`);
+        }
+      });
+      (o.removeTags || []).forEach((t) => {
+        if (!tagLabels[t]) {
+          fail(4, `Missing TAG_LABELS for removed tag "${t}" in ${chOwner}`);
+        }
+      });
+    });
+  }
+}
+
 for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
   validateReq(ev.req || ev.filter, ev.id);
   if (ev.alignBias && !alignKeys.has(ev.alignBias)) {
@@ -513,57 +581,7 @@ for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
   (ev.characters || []).forEach((cid) => {
     if (!charIds.has(cid)) fail(4, `Unknown character "${cid}" in ${ev.id}`);
   });
-  const choices = ev.choices || [];
-  if (choices.filter((ch) => !ch.req).length === 0) {
-    fail(5, `Softlock risk (0 unconditional choices) in ${ev.id}`);
-  }
-  const validStatKeys = new Set(Object.keys(Engine.STAT_META || {}));
-  for (const ch of choices) {
-    validateReq(ch.req, `${ev.id}:choice`);
-    if (ch.req && !Engine.describeReq(ch.req)) {
-      fail(4, `Empty describeReq on choice in ${ev.id}`);
-    }
-    if (ch.outcome !== undefined) {
-      fail(4, `Choice in ${ev.id} uses dead field "outcome" (engine reads "effect" or "success"/"fail")`);
-    }
-    if (ch.check) {
-      if (!validStatKeys.has(ch.check.stat)) {
-        fail(4, `Invalid check.stat "${ch.check.stat}" in ${ev.id}`);
-      }
-      if (!ch.success || !ch.fail) {
-        fail(4, `Checked choice in ${ev.id} missing required success/fail outcome`);
-      }
-    } else if (!ch.effect && !ch.success) {
-      fail(4, `Unchecked choice in ${ev.id} missing effect/success outcome`);
-    }
-    if ((ch.critSuccess || ch.critFail) && !ch.check) {
-      fail(4, `Choice in ${ev.id} defines critSuccess/critFail without a d100 check`);
-    }
-    [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail].forEach((o) => {
-      if (!o) return;
-      if (typeof o.text !== "string" || !o.text.trim()) {
-        fail(4, `Missing or empty outcome.text in ${ev.id}`);
-      }
-      if (o.stats) {
-        for (const sk of Object.keys(o.stats)) {
-          if (!validStatKeys.has(sk)) fail(4, `Unknown outcome.stats key "${sk}" in ${ev.id}`);
-        }
-      }
-      if (o.forceCareer && !careerIds.has(o.forceCareer)) fail(4, `Unknown forceCareer "${o.forceCareer}" in ${ev.id}`);
-      if (o.moveWorld && !worldIds.has(o.moveWorld)) fail(4, `Unknown moveWorld "${o.moveWorld}" in ${ev.id}`);
-      if (o.align) validateAlignObj(o.align, `${ev.id}:outcome.align`, true);
-      (o.addTags || []).forEach((t) => {
-        if (!t.startsWith("met_") && !t.startsWith("chapter_") && !tagLabels[t]) {
-          fail(4, `Missing TAG_LABELS for added tag "${t}" in ${ev.id}`);
-        }
-      });
-      (o.removeTags || []).forEach((t) => {
-        if (!tagLabels[t]) {
-          fail(4, `Missing TAG_LABELS for removed tag "${t}" in ${ev.id}`);
-        }
-      });
-    });
-  }
+  validateEventChoices(ev, ev.id);
 }
 
 // Stage 21 invariants: 23 world perks, 12 traits (weights=100), 12 acquired traits, statCaps & removeTags
@@ -646,6 +664,27 @@ for (const ch of DATA.CHRONICLES) {
   }
   if (ch.effect && ch.effect.align) {
     validateAlignObj(ch.effect.align, `${ch.id}:effect.align`, true);
+  }
+  if (ch.effect && ch.effect.stats) {
+    for (const sk of Object.keys(ch.effect.stats)) {
+      if (!validStatKeys.has(sk)) {
+        fail(4, `Unknown chronicle effect.stats key "${sk}" in ${ch.id}`);
+      }
+    }
+  }
+  if (ch.effect && ch.effect.removeTags) {
+    for (const t of ch.effect.removeTags) {
+      if (!tagLabels[t]) {
+        fail(4, `Missing TAG_LABELS for chronicle effect.removeTags "${t}" in ${ch.id}`);
+      }
+    }
+  }
+  if (ch.effect && ch.effect.addTags) {
+    for (const t of ch.effect.addTags) {
+      if (!t.startsWith("met_") && !t.startsWith("chapter_") && !tagLabels[t]) {
+        fail(4, `Missing TAG_LABELS for chronicle effect.addTags "${t}" in ${ch.id}`);
+      }
+    }
   }
   kriegCheckState.age = Math.max(1, (ch.req && ch.req.minAge) || 5);
   const cleaned = (ch.text || "").replace(/어머니의 품 대신/g, "");
@@ -1745,6 +1784,257 @@ for (const ev of DATA.EVENTS) {
       if (incSt.corruption !== 0 || (incSt.logs[0]?.deltaText || "").includes("오염")) {
         fail(4, `Stage 20 Red-Team P1-3: incorruptible Custodes logged false corruption deltaText="${incSt.logs[0]?.deltaText}" (corr=${incSt.corruption})`);
       }
+
+      // Stage 23.5: Shared choice validation across ALL 4 dynamic event generators
+      // 1) centenarianOps (all 14 templates across transhuman/mortal/chaos + TTS [XX 판정] prefix)
+      const STAT_PREFIX_RE = /^\[(백병|사격|강인|민첩|지성|의지|교섭|권위) 판정\]/;
+      const centDemoState = Engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "imperial_citizen", traitId: "none", eraId: "indomitus", gender: "male" });
+      centDemoState.age = 140;
+      centDemoState.year = 1138;
+      const centDemoCtx = {
+        worldName: "마크라그",
+        isChaos: false,
+        isDreadnought: false,
+        isGreyKnight: false,
+        isCustodes: false,
+        isLivingSaint: false,
+        isTranshuman: true,
+        isTerraOrMars: false,
+        careerTier: 4,
+        isOgryn: false,
+        isAssassin: false,
+        isInNihilus: false,
+        isVoidCapable: true,
+        isMechanicus: true,
+        hasRejuvenat: true,
+        hasBionic: true,
+        isKrieg: false,
+        isFeral: false,
+        incorruptible: false
+      };
+      let centTemplateCount = 0;
+      for (const [poolName, pool] of Object.entries(CENTENARIAN_OP_POOLS)) {
+        for (const op of pool) {
+          centTemplateCount++;
+          const built = op.build(centDemoState, centDemoCtx);
+          const evObj = { id: op.id, title: op.title, text: built.text, choices: built.choices, source: built.source };
+          validateEventChoices(evObj, `dyn:centenarian:${poolName}:${op.id}`);
+          const firstChoice = evObj.choices && evObj.choices[0];
+          if (!firstChoice || !firstChoice.check || !STAT_PREFIX_RE.test(firstChoice.label || "")) {
+            fail(4, `Centenarian op "${op.id}" Choice 0 must carry check and [XX 판정] TTS prefix (got "${firstChoice && firstChoice.label}")`);
+          }
+        }
+      }
+      if (centTemplateCount !== 14) {
+        fail(4, `Expected 14 centenarianOps templates across 3 pools, found ${centTemplateCount}`);
+      }
+
+      // 2) careerRules dynamic offers, chapter selection & assassin clade selection
+      validateEventChoices(wmOffer, "dyn:careerRules:warmaster_offer");
+      validateEventChoices(govOffer, "dyn:careerRules:governor_offer");
+      validateEventChoices(culexEv, "dyn:careerRules:assassin_clade_blank");
+      const astartesScoutProbe = Engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "imperial_citizen", traitId: "geneseed_compatible", eraId: "armageddon", gender: "male" });
+      astartesScoutProbe.age = 16;
+      astartesScoutProbe.year = 956;
+      astartesScoutProbe.careerId = "pdf_trooper";
+      astartesScoutProbe.stats = { WS: 60, BS: 55, T: 60, Ag: 55, Int: 45, WP: 55, Fel: 40, Inf: 35 };
+      const scoutOfferEv = Engine.createDynamicCareerOfferEvent(astartesScoutProbe, null, { forceOffer: true, ignoreCooldown: true, targetCareerId: "astartes_scout" });
+      validateEventChoices(scoutOfferEv, "dyn:careerRules:astartes_scout_offer");
+      if (!scoutOfferEv?.choices?.[0]?.check?.geneseedTrial) {
+        fail(4, `Stage 23.5 astartes_scout dynamic offer missing check.geneseedTrial=true`);
+      }
+      const gsPreview = Engine.computeCheckPreview(astartesScoutProbe, scoutOfferEv.choices[0].check);
+      if (!gsPreview.modifiers.some((m) => m.label === "진시드 적합" && m.value === 8)) {
+        fail(4, `Stage 23.5 geneseed_compatible +8 trialCheck bonus missing in computeCheckPreview: ${JSON.stringify(gsPreview.modifiers)}`);
+      }
+      Math.random = () => 0.05;
+      const scoutJoinRes = Engine.attemptCareerChange(astartesScoutProbe, "astartes_scout");
+      Math.random = origRandom;
+      if (!scoutJoinRes?.ok || !astartesScoutProbe.pendingEvent) {
+        fail(4, `Stage 23.5 astartes_scout attemptCareerChange did not open chapter selection event`);
+      } else {
+        validateEventChoices(astartesScoutProbe.pendingEvent, "dyn:careerRules:chapter_select");
+      }
+
+      // 3) travel dynamic events (warp anomaly + transit profiles)
+      const travelMod = createTravelModule({
+        DATA,
+        getWorld: Engine.getWorld,
+        getCareer: Engine.getCareer,
+        randInt: (min) => min
+      });
+      const warpProbe = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "militarum_family", traitId: "none", eraId: "armageddon", gender: "male" });
+      warpProbe.age = 24;
+      warpProbe.year = 950;
+      warpProbe.careerId = "imperial_navy";
+      const warpDynEv = Engine.createWarpAnomalyTransitEvent(warpProbe, Engine.getWorld("armageddon"));
+      if (warpDynEv) validateEventChoices(warpDynEv, "dyn:travel:warp_anomaly");
+      const transitProbes = [
+        { label: "forced", careerId: "astra_militarum", worldId: "cadia", tags: ["militarum"], inf: 30 },
+        { label: "mid_admin", careerId: "administratum", worldId: "terra", tags: ["administratum"], inf: 40 },
+        { label: "mid_faith", careerId: "ecclesiarchy_priest", worldId: "ophelia7", tags: ["ecclesiarchy"], inf: 40 },
+        { label: "autonomous", careerId: "rogue_trader", worldId: "macragge", tags: ["rogue_trader"], inf: 70 },
+        { label: "heretic", careerId: "chaos_cultist", worldId: "necromunda", tags: ["heretic", "chaos_aligned"], inf: 35 },
+        { label: "civilian", careerId: "menial_worker", worldId: "necromunda", tags: [], inf: 35 }
+      ];
+      for (const tp of transitProbes) {
+        const ts = Engine.createCharacter({ mode: "custom", worldId: tp.worldId, originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+        ts.age = 28;
+        ts.year = 955;
+        ts.careerId = tp.careerId;
+        ts.tags = [...new Set([...ts.tags, ...tp.tags])];
+        ts.stats.Inf = tp.inf;
+        const tev = travelMod.createDynamicTransitEvent(ts);
+        if (!tev) fail(4, `Stage 23.5 createDynamicTransitEvent returned null for probe "${tp.label}"`);
+        else validateEventChoices(tev, `dyn:travel:transit:${tp.label}`);
+      }
+
+      // 4) endings dynamic events across all 16 factionMatrix archetypes
+      for (const row of factionMatrix) {
+        const eSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "indomitus", gender: "male" });
+        eSt.age = 75;
+        eSt.careerId = row.careerId;
+        eSt.tags = [...new Set([...eSt.tags, ...row.tags])];
+        validateEventChoices(Engine.createHonorableEndingEvent(eSt), `dyn:endings:${row.careerId}`);
+      }
+
+      // Stage 23.5: ev_s21_anom_02 ~ ev_s21_anom_14 minAge >= 14 enforcement
+      for (let idx = 2; idx <= 14; idx++) {
+        const aid = `ev_s21_anom_${String(idx).padStart(2, "0")}`;
+        const aev = DATA.EVENTS.find((e) => e.id === aid);
+        if (!aev) {
+          fail(4, `Stage 23.5 missing expected anomaly event "${aid}"`);
+        } else if (!aev.req || typeof aev.req.minAge !== "number" || aev.req.minAge < 14) {
+          fail(4, `Stage 23.5 anomaly event "${aid}" missing adult/youth guard req.minAge >= 14 (got ${aev.req && aev.req.minAge})`);
+        }
+      }
+
+      // Stage 23.5: canUsePenance at corruption === 0 with shell_shocked / warp_scarred (and blocked without trauma)
+      const penZero = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+      penZero.age = 25;
+      penZero.year = 960;
+      penZero.careerId = "administratum";
+      penZero.corruption = 0;
+      if (Engine.performAction(penZero, "penance").ok) {
+        fail(4, `Stage 23.5 penance must fail when corruption === 0 and no mental trauma tag is held`);
+      }
+      penZero.tags.push("shell_shocked");
+      const penZeroRes = Engine.performAction(penZero, "penance");
+      if (!penZeroRes.ok || penZero.tags.includes("shell_shocked")) {
+        fail(4, `Stage 23.5 penance at corruption === 0 failed to heal shell_shocked`);
+      }
+
+      // Stage 23.5: Superhuman/Krieg shell_shocked immunity, Incorruptible/Blank/Omega warp_scarred immunity & corruption scaling, Ogryn wound scaling
+      for (const [label, cfg] of [
+        ["astartes", { worldId: "macragge", careerId: "astartes_brother", tags: ["astartes", "transhuman"] }],
+        ["custodes", { worldId: "terra", careerId: "adeptus_custodes", tags: ["custodes", "transhuman"] }],
+        ["grey_knight", { worldId: "terra", careerId: "grey_knight", tags: ["grey_knight", "transhuman"] }],
+        ["dreadnought", { worldId: "macragge", careerId: "astartes_brother", tags: ["astartes", "dreadnought"] }],
+        ["living_saint", { worldId: "ophelia7", careerId: "living_saint", tags: ["living_saint", "transhuman"] }],
+        ["daemon_prince", { worldId: "necromunda", careerId: "daemon_prince", tags: ["daemon_prince", "heretic"] }],
+        ["krieg", { worldId: "krieg", careerId: "astra_militarum", tags: ["militarum"] }]
+      ]) {
+        const imSt = Engine.createCharacter({ mode: "custom", worldId: cfg.worldId, originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+        imSt.careerId = cfg.careerId;
+        imSt.tags = [...new Set([...imSt.tags, ...cfg.tags])];
+        imSt.pendingEvent = {
+          id: `qa_s235_imm_${label}`,
+          title: "면역 검증",
+          choices: [{ label: "테스트", effect: { text: "포격.", addTags: ["shell_shocked"] } }]
+        };
+        Engine.resolvePendingChoice(imSt, 0);
+        if (imSt.tags.includes("shell_shocked")) {
+          fail(4, `Stage 23.5 ${label} should be immune to shell_shocked in applyOutcome`);
+        }
+      }
+
+      for (const [label, worldId, traitId, expectedCorr] of [
+        ["blank", "terra", "blank", 10],
+        ["omega_pariah", "terra", "omega_pariah", 3],
+        ["ophelia7", "ophelia7", "none", 17]
+      ]) {
+        const cs = Engine.createCharacter({ mode: "custom", worldId, originId: "imperial_citizen", traitId, eraId: "armageddon", gender: "female" });
+        cs.corruption = 0;
+        cs.pendingEvent = {
+          id: `qa_s235_corr_${label}`,
+          title: "오염 감쇠 검증",
+          choices: [{ label: "테스트", effect: { text: "워프 노출.", corruption: 20, addTags: ["warp_scarred"] } }]
+        };
+        Engine.resolvePendingChoice(cs, 0);
+        if (cs.corruption !== expectedCorr) {
+          fail(4, `Stage 23.5 ${label} corruption scaling expected ${expectedCorr} from +20, got ${cs.corruption}`);
+        }
+        if ((traitId === "blank" || traitId === "omega_pariah") && cs.tags.includes("warp_scarred")) {
+          fail(4, `Stage 23.5 ${label} should be immune to warp_scarred`);
+        }
+        if (!(cs.logs[0]?.deltaText || "").includes(`오염 +${expectedCorr}`)) {
+          fail(4, `Stage 23.5 ${label} deltaText out of sync with scaled corruption (expected 오염 +${expectedCorr}, got "${cs.logs[0]?.deltaText}")`);
+        }
+      }
+
+      // Ogryn 20% physical wound reduction
+      const ogSt = Engine.createCharacter({ mode: "custom", worldId: "generic_civilised", originId: "imperial_citizen", traitId: "abhuman_ogryn", eraId: "armageddon", gender: "male" });
+      ogSt.wounds = 100;
+      ogSt.maxWounds = 100;
+      ogSt.pendingEvent = {
+        id: "qa_s235_ogryn_dmg",
+        title: "오그린 내구 검증",
+        choices: [{ label: "테스트", effect: { text: "충격.", wounds: -20 } }]
+      };
+      Engine.resolvePendingChoice(ogSt, 0);
+      if (ogSt.wounds !== 84) {
+        fail(4, `Stage 23.5 abhuman_ogryn expected 20% wound reduction (-20 -> -16, wounds=84), got wounds=${ogSt.wounds}`);
+      }
+
+      // Stage 23.5: applyChronicle must NOT emit fake "특성 치유" when removeTags targets unowned tag
+      const { createImperiumEngine } = await import("../src/engine/createEngine.js");
+      const miniEng = createImperiumEngine({
+        ...DATA,
+        EVENTS: [],
+        TIMELINE: [],
+        CHRONICLES: [{
+          id: "qa_s235_fake_heal_chron",
+          badge: "테스트",
+          priority: 3,
+          req: { minAge: 20 },
+          text: "고행으로 마음을 다스렸다.",
+          effect: { removeTags: ["shell_shocked"], faith: 1 }
+        }]
+      });
+      const fakeHealSt = miniEng.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+      fakeHealSt.age = 24;
+      fakeHealSt.year = 960;
+      fakeHealSt.careerId = "administratum";
+      fakeHealSt.tags = fakeHealSt.tags.filter((t) => t !== "shell_shocked");
+      Math.random = () => 0.99; // skip dynamic events so chronicle runs
+      miniEng.advanceQuarter(fakeHealSt);
+      Math.random = origRandom;
+      const chronLog = fakeHealSt.logs.find((l) => l.chronicleId === "qa_s235_fake_heal_chron");
+      if (!chronLog) {
+        fail(4, `Stage 23.5 miniEng failed to trigger qa_s235_fake_heal_chron`);
+      } else if ((chronLog.deltaText || "").includes("특성 치유")) {
+        fail(4, `Stage 23.5 applyChronicle emitted fake heal deltaText for unowned shell_shocked: "${chronLog.deltaText}"`);
+      }
+
+      // Stage 23.5 re-audit regressions: ev_s21_anom_13 Choice 0 tier guard, Navigator psyker exemption, migrateState null-coercion guard
+      const anom13 = DATA.EVENTS.find((e) => e.id === "ev_s21_anom_13");
+      if (!anom13?.choices?.[0]?.req || typeof anom13.choices[0].req.maxCareerTier !== "number" || anom13.choices[0].req.maxCareerTier > 3) {
+        fail(4, `Stage 23.5 ev_s21_anom_13 Choice 0 must cap req.maxCareerTier <= 3 to prevent Tier 4 assassin_initiate downgrade deadlock`);
+      }
+      const navPsy = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "navigator_house", traitId: "psyker", eraId: "armageddon", gender: "female" });
+      navPsy.age = 20;
+      navPsy.careerId = "nav_apprentice";
+      navPsy.stats.WP = 75;
+      if (Engine.checkReq(navPsy, Engine.getCareer("sanctioned_psyker").req) || Engine.isManualCareerAllowed(navPsy, Engine.getCareer("sanctioned_psyker"))) {
+        fail(4, `Stage 23.5 Navis Nobilite navigator must be exempt from sanctioned_psyker / Black Ship conscription`);
+      }
+      const nullSave = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+      nullSave.wounds = null;
+      nullSave.birthYear = null;
+      const migNull = Engine.migrateState(nullSave);
+      if (!migNull || migNull.wounds !== migNull.maxWounds || migNull.birthYear !== 980) {
+        fail(4, `Stage 23.5 migrateState must not coerce null wounds/birthYear to 0 (got wounds=${migNull?.wounds}, birthYear=${migNull?.birthYear})`);
+      }
     } finally {
       Math.random = origRandom;
     }
@@ -1855,681 +2145,7 @@ const careerById = new Map(DATA.CAREERS.map((c) => [c.id, c]));
 const selectableCareers = DATA.CAREERS.filter((c) => c.selectable);
 
 if (DEEP_MODE) {
-  console.log("\n--- [Gate 7A/7B: Static Graph & Full-Corpus Reachability (--deep)] ---");
-
-  // 7A. Career Transition Reachability Graph & anyPastCareers Contradiction Audit
-  const forceCareerTargets = new Set();
-  for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
-    for (const ch of (ev.choices || [])) {
-      [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail].forEach((o) => {
-        if (o && o.forceCareer) forceCareerTargets.add(o.forceCareer);
-      });
-    }
-  }
-
-  function careerPermTags(c) {
-    const out = new Set();
-    if (c && c.onJoin && Array.isArray(c.onJoin.addTags)) {
-      for (const t of c.onJoin.addTags) {
-        if (t !== "imperial_nihilus") out.add(t);
-      }
-    }
-    return out;
-  }
-
-  function reqCompatibleWithBase(req, currId, baseGender, baseTags) {
-    if (!req) return true;
-    if (req.gender && baseGender && req.gender !== baseGender) return false;
-    if (req.excludeTags && req.excludeTags.some((t) => baseTags.has(t))) return false;
-    if (req.anyCareers && !req.anyCareers.includes(currId)) return false;
-    if (req.or && req.or.length > 0) {
-      const anyBranchOk = req.or.some((sub) => reqCompatibleWithBase(sub, currId, baseGender, baseTags));
-      if (!anyBranchOk) return false;
-    }
-    return true;
-  }
-
-  // SSOT sanity check against src/engine/careerRules.js
-  if (!UNBOUND_CAREERS.size || !CLOSED_VOW_TREES.size || !isUnboundCareer("child")) {
-    fail(7, "careerRules.js SSOT exports (UNBOUND_CAREERS / CLOSED_VOW_TREES / isUnboundCareer) are invalid");
-  }
-
-  function canDirectStep(curr, target, baseGender, baseTags, baseTranshuman) {
-    if (!curr || !target || curr.id === target.id) return false;
-    const tGender = target.req && target.req.gender ? target.req.gender : null;
-    if (baseGender && tGender && baseGender !== tGender) return false;
-
-    const effTags = new Set([...baseTags, ...careerPermTags(curr)]);
-    const effTranshuman = baseTranshuman || Boolean(curr.isTranshuman) ||
-      effTags.has("astartes") || effTags.has("custodes") || effTags.has("grey_knight") || effTags.has("daemon_prince") || effTags.has("living_saint");
-
-    if (isCareerTransitionBlockedPure(effTags, curr, target, null)) return false;
-
-    // 1) Manual open transition (SSOT: src/engine/careerRules.js isManualCareerAllowedPure)
-    if (target.selectable && target.entryMode === "open") {
-      if (reqCompatibleWithBase(target.req, curr.id, baseGender, effTags)) {
-        if (isManualCareerAllowedPure(effTags, curr, target)) {
-          return true;
-        }
-      }
-    }
-
-    // 2) Dynamic career offer transition (SSOT: src/engine/careerRules.js evaluateDynamicOfferEligibilityPure)
-    if (reqCompatibleWithBase(target.req, curr.id, baseGender, effTags)) {
-      const offerRes = evaluateDynamicOfferEligibilityPure(effTags, curr, target, {
-        checkDestOriginTags: false,
-        checkScoutQualification: false
-      });
-      if (offerRes.allowed) return true;
-    }
-
-    // 3) Event forceCareer transition (with Astartes chaos_cultist -> renegade_marine redirect)
-    const forcedDirectly = forceCareerTargets.has(target.id);
-    const forcedViaRedirect = target.id === "renegade_marine" && forceCareerTargets.has("chaos_cultist") && effTags.has("astartes");
-    if (forcedDirectly || forcedViaRedirect) {
-      const targetIsTranshuman = Boolean(target.isTranshuman);
-      const isDowngrade = (effTranshuman && !targetIsTranshuman && target.tree !== "chaos") ||
-        (target.tier < curr.tier && target.tree !== "chaos");
-      if (!isDowngrade) {
-        if (!(target.id === "chaos_cultist" && effTags.has("astartes"))) return true;
-      }
-    }
-
-    return false;
-  }
-
-  const reachableFrom = new Map();
-  for (const start of DATA.CAREERS) {
-    const startGender = start.req && start.req.gender ? start.req.gender : null;
-    const startTags = careerPermTags(start);
-    const startTranshuman = Boolean(start.isTranshuman) ||
-      startTags.has("astartes") || startTags.has("custodes") || startTags.has("grey_knight") || startTags.has("daemon_prince") || startTags.has("living_saint");
-
-    const visited = new Set([start.id]);
-    const queue = [start];
-    while (queue.length > 0) {
-      const curr = queue.shift();
-      for (const next of DATA.CAREERS) {
-        if (visited.has(next.id)) continue;
-        if (canDirectStep(curr, next, startGender, startTags, startTranshuman)) {
-          visited.add(next.id);
-          queue.push(next);
-        }
-      }
-    }
-    reachableFrom.set(start.id, visited);
-  }
-
-  // Graph sanity checks (prevents silent drift of the graph analyzer itself)
-  const graphChecks = [
-    ["astra_militarum", "warmaster", true],
-    ["astra_militarum", "planetary_governor", true],
-    ["astartes_brother", "renegade_marine", true],
-    ["astartes_brother", "daemon_prince", true],
-    ["adeptus_custodes", "chaos_cultist", false],
-    ["adeptus_custodes", "daemon_prince", false],
-    ["grey_knight", "renegade_marine", false],
-    ["adepta_sororitas", "astartes_brother", false],
-    ["adepta_sororitas", "hive_crime_lord", false],
-    ["tech_priest", "hive_crime_lord", false],
-    ["knight_scion", "planetary_governor", false],
-    ["knight_scion", "militarum_general", false],
-    ["astartes_brother", "planetary_governor", false],
-    ["nav_apprentice", "paternoval_envoy", true],
-    ["nav_apprentice", "adeptus_custodes", false],
-    ["nav_apprentice", "astartes_scout", false],
-    ["assassin_initiate", "grand_master_of_assassins", true],
-    ["assassin_initiate", "commissar", false],
-    ["assassin_initiate", "inquisition_acolyte", false],
-    ["knight_squire", "knight_high_king", true],
-    ["adepta_sororitas", "living_saint", true],
-    ["living_saint", "chaos_cultist", false]
-  ];
-  for (const [fromId, toId, expected] of graphChecks) {
-    const actual = reachableFrom.has(fromId) && reachableFrom.get(fromId).has(toId);
-    if (actual !== expected) {
-      fail(7, `Career graph sanity mismatch: ${fromId} -> ${toId} expected=${expected}, got=${actual}`);
-    }
-  }
-
-  let pastCareerChecks = 0;
-  function auditPastCareerReq(req, owner, parentCareers) {
-    if (!req) return;
-    const curList = req.anyCareers || parentCareers || null;
-    if (req.anyPastCareers) {
-      pastCareerChecks++;
-      const excl = new Set(req.excludePastCareers || []);
-      const validPast = req.anyPastCareers.filter((p) => !excl.has(p));
-      if (validPast.length === 0) {
-        fail(7, `Contradictory anyPastCareers vs excludePastCareers in ${owner}`);
-      } else if (curList && curList.length > 0) {
-        let pairOk = false;
-        for (const p of validPast) {
-          const reach = reachableFrom.get(p);
-          for (const c of curList) {
-            if (p === c || (reach && reach.has(c))) {
-              pairOk = true;
-              break;
-            }
-          }
-          if (pairOk) break;
-        }
-        if (!pairOk) {
-          fail(7, `Unreachable (anyPastCareers=[${validPast.join(",")}] -> anyCareers=[${curList.join(",")}]) in ${owner}`);
-        }
-      }
-    }
-    if (req.or) {
-      req.or.forEach((sub, idx) => auditPastCareerReq(sub, `${owner}.or[${idx}]`, curList));
-    }
-  }
-
-  // 7B. Full-Corpus Synthetic Reachability Prover
-  function intersectArrays(a, b) {
-    if (!a) return b ? [...b] : null;
-    if (!b) return [...a];
-    const setB = new Set(b);
-    return a.filter((x) => setB.has(x));
-  }
-
-  function mergeFlatReq(a, b) {
-    if (!a) return b ? Object.assign({}, b) : {};
-    if (!b) return Object.assign({}, a);
-    const out = Object.assign({}, a);
-
-    const maxKeys = ["minAge", "minYear", "minFaith", "minCorruption", "minWounds"];
-    const minKeys = ["maxAge", "maxYear", "maxFaith", "maxCorruption", "maxWounds", "maxCareerTier"];
-    for (const k of maxKeys) {
-      if (b[k] !== undefined) out[k] = out[k] !== undefined ? Math.max(out[k], b[k]) : b[k];
-    }
-    for (const k of minKeys) {
-      if (b[k] !== undefined) out[k] = out[k] !== undefined ? Math.min(out[k], b[k]) : b[k];
-    }
-
-    if (b.minSocialTier) {
-      if (!out.minSocialTier || socialTierOrder.indexOf(b.minSocialTier) > socialTierOrder.indexOf(out.minSocialTier)) {
-        out.minSocialTier = b.minSocialTier;
-      }
-    }
-    if (b.maxSocialTier) {
-      if (!out.maxSocialTier || socialTierOrder.indexOf(b.maxSocialTier) < socialTierOrder.indexOf(out.maxSocialTier)) {
-        out.maxSocialTier = b.maxSocialTier;
-      }
-    }
-    if (out.minSocialTier && out.maxSocialTier && socialTierOrder.indexOf(out.minSocialTier) > socialTierOrder.indexOf(out.maxSocialTier)) {
-      return null;
-    }
-
-    if (b.difficulty) {
-      if (out.difficulty && out.difficulty !== b.difficulty) return null;
-      out.difficulty = b.difficulty;
-    }
-    if (b.gender) {
-      if (out.gender && out.gender !== b.gender) return null;
-      out.gender = b.gender;
-    }
-    if (b.greatRift !== undefined) {
-      if (out.greatRift !== undefined && out.greatRift !== b.greatRift) return null;
-      out.greatRift = b.greatRift;
-    }
-
-    const intersectKeys = ["anyCareers", "anyTrees", "anyChapters", "anyWorlds", "anyHomeWorlds", "anySegmenta", "anyFocus", "anyDominantAlign", "anySocialTiers", "anyRealms", "anyBodyClasses"];
-    for (const k of intersectKeys) {
-      if (b[k]) {
-        const merged = intersectArrays(out[k], b[k]);
-        if (merged.length === 0) return null;
-        out[k] = merged;
-      }
-    }
-
-    out._anyTagGroups = [...(a._anyTagGroups || (a.anyTags ? [a.anyTags] : [])), ...(b._anyTagGroups || (b.anyTags ? [b.anyTags] : []))];
-    out._anyWorldTagGroups = [...(a._anyWorldTagGroups || (a.anyWorldTags ? [a.anyWorldTags] : [])), ...(b._anyWorldTagGroups || (b.anyWorldTags ? [b.anyWorldTags] : []))];
-    out._anyPastGroups = [...(a._anyPastGroups || (a.anyPastCareers ? [a.anyPastCareers] : [])), ...(b._anyPastGroups || (b.anyPastCareers ? [b.anyPastCareers] : []))];
-    delete out.anyTags;
-    delete out.anyWorldTags;
-    delete out.anyPastCareers;
-
-    const unionKeys = ["allTags", "excludeTags", "excludeWorlds", "excludeHomeWorlds", "excludeWorldTags", "excludeChapters", "excludePastCareers", "excludeRealms", "excludeBodyClasses", "excludeTrees"];
-    for (const k of unionKeys) {
-      if (b[k]) out[k] = [...new Set([...(out[k] || []), ...b[k]])];
-    }
-
-    if (b.stats) {
-      out.stats = Object.assign({}, out.stats || {});
-      for (const sk of Object.keys(b.stats)) {
-        out.stats[sk] = out.stats[sk] !== undefined ? Math.max(out.stats[sk], b.stats[sk]) : b.stats[sk];
-      }
-    }
-    if (b.minAlign) {
-      out.minAlign = Object.assign({}, out.minAlign || {});
-      for (const ak of Object.keys(b.minAlign)) {
-        out.minAlign[ak] = out.minAlign[ak] !== undefined ? Math.max(out.minAlign[ak], b.minAlign[ak]) : b.minAlign[ak];
-      }
-    }
-    if (b.maxAlign) {
-      out.maxAlign = Object.assign({}, out.maxAlign || {});
-      for (const ak of Object.keys(b.maxAlign)) {
-        out.maxAlign[ak] = out.maxAlign[ak] !== undefined ? Math.min(out.maxAlign[ak], b.maxAlign[ak]) : b.maxAlign[ak];
-      }
-    }
-    delete out.or;
-    return out;
-  }
-
-  function expandClauses(req) {
-    if (!req) return [{}];
-    const base = Object.assign({}, req);
-    const orBranches = base.or;
-    delete base.or;
-    const baseFlat = mergeFlatReq({}, base);
-    if (!baseFlat) return [];
-    if (!orBranches || orBranches.length === 0) return [baseFlat];
-
-    const results = [];
-    for (const branch of orBranches) {
-      const subClauses = expandClauses(branch);
-      for (const sc of subClauses) {
-        const merged = mergeFlatReq(baseFlat, sc);
-        if (merged) results.push(merged);
-      }
-    }
-    return results;
-  }
-
-  function synthesizeClauseState(cl) {
-    const minAge = cl.minAge !== undefined ? cl.minAge : 0;
-    const maxAge = cl.maxAge !== undefined ? cl.maxAge : 400;
-    if (minAge > maxAge) return null;
-    const age = cl.minAge !== undefined ? cl.minAge : Math.min(25, maxAge);
-
-    let minYear = cl.minYear !== undefined ? cl.minYear : 100;
-    let maxYear = cl.maxYear !== undefined ? cl.maxYear : 1040;
-    if (cl.greatRift === true) minYear = Math.max(minYear, 999);
-    if (cl.greatRift === false) maxYear = Math.min(maxYear, 998);
-    if (minYear > maxYear) return null;
-    const year = minYear;
-
-    const minFaith = cl.minFaith !== undefined ? cl.minFaith : 0;
-    const maxFaith = cl.maxFaith !== undefined ? cl.maxFaith : 100;
-    if (minFaith > maxFaith) return null;
-    const faith = minFaith;
-
-    const minCorr = cl.minCorruption !== undefined ? cl.minCorruption : 0;
-    const maxCorr = cl.maxCorruption !== undefined ? cl.maxCorruption : 100;
-    if (minCorr > maxCorr) return null;
-    const corruption = minCorr;
-
-    const minWounds = cl.minWounds !== undefined ? cl.minWounds : 1;
-    const maxWounds = cl.maxWounds !== undefined ? cl.maxWounds : 200;
-    if (minWounds > maxWounds) return null;
-    const wounds = minWounds;
-
-    const minA = { humane: 0, dogmatic: 0, ruthless: 0 };
-    const maxA = { humane: 100, dogmatic: 100, ruthless: 100 };
-    for (const ak of ["humane", "dogmatic", "ruthless"]) {
-      if (cl.minAlign && cl.minAlign[ak] !== undefined) minA[ak] = Math.max(minA[ak], cl.minAlign[ak]);
-      if (cl.maxAlign && cl.maxAlign[ak] !== undefined) maxA[ak] = Math.min(maxA[ak], cl.maxAlign[ak]);
-      if (minA[ak] > maxA[ak]) return null;
-    }
-    let alignment = { humane: minA.humane, dogmatic: minA.dogmatic, ruthless: minA.ruthless };
-    if (cl.anyDominantAlign && cl.anyDominantAlign.length > 0) {
-      let solved = null;
-      for (const dom of cl.anyDominantAlign) {
-        if (dom === "neutral") {
-          const topMin = Math.max(minA.humane, minA.dogmatic, minA.ruthless);
-          if (topMin < 15) {
-            solved = { humane: minA.humane, dogmatic: minA.dogmatic, ruthless: minA.ruthless };
-            break;
-          }
-          const pairs = [["humane", "dogmatic", "ruthless"], ["humane", "ruthless", "dogmatic"], ["dogmatic", "ruthless", "humane"]];
-          for (const [k1, k2, k3] of pairs) {
-            const v = Math.max(15, minA[k1], minA[k2], minA[k3]);
-            if (v <= maxA[k1] && v <= maxA[k2] && minA[k3] <= v) {
-              const cand = { [k1]: v, [k2]: v, [k3]: minA[k3] };
-              if (Engine.getAlignmentInfo({ alignment: cand }).dominant === "neutral") {
-                solved = cand;
-                break;
-              }
-            }
-          }
-          if (solved) break;
-        } else {
-          const others = ["humane", "dogmatic", "ruthless"].filter((k) => k !== dom);
-          const needed = Math.max(15, minA[dom], minA[others[0]] + 1, minA[others[1]] + 1);
-          if (needed <= maxA[dom]) {
-            solved = { [dom]: needed, [others[0]]: minA[others[0]], [others[1]]: minA[others[1]] };
-            break;
-          }
-        }
-      }
-      if (!solved) return null;
-      alignment = solved;
-    }
-
-    const exclWorlds = new Set(cl.excludeWorlds || []);
-    const exclHomeWorlds = new Set(cl.excludeHomeWorlds || []);
-    const exclWorldTags = new Set(cl.excludeWorldTags || []);
-    const worldCandidates = DATA.WORLDS.filter((w) => {
-      if (cl.anyWorlds && !cl.anyWorlds.includes(w.id)) return false;
-      if (exclWorlds.has(w.id)) return false;
-      if (cl.anySegmenta && !cl.anySegmenta.includes(w.segmentum)) return false;
-      if (exclWorldTags.size && (w.tags || []).some((t) => exclWorldTags.has(t))) return false;
-      for (const grp of (cl._anyWorldTagGroups || [])) {
-        if (!grp.some((t) => (w.tags || []).includes(t))) return false;
-      }
-      return true;
-    });
-    if (worldCandidates.length === 0) return null;
-
-    const exclChapters = new Set(cl.excludeChapters || []);
-    let chapterId = null;
-    if (cl.anyChapters) {
-      const validCh = cl.anyChapters.find((cid) => chapterIds.has(cid) && !exclChapters.has(cid));
-      if (!validCh) return null;
-      chapterId = validCh;
-    }
-
-    const exclTags = new Set(cl.excludeTags || []);
-    const baseTagSet = new Set(cl.allTags || []);
-    for (const t of baseTagSet) {
-      if (exclTags.has(t)) return null;
-    }
-    for (const grp of (cl._anyTagGroups || [])) {
-      const picked = grp.find((t) => !exclTags.has(t));
-      if (!picked) return null;
-      baseTagSet.add(picked);
-    }
-
-    const exclPast = new Set(cl.excludePastCareers || []);
-    const exclTrees = new Set(cl.excludeTrees || []);
-    const needsStratSearch = Boolean(
-      cl.minSocialTier || cl.maxSocialTier || cl.anySocialTiers ||
-      cl.anyRealms || cl.excludeRealms ||
-      cl.anyBodyClasses || cl.excludeBodyClasses ||
-      cl.excludeTrees || cl.maxCareerTier !== undefined
-    );
-
-    const buildCareerCandidates = () => {
-      const list = [];
-      if (cl.anyCareers) {
-        for (const cid of cl.anyCareers) {
-          const co = careerById.get(cid);
-          if (!co || exclPast.has(cid)) continue;
-          if (exclTrees.has(co.tree)) continue;
-          if (cl.anyTrees && !cl.anyTrees.includes(co.tree)) continue;
-          if (cl.maxCareerTier !== undefined && (co.tier || 0) > cl.maxCareerTier) continue;
-          list.push(co);
-        }
-        return list;
-      }
-      if (cl.anyTrees) {
-        for (const co of DATA.CAREERS) {
-          if (exclPast.has(co.id) || exclTrees.has(co.tree)) continue;
-          if (!cl.anyTrees.includes(co.tree)) continue;
-          if (cl.maxCareerTier !== undefined && (co.tier || 0) > cl.maxCareerTier) continue;
-          list.push(co);
-        }
-        return list;
-      }
-      const preferredIds = age < 14
-        ? ["child"]
-        : ["menial_worker", "astra_militarum", "underhive_ganger", "administratum", "imperial_navy", "tech_priest", "ecclesiarchy_priest", "militarum_officer", "inquisitor", "astartes_brother", "adeptus_custodes", "chaos_cultist", "daemon_prince", "child"];
-      const seen = new Set();
-      for (const pid of preferredIds) {
-        const co = careerById.get(pid);
-        if (co && !exclPast.has(co.id) && !exclTrees.has(co.tree) && (cl.maxCareerTier === undefined || (co.tier || 0) <= cl.maxCareerTier)) {
-          list.push(co);
-          seen.add(co.id);
-        }
-      }
-      if (needsStratSearch || list.length === 0) {
-        for (const co of DATA.CAREERS) {
-          if (seen.has(co.id) || exclPast.has(co.id) || exclTrees.has(co.tree)) continue;
-          if (cl.maxCareerTier !== undefined && (co.tier || 0) > cl.maxCareerTier) continue;
-          list.push(co);
-          seen.add(co.id);
-        }
-      }
-      return list;
-    };
-
-    const careerCandidates = buildCareerCandidates();
-    if (careerCandidates.length === 0) return null;
-
-    const extraTagVariants = needsStratSearch
-      ? [[], ["lowborn"], ["noble"], ["bionic"], ["dreadnought"], ["astartes", "transhuman"], ["daemon_prince"], ["schola"], ["voidborn"], ["mechanicus_blood"], ["heretic"]]
-      : [[]];
-
-    const worldTryList = needsStratSearch
-      ? [
-          ...worldCandidates.filter((w) => !exclHomeWorlds.has(w.id)),
-          ...worldCandidates.filter((w) => exclHomeWorlds.has(w.id))
-        ].slice(0, 8)
-      : [worldCandidates.find((w) => !exclHomeWorlds.has(w.id)) || worldCandidates[0]];
-
-    const focus = (cl.anyFocus && cl.anyFocus[0]) || "survival";
-    const stats = { WS: 50, BS: 50, T: 50, Ag: 50, Int: 50, WP: 50, Fel: 50, Inf: 50 };
-    if (cl.stats) {
-      for (const sk of Object.keys(cl.stats)) stats[sk] = Math.max(stats[sk] || 50, cl.stats[sk]);
-    }
-
-    const stratReqOnly = needsStratSearch ? {
-      minSocialTier: cl.minSocialTier,
-      maxSocialTier: cl.maxSocialTier,
-      anySocialTiers: cl.anySocialTiers,
-      anyRealms: cl.anyRealms,
-      excludeRealms: cl.excludeRealms,
-      anyBodyClasses: cl.anyBodyClasses,
-      excludeBodyClasses: cl.excludeBodyClasses,
-      excludeTrees: cl.excludeTrees,
-      maxCareerTier: cl.maxCareerTier
-    } : null;
-
-    for (const co of careerCandidates) {
-      const careerId = co.id;
-      const pastHistory = [careerId];
-      if (!exclPast.has("child") && careerId !== "child") pastHistory.unshift("child");
-      let pastOk = true;
-      for (const grp of (cl._anyPastGroups || [])) {
-        const pickedPast = grp.find((p) => {
-          if (exclPast.has(p)) return false;
-          const reach = reachableFrom.get(p);
-          return p === careerId || (reach && reach.has(careerId));
-        });
-        if (!pickedPast) { pastOk = false; break; }
-        if (!pastHistory.includes(pickedPast)) pastHistory.push(pickedPast);
-      }
-      if (!pastOk) continue;
-
-      const gender = cl.gender || (co.req && co.req.gender) || "male";
-      for (const chosenWorld of worldTryList) {
-        let homeWorldId;
-        if (cl.anyHomeWorlds && cl.anyHomeWorlds.length > 0) {
-          homeWorldId = cl.anyHomeWorlds.find((id) => worldIds.has(id) && !exclHomeWorlds.has(id));
-          if (!homeWorldId) continue;
-        } else if (!exclHomeWorlds.has(chosenWorld.id)) {
-          homeWorldId = chosenWorld.id;
-        } else {
-          const altHome = DATA.WORLDS.find((w) => !exclHomeWorlds.has(w.id));
-          if (!altHome) continue;
-          homeWorldId = altHome.id;
-        }
-        if (!worldIds.has(homeWorldId)) continue;
-
-        for (const extraTags of extraTagVariants) {
-          if (extraTags.some((t) => exclTags.has(t))) continue;
-          const tagArr = [...new Set([...baseTagSet, ...extraTags])];
-          const candidateState = {
-            alive: true,
-            difficulty: cl.difficulty || "standard",
-            age,
-            year,
-            quarter: 1,
-            gender,
-            worldId: chosenWorld.id,
-            homeWorldId,
-            segmentum: chosenWorld.segmentum,
-            careerId,
-            careerHistory: pastHistory,
-            chapterId,
-            focus,
-            stats,
-            faith,
-            corruption,
-            wounds,
-            maxWounds: Math.max(100, wounds),
-            alignment,
-            tags: tagArr,
-            globalFlags: {
-              greatRiftOpened: cl.greatRift !== undefined ? cl.greatRift : year >= 999
-            }
-          };
-          if (!stratReqOnly || Engine.checkReq(candidateState, stratReqOnly)) {
-            return candidateState;
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  function proveReachable(req, owner, origReqForCheck) {
-    if (!req) return true;
-    const clauses = expandClauses(req);
-    for (const cl of clauses) {
-      const st = synthesizeClauseState(cl);
-      if (st && Engine.checkReq(st, origReqForCheck || req)) return true;
-    }
-    fail(7, `Synthetically unreachable requirement in ${owner}`);
-    return false;
-  }
-
-  let synthChecked = 0;
-  for (let i = 0; i < DATA.EVENTS.length; i++) {
-    const ev = DATA.EVENTS[i];
-    const src = eventSourceByIndex[i] || "EVENTS";
-    const owner = `${ev.id} (${src})`;
-    auditPastCareerReq(ev.req, owner, null);
-    synthChecked++;
-    proveReachable(ev.req, owner, ev.req);
-    (ev.choices || []).forEach((ch, idx) => {
-      if (!ch.req) return;
-      const chOwner = `${ev.id}:choice[${idx}] (${src})`;
-      auditPastCareerReq(ch.req, chOwner, ev.req && ev.req.anyCareers ? ev.req.anyCareers : null);
-      synthChecked++;
-      const combined = ev.req ? { or: expandClauses(ev.req).flatMap((ec) => expandClauses(ch.req).map((cc) => mergeFlatReq(ec, cc)).filter(Boolean)) } : ch.req;
-      let ok = false;
-      const clauses = combined.or ? combined.or : expandClauses(combined);
-      for (const cl of clauses) {
-        const st = synthesizeClauseState(cl);
-        if (st && Engine.checkReq(st, ev.req) && Engine.checkReq(st, ch.req)) { ok = true; break; }
-      }
-      if (!ok) fail(7, `Choice unreachable under parent event req in ${chOwner}`);
-    });
-  }
-
-  for (const tl of DATA.TIMELINE) {
-    const owner = `timeline:${tl.id}`;
-    auditPastCareerReq(tl.filter, owner, null);
-    synthChecked++;
-    proveReachable(tl.filter, owner, tl.filter);
-    (tl.choices || []).forEach((ch, idx) => {
-      if (!ch.req) return;
-      const chOwner = `timeline:${tl.id}:choice[${idx}]`;
-      auditPastCareerReq(ch.req, chOwner, tl.filter && tl.filter.anyCareers ? tl.filter.anyCareers : null);
-      synthChecked++;
-      let ok = false;
-      const parentClauses = expandClauses(tl.filter);
-      const childClauses = expandClauses(ch.req);
-      for (const ec of parentClauses) {
-        for (const cc of childClauses) {
-          const merged = mergeFlatReq(ec, cc);
-          if (!merged) continue;
-          const st = synthesizeClauseState(merged);
-          if (st && Engine.checkReq(st, tl.filter) && Engine.checkReq(st, ch.req)) { ok = true; break; }
-        }
-        if (ok) break;
-      }
-      if (!ok) fail(7, `Timeline choice unreachable under parent filter in ${chOwner}`);
-    });
-  }
-
-  for (let i = 0; i < DATA.CHRONICLES.length; i++) {
-    const ch = DATA.CHRONICLES[i];
-    const src = chronSourceByIndex[i] || "CHRONICLES";
-    const owner = `${ch.id} (${src})`;
-    auditPastCareerReq(ch.req, owner, null);
-    synthChecked++;
-    proveReachable(ch.req, owner, ch.req);
-  }
-
-  for (const c of DATA.CAREERS) {
-    if (!c.req) continue;
-    synthChecked++;
-    proveReachable(c.req, `career:${c.id}`, c.req);
-  }
-
-  function reqMentionsCareer(req, cid) {
-    if (!req) return false;
-    if (req.anyCareers && req.anyCareers.includes(cid)) return true;
-    if (req.or && req.or.some((sub) => reqMentionsCareer(sub, cid))) return true;
-    return false;
-  }
-
-  let careersWithEvents = 0;
-  let careersWithChrons = 0;
-  for (const c of selectableCareers) {
-    const hasEv = DATA.EVENTS.some((ev) => reqMentionsCareer(ev.req, c.id));
-    const hasCh = DATA.CHRONICLES.some((ch) => reqMentionsCareer(ch.req, c.id));
-    if (hasEv) careersWithEvents++;
-    if (hasCh) careersWithChrons++;
-  }
-
-  console.log(
-    `[Gate 7A/7B] Career graph verified (${DATA.CAREERS.length} nodes, ${pastCareerChecks} anyPastCareers checks), ` +
-    `synthetic reachability proved (${synthChecked} req specs), ` +
-    `directCareerMatch(events=${careersWithEvents}/${selectableCareers.length}, chronicles=${careersWithChrons}/${selectableCareers.length}).`
-  );
-
-  // Gate 7D: 전 91직군 승급 간선(A -> B) 스탯 상한 무결성 증명 (데드락 0건)
-  let checkedEdges = 0;
-  for (const b of selectableCareers) {
-    const reqStats = (b.req && b.req.stats) || {};
-    const statEntries = Object.entries(reqStats);
-    if (statEntries.length === 0) continue;
-    const prevSet = new Set();
-    if (b.req && Array.isArray(b.req.anyCareers)) {
-      b.req.anyCareers.forEach((id) => prevSet.add(id));
-    }
-    if (b.req && Array.isArray(b.req.or)) {
-      for (const br of b.req.or) {
-        if (br && Array.isArray(br.anyCareers)) br.anyCareers.forEach((id) => prevSet.add(id));
-      }
-    }
-    if (prevSet.size === 0) continue;
-    for (const prevId of prevSet) {
-      const a = DATA.CAREERS.find((c) => c.id === prevId);
-      if (!a) continue;
-      checkedEdges++;
-      const probe = {
-        age: Math.max(20, (b.req && b.req.minAge) || 20),
-        careerId: a.id,
-        worldId: "generic_civilised",
-        homeWorldId: "generic_civilised",
-        traitId: "none",
-        tags: [...((a.onJoin && a.onJoin.addTags) || [])],
-        augmeticsCount: a.tree === "mechanicus" ? 1 : 0,
-        stats: { WS: 25, BS: 25, T: 25, Ag: 25, Int: 25, WP: 25, Fel: 25, Inf: 25 }
-      };
-      for (const [sk, minVal] of statEntries) {
-        const cap = Engine.getStatCap(probe, sk);
-        if (cap < minVal) {
-          fail(7, `Gate 7D promotion cap deadlock: ${a.id} (${sk} cap=${cap}) -> ${b.id} (requires ${sk}>=${minVal})`);
-        }
-      }
-    }
-  }
-  console.log(`[Gate 7D] Promotion-cap integrity proved (${checkedEdges} direct edges, 0 cap deadlocks).`);
+  runCareerAuditGate({ DATA, Engine, eventSourceByIndex, chronSourceByIndex, fail });
 }
 
 // ============================================================================

@@ -72,7 +72,7 @@ export default [
       minAge: 16,
       allTags: ["psyker"],
       excludeChapters: ["black_templars"],
-      excludeTags: ["custodes", "grey_knight", "daemon_prince", "heretic", "chaos_aligned", "blank", "dreadnought", "living_saint"]
+      excludeTags: ["custodes", "grey_knight", "daemon_prince", "heretic", "chaos_aligned", "blank", "omega_pariah", "dreadnought", "living_saint"]
     },
     reqLabel: "자질: 사이커",
     weight: 16,
@@ -120,10 +120,25 @@ export default [
           faith: 6,
           align: { dogmatic: 5 }
         },
+        critSuccess: {
+          text: "워프의 균열을 역으로 닫아걸며 영혼에 박혀 있던 흉터마저 태워 정화했다.",
+          stats: { WP: 8, Int: 5 },
+          faith: 8,
+          corruption: -6,
+          removeTags: ["warp_scarred"],
+          addTags: ["iron_nerves"],
+          align: { dogmatic: 7 }
+        },
         fail: {
           text: "사이킥 역류로 피를 토하며 쓰러졌고, 영혼에 지워지지 않는 워프의 균열이 남았다.",
           wounds: -24,
           corruption: 14
+        },
+        critFail: {
+          text: "통제를 벗어난 워프의 불길이 정신을 할퀴며 지워지지 않는 워프 흉터를 새겼다.",
+          wounds: -28,
+          corruption: 18,
+          addTags: ["warp_scarred"]
         }
       },
       {
@@ -153,11 +168,19 @@ export default [
     text: "워프 항해 도중 선체 전체의 조명이 0.8초간 꺼졌다! 겔러 필드가 흔들리는 찰나, 복도 벽면에서 피가 흐르고 기관실 승무원들이 미쳐 날뛰기 시작한다!",
     choices: [
       {
-        label: "[아스타르테스·쿠스토데스 전용] 초인의 위엄과 압도적 무력으로 빙의자들을 단숨에 일소한다",
-        req: { anyTags: ["astartes", "custodes"] },
+        label: "[초인·성인 전용] 압도적 위엄과 신성한 무력으로 빙의자들을 단숨에 일소한다",
+        req: { anyTags: ["astartes", "custodes", "grey_knight", "living_saint"] },
         effect: {
-          text: "초인의 압도적인 기세와 맹공이 복도를 휩쓸자 악마적 환영은 산산조각 났다! 일말의 흔들림도 없는 정밀한 진압으로 선내 위협을 2분 만에 평정했다.",
+          text: "초인과 성인의 압도적인 기세와 맹공이 복도를 휩쓸자 악마적 환영은 산산조각 났다! 일말의 흔들림도 없는 정밀한 진압으로 선내 위협을 2분 만에 평정했다.",
           stats: { WS: 4, WP: 4, Inf: 5 }
+        }
+      },
+      {
+        label: "[무혼 전용] 영혼 없는 공허의 장막으로 복도의 악마 현현을 즉각 소멸시키고 보조 발전기를 안정화한다",
+        req: { anyTags: ["blank", "omega_pariah"] },
+        effect: {
+          text: "워프의 속삭임과 악마적 환영은 공허한 영혼 앞에서 아무 힘도 쓰지 못했다! 빙의된 승무원들이 비명을 지르며 무력화되는 사이 겔러 발전기를 침착히 복구했다.",
+          stats: { WP: 5, Int: 4, Inf: 5 }
         }
       },
       {
@@ -179,11 +202,18 @@ export default [
       },
       {
         label: "[의지 판정] 악마적 환영을 뿌리치고 겔러 필드 보조 발전기를 재가동한다",
+        req: { excludeTags: ["grey_knight", "custodes", "living_saint", "blank", "omega_pariah"] },
         check: { stat: "WP", diff: -5 },
         success: {
           text: "기계령의 기도를 외며 방어막을 복구해 수만 명 승무원의 영혼을 구했다!",
           stats: { WP: 6, Int: 4, Inf: 6 },
           faith: 6
+        },
+        critSuccess: {
+          text: "완벽한 정신 집중으로 겔러 필드를 즉각 정상화하고, 그 여파로 영혼에 남았던 워프의 잔재까지 말끔히 씻어 냈다.",
+          stats: { WP: 7, Int: 5, Inf: 7 },
+          faith: 8,
+          removeTags: ["warp_scarred"]
         },
         fail: {
           text: "워프의 광기에 휩쓸린 승무원들과 난투극을 벌이며 부상과 오염을 입었다.",
@@ -204,8 +234,13 @@ export default [
           text: "함교로 돌진하던 빙의자들을 모두 막아 내어 함교 전원의 찬사를 받았다.",
           stats: { WS: 5, T: 3, Inf: 5 }
         },
+        critSuccess: {
+          text: "좁은 격벽 통로에서 밀려드는 빙의자들을 단신으로 베어 넘기며 신들린 검술의 경지를 증명했다.",
+          stats: { WS: 7, T: 4, Inf: 6 },
+          addTags: ["blade_master"]
+        },
         fail: {
-          text: "변이된 승무원의 괴력에 뼈가 부러졌다.",
+          text: "변이된 승무원들의 광포한 반격에 깊은 상처를 입었다.",
           wounds: -26,
           corruption: 6
         }
@@ -279,7 +314,7 @@ export default [
       minAge: 16,
       minCorruption: 35,
       excludeTags: [
-        "custodes", "grey_knight", "blank", "daemon_prince",
+        "custodes", "grey_knight", "living_saint", "blank", "omega_pariah", "daemon_prince",
         "mark_khorne", "mark_tzeentch", "mark_nurgle", "mark_slaanesh"
       ]
     },
@@ -359,10 +394,11 @@ export default [
     category: "오염",
     req: {
       anyCareers: ["chaos_cultist", "chaos_champion"],
-      excludeWorlds: ["mars"],
+      excludeWorlds: ["mars", "krieg", "voidborn"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral", "krieg"]
     },
-    reqLabel: "직군: 카오스 컬티스트 · 카오스 챔피언",
+    reqLabel: "직군: 카오스 컬티스트 · 카오스 챔피언 · 화성·크리그·함선·야만 행성 제외",
     weight: 24,
     alignBias: "ruthless",
     text: "제국 군수 창고와 성당을 습격할 비밀 의식이 준비되었다. 성공하면 워프의 축복이 쏟아지지만, 제국 치안대와 소로리타스가 이미 낌새를 챘다.",
@@ -751,10 +787,11 @@ export default [
     once: true,
     req: {
       anyCareers: ["chaos_cultist", "chaos_champion"],
-      excludeWorldTags: ["feral", "krieg"],
-      excludeHomeWorlds: ["krieg"]
+      excludeWorlds: ["krieg", "voidborn"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"]
     },
-    reqLabel: "직군: 카오스 컬티스트 · 카오스 챔피언",
+    reqLabel: "직군: 카오스 컬티스트 · 카오스 챔피언 · 크리그·함선·야만 행성 제외",
     weight: 34,
     alignBias: "ruthless",
     text: "18시간 교대 노동과 시체 전분 배급에 지친 하층 하이브 공장 인부들 사이에 절망이 짙게 깔려 있다. 어둠의 교단을 키울 절호의 토양이지만, 아르비테스 밀정이 섞여 있을 위험도 크다.",
@@ -811,9 +848,11 @@ export default [
     req: {
       anyCareers: ["chaos_cultist", "chaos_champion"],
       minAge: 18,
-      excludeWorlds: ["terra", "mars"]
+      excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"]
     },
-    reqLabel: "직군: 카오스 컬티스트 · 카오스 챔피언 · 18세+",
+    reqLabel: "직군: 카오스 컬티스트 · 카오스 챔피언 · 18세+ · 테라·화성·크리그·함선·야만 행성 제외",
     weight: 34,
     alignBias: "ruthless",
     text: "교단의 소환 신호에 응답해 궤도에서 가시 돋친 강습정이 내려왔다! 1만 년 증오에 절은 반역자 카오스 스페이스 마린 워밴드 군주가 필멸자 교단원들을 소모품 보듯 내려다보며 방어 포대 좌표를 요구한다.",
@@ -978,14 +1017,14 @@ export default [
     once: true,
     req: {
       minAge: 18,
-      excludeWorlds: ["terra", "mars"],
+      excludeWorlds: ["terra", "mars", "voidborn"],
       excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "daemon_prince",
         "custodes", "grey_knight", "dreadnought", "high_lord_terra"
       ]
     },
-    reqLabel: "18세 이상 · 카오스 침공 전선",
+    reqLabel: "18세 이상 · 카오스 침공 지상 전선 · 테라·화성·함선·야만 행성 제외",
     weight: 26,
     text: "잿빛 안개 속에서 무거운 쇠종이 일곱 번 울려 퍼졌다. 녹슨 파워 아머 사이로 고름과 독충을 흘리며 느릿느릿 걸어오는 거인들—너글의 선택을 받은 배신자 군단 '데스 가드'의 플레이그 마린들이다! 라스건과 볼터가 몸통을 꿰뚫어도 저주받은 거인들은 고통조차 느끼지 못한 채 전진해 온다.",
     choices: [
@@ -1094,14 +1133,15 @@ export default [
     once: true,
     req: {
       minAge: 18,
-      excludeWorlds: ["terra", "mars", "krieg"],
+      excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "daemon_prince",
         "custodes", "grey_knight", "dreadnought", "high_lord_terra"
       ]
     },
-    reqLabel: "18세 이상 · 공포 심리전 전선",
+    reqLabel: "18세 이상 · 공포 심리전 지상 전선 · 테라·화성·크리그·함선·야만 행성 제외",
     weight: 26,
     text: "한밤중 도시의 모든 복스 확성기와 가정용 수신기가 저절로 켜지더니, 끔찍한 비명 소리와 번개 문양 갑주의 환상이 쏟아져 나왔다. 공포 자체를 무기로 삼는 배신자 군단 '나이트 로드'가 행성 궤도에 도착해 시민들의 이성을 산산조각 내려 하고 있다.",
     choices: [

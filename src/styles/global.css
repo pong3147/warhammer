@@ -611,17 +611,13 @@ body {
 }
 
 .stat-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
   background: var(--bg-card);
   border: 1px solid var(--border-dim);
   border-radius: 3px;
   padding: 6px 8px;
-}
-
-.stat-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 12px;
 }
 
 .stat-key {
@@ -636,9 +632,11 @@ body {
   font-weight: 700;
   color: var(--gold-bright);
   font-size: 13px;
+  text-align: right;
 }
 
 .stat-mini-bar {
+  grid-column: 1 / -1;
   height: 4px;
   background: #0b0a09;
   margin-top: 4px;

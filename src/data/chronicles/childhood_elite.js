@@ -334,7 +334,7 @@ export default [
       anyCareers: ["child"],
       or: [{ anyWorlds: ["voidborn"] }, { allTags: ["rogue_trader_blood"] }]
     },
-    text: "두꺼운 선체 격벽 안쪽에서 플라스마 원자로와 인공 중력 발전기가 내는 낮고 규칙적인 진동음을 자장가 삼아 잠들었다. 실우주 관측창 너머로 펼쳐진 차가운 별빛과 약한 인공 중력이 함선 태생 아이의 첫 세상이 되었다.",
+    text: "두꺼운 선체 격벽 안쪽에서 플라즈마 원자로와 인공 중력 발전기가 내는 낮고 규칙적인 진동음을 자장가 삼아 잠들었다. 실우주 관측창 너머로 펼쳐진 차가운 별빛과 약한 인공 중력이 함선 태생 아이의 첫 세상이 되었다.",
     effect: { stats: { WP: 1, Ag: 1 } },
     source: "Dark Heresy 2e: Voidborn"
   },

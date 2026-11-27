@@ -21,7 +21,7 @@ export default [
     badge: "화성 포지",
     priority: 3,
     req: { minAge: 14, anyWorlds: ["mars"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeRealms: ["heretic"] },
-    text: "붉은 방사능 모래폭풍이 올림푸스 몬스 주조소를 덮쳤다. 테크프리스트는 노동자 대피보다 외부 코기타토르 냉각기 덮개부터 씌우라고 명령했다.",
+    text: "붉은 방사능 모래폭풍이 올림푸스 몬스 주조소를 덮쳤다. 테크프리스트는 노동자 대피보다 외부 코지테이터 냉각기 덮개부터 씌우라고 명령했다.",
     effect: { stats: { Int: 1 }, wounds: -3 }
   },
   {

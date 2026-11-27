@@ -151,9 +151,9 @@ export const CAREERS_FAITH = [
     trialCheck: { stat: "WP", diff: -40, title: "테라·오펠리아 양대 콘벤트 합동 수녀회장 추대 심의", failDeathChance: 0.18 },
     onJoin: { stats: { WP: 8, Fel: 8, Inf: 12 }, addTags: ["high_lord_terra", "canoness", "hero_of_imperium"] },
     offerTitle: "테라 콘벤트 프리오리스와 오펠리아 VII 합동 선출 — 아베스 상크토룸 추대",
-    offerPitch: "모르벤 발의 뒤를 이어 은하 모든 전투 수녀회를 통솔하고 테라의 하이 로드 의석에 앉을 최고 지도자, 아베스 상크토룸으로 그대가 추대되었다.",
+    offerPitch: "성녀 카서린과 역대 총원장들의 계보를 이어 은하 모든 전투 수녀회를 통솔하고 테라의 하이 로드 의석에 앉을 최고 지도자, 아베스 상크토룸으로 그대가 추대되었다.",
     desc: "아뎁타 소로리타스 전 교단의 절대적 영적·군사적 수장이자 테라의 하이 로드. 황금 파라곤 워슈트를 두르고 성전과 원로원을 함께 이끈다.",
-    source: "Lexicanum: Abbess of the Adepta Sororitas / Morvenn Vahl"
+    source: "Lexicanum: Abbess of the Adepta Sororitas / Codex: Adepta Sororitas"
   },
 
   // =========================================================================
@@ -173,7 +173,7 @@ export const CAREERS_FAITH = [
     lifeBonus: 12,
     hazardMod: 0.009,
     annualGrowth: { WP: 2.2, Fel: 2, Inf: 1.5 },
-    req: { minAge: 17, stats: { WP: 38, Fel: 35 }, or: [{ minFaith: 55 }, { minFaith: 45, minAlign: { humane: 20 } }], maxCorruption: 15, excludeTags: ["astartes", "custodes", "heretic", "assassin", "living_saint"] },
+    req: { minAge: 17, stats: { WP: 38, Fel: 35 }, or: [{ minFaith: 55 }, { minFaith: 45, minAlign: { humane: 20 } }], maxCorruption: 15, excludeTags: ["abhuman", "psyker", "navigator", "mutant_sanctioned", "astartes", "custodes", "heretic", "assassin", "living_saint"] },
     selectable: true,
     onJoin: { stats: { WP: 7, Fel: 7, Inf: 8 }, addTags: ["ecclesiarchy", "pious"] },
     desc: "황제 신앙을 전파하고 전장에서 체인소드를 치켜든 채 병사들의 광신을 불태우는 국교 사제.",
@@ -199,7 +199,7 @@ export const CAREERS_FAITH = [
       stats: { WP: 52, Fel: 50, Inf: 42 },
       minFaith: 70,
       maxCorruption: 10,
-      excludeTags: ["heretic"]
+      excludeTags: ["abhuman", "psyker", "navigator", "mutant_sanctioned", "heretic"]
     },
     selectable: true,
     onJoin: { stats: { WP: 6, Fel: 7, Inf: 8 }, addTags: ["confessor", "ecclesiarchy", "pious"] },
@@ -228,7 +228,7 @@ export const CAREERS_FAITH = [
       minFaith: 82,
       maxCorruption: 8,
       or: [{ anyCareers: ["ministorum_confessor", "canoness"] }, { allTags: ["ecclesiarchy", "noble"], stats: { Inf: 70 } }],
-      excludeTags: ["astartes", "custodes", "heretic"]
+      excludeTags: ["abhuman", "psyker", "navigator", "mutant_sanctioned", "astartes", "custodes", "heretic"]
     },
     selectable: true,
     onJoin: { stats: { Fel: 6, Inf: 10, WP: 6 }, addTags: ["cardinal", "ecclesiarchy", "hero_of_imperium"] },
@@ -257,7 +257,7 @@ export const CAREERS_FAITH = [
       stats: { WP: 90, Fel: 90, Inf: 90 },
       minFaith: 95,
       maxCorruption: 3,
-      excludeTags: ["heretic", "high_lord_terra"]
+      excludeTags: ["abhuman", "psyker", "navigator", "mutant_sanctioned", "heretic", "high_lord_terra"]
     },
     selectable: true,
     trialCheck: { stat: "Fel", diff: -50, title: "테라 홀리 시노드 콘클라베 권력 암투", failDeathChance: 0.28 },
@@ -448,7 +448,7 @@ export const CAREERS_INQ_MECH = [
       minAge: 16,
       stats: { Int: 32, T: 30 },
       or: [{ anyTags: ["mechanicus_blood"] }, { anyWorldTags: ["forge", "mechanicus"] }, { stats: { Int: 45 } }],
-      excludeTags: ["astartes", "custodes", "heretic"]
+      excludeTags: ["abhuman", "psyker", "navigator", "astartes", "custodes", "heretic"]
     },
     selectable: true,
     onJoin: { stats: { BS: 7, T: 7, Int: 4, Fel: -5 }, addTags: ["mechanicus", "bionic"] },
@@ -473,7 +473,7 @@ export const CAREERS_INQ_MECH = [
       minAge: 22,
       anyCareers: ["skitarii"],
       stats: { BS: 52, T: 48, Int: 46 },
-      excludeTags: ["heretic"]
+      excludeTags: ["abhuman", "psyker", "navigator", "heretic"]
     },
     selectable: true,
     onJoin: { stats: { BS: 7, T: 6, Int: 6, Inf: 8 }, addTags: ["skitarii_marshal", "mechanicus", "bionic"] },
@@ -500,7 +500,7 @@ export const CAREERS_INQ_MECH = [
       minAge: 18,
       stats: { Int: 48 },
       or: [{ anyTags: ["mechanicus_blood", "mechanicus"] }, { anyWorldTags: ["forge"] }, { stats: { Int: 56 } }],
-      excludeTags: ["astartes", "custodes", "abhuman", "heretic", "assassin", "living_saint"]
+      excludeTags: ["abhuman", "psyker", "navigator", "astartes", "custodes", "heretic", "assassin", "living_saint"]
     },
     selectable: true,
     onJoin: { stats: { Int: 10, T: 6, Inf: 8, Fel: -4 }, addTags: ["mechanicus", "bionic", "tech_priest"] },
@@ -619,7 +619,7 @@ export const CAREERS_PSYKER = [
       allTags: ["psyker"],
       stats: { WP: 44 },
       maxCorruption: 35,
-      excludeTags: ["astartes", "custodes", "heretic", "living_saint", "assassin"]
+      excludeTags: ["astartes", "custodes", "heretic", "living_saint", "assassin", "navigator"]
     },
     selectable: true,
     trialCheck: { stat: "WP", diff: -5, title: "테라 영혼 결속 의식 (Soul Binding)", failDeathChance: 0.3 },
@@ -649,7 +649,7 @@ export const CAREERS_PSYKER = [
       stats: { WP: 64, Int: 56 },
       maxCorruption: 30,
       or: [{ anyCareers: ["sanctioned_psyker"] }, { allTags: ["psyker_primaris"] }],
-      excludeTags: ["astartes", "custodes", "heretic", "living_saint"]
+      excludeTags: ["astartes", "custodes", "heretic", "living_saint", "navigator"]
     },
     selectable: true,
     onJoin: { stats: { WP: 10, Int: 8, Inf: 10 }, addTags: ["psyker_primaris", "sanctioned_psyker"] },
@@ -659,6 +659,8 @@ export const CAREERS_PSYKER = [
     source: "Lexicanum: Primaris Psyker / Codex: Astra Militarum"
   },
   {
+    // 구저장본 하위 호환을 위해 레거시 ID("master_of_astronomicum")를 유지하되,
+    // 테라의 하이 로드 의석상 아스트로노미칸·아스트라 텔레파티카 통합 사이커 총관 직위를 대표한다.
     id: "master_of_astronomicum",
     name: "마스터 오브 디 아스트라 텔레파티카 (하이 로드 · 사이커 총관)",
     en: "Master of the Adeptus Astra Telepathica",

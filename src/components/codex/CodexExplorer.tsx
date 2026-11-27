@@ -15,7 +15,7 @@ interface Props {
 export default function CodexExplorer({ section }: Props) {
   const [query, setQuery] = useState("");
   const [openTrees, setOpenTrees] = useState<Set<string>>(() => new Set(["civil"]));
-  const [pendingHash, setPendingHash] = useState<string | null>(null);
+  const [pendingHash, setPendingHash] = useState<{ id: string; isInitial: boolean } | null>(null);
   const [liveMsg, setLiveMsg] = useState("");
   const didMountRef = useRef(false);
   const seqRef = useRef(0);
@@ -23,7 +23,7 @@ export default function CodexExplorer({ section }: Props) {
   const q = query.trim().toLowerCase();
 
   const requestHashFocus = useCallback(
-    (rawHash: string) => {
+    (rawHash: string, isInitial: boolean) => {
       let hash = (rawHash || "").replace(/^#/, "");
       if (!hash) return;
       try {
@@ -36,14 +36,14 @@ export default function CodexExplorer({ section }: Props) {
           const treeId = hash.slice("tree-".length);
           setOpenTrees((prev) => new Set([...prev, treeId]));
           setQuery("");
-          setPendingHash(hash);
+          setPendingHash({ id: hash, isInitial });
           return;
         }
         const found = CORE_DATA.CAREERS.find((c: any) => c.id === hash);
         if (found && found.tree) {
           setOpenTrees((prev) => new Set([...prev, found.tree]));
           setQuery("");
-          setPendingHash(hash);
+          setPendingHash({ id: hash, isInitial });
         }
         return;
       }
@@ -59,7 +59,7 @@ export default function CodexExplorer({ section }: Props) {
 
       if (pool.some((item: any) => item.id === hash)) {
         setQuery("");
-        setPendingHash(hash);
+        setPendingHash({ id: hash, isInitial });
       }
     },
     [section]
@@ -68,25 +68,30 @@ export default function CodexExplorer({ section }: Props) {
   // 전 5개 코덱스 섹션 해시 진입 및 hashchange 시 필터 해제 · 아코디언 개방 후 대상 <h3>/<summary> 포커스
   useEffect(() => {
     if (typeof window === "undefined") return;
-    requestHashFocus(window.location.hash);
-    const onHashChange = () => requestHashFocus(window.location.hash);
+    requestHashFocus(window.location.hash, true);
+    const onHashChange = () => requestHashFocus(window.location.hash, false);
     window.addEventListener("hashchange", onHashChange);
     return () => window.removeEventListener("hashchange", onHashChange);
   }, [requestHashFocus]);
 
   useEffect(() => {
     if (!pendingHash || typeof document === "undefined") return;
-    const el = document.getElementById(pendingHash);
+    const el = document.getElementById(pendingHash.id);
     if (!el) return;
-    if (typeof el.scrollIntoView === "function") {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-    const target =
-      section === "careers" && pendingHash.startsWith("tree-")
-        ? el.querySelector("summary")
-        : el.querySelector("h3") || el;
-    if (target instanceof HTMLElement) {
-      target.focus();
+    const active = document.activeElement;
+    const allowFocus =
+      !pendingHash.isInitial || active === null || active === document.body;
+    if (allowFocus) {
+      if (typeof el.scrollIntoView === "function") {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      const target =
+        section === "careers" && pendingHash.id.startsWith("tree-")
+          ? el.querySelector("summary")
+          : el.querySelector("h3") || el;
+      if (target instanceof HTMLElement) {
+        target.focus();
+      }
     }
     setPendingHash(null);
   }, [pendingHash, section, query, openTrees]);

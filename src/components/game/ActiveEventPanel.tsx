@@ -126,19 +126,29 @@ export default function ActiveEventPanel({ state, engine, onChoose }: Props) {
               {(ev.choices || []).map((ch: any, idx: number) => {
                 const unlocked = engine.checkReq(state, ch.req);
                 const traitMap = engine.ACQUIRED_TRAIT_EFFECTS || {};
+                const ownedTags = new Set<string>(Array.isArray(state.tags) ? state.tags : []);
+                const isImmune = (t: string) =>
+                  Boolean(engine.isTraitImmune && engine.isTraitImmune(state, t));
                 const extractTraitMap = (outcome: any) => {
                   const items: { key: string; text: string }[] = [];
                   if (!outcome) return items;
                   if (Array.isArray(outcome.removeTags)) {
                     for (const t of outcome.removeTags) {
                       const at = traitMap[t];
-                      if (at) items.push({ key: `rem:${t}`, text: `${at.kind === "negative" ? "특성 치유" : "특성 상실"}: ${at.name}` });
+                      if (at && ownedTags.has(t)) {
+                        items.push({
+                          key: `rem:${t}`,
+                          text: `${at.kind === "negative" ? "특성 치유" : "특성 상실"}: ${at.name}`
+                        });
+                      }
                     }
                   }
                   if (Array.isArray(outcome.addTags)) {
                     for (const t of outcome.addTags) {
                       const at = traitMap[t];
-                      if (at) items.push({ key: `add:${t}`, text: `특성 획득: ${at.name}` });
+                      if (at && !ownedTags.has(t) && !isImmune(t)) {
+                        items.push({ key: `add:${t}`, text: `특성 획득: ${at.name}` });
+                      }
                     }
                   }
                   return items;

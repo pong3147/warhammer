@@ -515,7 +515,7 @@ export function createTravelModule(deps) {
           }
         },
         {
-          label: "[지성 판정] 엔지니어들과 함께 보조 플라스마 도관을 수동 절체해 겔러 필드 출력을 긴급 복구한다",
+          label: "[지성 판정] 엔지니어들과 함께 보조 플라즈마 도관을 수동 절체해 겔러 필드 출력을 긴급 복구한다",
           check: { stat: "Int", diff: -5 },
           success: {
             text: `번개 같은 회로 절체로 겔러 필드의 균열을 봉합했다! 함장이 그대를 함선의 은인으로 치하하며 [${destWorld.name}]에 상륙시켰다.`,
