@@ -97,10 +97,10 @@ export function createImperiumEngine(DATA) {
   }
 
   function pickWeighted(items, weightKey = "weight") {
-    const total = items.reduce((sum, item) => sum + (item[weightKey] || 1), 0);
+    const total = items.reduce((sum, item) => sum + (item[weightKey] ?? 1), 0);
     let r = Math.random() * total;
     for (const item of items) {
-      r -= (item[weightKey] || 1);
+      r -= (item[weightKey] ?? 1);
       if (r <= 0) return item;
     }
     return items[items.length - 1];
@@ -385,6 +385,7 @@ export function createImperiumEngine(DATA) {
 
   function createCharacter(config = {}) {
     const mode = config.mode || "random";
+    const difficulty = config.difficulty === "grimdark" ? "grimdark" : "standard";
 
     // 1. 시대 / 출생 연도
     let birthYear;
@@ -435,7 +436,16 @@ export function createImperiumEngine(DATA) {
         if (o.excludeWorldTags && o.excludeWorldTags.some((wt) => worldTags.includes(wt))) return false;
         return true;
       });
-      origin = pickWeighted(eligibleOrigins.length ? eligibleOrigins : DATA.ORIGINS, "weight");
+      const basePool = eligibleOrigins.length ? eligibleOrigins : DATA.ORIGINS;
+      if (difficulty === "grimdark") {
+        const grimPool = basePool.map((o) => {
+          const isCommoner = (o.tags || []).some((t) => t === "lowborn" || t === "citizen");
+          return { item: o, w: (o.weight || 1) * (isCommoner ? 2.6 : 1) };
+        });
+        origin = pickWeighted(grimPool, "w").item;
+      } else {
+        origin = pickWeighted(basePool, "weight");
+      }
     }
 
     // 5. 선천 자질
@@ -485,6 +495,7 @@ export function createImperiumEngine(DATA) {
       saveVersion: SAVE_VERSION,
       id: `soul_${Date.now()}_${randInt(100, 999)}`,
       mode,
+      difficulty,
       name,
       gender,
       birthYear,
@@ -591,6 +602,7 @@ export function createImperiumEngine(DATA) {
       st.segmentum = curW.segmentum === "random" ? "solar" : curW.segmentum;
     }
     if (!FOCUSES[st.focus]) st.focus = "survival";
+    st.difficulty = st.difficulty === "grimdark" ? "grimdark" : "standard";
     st.quarter = clamp(Number(st.quarter) || 1, 1, 3);
     st.age = Math.max(0, Number(st.age) || 0);
     st.birthYear = Number.isFinite(st.birthYear) ? st.birthYear : 980;
@@ -631,6 +643,9 @@ export function createImperiumEngine(DATA) {
     if (!Array.isArray(st.heardNews)) st.heardNews = [];
     if (!Array.isArray(st.recentChronicles)) st.recentChronicles = [];
     if (!Array.isArray(st.metCharacters)) st.metCharacters = [];
+    st.logs = st.logs.filter(
+      (entry) => entry && typeof entry === "object" && !Array.isArray(entry) && typeof entry.text === "string"
+    );
 
     if (
       st.pendingEvent &&
@@ -1337,7 +1352,19 @@ export function createImperiumEngine(DATA) {
       if (homeWorld.id === "catachan" && ((world.tags && (world.tags.includes("death") || world.tags.includes("feral"))))) perkHazMult *= 0.5;
       if (state.tags.includes("battle_hardened")) perkHazMult *= 0.75;
       if (state.tags.includes("saint_spark") && state.faith >= 70) perkHazMult *= 0.8;
-      const totalHazard = Math.max(0.002, (world.annualHazard + (activeCareer.hazardMod || 0) + nihilusHaz) * (focus.hazardMult || 1) * perkHazMult);
+      const diffHazMult =
+        state.difficulty === "grimdark"
+          ? ["child", "menial_worker", "pdf_trooper", "astra_militarum"].includes(state.careerId)
+            ? 1.55
+            : 1.25
+          : 1.0;
+      const totalHazard = Math.max(
+        0.002,
+        (world.annualHazard + (activeCareer.hazardMod || 0) + nihilusHaz) *
+          (focus.hazardMult || 1) *
+          perkHazMult *
+          diffHazMult
+      );
 
       if (Math.random() < totalHazard * 2.0) {
         const dmg = randInt(5, 13);
@@ -1496,6 +1523,9 @@ export function createImperiumEngine(DATA) {
           if (ev.alignBias && alignInfo.dominant !== "neutral") {
             if (ev.alignBias === alignInfo.dominant) w *= alignBoost;
             else w *= 0.4;
+          }
+          if (state.difficulty === "grimdark" && ev.grimdarkMisfortune) {
+            w *= 1.65;
           }
           return { item: ev, w };
         });

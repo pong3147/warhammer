@@ -442,6 +442,7 @@ function validateReq(req, owner) {
   (req.anyCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown career "${c}" in ${owner}`); });
   (req.anyPastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown pastCareer "${c}" in ${owner}`); });
   (req.excludePastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown excludePastCareer "${c}" in ${owner}`); });
+  (req.anyTrees || []).forEach((t) => { if (!careerTreeSet.has(t)) fail(4, `Unknown anyTree "${t}" in ${owner}`); });
   (req.excludeTrees || []).forEach((t) => { if (!careerTreeSet.has(t)) fail(4, `Unknown excludeTree "${t}" in ${owner}`); });
   if (req.maxCareerTier !== undefined && (typeof req.maxCareerTier !== "number" || req.maxCareerTier < 0 || req.maxCareerTier > 6)) {
     fail(4, `Invalid maxCareerTier "${req.maxCareerTier}" in ${owner}`);
@@ -2059,6 +2060,10 @@ if (DEEP_MODE) {
       return null;
     }
 
+    if (b.difficulty) {
+      if (out.difficulty && out.difficulty !== b.difficulty) return null;
+      out.difficulty = b.difficulty;
+    }
     if (b.gender) {
       if (out.gender && out.gender !== b.gender) return null;
       out.gender = b.gender;
@@ -2068,7 +2073,7 @@ if (DEEP_MODE) {
       out.greatRift = b.greatRift;
     }
 
-    const intersectKeys = ["anyCareers", "anyChapters", "anyWorlds", "anyHomeWorlds", "anySegmenta", "anyFocus", "anyDominantAlign", "anySocialTiers", "anyRealms", "anyBodyClasses"];
+    const intersectKeys = ["anyCareers", "anyTrees", "anyChapters", "anyWorlds", "anyHomeWorlds", "anySegmenta", "anyFocus", "anyDominantAlign", "anySocialTiers", "anyRealms", "anyBodyClasses"];
     for (const k of intersectKeys) {
       if (b[k]) {
         const merged = intersectArrays(out[k], b[k]);
@@ -2251,6 +2256,16 @@ if (DEEP_MODE) {
           const co = careerById.get(cid);
           if (!co || exclPast.has(cid)) continue;
           if (exclTrees.has(co.tree)) continue;
+          if (cl.anyTrees && !cl.anyTrees.includes(co.tree)) continue;
+          if (cl.maxCareerTier !== undefined && (co.tier || 0) > cl.maxCareerTier) continue;
+          list.push(co);
+        }
+        return list;
+      }
+      if (cl.anyTrees) {
+        for (const co of DATA.CAREERS) {
+          if (exclPast.has(co.id) || exclTrees.has(co.tree)) continue;
+          if (!cl.anyTrees.includes(co.tree)) continue;
           if (cl.maxCareerTier !== undefined && (co.tier || 0) > cl.maxCareerTier) continue;
           list.push(co);
         }
@@ -2346,6 +2361,7 @@ if (DEEP_MODE) {
           const tagArr = [...new Set([...baseTagSet, ...extraTags])];
           const candidateState = {
             alive: true,
+            difficulty: cl.difficulty || "standard",
             age,
             year,
             quarter: 1,
@@ -2732,6 +2748,54 @@ if (DEEP_MODE) {
     }
     console.log(`  [Alignment Comparative] ${compSummary.join(" | ")}`);
   }
+
+  // Stage 22-C: Grimdark Mode 300-life dual-mode probe & req.difficulty isolation check
+  const grimdarkOnlyIds = new Set(
+    DATA.EVENTS.filter((e) => e.req && e.req.difficulty === "grimdark").map((e) => e.id)
+  );
+  let standardGrimLeaks = 0;
+  for (const eid of seenEvents) {
+    if (grimdarkOnlyIds.has(eid)) standardGrimLeaks++;
+  }
+  if (standardGrimLeaks > 0) {
+    fail(7, `Grimdark-only events leaked into standard mode simulation (${standardGrimLeaks} leaks)`);
+  }
+
+  const GRIM_LIVES = 300;
+  const grimAges = [];
+  const grimReached = new Set();
+  let grimViolent = 0;
+  let grimEventsHit = 0;
+  let grimMaxRep = 0;
+  for (let i = 0; i < GRIM_LIVES; i++) {
+    const st = Engine.createCharacter({ mode: "random", difficulty: "grimdark" });
+    st.focus = focuses[i % focuses.length];
+    let steps = 0;
+    while (st.alive && steps < 1800) {
+      steps++;
+      Engine.advanceQuarter(st);
+      while (st.alive && st.pendingEvent) {
+        if (grimdarkOnlyIds.has(st.pendingEvent.id)) grimEventsHit++;
+        Engine.resolvePendingChoice(st, pickSmartChoice(st));
+      }
+    }
+    grimAges.push(st.age);
+    if (!/노환|고령|수명/.test(st.deathCause || "")) grimViolent++;
+    for (const cid of (st.careerHistory || [st.careerId])) {
+      if (cid && cid !== "child") grimReached.add(cid);
+    }
+    for (const cnt of Object.values(st.eventCounts || {})) {
+      if (cnt > grimMaxRep) grimMaxRep = cnt;
+    }
+  }
+  grimAges.sort((a, b) => a - b);
+  const grimMedAge = grimAges[Math.floor(grimAges.length / 2)];
+  if (grimEventsHit === 0) fail(7, "Grimdark-only events never triggered in 300 grimdark lives");
+  if (grimMaxRep > 2) fail(7, `Grimdark mode event repeat exceeded 2: ${grimMaxRep}`);
+  console.log(
+    `  [Grimdark Probe] ${GRIM_LIVES} lives: medAge=${grimMedAge}, violent=${Math.round((grimViolent / GRIM_LIVES) * 100)}%, ` +
+    `grimdarkEvents=${grimEventsHit}, reachedCareers=${grimReached.size}/${selectableCareers.length}, standardLeaks=${standardGrimLeaks}`
+  );
 }
 
 if (CHECK_DIST) {

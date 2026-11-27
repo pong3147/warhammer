@@ -22,7 +22,7 @@ export function buildPlainTextChronicle(charState: any, engine: any, data: any):
   lines.push("================================================================");
   lines.push("  1 / QUADRILLION : IMPERIALIS VITA — 제국 생애 기록서");
   lines.push("================================================================");
-  lines.push(`이름: ${charState.name} (${charState.gender === "male" ? "남성" : "여성"})`);
+  lines.push(`이름: ${charState.name} (${charState.gender === "male" ? "남성" : "여성"})${charState.difficulty === "grimdark" ? " [그림다크 모드]" : ""}`);
   lines.push(`신분·직책: ${engine.getCareerDisplayTitle(charState)}`);
   if (chap) lines.push(`소속 챕터: ${chap.name} ("${chap.battleCry}")`);
   lines.push(
@@ -75,7 +75,9 @@ export function buildPlainTextChronicle(charState: any, engine: any, data: any):
 
   lines.push("");
   lines.push("----------------------------------------------------------------");
-  lines.push(`전체 생애 연대기 (출생순 · 총 ${charState.logs.length}건)`);
+  const truncatedNote =
+    charState.logs.length >= 2400 ? " · 보존 상한 2,400건 도달(일부 중반기 일상 기록 생략됨)" : "";
+  lines.push(`전체 생애 연대기 (출생순 · 총 ${charState.logs.length}건${truncatedNote})`);
   lines.push("----------------------------------------------------------------");
 
   const ascLogs = [...charState.logs].reverse();

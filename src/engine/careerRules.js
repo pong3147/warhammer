@@ -442,8 +442,11 @@ export function createCareerRulesModule(deps) {
     const traitBonus =
       ((tags.includes("prodigy") || tags.includes("savant_genius")) && ["militarum", "navy", "inquisition", "administratum"].includes(targetCareer.tree)) ? 8 : 0;
     const tierPenalty = Math.max(0, (targetCareer.tier - 2) * 8);
-    const raw = 58 + (statVal - reqMin) * 1.1 + pedigreeBonus + homeBonus + traitBonus - tierPenalty;
-    const target = clamp(Math.round(raw), 40, 88);
+    const diffPenalty = state.difficulty === "grimdark" ? 12 : 0;
+    const raw = 58 + (statVal - reqMin) * 1.1 + pedigreeBonus + homeBonus + traitBonus - tierPenalty - diffPenalty;
+    const minTarget = state.difficulty === "grimdark" ? 28 : 40;
+    const maxTarget = state.difficulty === "grimdark" ? 80 : 88;
+    const target = clamp(Math.round(raw), minTarget, maxTarget);
     const meta = STAT_META[statKey] || { name: statKey };
     return {
       statKey,

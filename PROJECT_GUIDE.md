@@ -142,12 +142,12 @@ warhammer/
 | `src/data/core/chapters.js` | 9챕터 | `ultramarines`, `blood_angels`, `space_wolves`, `dark_angels`, `imperial_fists`, `salamanders`, `black_templars`(`allowPsyker: false`), `raven_guard`, `white_scars`. |
 | `src/data/core/characters.js` | 28인물 | 28인 전원 단독 조우·`met_*` 선택지 생산·4대 후일담 사건·연대기 100% 완비. |
 | `src/data/core/timeline.js` (+ `timeline/*.js`) | 4파일 · 29대사건 | 배럴(`0.5KB`) + 시대별 3분할(`m41_early.js` 11, `m41_late.js` 9, `m42_indomitus.js` 9). 전 항목 0~1인 대표 스포트라이트 원칙 준수(`AGENTS.md` 2.2.6). |
-| `src/data/core/tags.js` | 태그 217 · 행성태그 49 | 이력·신분·자질·직군·계급·직책·명예·인연·성향·신규 세력·거시 전쟁·노년/변경·**Stage 21 4대 특이점 + 12종 후천 특성** 한글 라벨 사전(`TAG_LABELS` 217/217 전량 회수) 및 `WORLD_TAG_LABELS`. |
-| `src/data/events/careers/*.js` | 19파일 · 281사건 | 기존 18파일(269건) + 20단계 `mid_ranks_s20.js`(12건). |
+| `src/data/core/tags.js` | 태그 225 · 행성태그 49 | 이력·신분·자질·직군·계급·직책·명예·인연·성향·신규 세력·거시 전쟁·노년/변경·Stage 21 특이점/후천 특성·**Stage 21.6 인연 태그 8종** 한글 라벨 사전(`TAG_LABELS` 225/225 전량 회수) 및 `WORLD_TAG_LABELS`. |
+| `src/data/events/careers/*.js` | 20파일 · 291사건 | 기존 19파일(281건) + **22단계 `guardsman_grimdark.js`(10건)**. |
 | `src/data/events/chapters/*.js` | 10파일 · 60사건 | 9대 챕터 1:1 승격(`6*9=54`) + 합동 공조 `chapters_core`(6). |
 | `src/data/events/worlds/*.js` | 9파일 · 113사건 | 1:1 승격 4파일(`terra` 10, `cadia` 6, `krieg` 6, `armageddon` 6) + 권역 5파일(`solar` 13, `ultima` 27, `frontier` 19, `generic` 14, `generic_deep` 12). |
-| `src/data/events/themes/*.js` | 17파일 · 294사건 | 기존 15파일(266건, +`crises`/`chaos_warp`/`xenos` 후천 특성 전용 선택지 보강) + **21단계 `anomalies_s21.js`(14건 · `48.6KB`: 4대 특이점 각성·폭주·스카우트)** + **`acquired_traits_s21.js`(14건 · `44.6KB`: 12후천 특성 획득·극복·`critSuccess` 승화)**. |
-| `src/data/chronicles/*.js` | 20파일 · 892연대기 | 기존 18파일(840건) + **21단계 `wear_tradeoff.js`(38건 · `18.5KB`: `+1/-1` 전문화 트레이드오프 20 · 조건부 상황 마모 18)** + **`anomalies_s21.js`(14건 · `6.5KB`: 4대 특이점 `priority: 3` 전용 일상)** — 전체 892종 상황 맞춤형 일상·부조리 연대기. |
+| `src/data/events/themes/*.js` | 20파일 · 324사건 | 기존 17파일(294건) + **21.6단계 `bonds_s21_6.js`(12건)** + **22단계 `grimdark_misfortune.js`(10건) · `grimdark_factions.js`(8건)**. |
+| `src/data/chronicles/*.js` | 22파일 · 936연대기 | 기존 20파일(892건) + **21.6단계 `bonds_s21_6.js`(14건)** + **22단계 `grimdark_s22.js`(30건)** — 전체 936종 상황 맞춤형 일상·부조리·그림다크 연대기. |
 
 
 ---
@@ -1097,6 +1097,28 @@ warhammer/
 
 ---
 
+### 12.4 보수 단계 (`Stage 21.5`): 접근성 · 엔진 안전성 핫픽스 & 코덱스 하이드레이션 경량화
+
+| 단계 | 상태 | 목표 범위 및 세부 설계 명세 |
+| --- | --- | --- |
+| **21.5-A. 스크린 리더 2,400로그 상한 낭독 버그 · 엔진/문서 정합성 수정** | `[완료]` | `GameApp.tsx` `prevLogCount` -> `prevTopLog` 객체 비교 전환, `createEngine.js` `pickWeighted` `?? 1` & `migrateState` `logs` 원소 방어, `chronicleText.ts` 2,400건 상한 생략 안내, `README.md` 수량(`748`/`892`) 동기화, Vitest 회귀 테스트 2종(`22/22 PASS`) 추가 완료. |
+| **21.5-B. 제국 코덱스 5개 하위 페이지 하이드레이션 경량화** | `[완료]` | `src/pages/codex/{worlds,careers,chapters,timeline,characters}.astro`의 `CodexExplorer`를 `client:load` -> `client:idle`로 전환 완료 (`npm run verify` 0오류: `qa` 6게이트, `audit` 200생애, `typecheck`, `vitest 22/22`, `astro build` 9페이지, `qa:dist` Gate 8 통과). |
+
+* **Stage 21.5 달성도:** 목표 **100% 완료** (잔여 범위: Stage 21.6 도전정신·인연 연작 및 Stage 22 표준 vs 그림다크 모드 분리 대기).
+
+---
+
+### 12.5 보수·심화 단계 (`Stage 21.6`): 도전정신 마일스톤 & 유년기 인연 · 직군별 동료 · 네임드 교차 연작
+
+| 단계 | 상태 | 목표 범위 및 세부 설계 명세 |
+| --- | --- | --- |
+| **21.6-A. 영혼의 전당 도전 마일스톤 & 진로 안내 (`HallOfSoulsApp.tsx`)** | `[완료]` | `HallOfSoulsApp.tsx`에 역대 생애 기반 **제국 도전 마일스톤(10종 업적)** 섹션 추가 완료(장식 기호 0건, `[달성]`/`[미달성]` 표기). |
+| **21.6-B. 유년기 인연 · 직군별 동료 · 네임드 교차 연작 (`tags.js`, `bonds_s21_6.js` +12사건 / +14연대기)** | `[완료]` | `TAG_LABELS`에 8종 인연 태그(`bond_childhood_friend`, `bond_guard_comrade`, `bond_battle_brother`, `bond_ordo_partner`, `bond_void_companion`, `bond_heretic_pact`, `bond_fallen_comrade`, `bond_oath_fulfilled`) 등록, `src/data/events/themes/bonds_s21_6.js`(12사건: 유년기 발단->성인 재회, 5대 직군 동료, 이브람 건트·단테 네임드 교차, 전우의 유품·노년기 결산) 및 `src/data/chronicles/bonds_s21_6.js`(14연대기 `priority: 3`) 구축 완료. |
+
+* **Stage 21.6 달성도:** 목표 **100% 완료** (누적 코퍼스: `EVENTS=760`(역사 포함 `789`), `CHRONICLES=906`, `TAG_LABELS=225`, `npm run verify` 0오류: `qa` 6게이트, `audit` 200생애 `seed=1097904777`, `typecheck`, `vitest 22/22`, `astro build` 9페이지, `qa:dist` Gate 8 통과). 잔여 범위: Stage 22 표준 vs 그림다크 모드 분리.
+
+---
+
 ## 13. 22단계 고도화 계획: 「표준 vs 그림다크(1 / QUADRILLION 하드코어)」 모드 분리 & 워해머 공략형 억까 사건 팩 (`Stage 22`)
 
 > **착수 전 계획 선기록 (`AGENTS.md` 1장 준수):** 21단계에서 구축한 이중 스탯 캡·모성 특전·선천/후천 특성 토대 위에, 워해머 40k 특유의 잔혹한 계급 장벽과 절망적 생존률("일반 시민은 대부분 평생 노동자 · 가드맨 15시간 생존률 · 행정 착오·오인 포격·무능 상관·마녀사냥 억까")을 **취향별 선택형 모드(`표준` vs `그림다크`)**와 **"비겁·대가·특성으로 뚫을 수 있는 공략형 억까(Fair Grimdark)"**로 구현한다.
@@ -1117,9 +1139,11 @@ warhammer/
 
 | 단계 | 상태 | 목표 범위 및 세부 설계 명세 |
 | --- | --- | --- |
-| **22-A (Phase A). 선행 QA 분리 · `difficulty` (`standard`/`grimdark`) & `req.difficulty` 엔진 · UI · 영혼의 전당 연동** | `[예정]` | **① Stage 22 선행 QA 리팩토링:** `scripts/qa.mjs`의 `Gate 7`을 `scripts/qa/careerGate.mjs`로 분리한다. **② 엔진 난이도 프로파일 & `req.difficulty` (`createEngine.js`, `careerRules.js`, `endings.js`):** `state.difficulty`(`"standard"`/`"grimdark"`, `migrateState` 구저장본 `"standard"` 안전 폴백)와 `checkReq`의 `req.difficulty` 조건을 도입한다. 그림다크 모드 시 하층민/시민 출생 가중치 강화, 정규 기관 입단 심사 보정(`-12%`, `difficulty === "grimdark"` 엄격 한정), 가드맨·PDF·노동자 초기 환경 위험 및 `grimdarkMisfortune: true` 사건 가중치 배수 적용, 부고 기록 객체(`hallEntry.difficulty`)에 모드 기록. **③ UI·접근성 (`StartScreen.tsx`, `DossierPanel.tsx`, `ObituaryModal.tsx`, `HallOfSoulsApp.tsx`):** 시작 화면에 `표준 / 그림다크(하드코어)` 선택 UI 및 차이점 1줄 안내 추가(스크린 리더 친화적 라디오 그룹, 장식 기호 0건), 상태창·부고·영혼의 전당에 `그림다크` 기록 표기. |
-| **22-B (Phase B). 직군 계열별 그림다크 사건 팩 · 기존 사건 보강 · 그림다크 전용 연대기 동반 작성 (`+28~36사건` · `+28~36연대기`)** | `[예정]` | **① 가드맨 15시간 생존 억까 팩 (`src/data/events/careers/guardsman_grimdark.js` `+10~12사건`):** 무능한 귀족 장교의 자살 돌격 명령, 보급선 오배송, 아군 포병 오인 포격, 커미사르 즉결 처형 위기, 궤도 강하 대공 포화 등 — 전 항목 **정면 돌파 / 비겁·대가 생존 / 모성·특성 우회** 3갈래 + `critSuccess` 승화/`critFail` 파국 완비. **② 제국 관료제·계급 장벽·마녀사냥 억까 팩 (`src/data/events/themes/grimdark_misfortune.js` `+10~12사건`):** 행정청 오타 사망 처리·십일조 착오 징발, 공장 사고·서비터 징발 위기, 이웃의 무고한 이단 고발, 귀족 연회 독살 누명, 겔러 필드 깜빡임 등. **③ 직군 계열별 그림다크 전용 사건 및 기존 핵심 사건 보강 (`+8~12사건` + 기존 사건 보강):** 군사·하층민·기계교·성직·심문소/아르비테스·귀족·초인 계열별 그림다크 전용 분기 사건 추가 및 기존 핵심 사건에 `req: { difficulty: "grimdark" }` 전용 선택지·가혹한 트레이드오프 점진 보강. **④ 그림다크 전용 연대기 동반 작성 트랙 (`src/data/chronicles/grimdark_s22.js` `+28~36연대기`):** 직군 계열별 냉혹한 일상과 소소한 마모(즉사 금지, `priority: 2` 기본)를 사건 팩과 짝을 이뤄 작성. |
-| **22-C (Phase C). 이중 모드 1,500생애 밸런스 검증 · Vitest · 교차 감사 · 2단 레드팀** | `[예정]` | **① 이중 모드 시뮬레이션 검증 (`scripts/qa.mjs`, `scripts/qa/careerGate.mjs`, `scripts/audit-health.mjs`):** 표준 모드 91/91 도달성 불변 확인 + 그림다크 모드 전용 300생애 프로브로 **노동자/말단 잔류율 · 가드맨 조기 전사율 · 전략적 공략 시 고위직 돌파 가능성(소프트락 0건)** 및 `req.difficulty` 격리 무결성 동시 검증. **② Vitest 테스트 추가:** 시작 화면 모드 선택, 구저장본 `"standard"` 폴백, `req.difficulty` 필터, 영혼의 전당 `그림다크` 표기 및 접근성 검증. **③ 독립 교차 감사(`iv_lore_auditor`, `iv_prose_a11y_critic`) + 2단 레드팀(`iv_redteam_reviewer`):** P0/P1 전량 해소, 문서 동기화 및 `origin/main` 반영. |
+| **22-A (Phase A). `difficulty` (`standard`/`grimdark`) & `req.difficulty` · `req.anyTrees` 엔진 · UI · 영혼의 전당 연동** | `[완료]` | **① 엔진 난이도 프로파일 & `req.difficulty`/`req.anyTrees` (`createEngine.js`, `reqEvaluator.js`, `formatters.js`, `careerRules.js`, `storage.ts`):** `state.difficulty`(`"standard"`/`"grimdark"`, `migrateState` 구저장본 `"standard"` 폴백), 그림다크 하층민/시민 출생 가중치 강화(`×2.6`), 입단 심사 `-12%` 페널티(`difficulty === "grimdark"` 한정, `28~80%` 클램프), 환경 위험 배수(`×1.55`/`×1.25`) 및 `grimdarkMisfortune` 가중치(`×1.65`), `HallEntry.difficulty` 보존 구현 완료. **② UI·접근성 (`StartScreen.tsx`, `DossierPanel.tsx`, `ObituaryModal.tsx`, `HallOfSoulsApp.tsx`, `GameApp.tsx`, `chronicleText.ts`):** `#difficulty-fieldset`(`aria-describedby="difficulty-desc"`) 라디오 선택 UI, 부고 모달 재시작 시 난이도 승계, `[그림다크]` 표기 및 `그림다크 생환` 마일스톤 추가 완료 (`scripts/qa.mjs` Gate 7 모듈 분리는 후속 유지보수 과제로 이월). |
+| **22-B (Phase B). 직군 계열별 그림다크 공략형 억까 사건 팩 · 그림다크 전용 연대기 동반 작성 (`+28사건` · `+30연대기`)** | `[완료]` | **① 가드맨 15시간 생존 억까 팩 (`src/data/events/careers/guardsman_grimdark.js` `+10사건`):** 전 항목 3갈래 공략(정면 돌파 + `critSuccess`/`critFail` + 무조건 대가 생존 + 특성/모성 우회) 완비. **② 제국 관료제·계급 장벽·마녀사냥 억까 팩 (`src/data/events/themes/grimdark_misfortune.js` `+10사건`):** `maxCareerTier: 3` 및 `excludeTags: ["heretic", "chaos_aligned"]` 신분·진영 정합성 가드 적용. **③ 직군 계열별 그림다크 사건 팩 (`src/data/events/themes/grimdark_factions.js` `+8사건`):** 기계교·성직/심문소/아르비테스·해군/로그 트레이더/행정청·사이커·아스타르테스 8건. **④ 그림다크 전용 연대기 (`src/data/chronicles/grimdark_s22.js` `+30연대기`):** `req.difficulty: "grimdark"`, `priority: 2` 기본, 즉사·치명 페널티 0건. |
+| **22-C (Phase C). 이중 모드 1,500+300생애 검증 · Vitest · 교차 감사 · 2단 레드팀** | `[완료]` | **① 이중 모드 시뮬레이션 검증 (`scripts/qa.mjs`):** `Gate 7B` `difficulty`/`anyTrees` 합성 도달성(`2,178 req specs`, `91/91` 직군), `Gate 7D`(120간선 0데드락), 1,500 표준 생애 + **Grimdark Probe 300생애**(`grimdarkEvents=1,267`, `standardLeaks=0`) 검증 완료. **② Vitest (`tests/game-a11y.test.tsx`):** Stage 22 난이도 토글·구저장본 폴백·`-12%` 페널티 테스트 포함 `23/23 PASS`. **③ 독립 교차 감사(`iv_lore_auditor`, `iv_prose_a11y_critic`) + 2단 레드팀(`iv_redteam_reviewer`):** `ch_s22_grim_27` 하이 로드 제외·`세라마이트`·`허점`·`grimdark_misfortune` `heretic`/`maxCareerTier: 3` 가드·`handleRestartRandom` 난이도 승계·`StartScreen` `aria-describedby` 전량 수정 완료. |
+
+* **Stage 22 달성도:** 목표 **100% 완료** (누적 코퍼스: `EVENTS=788`(역사 포함 `817`), `CHRONICLES=936`, `TAG_LABELS=225`, Vitest `23/23 PASS`).
 
 
 

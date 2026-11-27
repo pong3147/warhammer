@@ -55,6 +55,7 @@ export default function DossierPanel({ state, engine }: Props) {
         </h2>
         <span id="lbl-mode-badge" className="ev-badge">
           {state.mode === "random" ? "운명" : "지정"}
+          {state.difficulty === "grimdark" ? " · 그림다크" : ""}
           {!state.alive ? " · 사망" : ""}
         </span>
       </div>

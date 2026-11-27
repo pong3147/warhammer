@@ -33,6 +33,7 @@ export default function StartScreen({
   const [traitId, setTraitId] = useState(CORE_DATA.TRAITS[0]?.id || "none");
   const [gender, setGender] = useState("random");
   const [name, setName] = useState("");
+  const [difficulty, setDifficulty] = useState<"standard" | "grimdark">("standard");
   const [armedAction, setArmedAction] = useState<ArmedAction>(null);
   const armTimerRef = useRef<number | null>(null);
 
@@ -178,6 +179,51 @@ export default function StartScreen({
         </div>
       )}
 
+      <fieldset
+        id="difficulty-fieldset"
+        aria-describedby="difficulty-desc"
+        style={{
+          border: "1px solid var(--border)",
+          borderRadius: "6px",
+          padding: "10px 14px",
+          marginBottom: "14px",
+          background: "rgba(18, 15, 12, 0.72)"
+        }}
+      >
+        <legend style={{ padding: "0 6px", fontWeight: 700, color: "var(--gold)" }}>
+          난이도 모드 선택
+        </legend>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "14px", alignItems: "center" }}>
+          <label style={{ display: "inline-flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+            <input
+              id="rad-diff-standard"
+              type="radio"
+              name="difficulty"
+              value="standard"
+              checked={difficulty === "standard"}
+              onChange={() => setDifficulty("standard")}
+            />
+            <span>표준 모드 (균형 잡힌 제국 생애)</span>
+          </label>
+          <label style={{ display: "inline-flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
+            <input
+              id="rad-diff-grimdark"
+              type="radio"
+              name="difficulty"
+              value="grimdark"
+              checked={difficulty === "grimdark"}
+              onChange={() => setDifficulty("grimdark")}
+            />
+            <span>그림다크 모드 (1 / QUADRILLION 하드코어)</span>
+          </label>
+        </div>
+        <p id="difficulty-desc" style={{ margin: "6px 0 0", fontSize: "12px", color: "var(--text-muted)" }}>
+          {difficulty === "grimdark"
+            ? "하층민 출생 비중·정규 기관 입단 장벽(-12%)·전선 치사율·공략형 억까 사건이 크게 강화된다."
+            : "워해머 40k 표준 난이도로 다양한 출신과 승급 경로를 균형 있게 체험한다."}
+        </p>
+      </fieldset>
+
       <div className="mode-grid">
         <div className="mode-card destiny">
           <div>
@@ -209,7 +255,7 @@ export default function StartScreen({
             type="button"
             className="btn-primary"
             disabled={narrativeLoading}
-            onClick={() => handleStartWithGuard("random", { mode: "random" })}
+            onClick={() => handleStartWithGuard("random", { mode: "random", difficulty })}
           >
             {armedAction === "random" ? "기존 저장본 덮어쓰고 탄생 (5초 내 다시 선택)" : "무작위 운명으로 탄생하기"}
           </button>
@@ -289,6 +335,7 @@ export default function StartScreen({
             onClick={() =>
               handleStartWithGuard("custom", {
                 mode: "custom",
+                difficulty,
                 eraId,
                 worldId,
                 originId,

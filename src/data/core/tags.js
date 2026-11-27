@@ -242,7 +242,17 @@ export const TAG_LABELS = {
   warp_scarred: "워프 흉터",
   chronic_toxins: "만성 독소",
   notorious_ruthless: "악명 높은 냉혈한",
-  imperial_debt: "거액의 채무"
+  imperial_debt: "거액의 채무",
+
+  // 21.6단계 유년기 인연 · 직군별 동료 · 전우애 태그 8종
+  bond_childhood_friend: "유년기 소꿉친구",
+  bond_guard_comrade: "전선 분대 전우",
+  bond_battle_brother: "서약의 배틀 브라더",
+  bond_ordo_partner: "심문·성직 동료",
+  bond_void_companion: "함선·기계교 동반자",
+  bond_heretic_pact: "배교 혈맹 동료",
+  bond_fallen_comrade: "전우의 유품",
+  bond_oath_fulfilled: "지켜 낸 전우애"
 };
 
 // 행성 유형 태그 한글 라벨 사전 (describeReq 표시용)

@@ -16,6 +16,7 @@ export const SPEED_OPTIONS = [
 
 export interface StartConfig {
   mode: "random" | "custom";
+  difficulty?: "standard" | "grimdark";
   eraId?: string;
   worldId?: string;
   originId?: string;

@@ -1296,6 +1296,107 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
       randSpy.mockRestore();
     }
   });
+
+  it("Stage 21.5: still announces new chronicle logs to #sr-live after reaching MAX_LOGS (2400)", () => {
+    const realEngine = createImperiumEngine(FULL_DATA);
+    const proxy = {
+      ...realEngine,
+      advanceQuarter(st: any) {
+        if (st.logs.length < 2400) {
+          while (st.logs.length < 2400) {
+            st.logs.push({
+              year: "980.M41 상반기",
+              age: st.age,
+              text: "이전 일상 기록",
+              kind: "chronicle"
+            });
+          }
+        }
+        st.age += 1;
+        st.year += 1;
+        // Simulate addLog at MAX_LOGS: unshift new entry and prune one old entry so length remains 2400
+        st.logs.unshift({
+          year: `${st.year}.M41 상반기`,
+          age: st.age,
+          text: "2400건 상한 이후 새 연대기 기록",
+          kind: "chronicle"
+        });
+        st.logs.pop();
+        return { status: "ok", isNewYear: true };
+      }
+    };
+
+    const { container, unmount } = render(<GameApp engineOverride={proxy} dataOverride={FULL_DATA} />);
+    startCustomCharacter(container);
+
+    fireEvent.click(container.querySelector("#btn-step")!);
+
+    const srText = container.querySelector("#sr-live")?.textContent || "";
+    expect(srText).toContain("2400건 상한 이후 새 연대기 기록");
+
+    unmount();
+    localStorage.clear();
+  });
+
+  it("Stage 21.5: migrateState filters malformed entries inside logs array", () => {
+    const engine = createImperiumEngine(FULL_DATA);
+    const base = engine.createCharacter({ mode: "custom", eraId: "armageddon", worldId: "terra" });
+    const corrupted = {
+      ...base,
+      logs: [
+        null,
+        "broken-string",
+        42,
+        { year: "980.M41", age: 0 },
+        { year: "980.M41", age: 0, text: "정상 출생 기록", kind: "birth" }
+      ]
+    };
+    const migrated = engine.migrateState(corrupted);
+    expect(migrated).not.toBeNull();
+    expect(migrated.logs).toHaveLength(1);
+    expect(migrated.logs[0].text).toBe("정상 출생 기록");
+  });
+
+  it("Stage 22: supports standard vs grimdark difficulty toggle, legacy fallback, req.difficulty isolation, and -12% grimdark admission penalty", () => {
+    const engine = createImperiumEngine(FULL_DATA);
+
+    // 1. Legacy state without difficulty falls back to "standard"
+    const legacy = engine.createCharacter({ mode: "custom", eraId: "armageddon", worldId: "terra" });
+    delete legacy.difficulty;
+    const migrated = engine.migrateState(legacy);
+    expect(migrated.difficulty).toBe("standard");
+
+    // 2. req.difficulty isolation
+    const stdState = engine.createCharacter({ mode: "custom", difficulty: "standard", eraId: "armageddon", worldId: "terra", originId: "imperial_citizen", traitId: "none" });
+    const grimState = engine.createCharacter({ mode: "custom", difficulty: "grimdark", eraId: "armageddon", worldId: "terra", originId: "imperial_citizen", traitId: "none" });
+    expect(engine.checkReq(stdState, { difficulty: "grimdark" })).toBe(false);
+    expect(engine.checkReq(grimState, { difficulty: "grimdark" })).toBe(true);
+
+    // 3. -12% admission penalty strictly in grimdark (unclamped mid-range stats)
+    stdState.careerId = "menial_worker";
+    grimState.careerId = "menial_worker";
+    stdState.stats = { ...stdState.stats, BS: 35, T: 35, WP: 35, Int: 35 };
+    grimState.stats = { ...stdState.stats };
+    const stdAdm = engine.getAdmissionPreview(stdState, "astra_militarum");
+    const grimAdm = engine.getAdmissionPreview(grimState, "astra_militarum");
+    expect(stdAdm).not.toBeNull();
+    expect(grimAdm).not.toBeNull();
+    expect(stdAdm.target - grimAdm.target).toBe(12);
+
+    // 4. StartScreen radio group switches to grimdark and reflects in DossierPanel badge
+    const { container, unmount } = render(<GameApp engineOverride={engine} dataOverride={FULL_DATA} />);
+    const grimRadio = container.querySelector("#rad-diff-grimdark") as HTMLInputElement;
+    expect(grimRadio).not.toBeNull();
+    fireEvent.click(grimRadio);
+    expect(grimRadio.checked).toBe(true);
+
+    fireEvent.click(container.querySelector("#btn-start-custom")!);
+    const modeBadge = container.querySelector("#lbl-mode-badge")?.textContent || "";
+    expect(modeBadge).toContain("그림다크");
+
+    unmount();
+    localStorage.clear();
+  });
 });
 
 

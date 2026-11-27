@@ -130,7 +130,59 @@ export default function HallOfSoulsApp() {
       missingChapters: CORE_DATA.CHAPTERS.filter((ch: any) => !uniqueChapters.has(ch.id)),
       missingChars: CORE_DATA.CHARACTERS.filter((c: any) => !uniqueChars.has(c.id)),
       missingTimeline: CORE_DATA.TIMELINE.filter((t: any) => !uniqueTimeline.has(t.id)),
-      missingWorlds: CORE_DATA.WORLDS.filter((w: any) => !uniqueWorlds.has(w.id))
+      missingWorlds: CORE_DATA.WORLDS.filter((w: any) => !uniqueWorlds.has(w.id)),
+      milestones: [
+        { id: "first_soul", name: "첫 영혼의 기록", desc: "영혼의 전당에 생애 1회 이상 기록", done: list.length >= 1 },
+        { id: "career_10", name: "백전의 노병", desc: "서로 다른 병종·계급 10종 이상 달성", done: uniqueCareers.size >= 10 },
+        { id: "career_30", name: "제국의 만능인", desc: "서로 다른 병종·계급 30종 이상 달성", done: uniqueCareers.size >= 30 },
+        { id: "world_15", name: "은하의 산증인", desc: "제국 행성 15곳 이상 탐방", done: uniqueWorlds.size >= 15 },
+        { id: "timeline_10", name: "역사의 목격자", desc: "M41~M42 역사 대사건 10건 이상 직접 체험", done: uniqueTimeline.size >= 10 },
+        { id: "char_10", name: "전설과의 조우", desc: "네임드 인물 10인 이상 조우", done: uniqueChars.size >= 10 },
+        { id: "chapter_vow", name: "엔젤 오브 데스", desc: "아스타르테스 챕터 서약 달성", done: uniqueChapters.size >= 1 },
+        { id: "centenarian", name: "백세의 영걸", desc: "100세 이상 초장수 생애 기록", done: list.some((x) => (x.age || 0) >= 100) },
+        {
+          id: "high_lord",
+          name: "테라의 정점",
+          desc: "테라의 하이 로드 12석 직책 취임",
+          done: list.some((x) => {
+            const hasTag = Array.isArray(x.tags) && x.tags.includes("high_lord_terra");
+            const careers = Array.isArray(x.careerHistory) && x.careerHistory.length ? x.careerHistory : [x.careerId];
+            const hasCareer = careers.some((cid: string) => {
+              const c = coreFmt.getCareer(cid);
+              return Boolean(c && c.onJoin && Array.isArray(c.onJoin.addTags) && c.onJoin.addTags.includes("high_lord_terra"));
+            });
+            return hasTag || hasCareer;
+          })
+        },
+        {
+          id: "apex_transcendent",
+          name: "초월적 존재",
+          desc: "쿠스토데스·그레이 나이트·살아 있는 성인·데몬 프린스 중 1종 이상 달성",
+          done: list.some((x) => {
+            const hasTag =
+              Array.isArray(x.tags) &&
+              (x.tags.includes("custodes") ||
+                x.tags.includes("grey_knight") ||
+                x.tags.includes("living_saint") ||
+                x.tags.includes("daemon_prince"));
+            const careers = Array.isArray(x.careerHistory) && x.careerHistory.length ? x.careerHistory : [x.careerId];
+            const hasCareer = careers.some((cid: string) => {
+              const c = coreFmt.getCareer(cid);
+              return Boolean(
+                c &&
+                  (["custodes", "grey_knights", "living_saint"].includes(c.tree) || c.id === "daemon_prince")
+              );
+            });
+            return hasTag || hasCareer;
+          })
+        },
+        {
+          id: "grimdark_survivor",
+          name: "그림다크 생환",
+          desc: "그림다크(하드코어) 모드에서 35세 이상 생존 기록",
+          done: list.some((x) => x.difficulty === "grimdark" && (x.age || 0) >= 35)
+        }
+      ]
     };
   }, [list, selectableCareers]);
 
@@ -270,6 +322,25 @@ export default function HallOfSoulsApp() {
         </div>
 
         <div id="hall-codex-wrap">
+          <details className="hall-codex-box" style={{ marginBottom: "10px" }}>
+            <summary>
+              제국 도전 마일스톤 — {stats.milestones.filter((m) => m.done).length} /{" "}
+              {stats.milestones.length} 달성
+            </summary>
+            <div className="hall-codex-body">
+              <ul className="hall-hint-list">
+                {stats.milestones.map((m) => (
+                  <li
+                    key={m.id}
+                    style={{ color: m.done ? "var(--cogitator)" : "var(--text-muted)" }}
+                  >
+                    <strong>[{m.done ? "달성" : "미달성"}] {m.name}</strong> — {m.desc}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </details>
+
           <details className="hall-codex-box">
             <summary>
               제국 도감 달성 현황 및 미수집 해금 힌트 — 전체 수집률 {stats.totalPct}% (
@@ -415,6 +486,7 @@ export default function HallOfSoulsApp() {
                   <div>
                     <h3>
                       {item.name} ({item.age}세)
+                      {item.difficulty === "grimdark" ? " [그림다크]" : ""}
                     </h3>
                     <div className="codex-en">
                       {coreFmt.formatImperialYear(item.birthYear)} ~{" "}

@@ -537,6 +537,9 @@ export function createCoreFormatters(DATA) {
     if (req.anyCareers && req.anyCareers.length) {
       parts.push("직군: " + req.anyCareers.map((id) => getCareerShortName(id)).join("/"));
     }
+    if (req.anyTrees && req.anyTrees.length) {
+      parts.push("세력: " + req.anyTrees.map((t) => TREE_NAME_BY_ID.get(t) || t).join("/"));
+    }
     if (req.anyPastCareers && req.anyPastCareers.length) {
       parts.push("경력: " + req.anyPastCareers.map((id) => getCareerShortName(id)).join("/"));
     }
@@ -571,6 +574,7 @@ export function createCoreFormatters(DATA) {
     }
     if (req.greatRift === true) parts.push("대균열 이후");
     if (req.greatRift === false) parts.push("대균열 이전");
+    if (req.difficulty) parts.push(req.difficulty === "grimdark" ? "그림다크 모드" : "표준 모드");
     if (req.or && Array.isArray(req.or)) {
       const orText = req.or.map((sub) => describeReq(sub)).filter(Boolean).join(" 또는 ");
       if (orText) parts.push(`(${orText})`);

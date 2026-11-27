@@ -254,7 +254,7 @@ export default function GameApp({ engineOverride, dataOverride, narrativeCounts 
     }
 
     const { engine } = rt;
-    const prevLogCount = cur.logs.length;
+    const prevTopLog = cur.logs[0] || null;
     const res = engine.advanceQuarter(cur, { fastChildhood: prefsRef.current.fastChildhood });
     setProgressResetToken((t) => t + 1);
 
@@ -291,7 +291,7 @@ export default function GameApp({ engineOverride, dataOverride, narrativeCounts 
     if (shouldPersist) persistState(cur, engine);
     bump();
 
-    if (prefsRef.current.srAnnounce && cur.logs.length > prevLogCount) {
+    if (prefsRef.current.srAnnounce && cur.logs[0] && cur.logs[0] !== prevTopLog) {
       const top = cur.logs[0];
       if (top) announce(`${top.year}, ${top.age}세: ${top.text}`);
     }
@@ -679,7 +679,8 @@ export default function GameApp({ engineOverride, dataOverride, narrativeCounts 
   }, []);
 
   const handleRestartRandom = useCallback(() => {
-    handleStartGame({ mode: "random" });
+    const prevDifficulty = stateRef.current?.difficulty === "grimdark" ? "grimdark" : "standard";
+    handleStartGame({ mode: "random", difficulty: prevDifficulty });
   }, [handleStartGame]);
 
   const effectiveNarrativeCounts = useMemo<NarrativeCounts | null>(() => {

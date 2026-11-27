@@ -83,6 +83,7 @@ export interface HallEntry {
   id: string;
   name: string;
   mode: string;
+  difficulty?: "standard" | "grimdark";
   age: number;
   birthYear: number;
   deathYear: number;
@@ -205,6 +206,7 @@ export function sanitizeHallEntry(raw: unknown): HallEntry | null {
     id,
     name,
     mode: r.mode === "custom" ? "custom" : "random",
+    difficulty: r.difficulty === "grimdark" ? "grimdark" : "standard",
     age,
     birthYear,
     deathYear,
@@ -250,6 +252,7 @@ export function saveToHall(charState: any, engine: any): boolean {
     id: charState.id,
     name: charState.name,
     mode: charState.mode,
+    difficulty: charState.difficulty === "grimdark" ? "grimdark" : "standard",
     age: charState.age,
     birthYear: charState.birthYear,
     deathYear: charState.year,
@@ -262,7 +265,7 @@ export function saveToHall(charState: any, engine: any): boolean {
     deathCause: charState.deathCause,
     seenTimeline: [...(charState.seenTimeline || [])],
     metCharacters: [...(charState.metCharacters || [])],
-    tags: [...(charState.tags || [])].slice(0, 14),
+    tags: [...(charState.tags || [])].slice(0, 24),
     stats: { ...(charState.stats || {}) },
     alignment: engine.normalizeAlignment(charState),
     faith: charState.faith,

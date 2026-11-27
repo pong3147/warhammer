@@ -130,6 +130,7 @@ export default function ObituaryModal({
       <div className="obituary-modal" ref={modalRef}>
         <div id="obit-rank" className="obit-rank">
           {grade.rank} — {grade.title}
+          {state.difficulty === "grimdark" ? " [그림다크 기록]" : ""}
         </div>
         <h2 id="obit-title" ref={titleRef} className="obit-title" tabIndex={-1}>
           {state.name} ({state.age}세)

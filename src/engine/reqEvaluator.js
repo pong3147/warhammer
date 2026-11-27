@@ -128,6 +128,7 @@ export function createReqEvaluatorModule({ DATA, getWorld, getCareer }) {
     if (req.maxAge !== undefined && state.age > req.maxAge) return false;
     if (req.minYear !== undefined && state.year < req.minYear) return false;
     if (req.maxYear !== undefined && state.year > req.maxYear) return false;
+    if (req.difficulty && (state.difficulty || "standard") !== req.difficulty) return false;
     if (req.gender && state.gender !== req.gender) return false;
     if (req.minFaith !== undefined && state.faith < req.minFaith) return false;
     if (req.maxFaith !== undefined && state.faith > req.maxFaith) return false;
@@ -140,8 +141,9 @@ export function createReqEvaluatorModule({ DATA, getWorld, getCareer }) {
       if (!req.anyCareers.includes(state.careerId)) return false;
     }
 
-    if (req.excludeTrees || req.maxCareerTier !== undefined) {
+    if (req.anyTrees || req.excludeTrees || req.maxCareerTier !== undefined) {
       const careerObj = (ctx && ctx.career) || getCareer(state.careerId);
+      if (req.anyTrees && !req.anyTrees.includes(careerObj.tree)) return false;
       if (req.excludeTrees && req.excludeTrees.includes(careerObj.tree)) return false;
       if (req.maxCareerTier !== undefined && (careerObj.tier || 0) > req.maxCareerTier) return false;
     }
