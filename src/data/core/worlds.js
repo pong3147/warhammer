@@ -21,6 +21,11 @@ export const WORLDS = [
     baseLifeExpectancy: 42,
     annualHazard: 0.014,
     statMods: { WP: 6, Inf: 6, T: -4, Int: 3 },
+    capMods: { Inf: 6, WP: 4, T: -3 },
+    perk: {
+      name: "황금 옥좌의 그늘",
+      desc: "권위·의지 상한 +6/+4(강인 -3), 고위 기관 입단 심사 +5%"
+    },
     tags: ["hive", "shrine", "terra", "high_gothic"],
     guardRegiment: "테라 근위 연대 (Lucifer Blacks)",
     astartesChapter: "임페리얼 피스트",
@@ -41,6 +46,11 @@ export const WORLDS = [
     baseLifeExpectancy: 46,
     annualHazard: 0.015,
     statMods: { Int: 10, T: 2, Fel: -6, WP: 2 },
+    capMods: { Int: 6, T: 3, Fel: -4 },
+    perk: {
+      name: "옴니시아의 성유",
+      desc: "지성·강인 상한 +6/+3(교섭 -4), 기계교 의체 호환"
+    },
     tags: ["forge", "mechanicus", "solar"],
     guardRegiment: "화성 스키타리 군단 (Skitarii)",
     astartesChapter: null,
@@ -61,6 +71,11 @@ export const WORLDS = [
     annualHazard: 0.016,
     destroyedYear: 999, // 999.M41 파괴
     statMods: { BS: 8, WS: 5, WP: 6, T: 4, Fel: -2 },
+    capMods: { BS: 5, WP: 5 },
+    perk: {
+      name: "카디아는 버틴다",
+      desc: "사격·의지 상한 +5, 카오스·워프 판정 +6"
+    },
     tags: ["fortress", "cadian", "militarized", "eye_of_terror"],
     guardRegiment: "카디안 쇼크 트루퍼 (Cadian Shock Troops)",
     astartesChapter: null,
@@ -80,6 +95,11 @@ export const WORLDS = [
     baseLifeExpectancy: 35,
     annualHazard: 0.022,
     statMods: { WP: 10, T: 8, WS: 4, BS: 4, Fel: -12 },
+    capMods: { WP: 6, T: 5, Fel: -8 },
+    perk: {
+      name: "비타-움의 무감각",
+      desc: "의지·강인 상한 +6/+5(교섭 -8), 공포·참호 WP 판정 +5, 포탄 충격 면역"
+    },
     tags: ["death", "krieg", "militarized", "radiation"],
     guardRegiment: "데스 코어 오브 크리그 (Death Korps of Krieg)",
     astartesChapter: null,
@@ -99,6 +119,11 @@ export const WORLDS = [
     baseLifeExpectancy: 38,
     annualHazard: 0.018,
     statMods: { T: 6, BS: 4, WS: 3, Int: 2, Fel: -3 },
+    capMods: { T: 5, BS: 4 },
+    perk: {
+      name: "잿빛 전선의 생존자",
+      desc: "강인·사격 상한 +5/+4, 장기전 환경 위험 경감"
+    },
     tags: ["hive", "industrial", "armageddon", "warzone"],
     guardRegiment: "아마겟돈 스틸 리전 (Armageddon Steel Legion)",
     astartesChapter: "블랙 템플러 (성전 징병권)",
@@ -118,6 +143,11 @@ export const WORLDS = [
     baseLifeExpectancy: 36,
     annualHazard: 0.02,
     statMods: { Ag: 6, WS: 5, BS: 4, T: 4, Inf: -4 },
+    capMods: { Ag: 5, WS: 4, Inf: -3 },
+    perk: {
+      name: "언더하이브의 약탈자",
+      desc: "민첩·백병 상한 +5/+4(권위 -3), 하층 생존·회복 보정"
+    },
     tags: ["hive", "underhive", "gang", "astartes_recruit"],
     guardRegiment: "네크로문다 스파이더스 (Necromundan 8th)",
     astartesChapter: "임페리얼 피스트",
@@ -137,6 +167,11 @@ export const WORLDS = [
     baseLifeExpectancy: 74,
     annualHazard: 0.008,
     statMods: { Int: 6, Fel: 6, Inf: 5, WP: 5, BS: 3 },
+    capMods: { Int: 5, Fel: 4, Inf: 4 },
+    perk: {
+      name: "울트라마의 규율",
+      desc: "지성·교섭·권위 상한 +5/+4/+4, 행정·전술 성장 우대"
+    },
     tags: ["civilised", "ultramar", "astartes_recruit", "ordered"],
     guardRegiment: "울트라마 보조군 (Ultramar Auxilia)",
     astartesChapter: "울트라마린",
@@ -157,6 +192,11 @@ export const WORLDS = [
     annualHazard: 0.024,
     nihilusOverride: true,
     statMods: { T: 7, WS: 7, Ag: 5, WP: 5, Int: -4 },
+    capMods: { T: 4, Ag: 4, WP: 4 },
+    perk: {
+      name: "방사능 사막의 인내",
+      desc: "강인·민첩·의지 상한 +4, 블러드 엔젤 선발 우대"
+    },
     tags: ["death", "radiation", "astartes_recruit", "baal"],
     guardRegiment: "바알 유목민 방위대",
     astartesChapter: "블러드 엔젤",
@@ -176,6 +216,11 @@ export const WORLDS = [
     baseLifeExpectancy: 36,
     annualHazard: 0.023,
     statMods: { WS: 9, T: 8, Ag: 4, WP: 5, Int: -6 },
+    capMods: { WS: 6, T: 5, Int: -3 },
+    perk: {
+      name: "얼음 늑대의 피",
+      desc: "백병·강인 상한 +6/+5(지성 -3), 스페이스 울프 선발 우대"
+    },
     tags: ["death", "feral", "astartes_recruit", "fenris"],
     guardRegiment: "펜리스 카얼 보조대 (Kaerls)",
     astartesChapter: "스페이스 울프",
@@ -195,6 +240,11 @@ export const WORLDS = [
     baseLifeExpectancy: 33,
     annualHazard: 0.025,
     statMods: { T: 10, WS: 8, Ag: 7, BS: 4, Fel: -5, Int: -3 },
+    capMods: { T: 6, WS: 5, Ag: 4, Fel: -3 },
+    perk: {
+      name: "정글의 생존자",
+      desc: "강인·백병·민첩 상한 +6/+5/+4(교섭 -3), 데스월드 위험 절반 · 부상 페널티 경감"
+    },
     tags: ["death", "jungle", "catachan"],
     guardRegiment: "카타찬 정글 파이터 (Catachan Jungle Fighters)",
     astartesChapter: null,
@@ -214,6 +264,11 @@ export const WORLDS = [
     baseLifeExpectancy: 45,
     annualHazard: 0.015,
     statMods: { BS: 6, T: 5, WP: 5, Int: 4 },
+    capMods: { BS: 5, Int: 3 },
+    perk: {
+      name: "장자의 가보 화기",
+      desc: "사격·지성 상한 +5/+3, 사격 정밀 판정 우대"
+    },
     tags: ["hive", "industrial", "vostroyan", "cold"],
     guardRegiment: "보스트로얀 퍼스트본 (Vostroyan Firstborn)",
     astartesChapter: null,
@@ -233,6 +288,11 @@ export const WORLDS = [
     baseLifeExpectancy: 44,
     annualHazard: 0.016,
     statMods: { T: 7, WP: 6, BS: 5, Ag: -2 },
+    capMods: { T: 5, WP: 5 },
+    perk: {
+      name: "영구 동토의 인내",
+      desc: "강인·의지 상한 +5, 혹한·소모전 내성"
+    },
     tags: ["hive", "cold", "valhallan"],
     guardRegiment: "발할라 아이스 워리어 (Valhallan Ice Warriors)",
     astartesChapter: null,
@@ -253,6 +313,11 @@ export const WORLDS = [
     annualHazard: 0.011,
     destroyedYear: 765,
     statMods: { Ag: 8, BS: 7, WP: 4, T: 2 },
+    capMods: { Ag: 6, BS: 5 },
+    perk: {
+      name: "유령의 발걸음",
+      desc: "민첩·사격 상한 +6/+5, 잠입·정찰 판정 +5"
+    },
     tags: ["forest", "tanith", "sabbat"],
     guardRegiment: "타니스 퍼스트 앤드 온리 (Tanith First and Only)",
     astartesChapter: null,
@@ -272,6 +337,11 @@ export const WORLDS = [
     baseLifeExpectancy: 48,
     annualHazard: 0.018,
     statMods: { T: 8, Int: 5, WP: 6, Fel: 4 },
+    capMods: { T: 5, Int: 4, WP: 4 },
+    perk: {
+      name: "화산 대장장이의 의지",
+      desc: "강인·지성·의지 상한 +5/+4/+4, 고열·공방 내성"
+    },
     tags: ["death", "volcanic", "astartes_recruit", "nocturne"],
     guardRegiment: "녹턴 성소 수비대",
     astartesChapter: "샐러맨더",
@@ -291,6 +361,11 @@ export const WORLDS = [
     baseLifeExpectancy: 64,
     annualHazard: 0.01,
     statMods: { WP: 9, Fel: 5, Inf: 4, Int: 2 },
+    capMods: { WP: 6, Fel: 4 },
+    perk: {
+      name: "성소의 찬가",
+      desc: "의지·교섭 상한 +6/+4, 신앙 성장 가속 · 오염 저항"
+    },
     tags: ["shrine", "ecclesiarchy", "sororitas"],
     guardRegiment: "오펠리아 성전 수호대",
     astartesChapter: null,
@@ -312,6 +387,11 @@ export const WORLDS = [
     baseLifeExpectancy: 38,
     annualHazard: 0.017,
     statMods: { Ag: 4, T: 2, Fel: 2, WP: -2 },
+    capMods: { Ag: 3, T: 3 },
+    perk: {
+      name: "첨탑 군중의 생존술",
+      desc: "민첩·강인 상한 +3, 과밀 환경 적응"
+    },
     tags: ["hive", "overpopulated"],
     guardRegiment: "하이브 징집 보병 연대",
     astartesChapter: null,
@@ -331,6 +411,11 @@ export const WORLDS = [
     baseLifeExpectancy: 68,
     annualHazard: 0.009,
     statMods: { T: 6, WP: 2, Int: -2, Inf: -3 },
+    capMods: { T: 5, WP: 3 },
+    perk: {
+      name: "대지의 노동",
+      desc: "강인·의지 상한 +5/+3, 기대수명 +5년"
+    },
     tags: ["agri", "rural"],
     guardRegiment: "아그리 월드 민병 연대",
     astartesChapter: null,
@@ -350,6 +435,11 @@ export const WORLDS = [
     baseLifeExpectancy: 64,
     annualHazard: 0.011,
     statMods: { Int: 4, Fel: 4, BS: 2 },
+    capMods: { Int: 3, Fel: 3 },
+    perk: {
+      name: "표준 문명의 유연성",
+      desc: "지성·교섭 상한 +3, 전 정규 기관 입단 심사 +4%"
+    },
     tags: ["civilised", "balanced"],
     guardRegiment: "제국 표준 방위 연대",
     astartesChapter: null,
@@ -369,6 +459,11 @@ export const WORLDS = [
     baseLifeExpectancy: 42,
     annualHazard: 0.017,
     statMods: { Int: 8, T: 3, Fel: -6 },
+    capMods: { Int: 4, T: 2, Fel: -4 },
+    perk: {
+      name: "포지의 규격",
+      desc: "지성·강인 상한 +4/+2(교섭 -4), 기계교 기술 호환"
+    },
     tags: ["forge", "mechanicus"],
     guardRegiment: "포지 월드 스키타리 군단",
     astartesChapter: null,
@@ -388,6 +483,11 @@ export const WORLDS = [
     baseLifeExpectancy: 40,
     annualHazard: 0.019,
     statMods: { WS: 7, T: 6, WP: 3, Int: -7, BS: -4 },
+    capMods: { WS: 6, T: 5, Int: -4 },
+    perk: {
+      name: "야생 사냥꾼",
+      desc: "백병·강인 상한 +6/+5(지성 -4), 아스타르테스 선발 우대"
+    },
     tags: ["feral", "astartes_recruit"],
     guardRegiment: "변방 기병·도검 연대",
     astartesChapter: "순회 스페이스 마린 챕터",
@@ -407,6 +507,11 @@ export const WORLDS = [
     baseLifeExpectancy: 88,
     annualHazard: 0.005,
     statMods: { Fel: 9, Inf: 8, T: -2, WS: -4 },
+    capMods: { Fel: 6, Inf: 5, T: -3, WS: -3 },
+    perk: {
+      name: "상류 사교계의 여유",
+      desc: "교섭·권위 상한 +6/+5(강인·백병 -3), 기대수명 +8년"
+    },
     tags: ["paradise", "wealthy"],
     guardRegiment: "의장 호위 연대",
     astartesChapter: null,
@@ -426,6 +531,11 @@ export const WORLDS = [
     baseLifeExpectancy: 52,
     annualHazard: 0.015,
     statMods: { Int: 5, Ag: 5, WP: 5, T: -4 },
+    capMods: { Int: 4, Ag: 4, WP: 4, T: -3 },
+    perk: {
+      name: "성간 항해의 감각",
+      desc: "지성·민첩·의지 상한 +4(강인 -3), 워프·우주 이상 판정 +6"
+    },
     tags: ["voidborn", "navy"],
     guardRegiment: "임페리얼 네이비 함내 경비대",
     astartesChapter: null,
@@ -445,6 +555,11 @@ export const WORLDS = [
     baseLifeExpectancy: 58,
     annualHazard: 0.013,
     statMods: { WS: 6, WP: 5, Fel: 4, Inf: 4, Int: -2 },
+    capMods: { WS: 4, WP: 4, Inf: 3 },
+    perk: {
+      name: "기사도의 맹세",
+      desc: "백병·의지·권위 상한 +4/+4/+3, 명예 결투 우대"
+    },
     tags: ["knight_world", "feudal", "noble_house"],
     guardRegiment: "기사 가문 시종 보병대 (Household Guard)",
     astartesChapter: null,

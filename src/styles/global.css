@@ -1832,6 +1832,33 @@ body {
   gap: 8px;
 }
 
+.trait-perks-list {
+  list-style: none;
+  margin: 0 0 12px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.trait-perk-item {
+  font-size: 11.5px;
+  line-height: 1.45;
+  padding: 5px 8px;
+  background: rgba(20, 17, 13, 0.75);
+  border-left: 2px solid var(--gold);
+  border-radius: 3px;
+  color: var(--text-sub);
+}
+
+.trait-perk-item.positive {
+  border-left-color: #63a375;
+}
+
+.trait-perk-item.negative {
+  border-left-color: #c85250;
+}
+
 /* ===== 스크롤바 ===== */
 ::-webkit-scrollbar { width: 7px; height: 7px; }
 ::-webkit-scrollbar-track { background: #0e0c0a; }

@@ -142,7 +142,7 @@ export const CAREERS_FAITH = [
       minAge: 60,
       gender: "female",
       anyCareers: ["canoness"],
-      stats: { WP: 90, Fel: 84, WS: 76, Inf: 92 },
+      stats: { WP: 90, Fel: 84, WS: 64, Inf: 90 },
       minFaith: 92,
       maxCorruption: 3,
       excludeTags: ["heretic", "high_lord_terra"]
@@ -224,10 +224,10 @@ export const CAREERS_FAITH = [
     annualGrowth: { WP: 2.2, Fel: 2.4, Inf: 2.5 },
     req: {
       minAge: 46,
-      stats: { WP: 74, Fel: 74, Inf: 76 },
+      stats: { WP: 70, Fel: 70, Inf: 70 },
       minFaith: 82,
       maxCorruption: 8,
-      or: [{ anyCareers: ["ministorum_confessor", "ecclesiarchy_priest", "canoness"] }, { allTags: ["ecclesiarchy", "noble"], stats: { Inf: 76 } }],
+      or: [{ anyCareers: ["ministorum_confessor", "canoness"] }, { allTags: ["ecclesiarchy", "noble"], stats: { Inf: 70 } }],
       excludeTags: ["astartes", "custodes", "heretic"]
     },
     selectable: true,
@@ -254,7 +254,7 @@ export const CAREERS_FAITH = [
     req: {
       minAge: 68,
       anyCareers: ["ecclesiarchy_cardinal"],
-      stats: { WP: 94, Fel: 94, Inf: 96 },
+      stats: { WP: 90, Fel: 90, Inf: 90 },
       minFaith: 95,
       maxCorruption: 3,
       excludeTags: ["heretic", "high_lord_terra"]
@@ -414,7 +414,7 @@ export const CAREERS_INQ_MECH = [
     req: {
       minAge: 68,
       anyCareers: ["lord_inquisitor"],
-      stats: { Int: 94, WP: 94, Inf: 96 },
+      stats: { Int: 90, WP: 90, Inf: 90 },
       maxCorruption: 30,
       excludeTags: ["heretic", "high_lord_terra"]
     },
@@ -581,7 +581,7 @@ export const CAREERS_INQ_MECH = [
     req: {
       minAge: 110,
       anyCareers: ["fabricator_locum"],
-      stats: { Int: 95, Inf: 94, WP: 84 },
+      stats: { Int: 92, Inf: 90, WP: 84 },
       maxCorruption: 15,
       excludeTags: ["heretic", "high_lord_terra"]
     },
@@ -676,7 +676,7 @@ export const CAREERS_PSYKER = [
       minAge: 60,
       allTags: ["psyker"],
       anyCareers: ["primaris_psyker"],
-      stats: { WP: 92, Int: 88, Inf: 92 },
+      stats: { WP: 88, Int: 86, Inf: 88 },
       maxCorruption: 15,
       excludeTags: ["astartes", "custodes", "heretic", "high_lord_terra", "living_saint"]
     },

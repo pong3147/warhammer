@@ -146,8 +146,8 @@ let srLiveCount = 0;
 if (uiFiles.length === 0) {
   fail(2, `No Astro/React UI files found under ${path.join(ROOT, "src")} (ROOT=${ROOT})`);
 }
-const FORBIDDEN_STATIC_ENGINE_RE = /\bfrom\s+["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel)\.js["']/;
-const FORBIDDEN_DYNAMIC_ENGINE_RE = /\bimport\s*\(\s*["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel)\.js["']\s*\)/;
+const FORBIDDEN_STATIC_ENGINE_RE = /\bfrom\s+["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel|statCaps)\.js["']/;
+const FORBIDDEN_DYNAMIC_ENGINE_RE = /\bimport\s*\(\s*["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel|statCaps)\.js["']\s*\)/;
 for (const f of uiFiles) {
   const src = readRel(f);
   // Single-letter keyboard shortcut ban (only Escape allowed)
@@ -556,7 +556,72 @@ for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
           fail(4, `Missing TAG_LABELS for added tag "${t}" in ${ev.id}`);
         }
       });
+      (o.removeTags || []).forEach((t) => {
+        if (!tagLabels[t]) {
+          fail(4, `Missing TAG_LABELS for removed tag "${t}" in ${ev.id}`);
+        }
+      });
     });
+  }
+}
+
+// Stage 21 invariants: 23 world perks, 12 traits (weights=100), 12 acquired traits, statCaps & removeTags
+if (DATA.TRAITS.length !== 12) {
+  fail(4, `Stage 21 expected 12 TRAITS, found ${DATA.TRAITS.length}`);
+}
+const traitWeightSum = DATA.TRAITS.reduce((acc, t) => acc + (t.weight || 0), 0);
+if (Math.abs(traitWeightSum - 100) > 0.01) {
+  fail(4, `Stage 21 TRAITS weight sum must equal 100 (got ${traitWeightSum})`);
+}
+for (const w of DATA.WORLDS) {
+  if (!w.perk || !w.perk.name || !w.perk.desc) {
+    fail(4, `Stage 21 world "${w.id}" missing lifetime perk metadata`);
+  }
+}
+for (const tr of DATA.TRAITS) {
+  if (!tr.talent || !tr.talent.name || !tr.talent.desc) {
+    fail(4, `Stage 21 trait "${tr.id}" missing talent metadata`);
+  }
+}
+{
+  const childCapProbe = Engine.createCharacter({
+    mode: "custom",
+    worldId: "generic_civilised",
+    originId: "imperial_citizen",
+    traitId: "none",
+    eraId: "armageddon",
+    gender: "male"
+  });
+  const childWsCap = Engine.getStatCap(childCapProbe, "WS");
+  if (childWsCap > 50) {
+    fail(4, `Stage 21 child baseline WS cap expected <=50, got ${childWsCap}`);
+  }
+  childCapProbe.stats.WS = childWsCap;
+  const overGain = Engine.applyDiminishedStatGain(childCapProbe, "WS", 5, "event");
+  if (overGain !== 0 || childCapProbe.stats.WS !== childWsCap) {
+    fail(4, `Stage 21 statCap hard ceiling failed: overGain=${overGain}, WS=${childCapProbe.stats.WS}`);
+  }
+  // removeTags + augmetics/penance healing test
+  const healProbe = Engine.createCharacter({
+    mode: "custom",
+    worldId: "terra",
+    originId: "planetary_noble",
+    traitId: "none",
+    eraId: "armageddon",
+    gender: "female"
+  });
+  healProbe.age = 26;
+  healProbe.careerId = "administratum";
+  healProbe.stats.Inf = 60;
+  healProbe.corruption = 20;
+  healProbe.tags.push("crippled_limb", "shell_shocked");
+  const penRes = Engine.performAction(healProbe, "penance");
+  if (!penRes.ok || healProbe.tags.includes("shell_shocked")) {
+    fail(4, "Stage 21 penance failed to heal shell_shocked");
+  }
+  const augRes = Engine.performAction(healProbe, "augmetics");
+  if (!augRes.ok || healProbe.tags.includes("crippled_limb")) {
+    fail(4, "Stage 21 augmetics failed to heal crippled_limb");
   }
 }
 
@@ -1274,6 +1339,7 @@ for (const ev of DATA.EVENTS) {
     if (passAt86 !== 0 || dimSt.stats.Inf !== 86) {
       fail(4, `Non-specialty mortal passive gain at 86 must be 0 (zero decay), got delta=${passAt86}`);
     }
+    dimSt.careerId = "master_of_administratum";
     dimSt.stats.Inf = 92;
     const evAt92 = Engine.applyDiminishedStatGain(dimSt, "Inf", 1, "event");
     if (evAt92 < 1 || dimSt.stats.Inf !== 93) {
@@ -2408,6 +2474,46 @@ if (DEEP_MODE) {
     `synthetic reachability proved (${synthChecked} req specs), ` +
     `directCareerMatch(events=${careersWithEvents}/${selectableCareers.length}, chronicles=${careersWithChrons}/${selectableCareers.length}).`
   );
+
+  // Gate 7D: 전 91직군 승급 간선(A -> B) 스탯 상한 무결성 증명 (데드락 0건)
+  let checkedEdges = 0;
+  for (const b of selectableCareers) {
+    const reqStats = (b.req && b.req.stats) || {};
+    const statEntries = Object.entries(reqStats);
+    if (statEntries.length === 0) continue;
+    const prevSet = new Set();
+    if (b.req && Array.isArray(b.req.anyCareers)) {
+      b.req.anyCareers.forEach((id) => prevSet.add(id));
+    }
+    if (b.req && Array.isArray(b.req.or)) {
+      for (const br of b.req.or) {
+        if (br && Array.isArray(br.anyCareers)) br.anyCareers.forEach((id) => prevSet.add(id));
+      }
+    }
+    if (prevSet.size === 0) continue;
+    for (const prevId of prevSet) {
+      const a = DATA.CAREERS.find((c) => c.id === prevId);
+      if (!a) continue;
+      checkedEdges++;
+      const probe = {
+        age: Math.max(20, (b.req && b.req.minAge) || 20),
+        careerId: a.id,
+        worldId: "generic_civilised",
+        homeWorldId: "generic_civilised",
+        traitId: "none",
+        tags: [...((a.onJoin && a.onJoin.addTags) || [])],
+        augmeticsCount: a.tree === "mechanicus" ? 1 : 0,
+        stats: { WS: 25, BS: 25, T: 25, Ag: 25, Int: 25, WP: 25, Fel: 25, Inf: 25 }
+      };
+      for (const [sk, minVal] of statEntries) {
+        const cap = Engine.getStatCap(probe, sk);
+        if (cap < minVal) {
+          fail(7, `Gate 7D promotion cap deadlock: ${a.id} (${sk} cap=${cap}) -> ${b.id} (requires ${sk}>=${minVal})`);
+        }
+      }
+    }
+  }
+  console.log(`[Gate 7D] Promotion-cap integrity proved (${checkedEdges} direct edges, 0 cap deadlocks).`);
 }
 
 // ============================================================================

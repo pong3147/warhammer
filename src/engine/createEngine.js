@@ -34,6 +34,13 @@ import {
   createCareerRulesModule
 } from "./careerRules.js";
 import { createCareerActionsModule } from "./careerActions.js";
+import {
+  ACQUIRED_TRAIT_EFFECTS,
+  getAcquiredTraits,
+  getSpecialtyStatSet,
+  getStatCap,
+  getAllStatCaps
+} from "./statCaps.js";
 
 export function createImperiumEngine(DATA) {
   function warnUnknownId(kind, id) {
@@ -175,9 +182,12 @@ export function createImperiumEngine(DATA) {
       state.stats[statKey] = next;
       return next - cur;
     }
-    if (cur >= 100) return 0;
+
+    const cap = getStatCap(state, statKey, { getWorld, getCareer, getTrait });
+    if (cur >= cap) return 0;
 
     const career = getCareer(state.careerId);
+    const homeWorld = getWorld(state.homeWorldId || state.worldId);
     const tags = state.tags || [];
     const bodyClass = computeBodyClass(state, career);
     const reqStats = (career && career.req && career.req.stats) || {};
@@ -188,13 +198,28 @@ export function createImperiumEngine(DATA) {
     );
     const isEliteBody = bodyClass === "transhuman" || bodyClass === "dreadnought" || bodyClass === "daemonic";
     const isMechInt = statKey === "Int" && ((career && career.tree === "mechanicus") || tags.includes("mechanicus"));
+    const ratio = cur / Math.max(1, cap);
 
     if (sourceType === "passive") {
       let mult = 1.0;
-      if (cur < 55) mult = 1.0;
-      else if (cur < 72) mult = isSpecialty ? 0.75 : 0.45;
-      else if (cur < 85) mult = isSpecialty ? 0.50 : 0.20;
-      else mult = ((career && career.tier >= 5 && isSpecialty) || (isEliteBody && isSpecialty) || isMechInt) ? 0.35 : 0;
+      if (ratio < 0.58) mult = 1.0;
+      else if (ratio < 0.78) mult = isSpecialty ? 0.75 : 0.45;
+      else if (ratio < 0.92) mult = isSpecialty ? 0.50 : 0.20;
+      else mult = ((career && career.tier >= 5 && isSpecialty) || (isEliteBody && isSpecialty) || isMechInt) ? 0.30 : 0;
+
+      if (mult > 0) {
+        if ((tags.includes("prodigy") || tags.includes("savant_genius")) && (statKey === "Int" || statKey === "BS")) {
+          mult *= 1.25;
+        }
+        if (tags.includes("psyker") && statKey === "WP") {
+          mult *= 1.2;
+        }
+        if (homeWorld && homeWorld.id === "macragge" && (statKey === "Int" || statKey === "Fel" || statKey === "Inf")) {
+          mult *= 1.15;
+        } else if (homeWorld && homeWorld.id === "fenris" && statKey === "WS") {
+          mult *= 1.15;
+        }
+      }
 
       const eff = rawGain * mult;
       if (eff <= 0) return 0;
@@ -202,22 +227,22 @@ export function createImperiumEngine(DATA) {
       const frac = eff - whole;
       const gain = whole + (Math.random() < frac ? 1 : 0);
       if (gain <= 0) return 0;
-      const next = clamp(cur + gain, 5, 100);
+      const next = clamp(cur + gain, 5, cap);
       state.stats[statKey] = next;
       return next - cur;
     }
 
     let mult = 1.0;
     if (sourceType === "join") {
-      mult = cur >= 88 ? 0.75 : 1.0;
+      mult = ratio >= 0.92 ? 0.75 : 1.0;
     } else {
-      if (cur < 75) mult = 1.0;
-      else if (cur < 88) mult = 0.75;
+      if (ratio < 0.80) mult = 1.0;
+      else if (ratio < 0.92) mult = 0.75;
       else mult = 0.50;
     }
 
     const scaled = Math.max(1, Math.round(rawGain * mult));
-    const next = clamp(cur + scaled, 5, 100);
+    const next = clamp(cur + scaled, 5, cap);
     state.stats[statKey] = next;
     return next - cur;
   }
@@ -229,6 +254,7 @@ export function createImperiumEngine(DATA) {
     const diff = check && Number.isFinite(check.diff) ? check.diff : 0;
     const tags = (state && state.tags) || [];
     const career = state ? getCareer(state.careerId) : null;
+    const homeWorld = state ? getWorld(state.homeWorldId || state.worldId) : null;
     const modifiers = [];
 
     if (diff !== 0) {
@@ -236,15 +262,18 @@ export function createImperiumEngine(DATA) {
     }
 
     const wounds = state && Number.isFinite(state.wounds) ? state.wounds : 100;
-    if (wounds <= 25) {
-      modifiers.push({ label: "중상", value: -16 });
-    } else if (wounds <= 50) {
-      modifiers.push({ label: "부상", value: -8 });
+    let woundPenalty = wounds <= 25 ? -16 : (wounds <= 50 ? -8 : 0);
+    if (woundPenalty < 0 && homeWorld && homeWorld.id === "catachan" && (statKey === "WS" || statKey === "T")) {
+      woundPenalty = Math.round(woundPenalty * 0.5);
+    }
+    if (woundPenalty < 0) {
+      modifiers.push({ label: wounds <= 25 ? "중상" : "부상", value: woundPenalty });
     }
 
     const corruption = state && Number.isFinite(state.corruption) ? state.corruption : 0;
     const isChaosCareer = Boolean(career && career.tree === "chaos");
-    if (!tags.includes("daemon_prince") && !isChaosCareer) {
+    const ignoreCorrPenalty = tags.includes("daemon_prince") || isChaosCareer || tags.includes("blank") || tags.includes("omega_pariah");
+    if (!ignoreCorrPenalty) {
       if (corruption >= 75) {
         modifiers.push({ label: "심각한 오염", value: -15 });
       } else if (corruption >= 45) {
@@ -261,6 +290,28 @@ export function createImperiumEngine(DATA) {
       modifiers.push({ label: "고위 난제", value: -9 });
     } else if (tier >= 4) {
       modifiers.push({ label: "고위 난제", value: -5 });
+    }
+
+    // 모성 · 선천 자질 · 후천 특성 판정 보정
+    if (homeWorld) {
+      if (homeWorld.id === "krieg" && statKey === "WP") {
+        modifiers.push({ label: "비타-움의 무감각", value: 4 });
+      } else if (homeWorld.id === "cadia" && statKey === "WP") {
+        modifiers.push({ label: "카디아는 버틴다", value: 4 });
+      } else if (homeWorld.id === "tanith" && (statKey === "Ag" || statKey === "BS")) {
+        modifiers.push({ label: "유령의 발걸음", value: 3 });
+      } else if (homeWorld.id === "voidborn" && (statKey === "Int" || statKey === "Ag")) {
+        modifiers.push({ label: "성간 항해의 감각", value: 3 });
+      }
+    }
+    if (tags.includes("ratling") && (statKey === "BS" || statKey === "Ag")) {
+      modifiers.push({ label: "래틀링 감각", value: 4 });
+    }
+    for (let i = 0; i < tags.length; i++) {
+      const at = ACQUIRED_TRAIT_EFFECTS[tags[i]];
+      if (at && at.checkMods && at.checkMods[statKey]) {
+        modifiers.push({ label: at.name, value: at.checkMods[statKey] });
+      }
     }
 
     const modSum = modifiers.reduce((acc, m) => acc + m.value, 0);
@@ -317,14 +368,17 @@ export function createImperiumEngine(DATA) {
 
   function computeLifeExpectancy(state) {
     const world = getWorld(state.worldId);
+    const homeWorld = getWorld(state.homeWorldId || state.worldId);
     const origin = getOrigin(state.originId);
     const career = getCareer(state.careerId);
     const tMod = clamp(Math.floor(((state.stats.T || 25) - 25) * 0.35), -8, 18);
+    const homeLifePerk = homeWorld.id === "generic_agri" ? 5 : (homeWorld.id === "generic_paradise" ? 8 : 0);
     return Math.max(24, Math.round(
       world.baseLifeExpectancy +
       (origin.lifeMod || 0) +
       (career.lifeBonus || 0) +
       (state.extraLifeBonus || 0) +
+      homeLifePerk +
       tMod
     ));
   }
@@ -404,14 +458,28 @@ export function createImperiumEngine(DATA) {
     }
 
     const tags = Array.from(new Set([...(origin.tags || []), ...(trait.tags || [])]));
+    const capProbeState = {
+      age: 0,
+      careerId: "child",
+      worldId: world.id,
+      homeWorldId: world.id,
+      traitId: trait.id,
+      tags,
+      augmeticsCount: 0
+    };
+    for (const key of Object.keys(STAT_META)) {
+      const cap = getStatCap(capProbeState, key, { getWorld, getCareer, getTrait });
+      stats[key] = clamp(stats[key], 8, cap);
+    }
+
     const name = (mode === "custom" && config.customName && config.customName.trim())
       ? config.customName.trim()
       : generateName(gender, world);
 
     const faith = clamp(48 + (origin.faithMod || 0) + (trait.faithBonus || 0), 5, 100);
     const corruption = clamp(trait.corruptionStart || 0, 0, 100);
-    const maxWounds = 100;
-    const wounds = clamp(82 + Math.floor((stats.T - 25) / 2), 65, 100);
+    const maxWounds = tags.includes("ogryn") ? 120 : 100;
+    const wounds = clamp(82 + Math.floor((stats.T - 25) / 2) + (tags.includes("ogryn") ? 15 : 0), 65, maxWounds);
 
     const state = {
       saveVersion: SAVE_VERSION,
@@ -636,6 +704,20 @@ export function createImperiumEngine(DATA) {
       }
     }
     if (eff.warpYearShift) parts.push(`워프 시간 왜곡 +${eff.warpYearShift}년`);
+    if (Array.isArray(eff.addTags)) {
+      for (let i = 0; i < eff.addTags.length; i++) {
+        const at = ACQUIRED_TRAIT_EFFECTS[eff.addTags[i]];
+        if (at) parts.push(`특성 획득: ${at.name}(${at.summary})`);
+      }
+    }
+    if (Array.isArray(eff.removeTags)) {
+      for (let i = 0; i < eff.removeTags.length; i++) {
+        const at = ACQUIRED_TRAIT_EFFECTS[eff.removeTags[i]];
+        if (at) {
+          parts.push(at.kind === "negative" ? `특성 치유: ${at.name}` : `특성 상실: ${at.name}`);
+        }
+      }
+    }
     return parts.join(" · ");
   }
 
@@ -762,12 +844,28 @@ export function createImperiumEngine(DATA) {
       state.rejuvenatCount = (state.rejuvenatCount || 0) + 1;
       state.lastRejuvenatAge = state.age;
     }
+    const addedTagsForDelta = [];
     if (outcome.addTags) {
+      const homeWorldId = state.homeWorldId || state.worldId;
       for (const t of outcome.addTags) {
-        if (!state.tags.includes(t)) state.tags.push(t);
+        if (t === "shell_shocked" && homeWorldId === "krieg") continue;
+        if (!state.tags.includes(t)) {
+          state.tags.push(t);
+          if (ACQUIRED_TRAIT_EFFECTS[t]) addedTagsForDelta.push(t);
+        }
         if (t.startsWith("met_")) {
           const cid = t.replace("met_", "");
           if (!state.metCharacters.includes(cid)) state.metCharacters.push(cid);
+        }
+      }
+    }
+    const removedTagsForDelta = [];
+    if (outcome.removeTags) {
+      for (const t of outcome.removeTags) {
+        const idx = state.tags.indexOf(t);
+        if (idx !== -1) {
+          state.tags.splice(idx, 1);
+          if (ACQUIRED_TRAIT_EFFECTS[t]) removedTagsForDelta.push(t);
         }
       }
     }
@@ -870,9 +968,13 @@ export function createImperiumEngine(DATA) {
     const logKind = outcome.instantDeath
       ? "death"
       : (outcome.chooseChapter || outcome.acceptCareerOffer ? "career" : (rollInfo ? (rollInfo.success ? "success" : "danger") : "event"));
-    const outcomeForDelta = (appliedOutcomeStats || blockedOutcomeCorr)
-      ? Object.assign({}, outcome, appliedOutcomeStats ? { stats: appliedOutcomeStats } : null, blockedOutcomeCorr ? { corruption: 0 } : null)
-      : outcome;
+    const outcomeForDelta = Object.assign(
+      {},
+      outcome,
+      appliedOutcomeStats ? { stats: appliedOutcomeStats } : null,
+      blockedOutcomeCorr ? { corruption: 0 } : null,
+      { addTags: addedTagsForDelta, removeTags: removedTagsForDelta }
+    );
     const deltaText = formatDeltaText(acceptedJoinEff || outcomeForDelta);
     addLog(state, outcome.text, logKind, rollInfo, {
       badge: outcome.instantDeath ? "최후의 기록" : (outcome.chooseChapter ? "챕터 서약" : (outcome.acceptCareerOffer ? "진로 발탁 · 승급" : (rollInfo ? "판정 결과" : "분기 기록"))),
@@ -982,10 +1084,23 @@ export function createImperiumEngine(DATA) {
     let appliedStats = null;
     if (eff.stats) {
       appliedStats = {};
-      for (const [k, delta] of Object.entries(eff.stats)) {
-        if (state.stats[k] !== undefined) {
-          const actual = applyDiminishedStatGain(state, k, delta, "passive");
+      const entries = Object.entries(eff.stats);
+      const hasNeg = entries.some(([, v]) => v < 0);
+      const specSet = getSpecialtyStatSet(getCareer(state.careerId));
+      for (const [k, delta] of entries) {
+        if (state.stats[k] === undefined) continue;
+        if (hasNeg || delta < 0) {
+          const cappedDelta = delta > 0 ? Math.min(delta, 2) : delta;
+          const actual = applyDiminishedStatGain(state, k, cappedDelta, "passive");
           if (actual !== 0) appliedStats[k] = actual;
+        } else {
+          const isSpec = specSet.has(k);
+          const prob = isSpec ? (picked.priority === 3 ? 0.60 : 0.42) : 0.16;
+          if (Math.random() < prob) {
+            const cappedDelta = isSpec ? Math.min(delta, 2) : Math.min(delta, 1);
+            const actual = applyDiminishedStatGain(state, k, cappedDelta, "passive");
+            if (actual !== 0) appliedStats[k] = actual;
+          }
         }
       }
     }
@@ -1008,10 +1123,24 @@ export function createImperiumEngine(DATA) {
     if (eff.align) {
       applyAlignDelta(state, eff.align);
     }
+    const removedChronTags = [];
+    if (eff.removeTags) {
+      for (const t of eff.removeTags) {
+        const idx = state.tags.indexOf(t);
+        if (idx !== -1) {
+          state.tags.splice(idx, 1);
+          if (ACQUIRED_TRAIT_EFFECTS[t]) removedChronTags.push(t);
+        }
+      }
+    }
 
-    const effForDelta = (appliedStats || blockedChronCorr)
-      ? Object.assign({}, eff, appliedStats ? { stats: appliedStats } : null, blockedChronCorr ? { corruption: 0 } : null)
-      : eff;
+    const effForDelta = Object.assign(
+      {},
+      eff,
+      appliedStats ? { stats: appliedStats } : null,
+      blockedChronCorr ? { corruption: 0 } : null,
+      removedChronTags.length ? { removeTags: removedChronTags } : null
+    );
     const deltaText = formatDeltaText(effForDelta);
     const effectiveCorr = blockedChronCorr ? 0 : (eff.corruption || 0);
     const kind = (eff.wounds && eff.wounds < 0) || effectiveCorr > 0
@@ -1159,26 +1288,32 @@ export function createImperiumEngine(DATA) {
         }
       }
 
-      // 하이브리드 체력 회복 · 노화 양극화 보정
+      // 하이브리드 체력 회복 · 노화 양극화 보정 · 선천/후천/모성 특전
+      const homeWorld = getWorld(state.homeWorldId || state.worldId);
       const lifeExp = computeLifeExpectancy(state);
-      const baseNaturalHeal = state.age <= lifeExp * 0.72 ? 3 : 0;
+      let baseNaturalHeal = state.age <= lifeExp * 0.72 ? 3 : 0;
+      if (state.tags.includes("geneseed_compatible") && state.age <= lifeExp * 0.85) baseNaturalHeal += 1;
+      if (state.tags.includes("chronic_toxins")) baseNaturalHeal = Math.max(0, baseNaturalHeal - 1);
       let focusHeal = focus.woundsDelta || 0;
       if (focusHeal > 0) {
         if (state.age > lifeExp * 0.95) focusHeal = 0;
         else if (state.age > lifeExp * 0.82) focusHeal = Math.floor(focusHeal * 0.5);
       }
       state.wounds = clamp(state.wounds + baseNaturalHeal + focusHeal, 0, state.maxWounds);
-      state.faith = clamp(state.faith + (focus.faithDelta || 0), 0, 100);
-      const rawCorrDelta = focus.corruptionDelta || 0;
+      const faithGain = (focus.faithDelta || 0) + (homeWorld.id === "ophelia7" && (focus.faithDelta || 0) > 0 ? 1 : 0);
+      state.faith = clamp(state.faith + faithGain, 0, 100);
+      const rawCorrDelta = (focus.corruptionDelta || 0) + (state.tags.includes("warp_scarred") ? 1 : 0);
       const incorruptible = isIncorruptibleState(state);
       if (rawCorrDelta > 0) {
         if (!incorruptible) {
           let effCorrDelta = state.age < 12 ? Math.min(rawCorrDelta, 2) : rawCorrDelta;
+          if (state.tags.includes("omega_pariah")) effCorrDelta = Math.floor(effCorrDelta * 0.15);
+          else if (state.tags.includes("blank")) effCorrDelta = Math.floor(effCorrDelta * 0.5);
           if (state.tags.includes("heretic") || state.tags.includes("chaos_aligned")) {
             if (state.corruption >= 92) effCorrDelta = 0;
             else if (state.corruption >= 80) effCorrDelta = Math.min(effCorrDelta, 2);
           }
-          state.corruption = clamp(state.corruption + effCorrDelta, 0, 100);
+          if (effCorrDelta > 0) state.corruption = clamp(state.corruption + effCorrDelta, 0, 100);
         }
       } else if (rawCorrDelta < 0) {
         state.corruption = clamp(state.corruption + rawCorrDelta, 0, 100);
@@ -1198,7 +1333,11 @@ export function createImperiumEngine(DATA) {
       }
 
       const nihilusHaz = state.tags.includes("imperial_nihilus") ? 0.008 : 0;
-      const totalHazard = Math.max(0.002, (world.annualHazard + (activeCareer.hazardMod || 0) + nihilusHaz) * (focus.hazardMult || 1));
+      let perkHazMult = 1.0;
+      if (homeWorld.id === "catachan" && ((world.tags && (world.tags.includes("death") || world.tags.includes("feral"))))) perkHazMult *= 0.5;
+      if (state.tags.includes("battle_hardened")) perkHazMult *= 0.75;
+      if (state.tags.includes("saint_spark") && state.faith >= 70) perkHazMult *= 0.8;
+      const totalHazard = Math.max(0.002, (world.annualHazard + (activeCareer.hazardMod || 0) + nihilusHaz) * (focus.hazardMult || 1) * perkHazMult);
 
       if (Math.random() < totalHazard * 2.0) {
         const dmg = randInt(5, 13);
@@ -1588,6 +1727,7 @@ export function createImperiumEngine(DATA) {
     BODY_CLASS_LABELS,
     FACTION_ENDING_KEYS,
     STAT_META,
+    ACQUIRED_TRAIT_EFFECTS,
     FOCUSES,
     ERA_PRESETS,
     TAG_LABELS,
@@ -1596,6 +1736,9 @@ export function createImperiumEngine(DATA) {
     applyAlignDelta,
     getAlignmentInfo,
     getStratification,
+    getStatCap: (state, statKey) => getStatCap(state, statKey, { getWorld, getCareer, getTrait }),
+    getAllStatCaps: (state) => getAllStatCaps(state, { getWorld, getCareer, getTrait }),
+    getAcquiredTraits,
     applyDiminishedStatGain,
     computeCheckPreview,
     isUnboundCareer,

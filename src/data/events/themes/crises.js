@@ -8,6 +8,8 @@ export default [
     req: {
       minAge: 15,
       anyCareers: ["astra_militarum", "pdf_trooper", "militarum_officer", "tempestus_scion", "commissar", "lord_commissar", "skitarii"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeTags: ["heretic", "chaos_aligned", "daemon_prince", "astartes", "transhuman", "custodes", "grey_knight", "dreadnought", "high_lord_terra"]
     },
     reqLabel: "15세 이상 · 전선 군인 · 스키타리 · 커미사르",
@@ -26,6 +28,20 @@ export default [
           text: "예상보다 빠른 2차 일제 사격이 분화구 가장자리를 강타했다. 온몸에 파편이 박힌 채 진흙 속에 파묻혔다.",
           wounds: -42,
           stats: { T: 2 }
+        },
+        critFail: {
+          text: "지근거리에서 작렬한 포탄의 폭압이 고막과 신경을 찢어 놓았다. 살아남았으나 포성 환청이 평생 남았다.",
+          wounds: -45,
+          addTags: ["shell_shocked"]
+        }
+      },
+      {
+        label: "[특성 전용 · 강철의 신경] 포화 속에서도 흔들리지 않고 전우들을 이끌어 즉석 방공호를 구축한다",
+        req: { allTags: ["iron_nerves"] },
+        effect: {
+          text: "강철 같은 신경으로 공황을 잠재운 덕분에 분대 전원이 최소한의 피해로 포격을 견뎌 냈다.",
+          wounds: -8,
+          stats: { WP: 3, Inf: 5 }
         }
       },
       {
@@ -73,6 +89,15 @@ export default [
     weight: 14,
     text: "야간 경계 구역의 복스 통신이 돌연 생체 잡음으로 끊겼다! 공기가 카멜레온처럼 일그러지더니, 낫 같은 발톱을 펼친 타이라니드 릭터와 생체 포자 떼가 순식간에 목덜미를 노리고 덮쳐 든다. 어둠 속에서 날카로운 키틴질 마찰음이 사방의 퇴로를 조여 온다.",
     choices: [
+      {
+        label: "[특성 전용 · 백전노장의 전술안] 어둠 속 사각을 미리 읽고 선제 교차 사격망을 전개한다",
+        req: { allTags: ["tactician_eye"] },
+        effect: {
+          text: "매복 궤적을 정확히 예측한 선제 사격에 릭터의 광학 위장이 무력화되며 단숨에 사살했다.",
+          wounds: -6,
+          stats: { Int: 4, Inf: 6 }
+        }
+      },
       {
         label: "[백병 판정] 정면으로 돌진하는 릭터의 발톱을 받아 내며 급소를 찌른다",
         check: { stat: "WS", diff: -10 },
@@ -134,6 +159,15 @@ export default [
     text: "녹색 괴성 '와아아아!'가 대지를 울리며 거대한 오크 배틀왜건이 바리케이드를 박살 냈다! 수백 명의 오크 보이즈와 초파를 치켜든 노브들이 틈새로 물밀듯 쏟아져 들어온다. 굉음 속에 전선의 좌익이 흔들리며 방어선이 무너지기 일보 직전이다.",
     choices: [
       {
+        label: "[특성 전용 · 검성의 경지] 선두 오크 워보스급 노브의 초파를 흘려 넘기며 단칼에 목을 벤다",
+        req: { allTags: ["blade_master"] },
+        effect: {
+          text: "절묘한 검술로 거구의 오크 노브를 일격에 베어 넘기자, 기세가 꺾인 오크 무리가 사방으로 흩어졌다.",
+          wounds: -8,
+          stats: { WS: 4, Inf: 6 }
+        }
+      },
+      {
         label: "[사격 판정] 중화기 거치대를 붙잡고 선두 오크 노브의 미간에 집중 사격을 퍼붓는다",
         check: { stat: "BS", diff: -10 },
         success: {
@@ -191,6 +225,15 @@ export default [
     text: "정찰로가 갑자기 들썩이더니 갑각 전갈 괴수 '카타찬 데블'의 집게발이 튀어나왔고, 피하려던 발목에는 신경독을 뿜는 붉은 덩굴 가시가 깊숙이 박혔다! 1분 안에 대처하지 않으면 심장이 멎는다. 눅눅한 밀림의 정적 속에서 거대한 절지동물이 두 번째 일격을 준비하며 몸을 웅크린다.",
     choices: [
       {
+        label: "[특성 전용 · 백전의 생존자] 단련된 내성과 야전 경험으로 맹독을 짜내며 괴수의 약점을 찌른다",
+        req: { allTags: ["battle_hardened"] },
+        effect: {
+          text: "수많은 사지를 건넌 생존 본능으로 독기를 버텨 내고, 카타찬 데블의 갑각 틈새를 정확히 끊어 냈다.",
+          wounds: -10,
+          stats: { T: 4, Ag: 3 }
+        }
+      },
+      {
         label: "[민첩 판정] 대검으로 덩굴을 단칼에 끊고 괴수의 갑각 틈새로 뛰어올라 눈을 찌른다",
         check: { stat: "Ag", diff: -10 },
         success: {
@@ -215,6 +258,11 @@ export default [
           text: "독기 중화가 늦어 고열과 경련 속에 며칠을 사경을 헤맨 끝에 간신히 깨어났다.",
           wounds: -40,
           stats: { T: 3 }
+        },
+        critFail: {
+          text: "해독이 늦어 맹독 일부가 혈관에 고착되었다. 목숨은 건졌으나 호흡과 체력이 크게 상했다.",
+          wounds: -42,
+          addTags: ["chronic_toxins"]
         }
       },
       {

@@ -18,6 +18,14 @@ export default [
     text: "지평선 너머로 귀청이 터질 듯한 '와아아아!' 함성과 함께 녹색 오크 보이즈 무리가 붉은 트럭을 몰고 쇄도해 온다! 흙먼지 너머로 낡은 기관총 탄환이 빗발처럼 쏟아지며 아군 화기의 총열이 뜨겁게 달아오른다. 덩치 큰 오크 노브가 초파를 치켜들며 방어선의 중앙을 향해 돌진한다.",
     choices: [
       {
+        label: "[특성 전용 · 백발백중 명사수] 흔들리는 트럭 운전석의 오크 운전수와 노브를 연속 저격한다",
+        req: { allTags: ["deadeye_marksman"] },
+        effect: {
+          text: "두 발의 정밀 사격으로 지휘 차량이 전복되며 오크 돌격 대열이 순식간에 붕괴했다.",
+          stats: { BS: 4, Inf: 5 }
+        }
+      },
+      {
         label: "[사격 판정] 침착하게 일제 사격을 퍼부어 선두 오크 노브를 저격한다",
         check: { stat: "BS", diff: 0 },
         success: {
@@ -125,6 +133,16 @@ export default [
     text: "성계 외곽 소행성대에서 아엘다리 커세어 선장이 비밀 회동을 제안해 왔다. 황제의 법은 무역 영장이나 심문관의 특권이 없는 자의 외계인 접촉을 극형에 처할 이단으로 규정하지만, 저들이 내민 고대 성간 항로도와 외계 유물은 좀처럼 거부하기 어렵다. 공허 너머 정지해 있는 날렵한 외계 순양함이 그대의 답을 기다린다.",
     choices: [
       {
+        label: "[특성 전용 · 은빛 혀] 아엘다리 방언과 외교 수사로 커세어 선장의 자존심을 건드려 헐값에 항로도를 넘겨받는다",
+        req: { allTags: ["silver_tongue"] },
+        effect: {
+          text: "화려한 말솜씨에 말려든 커세어 선장이 희귀 성간 항로도를 선선히 내어주고 물러났다.",
+          stats: { Inf: 10, Fel: 4 },
+          addTags: ["xenos_contact"],
+          align: { ruthless: 5 }
+        }
+      },
+      {
         label: "[교섭 판정] 치열한 수싸움 끝에 외계 유물과 성간 항로도를 유리한 조건으로 거래한다",
         check: { stat: "Fel", diff: -5 },
         success: {
@@ -138,6 +156,13 @@ export default [
           text: "오만한 외계인들에게 기만당해 매복 공격을 당하고 간신히 탈출했다.",
           wounds: -22,
           stats: { Inf: -5 },
+          align: { ruthless: 5 }
+        },
+        critFail: {
+          text: "외계인에게 막대한 대금을 떼이고 채권단과 중개인들에게 거액의 빚을 졌다.",
+          wounds: -20,
+          stats: { Inf: -8 },
+          addTags: ["imperial_debt"],
           align: { ruthless: 5 }
         }
       },
@@ -346,6 +371,15 @@ export default [
         fail: {
           text: "드루카리의 스플린터 소총 독가시에 스쳐 극심한 신경 독에 시달렸다.",
           wounds: -28
+        }
+      },
+      {
+        label: "[특성 전용 · 악명 높은 냉혈한] 혼란에 빠진 외곽 구역을 미끼로 내어주고 중심 방어선의 제국 무기고를 확보한다",
+        req: { allTags: ["notorious_ruthless"] },
+        effect: {
+          text: "냉혹한 희생 위에 방어선의 중화기를 가동해 드루카리 강습정을 격추하고 상부의 두려움 섞인 찬사를 받았다.",
+          stats: { Inf: 6, Int: 3 },
+          align: { ruthless: 8 }
         }
       },
       {

@@ -1214,6 +1214,88 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
       randSpy.mockRestore();
     }
   });
+
+  it("Stage 21: renders triple-explicit trait UI (choice preview, gain/heal log, dossier perks & stat caps) and heals via removeTags", () => {
+    const realEngine = createImperiumEngine(FULL_DATA);
+    const transmutEvent = {
+      id: "ev_test_s21_transmute",
+      title: "포탄 충격 극복 시련",
+      category: "테스트",
+      text: "트라우마를 딛고 전선으로 복귀할지 시험한다.",
+      choices: [
+        {
+          label: "[의지 판정] 포화 속 지휘권을 되찾는다",
+          check: { stat: "WP", diff: 10 },
+          success: {
+            text: "트라우마를 이겨 내고 평정을 되찾았다.",
+            removeTags: ["shell_shocked"]
+          },
+          critSuccess: {
+            text: "극한의 공포를 꿰뚫고 강철 같은 정신으로 각성했다.",
+            removeTags: ["shell_shocked"],
+            addTags: ["iron_nerves"]
+          },
+          fail: {
+            text: "여전히 손이 떨렸다.",
+            wounds: -5
+          }
+        },
+        {
+          label: "조용히 후방으로 물러난다",
+          effect: { text: "물러났다." }
+        }
+      ]
+    };
+
+    const proxy = {
+      ...realEngine,
+      advanceQuarter(st: any) {
+        if (!st.tags.includes("shell_shocked") && !st.tags.includes("iron_nerves")) {
+          st.tags.push("shell_shocked");
+        }
+        st.stats.WP = 40;
+        st.pendingEvent = transmutEvent;
+        return { status: "event", event: st.pendingEvent };
+      }
+    };
+
+    const randSpy = vi.spyOn(Math, "random");
+    try {
+      const { container, unmount } = render(<GameApp engineOverride={proxy} dataOverride={FULL_DATA} />);
+      startCustomCharacter(container);
+
+      // Dossier shows stat / cap and homeworld + innate trait perks
+      expect(container.querySelector("#stats-grid")?.textContent).toContain(" / ");
+      expect(container.querySelector("#trait-perks-list")?.textContent).toContain("모성 특전");
+      expect(container.querySelector("#trait-perks-list")?.textContent).toContain("선천 재능");
+
+      // Advance to trigger event with shell_shocked
+      fireEvent.click(container.querySelector("#btn-step")!);
+      expect(container.querySelector("#trait-perks-list")?.textContent).toContain("부정 특성: 포탄 충격");
+
+      // Choice preview shows both normal heal and critSuccess transmutation
+      const choiceText = container.querySelectorAll(".choice-btn")[0]?.textContent || "";
+      expect(choiceText).toContain("성공 시 특성 치유: 포탄 충격");
+      expect(choiceText).toContain("대성공 시 특성 획득: 강철의 신경");
+
+      // Trigger critSuccess (roll <= 5) -> removeTags shell_shocked + addTags iron_nerves
+      randSpy.mockReturnValue(0.01);
+      fireEvent.click(container.querySelectorAll(".choice-btn")[0]);
+
+      const logText = container.querySelector("#recent-log-list")?.textContent || "";
+      expect(logText).toContain("특성 치유: 포탄 충격");
+      expect(logText).toContain("특성 획득: 강철의 신경");
+
+      const perksText = container.querySelector("#trait-perks-list")?.textContent || "";
+      expect(perksText).toContain("긍정 특성: 강철의 신경");
+      expect(perksText).not.toContain("포탄 충격");
+
+      unmount();
+      localStorage.clear();
+    } finally {
+      randSpy.mockRestore();
+    }
+  });
 });
 
 

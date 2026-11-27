@@ -232,6 +232,12 @@ export default function CodexExplorer({ section }: Props) {
                             징병 챕터: {w.astartesChapter}
                           </>
                         ) : null}
+                        {w.perk ? (
+                          <>
+                            <br />
+                            모성 평생 특전: {w.perk.name} ({w.perk.desc})
+                          </>
+                        ) : null}
                       </div>
                     </div>
                   </div>

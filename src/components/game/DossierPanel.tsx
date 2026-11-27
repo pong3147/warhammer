@@ -17,12 +17,15 @@ function cleanShortTrait(name: string): string {
 
 export default function DossierPanel({ state, engine }: Props) {
   const world = engine.getWorld(state.worldId);
+  const homeWorld = engine.getWorld(state.homeWorldId || state.worldId);
   const career = engine.getCareer(state.careerId);
   const origin = engine.getOrigin(state.originId);
   const trait = engine.getTrait(state.traitId);
   const chap = state.chapterId ? engine.getChapter(state.chapterId) : null;
   const maxLife = engine.computeLifeExpectancy(state);
   const glossaryRefs = getContextualGlossaryRefs(state, career, world);
+  const statCaps = engine.getAllStatCaps ? engine.getAllStatCaps(state) : null;
+  const acquiredTraits = engine.getAcquiredTraits ? engine.getAcquiredTraits(state) : [];
 
   const woundsPct = Math.max(0, Math.min(100, Math.round((state.wounds / Math.max(1, state.maxWounds)) * 100)));
   const faithPct = Math.max(0, Math.min(100, Math.round(state.faith)));
@@ -40,6 +43,8 @@ export default function DossierPanel({ state, engine }: Props) {
   const isSupernatural =
     state.tags.includes("astartes") ||
     state.tags.includes("custodes") ||
+    state.tags.includes("grey_knight") ||
+    state.tags.includes("living_saint") ||
     state.tags.includes("daemon_prince");
 
   return (
@@ -140,26 +145,52 @@ export default function DossierPanel({ state, engine }: Props) {
         </div>
       </div>
 
-      <h3 className="sub-panel-title">8대 특성치</h3>
+      <h3 className="sub-panel-title">8대 특성치 (현재 / 상한)</h3>
       <dl id="stats-grid" className="stats-grid">
         {Object.values(engine.STAT_META).map((m: any) => {
           const val = Math.round(state.stats[m.key] || 0);
+          const cap = statCaps ? statCaps[m.key] : 100;
+          const pct = Math.min(100, Math.round((val / Math.max(1, cap)) * 100));
           return (
-            <div key={m.key} className="stat-item" title={m.desc}>
+            <div key={m.key} className="stat-item" title={`${m.desc} (현재 계급·체질 상한 ${cap})`}>
               <div className="stat-top">
                 <dt className="stat-key">
                   {m.name}
                   <span aria-hidden="true"> ({m.key})</span>
                 </dt>
-                <dd className="stat-num">{val}</dd>
+                <dd className="stat-num">
+                  {val} / {cap}
+                </dd>
               </div>
               <div className="stat-mini-bar" aria-hidden="true">
-                <div className="stat-mini-fill" style={{ width: `${Math.min(100, val)}%` }} />
+                <div className="stat-mini-fill" style={{ width: `${pct}%` }} />
               </div>
             </div>
           );
         })}
       </dl>
+
+      <h3 className="sub-panel-title">모성 특전 · 재능 · 후천 특성</h3>
+      <ul id="trait-perks-list" className="trait-perks-list">
+        {homeWorld && homeWorld.perk && (
+          <li className="trait-perk-item">
+            <strong>모성 특전({homeWorld.name})</strong>: {homeWorld.perk.name} — {homeWorld.perk.desc}
+          </li>
+        )}
+        {trait && trait.talent && (
+          <li className="trait-perk-item">
+            <strong>선천 재능</strong>: {trait.talent.name} — {trait.talent.desc}
+          </li>
+        )}
+        {acquiredTraits.map((at: any) => (
+          <li
+            key={at.key}
+            className={`trait-perk-item ${at.kind === "negative" ? "negative" : "positive"}`}
+          >
+            <strong>{at.kind === "negative" ? "부정 특성" : "긍정 특성"}</strong>: {at.name} — {at.summary}
+          </li>
+        ))}
+      </ul>
 
       <h3 className="sub-panel-title">보유 이력 및 특성</h3>
       <ul id="tag-cloud" className="tag-cloud">
@@ -169,7 +200,7 @@ export default function DossierPanel({ state, engine }: Props) {
           state.tags.map((t: string) => (
             <li
               key={t}
-              className={`tag-chip${t.startsWith("mark_") || t === "heretic" || t === "wanted_by_inquisition" ? " danger" : ""}`}
+              className={`tag-chip${t.startsWith("mark_") || t === "heretic" || t === "wanted_by_inquisition" || t === "crippled_limb" || t === "shell_shocked" || t === "warp_scarred" || t === "chronic_toxins" || t === "notorious_ruthless" || t === "imperial_debt" ? " danger" : ""}`}
             >
               {engine.TAG_LABELS[t] || t}
             </li>

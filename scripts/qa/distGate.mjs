@@ -62,7 +62,7 @@ export function runDistBundleGate({ rootDir, readRel, fail, coreData, glossaryTe
     return [...visited];
   };
 
-  // Identify narrative, simulation engine (6 split modules), and glossary chunks inside dist/_astro/
+  // Identify narrative, simulation engine (7 split modules), and glossary chunks inside dist/_astro/
   const astroDir = path.join(distDir, "_astro");
   const astroJsFiles = fs.existsSync(astroDir)
     ? fs.readdirSync(astroDir).filter((f) => f.endsWith(".js")).map((f) => `dist/_astro/${f}`)
@@ -74,7 +74,8 @@ export function runDistBundleGate({ rootDir, readRel, fail, coreData, glossaryTe
     "careerRules.",
     "careerActions.",
     "endings.",
-    "travel."
+    "travel.",
+    "statCaps."
   ];
   const ENGINE_CHUNK_SIGNATURES = [
     "createDynamicCareerOfferEvent",
@@ -83,7 +84,8 @@ export function runDistBundleGate({ rootDir, readRel, fail, coreData, glossaryTe
     "getCareerAction",
     "UNBOUND_CAREERS",
     "CLOSED_VOW_TREES",
-    "buildPoolIndex"
+    "buildPoolIndex",
+    "ACQUIRED_TRAIT_EFFECTS"
   ];
   const engineChunks = new Set(
     astroJsFiles.filter((f) => {

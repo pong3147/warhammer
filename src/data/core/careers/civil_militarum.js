@@ -89,8 +89,8 @@ export const CAREERS_CIVIL_MILITARUM_FRONT = [
     annualGrowth: { Fel: 1.4, Inf: 1.4, Int: 1.2 },
     req: {
       minAge: 28,
-      stats: { Int: 64, Fel: 64, Inf: 66 },
-      or: [{ anyCareers: ["guild_artisan", "administratum", "admin_prefect_rank"] }, { anyCareers: ["menial_worker", "underhive_boss"], anyTags: ["wealthy", "noble", "rogue_trader_blood"] }],
+      stats: { Int: 56, Fel: 56, Inf: 58 },
+      or: [{ anyCareers: ["guild_artisan", "administratum", "admin_prefect_rank"] }, { anyTags: ["wealthy", "noble", "rogue_trader_blood"], stats: { Int: 56, Fel: 56, Inf: 58 } }],
       excludeTags: ["astartes", "custodes", "heretic"]
     },
     selectable: true,
@@ -381,8 +381,8 @@ export const CAREERS_CIVIL_MILITARUM_FRONT = [
     annualGrowth: { Int: 2.4, Fel: 2.4, Inf: 3.0, WP: 2.0 },
     req: {
       minAge: 54,
-      anyCareers: ["militarum_general", "lord_commissar", "commissar_general", "navy_admiral", "lord_high_admiral"],
-      stats: { Int: 84, Fel: 82, WP: 82, Inf: 90 },
+      anyCareers: ["militarum_general", "commissar_general", "navy_admiral", "lord_high_admiral"],
+      stats: { Int: 84, Fel: 82, WP: 82, Inf: 88 },
       maxCorruption: 10,
       excludeTags: ["abhuman", "astartes", "custodes", "heretic"]
     },
@@ -410,8 +410,8 @@ export const CAREERS_CIVIL_MILITARUM_FRONT = [
     annualGrowth: { Int: 2.2, Fel: 2.2, Inf: 3.2, WP: 1.8 },
     req: {
       minAge: 62,
-      anyCareers: ["militarum_general", "warmaster", "lord_commissar", "commissar_general"],
-      stats: { Int: 88, Fel: 86, WP: 86, Inf: 94 },
+      anyCareers: ["militarum_general", "warmaster", "commissar_general"],
+      stats: { Int: 86, Fel: 84, WP: 84, Inf: 88 },
       maxCorruption: 8,
       excludeTags: ["abhuman", "astartes", "custodes", "heretic", "high_lord_terra"]
     },
@@ -642,7 +642,7 @@ export const CAREERS_IMPERIAL_STATE = [
     req: {
       minAge: 62,
       anyCareers: ["navy_admiral"],
-      stats: { Int: 88, Fel: 86, Inf: 94, WP: 82 },
+      stats: { Int: 88, Fel: 86, Inf: 90, WP: 82 },
       maxCorruption: 8,
       excludeTags: ["heretic", "high_lord_terra"]
     },
@@ -751,7 +751,7 @@ export const CAREERS_IMPERIAL_STATE = [
     req: {
       minAge: 62,
       anyCareers: ["arbites_marshal"],
-      stats: { WP: 90, Int: 86, Inf: 94, WS: 76 },
+      stats: { WP: 90, Int: 86, Inf: 90, WS: 64 },
       maxCorruption: 5,
       excludeTags: ["heretic", "high_lord_terra"]
     },
@@ -858,7 +858,7 @@ export const CAREERS_IMPERIAL_STATE = [
     req: {
       minAge: 64,
       anyCareers: ["admin_departmento_head"],
-      stats: { Int: 92, Inf: 94, Fel: 84 },
+      stats: { Int: 90, Inf: 90, Fel: 84 },
       maxCorruption: 12,
       excludeTags: ["heretic", "high_lord_terra"]
     },
@@ -893,7 +893,7 @@ export const CAREERS_IMPERIAL_STATE = [
       stats: { Fel: 74, Inf: 84, Int: 72 },
       maxCorruption: 22,
       or: [
-        { anyCareers: ["militarum_general", "lord_commissar", "commissar_general", "navy_admiral", "admin_departmento_head", "rt_lord_captain", "arbites_marshal"] },
+        { anyCareers: ["militarum_general", "commissar_general", "navy_admiral", "admin_departmento_head", "rt_lord_captain", "arbites_marshal"] },
         { allTags: ["noble"], stats: { Inf: 86 } }
       ],
       excludeTags: ["astartes", "custodes", "grey_knight", "abhuman", "heretic", "assassin", "living_saint", "imperial_knight", "knight_blood", "navigator", "sororitas", "mechanicus"]
@@ -922,7 +922,7 @@ export const CAREERS_IMPERIAL_STATE = [
     req: {
       minAge: 58,
       anyCareers: ["planetary_governor", "admin_departmento_head", "militarum_general"],
-      stats: { Inf: 92, Fel: 86, Int: 84 },
+      stats: { Inf: 88, Fel: 86, Int: 84 },
       maxCorruption: 15,
       excludeTags: ["astartes", "custodes", "heretic", "assassin", "living_saint"]
     },
@@ -1011,7 +1011,7 @@ export const CAREERS_IMPERIAL_STATE = [
     annualGrowth: { Fel: 2.0, Inf: 2.2, Int: 1.8, Ag: 1.2 },
     req: {
       minAge: 44,
-      stats: { Fel: 76, Inf: 84, Int: 68 },
+      stats: { Fel: 76, Inf: 80, Int: 68 },
       or: [{ anyCareers: ["rogue_trader"] }, { allTags: ["rogue_trader", "rogue_warrant_charter"] }],
       excludeTags: ["astartes", "custodes", "heretic", "assassin", "living_saint"]
     },

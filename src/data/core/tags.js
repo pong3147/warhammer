@@ -224,7 +224,25 @@ export const TAG_LABELS = {
 
   // 20단계 노년·변경 회수 이력 태그
   silver_legacy: "노년의 유산",
-  frontier_patron: "변경의 후원자"
+  frontier_patron: "변경의 후원자",
+
+  // 21단계 규격 외 특이점 4종 · 후천 특성 12종 (긍정 6 · 부정 6)
+  alpha_plus_psyker: "알파 플러스 사이커",
+  freak_physique: "규격 외 피지컬",
+  savant_genius: "전략·지성 사반트",
+  omega_pariah: "절대 무혼(오메가-마이너스)",
+  iron_nerves: "강철의 신경",
+  blade_master: "검성의 경지",
+  deadeye_marksman: "백발백중 명사수",
+  silver_tongue: "은빛 혀",
+  tactician_eye: "백전노장의 전술안",
+  battle_hardened: "백전의 생존자",
+  crippled_limb: "불구",
+  shell_shocked: "포탄 충격",
+  warp_scarred: "워프 흉터",
+  chronic_toxins: "만성 독소",
+  notorious_ruthless: "악명 높은 냉혈한",
+  imperial_debt: "거액의 채무"
 };
 
 // 행성 유형 태그 한글 라벨 사전 (describeReq 표시용)

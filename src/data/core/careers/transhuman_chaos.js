@@ -26,7 +26,7 @@ export const CAREERS_TRANSHUMAN = [
       gender: "male",
       stats: { T: 38, WS: 35, WP: 34 },
       maxCorruption: 10,
-      or: [{ anyTags: ["geneseed_compatible"] }, { anyWorldTags: ["astartes_recruit"] }],
+      or: [{ anyTags: ["geneseed_compatible", "freak_physique"] }, { anyWorldTags: ["astartes_recruit"] }],
       excludeTags: ["abhuman", "astartes", "custodes", "heretic", "navigator", "mutant_sanctioned", "assassin", "living_saint"]
     },
     selectable: true,

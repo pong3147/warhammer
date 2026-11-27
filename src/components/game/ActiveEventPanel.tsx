@@ -125,6 +125,47 @@ export default function ActiveEventPanel({ state, engine, onChoose }: Props) {
             <div className="event-choices">
               {(ev.choices || []).map((ch: any, idx: number) => {
                 const unlocked = engine.checkReq(state, ch.req);
+                const traitMap = engine.ACQUIRED_TRAIT_EFFECTS || {};
+                const extractTraitMap = (outcome: any) => {
+                  const items: { key: string; text: string }[] = [];
+                  if (!outcome) return items;
+                  if (Array.isArray(outcome.removeTags)) {
+                    for (const t of outcome.removeTags) {
+                      const at = traitMap[t];
+                      if (at) items.push({ key: `rem:${t}`, text: `${at.kind === "negative" ? "특성 치유" : "특성 상실"}: ${at.name}` });
+                    }
+                  }
+                  if (Array.isArray(outcome.addTags)) {
+                    for (const t of outcome.addTags) {
+                      const at = traitMap[t];
+                      if (at) items.push({ key: `add:${t}`, text: `특성 획득: ${at.name}` });
+                    }
+                  }
+                  return items;
+                };
+                const mergeOutcomeHints = (a: any, aLabel: string, b: any, bLabel: string, bothLabel: string) => {
+                  const aList = extractTraitMap(a);
+                  const bList = extractTraitMap(b);
+                  const bKeys = new Set(bList.map((x) => x.key));
+                  const aKeys = new Set(aList.map((x) => x.key));
+                  const out: string[] = [];
+                  for (const item of aList) {
+                    out.push(`${bKeys.has(item.key) ? bothLabel : aLabel} ${item.text}`);
+                  }
+                  for (const item of bList) {
+                    if (!aKeys.has(item.key)) out.push(`${bLabel} ${item.text}`);
+                  }
+                  return out;
+                };
+                const traitHints: string[] = unlocked
+                  ? (ch.check
+                      ? [
+                          ...mergeOutcomeHints(ch.success, "성공 시", ch.critSuccess, "대성공 시", "성공/대성공 시"),
+                          ...mergeOutcomeHints(ch.fail, "실패 시", ch.critFail, "대실패 시", "실패/대실패 시")
+                        ]
+                      : extractTraitMap(ch.effect || ch.success).map((x) => `확정 ${x.text}`))
+                  : [];
+
                 let oddsNode: React.ReactNode = <span className="choice-odds">확정</span>;
                 if (!unlocked) {
                   oddsNode = (
@@ -164,6 +205,9 @@ export default function ActiveEventPanel({ state, engine, onChoose }: Props) {
                   >
                     <span>{ch.label}</span>{" "}
                     {oddsNode}
+                    {traitHints.length > 0 && (
+                      <span className="choice-odds"> · {traitHints.join(" · ")}</span>
+                    )}
                   </button>
                 );
               })}

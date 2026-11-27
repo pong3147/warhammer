@@ -487,13 +487,22 @@ export function createCareerActionsModule(deps) {
       state.rejuvenatCount += 1;
       state.lastRejuvenatAge = state.age;
       state.extraLifeBonus += 55;
-      state.stats.Inf = clamp(state.stats.Inf - chk.infCost, 5, 100);
-      state.stats.T = clamp(state.stats.T + 4, 5, 100);
+      applyDiminishedStatGain(state, "Inf", -chk.infCost, "event");
+      const tGain = applyDiminishedStatGain(state, "T", 4, "event");
       state.wounds = clamp(state.wounds + 30, 1, state.maxWounds);
       if (!state.tags.includes("rejuvenat")) state.tags.push("rejuvenat");
+      const healed = [];
+      const toxIdx = state.tags.indexOf("chronic_toxins");
+      if (toxIdx !== -1) {
+        state.tags.splice(toxIdx, 1);
+        healed.push("특성 치유: 만성 독소");
+      }
+      const deltaParts = [`기대수명 +55년`, `생명력 +30`, `권위 -${chk.infCost}`];
+      if (tGain > 0) deltaParts.push(`강인 +${tGain}`);
+      if (healed.length) deltaParts.push(...healed);
       addLog(state, `막대한 재력과 인맥을 동원해 리주버냇 수명 연장 시술(${state.rejuvenatCount}/3회)을 받았다.`, "success", null, {
         badge: "수명 연장",
-        deltaText: `기대수명 +55년 · 생명력 +30 · 권위 -${chk.infCost}`
+        deltaText: deltaParts.join(" · ")
       });
       return { ok: true };
     }
@@ -504,19 +513,34 @@ export function createCareerActionsModule(deps) {
 
       state.augmeticsCount += 1;
       state.lastAugmeticsAge = state.age;
-      if (chk.infCost) state.stats.Inf = clamp(state.stats.Inf - chk.infCost, 5, 100);
-      state.stats.T = clamp(state.stats.T + 5, 5, 100);
-      state.stats.WS = clamp(state.stats.WS + 3, 5, 100);
-      state.stats.Int = clamp(state.stats.Int + 3, 5, 100);
-      state.stats.Fel = clamp(state.stats.Fel - 2, 5, 100);
+      if (chk.infCost) applyDiminishedStatGain(state, "Inf", -chk.infCost, "event");
+      if (!state.tags.includes("bionic")) state.tags.push("bionic");
+      const tGain = applyDiminishedStatGain(state, "T", 5, "event");
+      const wsGain = applyDiminishedStatGain(state, "WS", 3, "event");
+      const intGain = applyDiminishedStatGain(state, "Int", 3, "event");
+      const felDelta = applyDiminishedStatGain(state, "Fel", -2, "event");
       state.maxWounds += 10;
       state.wounds = clamp(state.wounds + 15, 1, state.maxWounds);
       state.extraLifeBonus += 18;
-      if (!state.tags.includes("bionic")) state.tags.push("bionic");
+      const healed = [];
+      for (const [tagKey, label] of [["crippled_limb", "불구"], ["chronic_toxins", "만성 독소"]]) {
+        const idx = state.tags.indexOf(tagKey);
+        if (idx !== -1) {
+          state.tags.splice(idx, 1);
+          healed.push(`특성 치유: ${label}`);
+        }
+      }
+      const deltaParts = [];
+      if (tGain > 0) deltaParts.push(`강인 +${tGain}`);
+      if (wsGain > 0) deltaParts.push(`백병 +${wsGain}`);
+      if (intGain > 0) deltaParts.push(`지성 +${intGain}`);
+      if (felDelta < 0) deltaParts.push(`교섭 ${felDelta}`);
+      if (chk.infCost) deltaParts.push(`권위 -${chk.infCost}`);
+      if (healed.length) deltaParts.push(...healed);
       const via = chk.isMech ? "기계교 성소의 교리 의례로" : "막대한 비용과 계급 특권을 들여";
       addLog(state, `${via} 생체 의체 개조(${state.augmeticsCount}/3단계)를 시술받았다.`, "success", null, {
         badge: "의체 개조",
-        deltaText: `강인 +5 · 백병 +3 · 지성 +3${chk.infCost ? " · 권위 -" + chk.infCost : ""}`
+        deltaText: deltaParts.join(" · ") || "기대수명 +18년"
       });
       return { ok: true };
     }
@@ -533,6 +557,13 @@ export function createCareerActionsModule(deps) {
       if (normalizeAlignment(state).ruthless > 0) {
         applyAlignDelta(state, { ruthless: -3, dogmatic: 1 });
         deltaText += " · 암흑 -3 · 교조 +1";
+      }
+      for (const [tagKey, label] of [["shell_shocked", "포탄 충격"], ["warp_scarred", "워프 흉터"]]) {
+        const idx = state.tags.indexOf(tagKey);
+        if (idx !== -1) {
+          state.tags.splice(idx, 1);
+          deltaText += ` · 특성 치유: ${label}`;
+        }
       }
       addLog(state, "성당에서 혹독한 고행과 참회 기도를 올려 워프 오염을 정화했다.", "event", null, {
         badge: "정화 고행",
@@ -566,7 +597,7 @@ export function createCareerActionsModule(deps) {
         if (!success) {
           if (evalRes.denyStats) {
             for (const [k, d] of Object.entries(evalRes.denyStats)) {
-              if (state.stats[k] !== undefined) state.stats[k] = clamp(state.stats[k] + d, 5, 100);
+              if (state.stats[k] !== undefined) applyDiminishedStatGain(state, k, d, "event");
             }
           }
           if (evalRes.denyWounds) {

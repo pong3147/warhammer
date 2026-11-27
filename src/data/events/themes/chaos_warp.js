@@ -169,6 +169,15 @@ export default [
         }
       },
       {
+        label: "[특성 전용 · 워프 흉터] 욱신거리는 워프 흉터의 공명으로 균열 틈새를 역추적해 즉시 봉쇄한다",
+        req: { allTags: ["warp_scarred"] },
+        effect: {
+          text: "워프 흉터가 일그러지는 감각을 따라 균열의 발원지를 찾아내 보조 방어막을 먼저 복구했다.",
+          stats: { WP: 4, Int: 4 },
+          faith: 4
+        }
+      },
+      {
         label: "[의지 판정] 악마적 환영을 뿌리치고 겔러 필드 보조 발전기를 재가동한다",
         check: { stat: "WP", diff: -5 },
         success: {
@@ -180,6 +189,12 @@ export default [
           text: "워프의 광기에 휩쓸린 승무원들과 난투극을 벌이며 부상과 오염을 입었다.",
           wounds: -22,
           corruption: 12
+        },
+        critFail: {
+          text: "워프의 속삭임이 정신의 방벽을 뚫고 영혼에 지워지지 않는 흉터를 남겼다.",
+          wounds: -26,
+          corruption: 15,
+          addTags: ["warp_scarred"]
         }
       },
       {
@@ -364,6 +379,12 @@ export default [
         fail: {
           text: "급파된 아뎁타 소로리타스의 볼터 화력에 큰 중상을 입고 겨우 도망쳤다!",
           wounds: -34,
+          align: { ruthless: 6 }
+        },
+        critFail: {
+          text: "소로리타스의 볼터 탄환이 다리 관절을 꿰뚫어 뼈가 산산이 부서졌다. 간신히 기어 탈출했으나 불구가 되었다.",
+          wounds: -42,
+          addTags: ["crippled_limb"],
           align: { ruthless: 6 }
         }
       },

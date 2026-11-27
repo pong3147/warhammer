@@ -153,8 +153,13 @@ export const TRAITS = [
     id: "none",
     name: "순수 인류 표준형",
     en: "Baseline Human",
-    weight: 66,
+    weight: 63.5,
     statMods: {},
+    capMods: {},
+    talent: {
+      name: "평범함의 방패",
+      desc: "이단심문소와 마녀사냥의 의심을 피해 가는 표준 인류의 안전선"
+    },
     tags: [],
     desc: "돌연변이나 초자연적 징후 없는 표준 인류. 이단심문소의 눈초리를 피할 수 있는 가장 안전한 축복이다."
   },
@@ -164,6 +169,11 @@ export const TRAITS = [
     en: "Astartes Gene-Compatible",
     weight: 11,
     statMods: { T: 7, WS: 6, WP: 4 },
+    capMods: { T: 4, WS: 3 },
+    talent: {
+      name: "강인한 재생력",
+      desc: "강인·백병 상한 +4/+3, 연간 자연 회복 +1, 아스타르테스·그레이 나이트 선발 시련 +8%"
+    },
     tags: ["geneseed_compatible"],
     desc: "남다른 심폐 지구력과 세포 재생력을 타고났다. 챕터 징병관의 눈에 띈다면 아스타르테스 선발 시험에 도전할 자격이 열린다."
   },
@@ -173,6 +183,11 @@ export const TRAITS = [
     en: "Latent Psyker",
     weight: 7,
     statMods: { WP: 10, Int: 6, T: -3 },
+    capMods: { WP: 8, Int: 4 },
+    talent: {
+      name: "워프 감응",
+      desc: "의지·지성 상한 +8/+4, 의지 성장 가속 및 사이킥·워프 판정 우대"
+    },
     corruptionStart: 6,
     tags: ["psyker"],
     desc: "워프의 속삭임을 듣는 위험한 축복이자 저주. 검은 함선에 끌려가 옥좌의 제물이 될지, 생션드 사이커나 그레이 나이트로 각성할지는 의지에 달렸다."
@@ -183,6 +198,11 @@ export const TRAITS = [
     en: "Pariah / Untouchable",
     weight: 2.5,
     statMods: { WP: 14, Fel: -14, T: 3 },
+    capMods: { WP: 10, Fel: -10 },
+    talent: {
+      name: "무혼의 장막",
+      desc: "의지 상한 +10(교섭 -10), 워프 오염 축적 50% 감쇠 · 오염 판정 페널티 무시"
+    },
     tags: ["blank"],
     desc: "워프에 그림자조차 남기지 않는 극희귀 체질. 타인에게는 본능적 불쾌감을 주지만 악마와 사이킥에 절대적 면역을 지녀 이단심문소가 탐낸다."
   },
@@ -192,6 +212,11 @@ export const TRAITS = [
     en: "Tactical Savant",
     weight: 5.5,
     statMods: { Int: 8, BS: 5, Fel: 4 },
+    capMods: { Int: 8, BS: 4, Fel: 4 },
+    talent: {
+      name: "전장의 수읽기",
+      desc: "지성·사격·교섭 상한 +8/+4/+4, 지성·사격 성장 +25%, 장교·해군·심문관 입단 +8%"
+    },
     tags: ["prodigy"],
     desc: "어린 나이부터 전장의 흐름과 보급선을 직관적으로 파악하는 비상한 두뇌."
   },
@@ -201,6 +226,11 @@ export const TRAITS = [
     en: "Touched by Faith",
     weight: 4,
     statMods: { WP: 9, Fel: 6 },
+    capMods: { WP: 8, Fel: 6 },
+    talent: {
+      name: "불굴의 기적",
+      desc: "의지·교섭 상한 +8/+6, 신앙 70+ 시 환경 위험 경감 · 성녀 그릇 각성 우대"
+    },
     faithBonus: 18,
     tags: ["saint_spark"],
     desc: "절체절명의 순간 기적적인 신념을 발휘하는 체질. 국교와 소로리타스가 주목할 만한 자질이다."
@@ -211,6 +241,11 @@ export const TRAITS = [
     en: "Abhuman (Ogryn)",
     weight: 2.5,
     statMods: { T: 18, WS: 14, Int: -18, Fel: -6, BS: -6 },
+    capMods: { WS: 10, T: 10, Int: -15, BS: -6 },
+    talent: {
+      name: "거인의 맷집",
+      desc: "백병·강인 상한 +10(지성 -15, 사격 -6), 최대 생명력 +20 · 물리 부상 경감"
+    },
     tags: ["abhuman", "ogryn"],
     desc: "고중력 행성 적응으로 거대한 근육과 순박한 충성심을 지닌 아인류. 머리는 단순하지만 황제와 커미사르를 향한 충성만은 산처럼 굳건하다."
   },
@@ -220,8 +255,70 @@ export const TRAITS = [
     en: "Abhuman (Ratling)",
     weight: 1.5,
     statMods: { BS: 15, Ag: 12, Fel: 5, T: -8, WS: -8 },
+    capMods: { BS: 8, Ag: 8, WS: -8, T: -8 },
+    talent: {
+      name: "매의 눈과 민첩함",
+      desc: "사격·민첩 상한 +8(백병·강인 -8), 사격·잠입 판정 +6"
+    },
     tags: ["abhuman", "ratling"],
     desc: "작은 체구와 뛰어난 시력, 교활한 식탐을 지닌 아인류. 아스트라 밀리타룸 최고의 저격수로 활약한다."
+  },
+  {
+    id: "alpha_plus_psyker",
+    name: "알파 플러스급 사이커 (특이점)",
+    en: "Alpha-Plus Psyker Anomaly",
+    weight: 0.6,
+    statMods: { WP: 14, Int: 8, T: -4 },
+    capMods: { WP: 20, Int: 8 },
+    talent: {
+      name: "알파 플러스 각성",
+      desc: "의지 상한 +20 · 지성 상한 +8, 초고위 사이킥·그레이 나이트·심문소 주시 대상"
+    },
+    corruptionStart: 10,
+    tags: ["psyker", "alpha_plus_psyker"],
+    desc: "천억 명 중 하나꼴로 태어나는 파멸적 초능력자. 홀로 도시 구역을 붕괴시킬 잠재력을 지녔으나 검은 함선과 카오스의 최우선 표적이다."
+  },
+  {
+    id: "freak_physique",
+    name: "규격 외 피지컬 괴물 (특이점)",
+    en: "Apex Mortal Physique Anomaly",
+    weight: 0.8,
+    statMods: { WS: 12, T: 12, Ag: 8 },
+    capMods: { WS: 14, BS: 8, T: 14, Ag: 12 },
+    talent: {
+      name: "규격 외 피지컬",
+      desc: "필멸자 신체 상한 +14(민첩 +12, 사격 +8), 아스타르테스·쿠스토데스·암살청 스카우트"
+    },
+    tags: ["freak_physique"],
+    desc: "유전 공학 없이도 아스타르테스 수련생에 필적하는 괴력과 반사 신경을 타고난 야성의 변종. 초인 기관의 징병관들이 혈안이 되어 추적한다."
+  },
+  {
+    id: "savant_genius",
+    name: "천년만의 전략·지성 사반트 (특이점)",
+    en: "Millennial Savant Anomaly",
+    weight: 0.7,
+    statMods: { Int: 12, Fel: 8, Inf: 6 },
+    capMods: { Int: 16, Fel: 16, Inf: 10 },
+    talent: {
+      name: "천년만의 사반트",
+      desc: "지성·교섭 상한 +16 · 권위 상한 +10, 고위 행정·심문소·사령부 직통 발탁"
+    },
+    tags: ["prodigy", "savant_genius"],
+    desc: "성계 단위의 병참과 적의 기동 패턴을 암산으로 꿰뚫는 전무후무한 천재. 상관의 시기와 암살 위협을 뚫고 대장군·대심문관으로 직통한다."
+  },
+  {
+    id: "omega_pariah",
+    name: "절대 무혼 · 오메가-마이너스 (특이점)",
+    en: "Omega-Minus Pariah Anomaly",
+    weight: 0.4,
+    statMods: { WP: 16, Fel: -16, T: 4 },
+    capMods: { WP: 18, Fel: -20 },
+    talent: {
+      name: "절대 무혼(오메가)",
+      desc: "의지 상한 +18 · 교섭 상한 -20, 워프 오염 85% 감쇠, 침묵의 자매들·쿨렉수스 최우선 차출"
+    },
+    tags: ["blank", "omega_pariah"],
+    desc: "접근하는 것만으로 사이커를 기절시키고 악마의 실체를 찢어발기는 최고 등급의 공허 체질. 고독한 배척 끝에 황궁 탈론즈나 암살청에 징발된다."
   }
 ];
 

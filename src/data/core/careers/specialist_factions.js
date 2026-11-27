@@ -103,7 +103,7 @@ export const CAREERS_SPECIALIST_FACTIONS = [
       minAge: 68,
       anyCareers: ["nav_novator"],
       allTags: ["navigator"],
-      stats: { WP: 88, Int: 88, Inf: 92 },
+      stats: { WP: 88, Int: 88, Inf: 90 },
       maxCorruption: 12,
       excludeTags: ["heretic", "high_lord_terra", "living_saint", "wanted_by_inquisition"]
     },
@@ -168,7 +168,7 @@ export const CAREERS_SPECIALIST_FACTIONS = [
     actionGroup: "assassin",
     lifeBonus: 85,
     hazardMod: 0.017,
-    annualGrowth: { Ag: 2.6, WS: 2.2, BS: 2.2, WP: 2.2, Int: 1.8 },
+    annualGrowth: { Ag: 2.6, WS: 2.2, BS: 2.2, WP: 2.2, Int: 1.8, Inf: 1.4 },
     req: {
       minAge: 22,
       anyCareers: ["assassin_initiate"],
@@ -206,7 +206,7 @@ export const CAREERS_SPECIALIST_FACTIONS = [
     req: {
       minAge: 56,
       anyCareers: ["assassin_operative"],
-      stats: { Int: 86, WP: 86, Ag: 78, Inf: 88 },
+      stats: { Int: 86, WP: 86, Ag: 78, Inf: 86 },
       maxCorruption: 15,
       excludeTags: ["heretic", "high_lord_terra", "living_saint", "wanted_by_inquisition"]
     },
@@ -337,7 +337,7 @@ export const CAREERS_SPECIALIST_FACTIONS = [
     req: {
       minAge: 38,
       anyCareers: ["knight_scion", "knight_freeblade"],
-      stats: { WS: 72, WP: 72, Fel: 68, Inf: 74 },
+      stats: { WS: 62, WP: 70, Fel: 66, Inf: 72 },
       maxCorruption: 10,
       excludeTags: ["abhuman", "psyker", "navigator", "mutant_sanctioned", "assassin", "heretic", "living_saint"]
     },

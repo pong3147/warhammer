@@ -434,8 +434,15 @@ export function createCareerRulesModule(deps) {
       (tags.includes("navigator") && targetCareer.tree === "navis_navigator")
         ? 8
         : 0;
+    const homeId = state.homeWorldId || state.worldId;
+    const homeBonus =
+      (homeId === "terra" && targetCareer.tier >= 3) ? 5 :
+      (homeId === "cadia" && targetCareer.tree === "militarum") ? 5 :
+      (homeId === "generic_civilised") ? 4 : 0;
+    const traitBonus =
+      ((tags.includes("prodigy") || tags.includes("savant_genius")) && ["militarum", "navy", "inquisition", "administratum"].includes(targetCareer.tree)) ? 8 : 0;
     const tierPenalty = Math.max(0, (targetCareer.tier - 2) * 8);
-    const raw = 58 + (statVal - reqMin) * 1.1 + pedigreeBonus - tierPenalty;
+    const raw = 58 + (statVal - reqMin) * 1.1 + pedigreeBonus + homeBonus + traitBonus - tierPenalty;
     const target = clamp(Math.round(raw), 40, 88);
     const meta = STAT_META[statKey] || { name: statKey };
     return {
@@ -491,14 +498,16 @@ export function createCareerRulesModule(deps) {
         prob = hasMiracleSpark ? 0.024 : 0.008;
       } else if (c.id === "assassin_initiate") {
         const isBlank = state.tags.includes("blank");
-        w = isBlank ? 28 : 14;
-        prob = isBlank ? 0.08 : 0.025;
+        const isFreak = state.tags.includes("freak_physique");
+        w = isBlank || isFreak ? 32 : 14;
+        prob = isBlank || isFreak ? 0.10 : 0.025;
       } else if (c.tier >= 6) {
         w = 35;
         prob = 0.025;
       } else if (Boolean(c.isTranshuman)) {
-        w = 50;
-        prob = 0.24;
+        const hasBodyAnomaly = state.tags.includes("freak_physique") || state.tags.includes("alpha_plus_psyker");
+        w = hasBodyAnomaly ? 68 : 50;
+        prob = hasBodyAnomaly ? 0.34 : 0.24;
       } else if (c.tree === "chaos") {
         w = 34;
         prob = 0.12;
@@ -514,6 +523,14 @@ export function createCareerRulesModule(deps) {
       } else if (isScoutOffer) {
         w = isDirectCrossLink ? 14 : 10;
         prob = cur.tier >= 5 ? 0.018 : 0.032;
+      }
+      if (state.tags.includes("savant_genius") && ["inquisition", "administratum", "governor", "militarum", "mechanicus", "rogue_trader"].includes(c.tree)) {
+        w = Math.round(w * 1.6);
+        prob = Math.min(0.45, prob * 1.4);
+      }
+      if (state.tags.includes("omega_pariah") && (c.tree === "officio_assassinorum" || c.tree === "inquisition")) {
+        w = Math.round(w * 1.6);
+        prob = Math.min(0.45, prob * 1.4);
       }
       if (alignInfo.dominant === "dogmatic" && ["commissariat", "sororitas", "arbites", "inquisition", "living_saint"].includes(c.tree)) {
         w = Math.round(w * 1.35);
