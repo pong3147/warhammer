@@ -27,10 +27,10 @@ export const CAREERS_TRANSHUMAN = [
       stats: { T: 38, WS: 35, WP: 34 },
       maxCorruption: 10,
       or: [{ anyTags: ["geneseed_compatible", "freak_physique"] }, { anyWorldTags: ["astartes_recruit"] }],
-      excludeTags: ["abhuman", "astartes", "custodes", "heretic", "navigator", "mutant_sanctioned", "assassin", "living_saint"]
+      excludeTags: ["abhuman", "blank", "astartes", "custodes", "heretic", "navigator", "mutant_sanctioned", "assassin", "living_saint"]
     },
     selectable: true,
-    trialCheck: { stat: "T", diff: -5, title: "진시드 이식 및 챕터 선발 시련", failDeathChance: 0.45 },
+    trialCheck: { stat: "T", diff: -5, title: "진시드 이식 및 챕터 선발 시련", failDeathChance: 0.45, geneseedTrial: true },
     onJoin: { stats: { T: 16, WS: 14, BS: 12, WP: 12, Ag: 8, Inf: 10 }, woundsBonus: 40, addTags: ["astartes", "transhuman"] },
     offerTitle: "하늘에서 내려온 죽음의 천사 — 아스타르테스 챕터 징병 소환",
     offerPitch: "거대한 파워 아머를 두른 챕터 채플린과 아포세카리가 그대의 유전 적성과 투지를 눈여겨보았다. 생사의 경계를 넘는 진시드 이식 시련에 도전해 황제의 천사로 다시 태어날 것인가?",
@@ -219,10 +219,10 @@ export const CAREERS_TRANSHUMAN = [
       stats: { WP: 62, T: 50, WS: 46 },
       minFaith: 60,
       maxCorruption: 5,
-      excludeTags: ["astartes", "custodes", "abhuman", "heretic", "navigator", "mutant_sanctioned", "assassin", "living_saint"]
+      excludeTags: ["astartes", "custodes", "abhuman", "blank", "heretic", "navigator", "mutant_sanctioned", "assassin", "living_saint"]
     },
     selectable: true,
-    trialCheck: { stat: "WP", diff: -10, title: "타이탄의 666 시련 (그레이 나이트 입단)", failDeathChance: 0.55 },
+    trialCheck: { stat: "WP", diff: -10, title: "타이탄의 666 시련 (그레이 나이트 입단)", failDeathChance: 0.55, geneseedTrial: true },
     onJoin: { stats: { WP: 18, WS: 16, T: 14, BS: 10, Inf: 14 }, woundsBonus: 45, corruptionReset: true, addTags: ["astartes", "grey_knight", "transhuman", "power_armor"] },
     offerTitle: "토성 위성 타이탄의 비밀 소환 — 제666챕터 입단 시련",
     offerPitch: "검은 함선 중에서도 가장 비밀스러운 은빛 함선이 그대의 순수한 사이킥 잠재력을 감지했다. 백만 중 하나만 살아남는 타이탄의 666 시련에 응할 것인가?",
@@ -315,7 +315,7 @@ export const CAREERS_TRANSHUMAN = [
     selectable: true,
     onJoin: { stats: { WP: 10, WS: 8, Inf: 18 }, woundsBonus: 25, corruptionReset: true, addTags: ["gk_supreme_master", "gk_grand_master", "hero_of_imperium"] },
     offerTitle: "타이탄 성채의 최고 서약 — 슈프림 그랜드 마스터 추대",
-    offerPitch: "칼도르 드라이고와 야누스의 계보를 잇는 인류 최후의 대악마 방패. 타이탄 전체와 모든 그레이 나이트를 지휘할 슈프림 그랜드 마스터로 추대되었다.",
+    offerPitch: "초대 슈프림 그랜드 마스터 야누스와 역대 영웅들의 계보를 잇는 인류 최후의 대악마 방패. 타이탄 전체와 모든 그레이 나이트를 지휘할 슈프림 그랜드 마스터로 추대되었다.",
     desc: "제666챕터 전체의 절대적 수장이자 황제의 최후 비상 칙령(터미누스 디크리)의 수호자. 인류 역사상 가장 순수하고 강력한 사이커 전사다.",
     source: "Lexicanum: Supreme Grand Master / Codex: Grey Knights"
   },
@@ -344,7 +344,7 @@ export const CAREERS_TRANSHUMAN = [
       stats: { T: 36, WS: 38, WP: 44, Int: 40 },
       maxCorruption: 0,
       or: [{ allTags: ["custodes_candidate"] }, { anyWorlds: ["terra"], allTags: ["noble"] }],
-      excludeTags: ["psyker", "abhuman", "astartes", "heretic", "navigator", "mutant_sanctioned", "assassin", "living_saint"]
+      excludeTags: ["psyker", "blank", "abhuman", "astartes", "heretic", "navigator", "mutant_sanctioned", "assassin", "living_saint"]
     },
     selectable: true,
     trialCheck: { stat: "T", diff: -8, title: "황궁 연금술 유전자 재창조 시술", failDeathChance: 0.45 },
@@ -437,9 +437,9 @@ export const CAREERS_TRANSHUMAN = [
     selectable: true,
     onJoin: { stats: { Inf: 18, Int: 8, WP: 8, WS: 6 }, woundsBonus: 30, addTags: ["high_lord_terra", "captain_general", "hero_of_imperium"] },
     offerTitle: "황금 옥좌 앞의 절대 위임 — 캡틴-제너럴 취임",
-    offerPitch: "콘스탄틴 발도르와 트라얀 발로리스의 계보를 이어, 만 명의 쿠스토데스와 황궁의 열쇠, 그리고 테라 하이 로드의 수석 의석을 맡을 캡틴-제너럴로 그대가 지명되었다.",
+    offerPitch: "초대 캡틴-제너럴 콘스탄틴 발도르와 역대 수호자들의 계보를 이어, 만 명의 쿠스토데스와 황궁의 열쇠, 그리고 테라 하이 로드의 수석 의석을 맡을 캡틴-제너럴로 그대가 지명되었다.",
     desc: "황제 폐하의 옥좌를 직접 대변하는 아뎁투스 쿠스토데스의 총사령관이자 테라의 하이 로드. 오직 황제와 프라이마크 외에는 그 누구의 명령도 받지 않는다.",
-    source: "Lexicanum: Captain-General / Trajann Valoris"
+    source: "Lexicanum: Captain-General / Codex: Adeptus Custodes"
   }
 
 ];
@@ -465,7 +465,7 @@ export const CAREERS_CHAOS = [
     req: {
       minAge: 16,
       or: [{ minCorruption: 50 }, { minCorruption: 35, minAlign: { ruthless: 40 } }],
-      excludeTags: ["astartes", "custodes", "grey_knight", "chaos_champion", "daemon_prince", "living_saint"]
+      excludeTags: ["blank", "astartes", "custodes", "grey_knight", "chaos_champion", "daemon_prince", "living_saint"]
     },
     selectable: true,
     onJoin: { stats: { WS: 6, WP: 6, Inf: -25 }, addTags: ["heretic", "chaos_aligned"] },
@@ -476,7 +476,7 @@ export const CAREERS_CHAOS = [
   },
   {
     id: "chaos_champion",
-    name: "카오스 챔피언 · 다크 아포슬 (필멸자 워밴드 지도자)",
+    name: "카오스 챔피언 · 다크 데마고그 (필멸자 워밴드 지도자)",
     en: "Chaos Champion / Dark Demagogue",
     faction: "암흑의 신들 (Chaos)",
     tree: "chaos",
@@ -496,7 +496,7 @@ export const CAREERS_CHAOS = [
         { anyCareers: ["chaos_cultist"] },
         { minCorruption: 68 }
       ],
-      excludeTags: ["astartes", "custodes", "grey_knight", "daemon_prince", "living_saint"]
+      excludeTags: ["blank", "astartes", "custodes", "grey_knight", "daemon_prince", "living_saint"]
     },
     selectable: true,
     onJoin: { stats: { WS: 8, WP: 8, Fel: 8, Inf: 10 }, woundsBonus: 15, addTags: ["chaos_champion", "heretic", "chaos_aligned"] },
@@ -524,7 +524,7 @@ export const CAREERS_CHAOS = [
       minAge: 18,
       allTags: ["astartes"],
       or: [{ minCorruption: 45 }, { minCorruption: 30, minAlign: { ruthless: 40 } }],
-      excludeTags: ["custodes", "grey_knight", "renegade_marine", "chaos_lord", "daemon_prince", "living_saint"]
+      excludeTags: ["blank", "custodes", "grey_knight", "renegade_marine", "chaos_lord", "daemon_prince", "living_saint"]
     },
     selectable: true,
     onJoin: { stats: { WS: 8, T: 6, WP: 6, Inf: -20 }, woundsBonus: 15, addTags: ["renegade_marine", "heretic", "chaos_aligned"] },
@@ -554,7 +554,7 @@ export const CAREERS_CHAOS = [
       anyCareers: ["renegade_marine"],
       minCorruption: 68,
       stats: { WS: 76, T: 70, WP: 72, Fel: 58 },
-      excludeTags: ["custodes", "grey_knight", "daemon_prince", "living_saint"]
+      excludeTags: ["blank", "custodes", "grey_knight", "daemon_prince", "living_saint"]
     },
     selectable: true,
     onJoin: { stats: { WS: 10, T: 8, WP: 8, Fel: 8, Inf: 18 }, woundsBonus: 25, addTags: ["chaos_lord", "renegade_marine", "heretic", "chaos_aligned"] },
@@ -584,7 +584,7 @@ export const CAREERS_CHAOS = [
       anyTags: ["mark_khorne", "mark_tzeentch", "mark_nurgle", "mark_slaanesh"],
       minCorruption: 75,
       stats: { WP: 66, WS: 58 },
-      excludeTags: ["custodes", "grey_knight", "daemon_prince", "living_saint"]
+      excludeTags: ["blank", "custodes", "grey_knight", "daemon_prince", "living_saint"]
     },
     selectable: true,
     trialCheck: {

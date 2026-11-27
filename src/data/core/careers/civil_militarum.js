@@ -273,7 +273,7 @@ export const CAREERS_CIVIL_MILITARUM_FRONT = [
       minAge: 17,
       stats: { BS: 46, T: 42, WP: 44 },
       or: [{ anyTags: ["schola"] }, { anyCareers: ["astra_militarum", "militarum_sergeant"] }],
-      excludeTags: ["abhuman", "astartes", "custodes", "heretic", "assassin", "living_saint"]
+      excludeTags: ["abhuman", "psyker", "astartes", "custodes", "heretic", "assassin", "living_saint"]
     },
     selectable: true,
     onJoin: { stats: { BS: 8, WS: 5, T: 5, Inf: 6 }, addTags: ["scion", "elite_troop", "militarum"] },
@@ -300,7 +300,7 @@ export const CAREERS_CIVIL_MILITARUM_FRONT = [
       minAge: 24,
       stats: { BS: 58, WS: 52, WP: 56, Int: 48 },
       or: [{ anyCareers: ["tempestus_scion"] }, { allTags: ["tempestus_prime"] }],
-      excludeTags: ["abhuman", "astartes", "custodes", "heretic"]
+      excludeTags: ["abhuman", "psyker", "astartes", "custodes", "heretic"]
     },
     selectable: true,
     onJoin: { stats: { BS: 6, WP: 6, Fel: 6, Inf: 12 }, addTags: ["tempestus_prime", "officer", "elite_troop", "militarum"] },
@@ -390,7 +390,7 @@ export const CAREERS_CIVIL_MILITARUM_FRONT = [
     trialCheck: { stat: "Inf", diff: -38, title: "테라 원로원 대성전 지휘권 인준 심사", failDeathChance: 0.16 },
     onJoin: { stats: { Inf: 12, WP: 6, Fel: 6, Int: 6 }, addTags: ["warmaster", "hero_of_imperium"] },
     offerTitle: "테라 원로원 칙령 — 대성전 총사령관 '워마스터' 추대",
-    offerPitch: "수백 개 성계를 탈환할 대성전의 지휘봉을 쥘 인물로 그대가 지명되었다. 마카리우스와 슬레이도, 마카로스의 뒤를 이어 워마스터의 이름을 짊어질 것인가?",
+    offerPitch: "수백 개 성계를 탈환할 대성전의 지휘봉을 쥘 인물로 그대가 지명되었다. 인류제국 역대 대성전 영웅들의 계보를 이어 워마스터의 이름을 짊어질 것인가?",
     desc: "육군·해군·타이탄 군단·심지어 스페이스 마린 지원군과의 합동 성전을 통솔하는 제국 군사 지휘권의 정점. 그대의 서명 하나로 수억 명의 행군이 시작된다.",
     source: "Lexicanum: Warmaster / Sabbat Worlds Crusade"
   },
@@ -956,7 +956,7 @@ export const CAREERS_IMPERIAL_STATE = [
       minAge: 20,
       stats: { Fel: 42, Int: 40, Inf: 38 },
       or: [{ anyTags: ["rogue_trader_blood", "voidborn", "noble"] }, { anyCareers: ["imperial_navy", "guild_artisan", "militarum_officer", "underhive_boss"] }],
-      excludeTags: ["astartes", "custodes", "heretic", "assassin", "living_saint"]
+      excludeTags: ["abhuman", "astartes", "custodes", "heretic", "assassin", "living_saint"]
     },
     selectable: true,
     onJoin: { stats: { Fel: 6, Inf: 8, Int: 5, Ag: 4 }, addTags: ["rt_seneschal", "voidborn"] },
@@ -986,7 +986,7 @@ export const CAREERS_IMPERIAL_STATE = [
         { anyCareers: ["rt_seneschal", "navy_captain", "navy_admiral", "guild_magnate", "hive_crime_lord", "militarum_general"] },
         { anyTags: ["rogue_trader_blood", "rogue_warrant_charter"] }
       ],
-      excludeTags: ["astartes", "custodes", "heretic", "assassin", "living_saint"]
+      excludeTags: ["abhuman", "astartes", "custodes", "heretic", "assassin", "living_saint"]
     },
     selectable: true,
     onJoin: { stats: { Inf: 12, Fel: 8, Int: 5 }, addTags: ["rogue_trader", "voidborn"] },
@@ -1013,7 +1013,7 @@ export const CAREERS_IMPERIAL_STATE = [
       minAge: 44,
       stats: { Fel: 76, Inf: 80, Int: 68 },
       or: [{ anyCareers: ["rogue_trader"] }, { allTags: ["rogue_trader", "rogue_warrant_charter"] }],
-      excludeTags: ["astartes", "custodes", "heretic", "assassin", "living_saint"]
+      excludeTags: ["abhuman", "astartes", "custodes", "heretic", "assassin", "living_saint"]
     },
     selectable: true,
     onJoin: { stats: { Inf: 12, Fel: 8, Int: 6 }, addTags: ["rt_lord_captain", "rogue_trader", "wealthy", "hero_of_imperium"] },

@@ -8,14 +8,19 @@ export default [
     req: {
       minAge: 54,
       stats: { Inf: 74 },
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTrees: ["navis_navigator"],
       excludeTags: [
         "astartes", "grey_knight", "custodes", "dreadnought", "living_saint", "saint_vessel",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
         "mechanicus", "magos", "fabricator_locum", "fabricator_general",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "나이 54세+ · 권위 74+ · 필멸자 최상류층",
+    reqLabel: "나이 54세+ · 권위 74+ · 필멸자 최상류층 · 크리그·야만 행성·항법사 제외",
     weight: 16,
     text: "황혼기에 접어든 그대에게 저명한 마고스 바이올로기스가 은밀히 리주버냇 세포 회춘 시술을 제안했다. 제국의 평민은 꿈도 꾸지 못할 200년 수명의 특권이다.",
     choices: [
@@ -48,16 +53,21 @@ export default [
     once: true,
     req: {
       minAge: 55,
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
       excludeRealms: ["mechanicus"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTrees: ["navis_navigator"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "rejuvenat",
         "living_saint", "saint_vessel", "assassin",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
         "mechanicus", "magos", "fabricator_locum", "fabricator_general", "high_lord_terra",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "55세+ · 필멸자 노년기",
+    reqLabel: "55세+ · 필멸자 노년기 · 크리그·야만 행성·항법사 제외",
     weight: 34,
     text: "거울 속 머리칼은 어느새 서리처럼 하얗게 세었고, 날이 궂거나 공기가 차가워질 때면 수십 년 전 입은 상처와 굳은 관절이 욱신거린다. 인류제국에서 쉰다섯을 넘겨 살아남았다는 사실 자체가 이미 드문 기적이다.",
     choices: [
@@ -119,15 +129,19 @@ export default [
     req: {
       minAge: 65,
       allTags: ["rejuvenat"],
+      excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTrees: ["navis_navigator"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
         "magos", "fabricator_locum", "fabricator_general",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "65세+ · 리주버냇 수명 연장자",
+    reqLabel: "65세+ · 리주버냇 수명 연장자 · 크리그·야만 행성·항법사 제외",
     weight: 38,
     text: "값비싼 리주버냇 수명 연장 시술 덕에 그대의 얼굴은 여전히 중년의 윤기를 유지하고 있다. 하지만 오늘 아침 도착한 마지막 옛 동기의 부고장 앞에서, 함께 젊은 날을 보낸 평범한 벗들이 이제 단 한 명도 남지 않았다는 사실을 깨달았다.",
     choices: [
@@ -184,7 +198,9 @@ export default [
     req: {
       minAge: 45,
       allTags: ["bionic"],
+      excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg", "voidborn"],
+      excludeWorldTags: ["feral", "krieg"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
         "astartes", "grey_knight", "custodes", "dreadnought", "living_saint", "saint_vessel", "assassin",
@@ -192,7 +208,7 @@ export default [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "45세+ · 기계 의체 시술자",
+    reqLabel: "45세+ · 기계 의체 시술자 · 크리그·야만 행성 제외",
     weight: 34,
     text: "세월과 부상이 쌓이며 육신의 상당 부분이 차가운 강철과 전선으로 대체되었다. 보조 연산 칩을 증설하던 테크프리스트가 묻는다. '비효율적인 어린 시절의 감각 기억과 슬픔의 회로를 삭제하시겠습니까? 연산 효율이 14퍼센트 상승합니다.'",
     choices: [
@@ -246,6 +262,9 @@ export default [
     once: true,
     req: {
       minAge: 120,
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
       excludeTags: [
         "grey_knight", "dreadnought",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
@@ -257,7 +276,7 @@ export default [
         { allTags: ["magos"] }
       ]
     },
-    reqLabel: "120세+ · 초장수기",
+    reqLabel: "120세+ · 초장수기 · 크리그·야만 행성 제외",
     weight: 42,
     text: "백 년을 훌쩍 넘겨 살아온 그대의 앞에 낯익은 성씨와 가문 문장을 단 젊은 장교가 경례를 올린다. 알고 보니 한 세기 전 피비린내 나는 공성전에서 그대의 등 뒤를 지켜 주었던 필멸자 전우의 증손자였다.",
     choices: [
@@ -363,15 +382,15 @@ export default [
       minAge: 55,
       anyTags: ["militarum", "navy", "officer", "commissar", "arbites"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "navigator",
         "high_lord_terra", "warmaster", "general_rank", "commissar_general", "navy_admiral", "arbites_marshal",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
-      excludeWorldTags: ["krieg"]
+      excludeWorldTags: ["feral", "krieg"]
     },
-    reqLabel: "55세+ · 제국 무관·치안 노병",
+    reqLabel: "55세+ · 제국 무관·치안 노병 · 크리그·야만 행성 제외",
     weight: 34,
     alignBias: "humane",
     text: "전선 출정을 하루 앞둔 주둔지 주점에서 앳된 신병들이 잔뜩 긴장한 얼굴로 늙은 백전노장인 그대의 주변으로 모여든다. '선배님, 진짜 첫 전투에 들어가면 어떻게 살아남습니까?'",
@@ -426,17 +445,19 @@ export default [
     req: {
       minAge: 16,
       maxAge: 45,
+      excludeTrees: ["navis_navigator", "officio_assassinorum", "living_saint"],
       excludeTags: [
         "bond_comrade",
-        "astartes", "grey_knight", "custodes", "dreadnought",
+        "astartes", "grey_knight", "custodes", "dreadnought", "living_saint", "saint_vessel", "assassin",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
         "high_lord_terra", "warmaster", "planetary_governor", "sector_lord", "inquisitor", "lord_inquisitor", "cardinal", "canoness", "magos", "fabricator_locum", "fabricator_general",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
-      excludeWorldTags: ["krieg"]
+      excludeWorldTags: ["feral", "krieg"]
     },
-    reqLabel: "16~45세 · 전우 인연 시작",
+    reqLabel: "16~45세 필멸자 · 전우 인연 시작 · 크리그·야만 행성·항법사 제외",
     weight: 28,
     text: "위험한 현장 작업과 교전이 길어지며 사방이 먼지와 비명으로 뒤덮인 밤, 옆자리의 이름 없는 동료가 자신의 마지막 정제수 물통을 말없이 그대에게 건넨다. '혼자 버티면 여기서 끝장이야. 등 뒤는 내가 볼 테니 네 앞만 지켜.'",
     choices: [
@@ -475,13 +496,16 @@ export default [
     once: true,
     req: {
       allTags: ["bond_comrade"],
+      excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeTrees: ["navis_navigator", "officio_assassinorum", "living_saint"],
       excludeTags: [
-        "astartes", "grey_knight", "custodes", "dreadnought",
+        "astartes", "grey_knight", "custodes", "dreadnought", "living_saint", "saint_vessel", "assassin", "navigator",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "이력: 등을 맡긴 전우",
+    reqLabel: "이력: 등을 맡긴 전우 · 크리그·야만 행성 제외",
     weight: 34,
     text: "세월이 흘러 각자의 전선과 구역으로 흩어진 뒤, 옛날 마지막 물통을 나누었던 전우가 치열한 붕괴 구역에 고립되어 위독하다는 다급한 전갈이 도착했다! 지금 달려가면 위험하지만, 외면하면 평생 그 얼굴이 눈에 밟힐 것이다.",
     choices: [
@@ -536,17 +560,19 @@ export default [
     req: {
       minAge: 14,
       maxAge: 35,
+      excludeTrees: ["navis_navigator", "officio_assassinorum", "living_saint"],
       excludeTags: [
         "bond_mentor",
-        "astartes", "grey_knight", "custodes", "dreadnought",
+        "astartes", "grey_knight", "custodes", "dreadnought", "living_saint", "saint_vessel", "assassin",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
         "high_lord_terra", "warmaster", "planetary_governor", "sector_lord", "inquisitor", "lord_inquisitor", "cardinal", "canoness", "magos", "fabricator_locum", "fabricator_general",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
-      excludeWorldTags: ["krieg"]
+      excludeWorldTags: ["feral", "krieg"]
     },
-    reqLabel: "14~35세 · 스승 인연 시작",
+    reqLabel: "14~35세 필멸자 · 스승 인연 시작 · 크리그·야만 행성·항법사 제외",
     weight: 28,
     text: "서툰 실수로 큰 문책을 당할 뻔한 순간, 백발이 성성한 베테랑 선배가 말없이 뒤처리를 막아 주더니 호된 꾸지람과 함께 손때 묻은 낡은 수첩을 던져 주었다. '제국에서 멍청한 놈은 일찍 죽는다. 살아서 제 몫을 하려거든 내 밑에서 제대로 배워.'",
     choices: [
@@ -582,13 +608,16 @@ export default [
     once: true,
     req: {
       allTags: ["bond_mentor"],
+      excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeTrees: ["navis_navigator", "officio_assassinorum", "living_saint"],
       excludeTags: [
-        "astartes", "grey_knight", "custodes", "dreadnought",
+        "astartes", "grey_knight", "custodes", "dreadnought", "living_saint", "saint_vessel", "assassin", "navigator",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "이력: 인생의 스승",
+    reqLabel: "이력: 인생의 스승 · 크리그·야만 행성 제외",
     weight: 34,
     text: "어느덧 기력이 다해 병상에 누운 옛 스승이 그대를 조용히 불렀다. 야윈 손으로 오래된 개인 기록과 아끼던 도구를 건네며 희미하게 웃는다. '내가 평생 지키려다 못 다한 약속이 하나 있네. 이제 자네가 내 대신 끝맺어 주겠나?'",
     choices: [
@@ -639,9 +668,11 @@ export default [
     req: {
       minAge: 16,
       maxAge: 50,
+      excludeTrees: ["navis_navigator", "officio_assassinorum", "living_saint"],
       excludeTags: [
         "bond_rival",
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
         "high_lord_terra", "warmaster", "sector_lord",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ],
@@ -649,7 +680,7 @@ export default [
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral", "krieg"]
     },
-    reqLabel: "16~50세 · 정적 인연 시작",
+    reqLabel: "16~50세 필멸자 · 정적 인연 시작 · 크리그·야만 행성·항법사 제외",
     weight: 26,
     text: "중요한 포상과 승진 추천 명단 앞에서, 늘 사사건건 방식이 부딪치던 동기가 그대의 공적을 교묘히 깎아내리며 차갑게 웃는다. '선한 척 굴어 봐야 이 제국에선 살아남지 못해. 누가 끝까지 올라가는지 두고 보자고.'",
     choices: [
@@ -684,13 +715,16 @@ export default [
     once: true,
     req: {
       allTags: ["bond_rival"],
+      excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeTrees: ["navis_navigator", "officio_assassinorum", "living_saint"],
       excludeTags: [
-        "astartes", "custodes", "grey_knight", "dreadnought",
+        "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "navigator",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "이력: 숙명의 정적",
+    reqLabel: "이력: 숙명의 정적 · 크리그·야만 행성 제외",
     weight: 34,
     text: "수년간 치열하게 부딪쳐 온 숙명의 정적과 예기치 못한 위기 현장에 함께 고립되었다! 무너지는 천장과 적의 포위망 사이에서, 상처 입은 정적이 치명적인 부패 증거를 손에 쥔 채 이를 악물고 말한다. '여기서 죽기 싫으면 잠시만 손을 잡자. 아니면 지금 나를 버리고 네가 다 차지하든가!'",
     choices: [
@@ -744,11 +778,13 @@ export default [
       maxAge: 45,
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
-      excludeWorldTags: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeTrees: ["navis_navigator"],
       excludeTags: [
         "bond_family",
         "astartes", "custodes", "grey_knight", "dreadnought",
         "living_saint", "saint_vessel", "assassin",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
         "sororitas_novitiate", "sororitas", "celestian", "canoness",
         "mechanicus", "magos", "fabricator_locum", "fabricator_general",
         "krieg_grenadier",
@@ -756,7 +792,7 @@ export default [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "20~45세 필멸자 · 초인·수도회·기계교·크리그 제외",
+    reqLabel: "20~45세 필멸자 · 초인·수도회·기계교·항법사·크리그·야만 행성 제외",
     weight: 28,
     text: "공습 경보가 멎은 뒤 등화관제가 깔린 밤거리에서, 몇 해 동안 배급표와 고단한 일상을 함께 나누던 인연이 조용히 손을 잡아 왔다. 내일 당장 성간 징집령이나 폭격이 떨어질지 모르는 제국이지만, 그래도 황제 폐하의 성당 앞에서 작은 가정을 꾸리고 싶다는 진심 어린 청혼이다.",
     choices: [
@@ -799,17 +835,19 @@ export default [
       allTags: ["bond_family"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
-      excludeWorldTags: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeTrees: ["navis_navigator"],
       excludeTags: [
         "bond_heir",
         "astartes", "custodes", "grey_knight", "dreadnought",
         "living_saint", "saint_vessel", "assassin",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
         "sororitas_novitiate", "sororitas", "celestian", "canoness",
         "mechanicus", "magos", "fabricator_locum", "fabricator_general",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "이력: 가정과 배우자",
+    reqLabel: "이력: 가정과 배우자 · 크리그·야만 행성·항법사 제외",
     weight: 34,
     text: "어둠뿐인 줄 알았던 그대의 삶에 새 생명의 울음소리가 찾아왔다. 어느덧 걸음마를 떼고 글자를 배우기 시작한 자녀를 바라보며, 배우자와 그대는 이 아이를 어떤 길로 키울지 밤새 고민에 잠긴다.",
     choices: [
@@ -864,15 +902,19 @@ export default [
       allTags: ["bond_family"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
-      excludeWorldTags: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeTrees: ["navis_navigator", "mechanicus", "officio_assassinorum", "living_saint"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought",
+        "living_saint", "saint_vessel", "assassin",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
+        "mechanicus", "magos", "fabricator_locum", "fabricator_general",
         "sororitas_novitiate", "sororitas", "celestian", "canoness",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "34세 이상 · 가정과 배우자",
+    reqLabel: "34세 이상 · 가정과 배우자 · 크리그·야만 행성·항법사 제외",
     weight: 36,
     text: "잿빛 제복의 징집 서기가 문 앞에 밀랍 인장이 찍힌 소집장을 꽂아 두고 사라졌다. 성계 밖 원정군 충원을 위해 그대의 배우자 혹은 가정의 핵심 식구가 48시간 내에 수송선 집합소로 출두하라는 명령이다. 이별의 그림자가 식탁 위에 무겁게 내려앉았다.",
     choices: [
@@ -923,14 +965,17 @@ export default [
       allTags: ["bond_heir"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
-      excludeWorldTags: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeTrees: ["navis_navigator", "officio_assassinorum", "living_saint"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought",
+        "living_saint", "saint_vessel", "assassin",
+        "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
         "sororitas_novitiate", "sororitas", "celestian", "canoness",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ]
     },
-    reqLabel: "44세 이상 · 후계자·자녀",
+    reqLabel: "44세 이상 · 후계자·자녀 · 크리그·야만 행성·항법사 제외",
     weight: 36,
     text: "어느새 그대의 키를 훌쩍 넘어선 자녀가 정복과 배낭을 갖추고 문턱에 섰다. 이제 자신의 삶을 개척하고 제국의 부름에 응답하러 떠날 날이다. 젊은 날의 그대를 쏙 빼닮은 눈빛이 마지막 가르침을 기다리고 있다.",
     choices: [

@@ -22,6 +22,8 @@ import {
 import { CORE_DATA } from "../src/data/core/index.js";
 import { GLOSSARY_TERMS } from "../src/data/glossary.js";
 import { isClosedVowCrossBlocked } from "../src/engine/careerRules.js";
+import { CENTENARIAN_OP_POOLS } from "../src/engine/centenarianOps.js";
+import { createTravelModule } from "../src/engine/travel.js";
 import { runDistBundleGate } from "./qa/distGate.mjs";
 import { runPersonaAuditGate } from "./qa/personaGate.mjs";
 import { runCareerAuditGate } from "./qa/careerGate.mjs";
@@ -217,7 +219,8 @@ const forbiddenTerms = [
   /크리그 데스 코어/g,
   /발할란 빙하/g,
   /보스트로얀 장자/g,
-  /타니스 제1유일/g
+  /타니스 제1유일/g,
+  /\[(친교|사교|영향|근접)\s*판정\]/g
 ];
 const forbiddenSymbols = /[★↗←✓↑↓]/g;
 
@@ -371,6 +374,8 @@ const charIds = new Set(DATA.CHARACTERS.map((c) => c.id));
 const segIds = new Set(Object.keys(DATA.SEGMENTA));
 const focusIds = new Set(Object.keys(Engine.FOCUSES));
 const tagLabels = Engine.TAG_LABELS;
+const worldTagLabels = DATA.WORLD_TAG_LABELS || {};
+const validStatKeys = new Set(Object.keys(Engine.STAT_META || {}));
 
 const producedTags = new Set([
   "imperial_nihilus",
@@ -432,6 +437,8 @@ function validateReq(req, owner) {
   (req.anyHomeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown homeWorld "${w}" in ${owner}`); });
   (req.excludeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown excludeWorld "${w}" in ${owner}`); });
   (req.excludeHomeWorlds || []).forEach((w) => { if (!worldIds.has(w)) fail(4, `Unknown excludeHomeWorld "${w}" in ${owner}`); });
+  (req.anyWorldTags || []).forEach((wt) => { if (!worldTagLabels[wt]) fail(4, `Unknown anyWorldTag "${wt}" in ${owner}`); });
+  (req.excludeWorldTags || []).forEach((wt) => { if (!worldTagLabels[wt]) fail(4, `Unknown excludeWorldTag "${wt}" in ${owner}`); });
   (req.anyCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown career "${c}" in ${owner}`); });
   (req.anyPastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown pastCareer "${c}" in ${owner}`); });
   (req.excludePastCareers || []).forEach((c) => { if (!careerIds.has(c)) fail(4, `Unknown excludePastCareer "${c}" in ${owner}`); });
@@ -498,6 +505,74 @@ for (const c of DATA.CAREERS) {
   }
 }
 
+function validateEventChoices(ev, owner) {
+  if (!ev || typeof ev !== "object") {
+    fail(4, `Invalid event object in ${owner}`);
+    return;
+  }
+  const choices = Array.isArray(ev.choices) ? ev.choices : [];
+  if (choices.length === 0) {
+    fail(5, `Event ${owner} has 0 choices`);
+    return;
+  }
+  if (choices.filter((ch) => !ch.req).length === 0) {
+    fail(5, `Softlock risk (0 unconditional choices) in ${owner}`);
+  }
+  for (let ci = 0; ci < choices.length; ci++) {
+    const ch = choices[ci];
+    const chOwner = `${owner}:choice[${ci}]`;
+    validateReq(ch.req, chOwner);
+    if (ch.req && !Engine.describeReq(ch.req)) {
+      fail(4, `Empty describeReq on choice in ${chOwner}`);
+    }
+    if (ch.outcome !== undefined) {
+      fail(4, `Choice in ${chOwner} uses dead field "outcome" (engine reads "effect" or "success"/"fail")`);
+    }
+    if (ch.check) {
+      if (!validStatKeys.has(ch.check.stat)) {
+        fail(4, `Invalid check.stat "${ch.check.stat}" in ${chOwner}`);
+      }
+      for (const nestedKey of ["success", "fail", "critSuccess", "critFail"]) {
+        if (ch.check[nestedKey] !== undefined) {
+          fail(4, `Nested ch.check.${nestedKey} in ${chOwner} (must be sibling of check on choice object)`);
+        }
+      }
+      if (!ch.success || !ch.fail) {
+        fail(4, `Checked choice in ${chOwner} missing required success/fail outcome`);
+      }
+    } else if (!ch.effect && !ch.success) {
+      fail(4, `Unchecked choice in ${chOwner} missing effect/success outcome`);
+    }
+    if ((ch.critSuccess || ch.critFail) && !ch.check) {
+      fail(4, `Choice in ${chOwner} defines critSuccess/critFail without a d100 check`);
+    }
+    [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail].forEach((o) => {
+      if (!o) return;
+      if (typeof o.text !== "string" || !o.text.trim()) {
+        fail(4, `Missing or empty outcome.text in ${chOwner}`);
+      }
+      if (o.stats) {
+        for (const sk of Object.keys(o.stats)) {
+          if (!validStatKeys.has(sk)) fail(4, `Unknown outcome.stats key "${sk}" in ${chOwner}`);
+        }
+      }
+      if (o.forceCareer && !careerIds.has(o.forceCareer)) fail(4, `Unknown forceCareer "${o.forceCareer}" in ${chOwner}`);
+      if (o.moveWorld && !worldIds.has(o.moveWorld)) fail(4, `Unknown moveWorld "${o.moveWorld}" in ${chOwner}`);
+      if (o.align) validateAlignObj(o.align, `${chOwner}:outcome.align`, true);
+      (o.addTags || []).forEach((t) => {
+        if (!t.startsWith("met_") && !t.startsWith("chapter_") && !tagLabels[t]) {
+          fail(4, `Missing TAG_LABELS for added tag "${t}" in ${chOwner}`);
+        }
+      });
+      (o.removeTags || []).forEach((t) => {
+        if (!tagLabels[t]) {
+          fail(4, `Missing TAG_LABELS for removed tag "${t}" in ${chOwner}`);
+        }
+      });
+    });
+  }
+}
+
 for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
   validateReq(ev.req || ev.filter, ev.id);
   if (ev.alignBias && !alignKeys.has(ev.alignBias)) {
@@ -506,57 +581,7 @@ for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
   (ev.characters || []).forEach((cid) => {
     if (!charIds.has(cid)) fail(4, `Unknown character "${cid}" in ${ev.id}`);
   });
-  const choices = ev.choices || [];
-  if (choices.filter((ch) => !ch.req).length === 0) {
-    fail(5, `Softlock risk (0 unconditional choices) in ${ev.id}`);
-  }
-  const validStatKeys = new Set(Object.keys(Engine.STAT_META || {}));
-  for (const ch of choices) {
-    validateReq(ch.req, `${ev.id}:choice`);
-    if (ch.req && !Engine.describeReq(ch.req)) {
-      fail(4, `Empty describeReq on choice in ${ev.id}`);
-    }
-    if (ch.outcome !== undefined) {
-      fail(4, `Choice in ${ev.id} uses dead field "outcome" (engine reads "effect" or "success"/"fail")`);
-    }
-    if (ch.check) {
-      if (!validStatKeys.has(ch.check.stat)) {
-        fail(4, `Invalid check.stat "${ch.check.stat}" in ${ev.id}`);
-      }
-      if (!ch.success || !ch.fail) {
-        fail(4, `Checked choice in ${ev.id} missing required success/fail outcome`);
-      }
-    } else if (!ch.effect && !ch.success) {
-      fail(4, `Unchecked choice in ${ev.id} missing effect/success outcome`);
-    }
-    if ((ch.critSuccess || ch.critFail) && !ch.check) {
-      fail(4, `Choice in ${ev.id} defines critSuccess/critFail without a d100 check`);
-    }
-    [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail].forEach((o) => {
-      if (!o) return;
-      if (typeof o.text !== "string" || !o.text.trim()) {
-        fail(4, `Missing or empty outcome.text in ${ev.id}`);
-      }
-      if (o.stats) {
-        for (const sk of Object.keys(o.stats)) {
-          if (!validStatKeys.has(sk)) fail(4, `Unknown outcome.stats key "${sk}" in ${ev.id}`);
-        }
-      }
-      if (o.forceCareer && !careerIds.has(o.forceCareer)) fail(4, `Unknown forceCareer "${o.forceCareer}" in ${ev.id}`);
-      if (o.moveWorld && !worldIds.has(o.moveWorld)) fail(4, `Unknown moveWorld "${o.moveWorld}" in ${ev.id}`);
-      if (o.align) validateAlignObj(o.align, `${ev.id}:outcome.align`, true);
-      (o.addTags || []).forEach((t) => {
-        if (!t.startsWith("met_") && !t.startsWith("chapter_") && !tagLabels[t]) {
-          fail(4, `Missing TAG_LABELS for added tag "${t}" in ${ev.id}`);
-        }
-      });
-      (o.removeTags || []).forEach((t) => {
-        if (!tagLabels[t]) {
-          fail(4, `Missing TAG_LABELS for removed tag "${t}" in ${ev.id}`);
-        }
-      });
-    });
-  }
+  validateEventChoices(ev, ev.id);
 }
 
 // Stage 21 invariants: 23 world perks, 12 traits (weights=100), 12 acquired traits, statCaps & removeTags
@@ -639,6 +664,27 @@ for (const ch of DATA.CHRONICLES) {
   }
   if (ch.effect && ch.effect.align) {
     validateAlignObj(ch.effect.align, `${ch.id}:effect.align`, true);
+  }
+  if (ch.effect && ch.effect.stats) {
+    for (const sk of Object.keys(ch.effect.stats)) {
+      if (!validStatKeys.has(sk)) {
+        fail(4, `Unknown chronicle effect.stats key "${sk}" in ${ch.id}`);
+      }
+    }
+  }
+  if (ch.effect && ch.effect.removeTags) {
+    for (const t of ch.effect.removeTags) {
+      if (!tagLabels[t]) {
+        fail(4, `Missing TAG_LABELS for chronicle effect.removeTags "${t}" in ${ch.id}`);
+      }
+    }
+  }
+  if (ch.effect && ch.effect.addTags) {
+    for (const t of ch.effect.addTags) {
+      if (!t.startsWith("met_") && !t.startsWith("chapter_") && !tagLabels[t]) {
+        fail(4, `Missing TAG_LABELS for chronicle effect.addTags "${t}" in ${ch.id}`);
+      }
+    }
   }
   kriegCheckState.age = Math.max(1, (ch.req && ch.req.minAge) || 5);
   const cleaned = (ch.text || "").replace(/어머니의 품 대신/g, "");
@@ -1737,6 +1783,257 @@ for (const ev of DATA.EVENTS) {
       Engine.resolvePendingChoice(incSt, 0);
       if (incSt.corruption !== 0 || (incSt.logs[0]?.deltaText || "").includes("오염")) {
         fail(4, `Stage 20 Red-Team P1-3: incorruptible Custodes logged false corruption deltaText="${incSt.logs[0]?.deltaText}" (corr=${incSt.corruption})`);
+      }
+
+      // Stage 23.5: Shared choice validation across ALL 4 dynamic event generators
+      // 1) centenarianOps (all 14 templates across transhuman/mortal/chaos + TTS [XX 판정] prefix)
+      const STAT_PREFIX_RE = /^\[(백병|사격|강인|민첩|지성|의지|교섭|권위) 판정\]/;
+      const centDemoState = Engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "imperial_citizen", traitId: "none", eraId: "indomitus", gender: "male" });
+      centDemoState.age = 140;
+      centDemoState.year = 1138;
+      const centDemoCtx = {
+        worldName: "마크라그",
+        isChaos: false,
+        isDreadnought: false,
+        isGreyKnight: false,
+        isCustodes: false,
+        isLivingSaint: false,
+        isTranshuman: true,
+        isTerraOrMars: false,
+        careerTier: 4,
+        isOgryn: false,
+        isAssassin: false,
+        isInNihilus: false,
+        isVoidCapable: true,
+        isMechanicus: true,
+        hasRejuvenat: true,
+        hasBionic: true,
+        isKrieg: false,
+        isFeral: false,
+        incorruptible: false
+      };
+      let centTemplateCount = 0;
+      for (const [poolName, pool] of Object.entries(CENTENARIAN_OP_POOLS)) {
+        for (const op of pool) {
+          centTemplateCount++;
+          const built = op.build(centDemoState, centDemoCtx);
+          const evObj = { id: op.id, title: op.title, text: built.text, choices: built.choices, source: built.source };
+          validateEventChoices(evObj, `dyn:centenarian:${poolName}:${op.id}`);
+          const firstChoice = evObj.choices && evObj.choices[0];
+          if (!firstChoice || !firstChoice.check || !STAT_PREFIX_RE.test(firstChoice.label || "")) {
+            fail(4, `Centenarian op "${op.id}" Choice 0 must carry check and [XX 판정] TTS prefix (got "${firstChoice && firstChoice.label}")`);
+          }
+        }
+      }
+      if (centTemplateCount !== 14) {
+        fail(4, `Expected 14 centenarianOps templates across 3 pools, found ${centTemplateCount}`);
+      }
+
+      // 2) careerRules dynamic offers, chapter selection & assassin clade selection
+      validateEventChoices(wmOffer, "dyn:careerRules:warmaster_offer");
+      validateEventChoices(govOffer, "dyn:careerRules:governor_offer");
+      validateEventChoices(culexEv, "dyn:careerRules:assassin_clade_blank");
+      const astartesScoutProbe = Engine.createCharacter({ mode: "custom", worldId: "macragge", originId: "imperial_citizen", traitId: "geneseed_compatible", eraId: "armageddon", gender: "male" });
+      astartesScoutProbe.age = 16;
+      astartesScoutProbe.year = 956;
+      astartesScoutProbe.careerId = "pdf_trooper";
+      astartesScoutProbe.stats = { WS: 60, BS: 55, T: 60, Ag: 55, Int: 45, WP: 55, Fel: 40, Inf: 35 };
+      const scoutOfferEv = Engine.createDynamicCareerOfferEvent(astartesScoutProbe, null, { forceOffer: true, ignoreCooldown: true, targetCareerId: "astartes_scout" });
+      validateEventChoices(scoutOfferEv, "dyn:careerRules:astartes_scout_offer");
+      if (!scoutOfferEv?.choices?.[0]?.check?.geneseedTrial) {
+        fail(4, `Stage 23.5 astartes_scout dynamic offer missing check.geneseedTrial=true`);
+      }
+      const gsPreview = Engine.computeCheckPreview(astartesScoutProbe, scoutOfferEv.choices[0].check);
+      if (!gsPreview.modifiers.some((m) => m.label === "진시드 적합" && m.value === 8)) {
+        fail(4, `Stage 23.5 geneseed_compatible +8 trialCheck bonus missing in computeCheckPreview: ${JSON.stringify(gsPreview.modifiers)}`);
+      }
+      Math.random = () => 0.05;
+      const scoutJoinRes = Engine.attemptCareerChange(astartesScoutProbe, "astartes_scout");
+      Math.random = origRandom;
+      if (!scoutJoinRes?.ok || !astartesScoutProbe.pendingEvent) {
+        fail(4, `Stage 23.5 astartes_scout attemptCareerChange did not open chapter selection event`);
+      } else {
+        validateEventChoices(astartesScoutProbe.pendingEvent, "dyn:careerRules:chapter_select");
+      }
+
+      // 3) travel dynamic events (warp anomaly + transit profiles)
+      const travelMod = createTravelModule({
+        DATA,
+        getWorld: Engine.getWorld,
+        getCareer: Engine.getCareer,
+        randInt: (min) => min
+      });
+      const warpProbe = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "militarum_family", traitId: "none", eraId: "armageddon", gender: "male" });
+      warpProbe.age = 24;
+      warpProbe.year = 950;
+      warpProbe.careerId = "imperial_navy";
+      const warpDynEv = Engine.createWarpAnomalyTransitEvent(warpProbe, Engine.getWorld("armageddon"));
+      if (warpDynEv) validateEventChoices(warpDynEv, "dyn:travel:warp_anomaly");
+      const transitProbes = [
+        { label: "forced", careerId: "astra_militarum", worldId: "cadia", tags: ["militarum"], inf: 30 },
+        { label: "mid_admin", careerId: "administratum", worldId: "terra", tags: ["administratum"], inf: 40 },
+        { label: "mid_faith", careerId: "ecclesiarchy_priest", worldId: "ophelia7", tags: ["ecclesiarchy"], inf: 40 },
+        { label: "autonomous", careerId: "rogue_trader", worldId: "macragge", tags: ["rogue_trader"], inf: 70 },
+        { label: "heretic", careerId: "chaos_cultist", worldId: "necromunda", tags: ["heretic", "chaos_aligned"], inf: 35 },
+        { label: "civilian", careerId: "menial_worker", worldId: "necromunda", tags: [], inf: 35 }
+      ];
+      for (const tp of transitProbes) {
+        const ts = Engine.createCharacter({ mode: "custom", worldId: tp.worldId, originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+        ts.age = 28;
+        ts.year = 955;
+        ts.careerId = tp.careerId;
+        ts.tags = [...new Set([...ts.tags, ...tp.tags])];
+        ts.stats.Inf = tp.inf;
+        const tev = travelMod.createDynamicTransitEvent(ts);
+        if (!tev) fail(4, `Stage 23.5 createDynamicTransitEvent returned null for probe "${tp.label}"`);
+        else validateEventChoices(tev, `dyn:travel:transit:${tp.label}`);
+      }
+
+      // 4) endings dynamic events across all 16 factionMatrix archetypes
+      for (const row of factionMatrix) {
+        const eSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "indomitus", gender: "male" });
+        eSt.age = 75;
+        eSt.careerId = row.careerId;
+        eSt.tags = [...new Set([...eSt.tags, ...row.tags])];
+        validateEventChoices(Engine.createHonorableEndingEvent(eSt), `dyn:endings:${row.careerId}`);
+      }
+
+      // Stage 23.5: ev_s21_anom_02 ~ ev_s21_anom_14 minAge >= 14 enforcement
+      for (let idx = 2; idx <= 14; idx++) {
+        const aid = `ev_s21_anom_${String(idx).padStart(2, "0")}`;
+        const aev = DATA.EVENTS.find((e) => e.id === aid);
+        if (!aev) {
+          fail(4, `Stage 23.5 missing expected anomaly event "${aid}"`);
+        } else if (!aev.req || typeof aev.req.minAge !== "number" || aev.req.minAge < 14) {
+          fail(4, `Stage 23.5 anomaly event "${aid}" missing adult/youth guard req.minAge >= 14 (got ${aev.req && aev.req.minAge})`);
+        }
+      }
+
+      // Stage 23.5: canUsePenance at corruption === 0 with shell_shocked / warp_scarred (and blocked without trauma)
+      const penZero = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+      penZero.age = 25;
+      penZero.year = 960;
+      penZero.careerId = "administratum";
+      penZero.corruption = 0;
+      if (Engine.performAction(penZero, "penance").ok) {
+        fail(4, `Stage 23.5 penance must fail when corruption === 0 and no mental trauma tag is held`);
+      }
+      penZero.tags.push("shell_shocked");
+      const penZeroRes = Engine.performAction(penZero, "penance");
+      if (!penZeroRes.ok || penZero.tags.includes("shell_shocked")) {
+        fail(4, `Stage 23.5 penance at corruption === 0 failed to heal shell_shocked`);
+      }
+
+      // Stage 23.5: Superhuman/Krieg shell_shocked immunity, Incorruptible/Blank/Omega warp_scarred immunity & corruption scaling, Ogryn wound scaling
+      for (const [label, cfg] of [
+        ["astartes", { worldId: "macragge", careerId: "astartes_brother", tags: ["astartes", "transhuman"] }],
+        ["custodes", { worldId: "terra", careerId: "adeptus_custodes", tags: ["custodes", "transhuman"] }],
+        ["grey_knight", { worldId: "terra", careerId: "grey_knight", tags: ["grey_knight", "transhuman"] }],
+        ["dreadnought", { worldId: "macragge", careerId: "astartes_brother", tags: ["astartes", "dreadnought"] }],
+        ["living_saint", { worldId: "ophelia7", careerId: "living_saint", tags: ["living_saint", "transhuman"] }],
+        ["daemon_prince", { worldId: "necromunda", careerId: "daemon_prince", tags: ["daemon_prince", "heretic"] }],
+        ["krieg", { worldId: "krieg", careerId: "astra_militarum", tags: ["militarum"] }]
+      ]) {
+        const imSt = Engine.createCharacter({ mode: "custom", worldId: cfg.worldId, originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+        imSt.careerId = cfg.careerId;
+        imSt.tags = [...new Set([...imSt.tags, ...cfg.tags])];
+        imSt.pendingEvent = {
+          id: `qa_s235_imm_${label}`,
+          title: "면역 검증",
+          choices: [{ label: "테스트", effect: { text: "포격.", addTags: ["shell_shocked"] } }]
+        };
+        Engine.resolvePendingChoice(imSt, 0);
+        if (imSt.tags.includes("shell_shocked")) {
+          fail(4, `Stage 23.5 ${label} should be immune to shell_shocked in applyOutcome`);
+        }
+      }
+
+      for (const [label, worldId, traitId, expectedCorr] of [
+        ["blank", "terra", "blank", 10],
+        ["omega_pariah", "terra", "omega_pariah", 3],
+        ["ophelia7", "ophelia7", "none", 17]
+      ]) {
+        const cs = Engine.createCharacter({ mode: "custom", worldId, originId: "imperial_citizen", traitId, eraId: "armageddon", gender: "female" });
+        cs.corruption = 0;
+        cs.pendingEvent = {
+          id: `qa_s235_corr_${label}`,
+          title: "오염 감쇠 검증",
+          choices: [{ label: "테스트", effect: { text: "워프 노출.", corruption: 20, addTags: ["warp_scarred"] } }]
+        };
+        Engine.resolvePendingChoice(cs, 0);
+        if (cs.corruption !== expectedCorr) {
+          fail(4, `Stage 23.5 ${label} corruption scaling expected ${expectedCorr} from +20, got ${cs.corruption}`);
+        }
+        if ((traitId === "blank" || traitId === "omega_pariah") && cs.tags.includes("warp_scarred")) {
+          fail(4, `Stage 23.5 ${label} should be immune to warp_scarred`);
+        }
+        if (!(cs.logs[0]?.deltaText || "").includes(`오염 +${expectedCorr}`)) {
+          fail(4, `Stage 23.5 ${label} deltaText out of sync with scaled corruption (expected 오염 +${expectedCorr}, got "${cs.logs[0]?.deltaText}")`);
+        }
+      }
+
+      // Ogryn 20% physical wound reduction
+      const ogSt = Engine.createCharacter({ mode: "custom", worldId: "generic_civilised", originId: "imperial_citizen", traitId: "abhuman_ogryn", eraId: "armageddon", gender: "male" });
+      ogSt.wounds = 100;
+      ogSt.maxWounds = 100;
+      ogSt.pendingEvent = {
+        id: "qa_s235_ogryn_dmg",
+        title: "오그린 내구 검증",
+        choices: [{ label: "테스트", effect: { text: "충격.", wounds: -20 } }]
+      };
+      Engine.resolvePendingChoice(ogSt, 0);
+      if (ogSt.wounds !== 84) {
+        fail(4, `Stage 23.5 abhuman_ogryn expected 20% wound reduction (-20 -> -16, wounds=84), got wounds=${ogSt.wounds}`);
+      }
+
+      // Stage 23.5: applyChronicle must NOT emit fake "특성 치유" when removeTags targets unowned tag
+      const { createImperiumEngine } = await import("../src/engine/createEngine.js");
+      const miniEng = createImperiumEngine({
+        ...DATA,
+        EVENTS: [],
+        TIMELINE: [],
+        CHRONICLES: [{
+          id: "qa_s235_fake_heal_chron",
+          badge: "테스트",
+          priority: 3,
+          req: { minAge: 20 },
+          text: "고행으로 마음을 다스렸다.",
+          effect: { removeTags: ["shell_shocked"], faith: 1 }
+        }]
+      });
+      const fakeHealSt = miniEng.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+      fakeHealSt.age = 24;
+      fakeHealSt.year = 960;
+      fakeHealSt.careerId = "administratum";
+      fakeHealSt.tags = fakeHealSt.tags.filter((t) => t !== "shell_shocked");
+      Math.random = () => 0.99; // skip dynamic events so chronicle runs
+      miniEng.advanceQuarter(fakeHealSt);
+      Math.random = origRandom;
+      const chronLog = fakeHealSt.logs.find((l) => l.chronicleId === "qa_s235_fake_heal_chron");
+      if (!chronLog) {
+        fail(4, `Stage 23.5 miniEng failed to trigger qa_s235_fake_heal_chron`);
+      } else if ((chronLog.deltaText || "").includes("특성 치유")) {
+        fail(4, `Stage 23.5 applyChronicle emitted fake heal deltaText for unowned shell_shocked: "${chronLog.deltaText}"`);
+      }
+
+      // Stage 23.5 re-audit regressions: ev_s21_anom_13 Choice 0 tier guard, Navigator psyker exemption, migrateState null-coercion guard
+      const anom13 = DATA.EVENTS.find((e) => e.id === "ev_s21_anom_13");
+      if (!anom13?.choices?.[0]?.req || typeof anom13.choices[0].req.maxCareerTier !== "number" || anom13.choices[0].req.maxCareerTier > 3) {
+        fail(4, `Stage 23.5 ev_s21_anom_13 Choice 0 must cap req.maxCareerTier <= 3 to prevent Tier 4 assassin_initiate downgrade deadlock`);
+      }
+      const navPsy = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "navigator_house", traitId: "psyker", eraId: "armageddon", gender: "female" });
+      navPsy.age = 20;
+      navPsy.careerId = "nav_apprentice";
+      navPsy.stats.WP = 75;
+      if (Engine.checkReq(navPsy, Engine.getCareer("sanctioned_psyker").req) || Engine.isManualCareerAllowed(navPsy, Engine.getCareer("sanctioned_psyker"))) {
+        fail(4, `Stage 23.5 Navis Nobilite navigator must be exempt from sanctioned_psyker / Black Ship conscription`);
+      }
+      const nullSave = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+      nullSave.wounds = null;
+      nullSave.birthYear = null;
+      const migNull = Engine.migrateState(nullSave);
+      if (!migNull || migNull.wounds !== migNull.maxWounds || migNull.birthYear !== 980) {
+        fail(4, `Stage 23.5 migrateState must not coerce null wounds/birthYear to 0 (got wounds=${migNull?.wounds}, birthYear=${migNull?.birthYear})`);
       }
     } finally {
       Math.random = origRandom;

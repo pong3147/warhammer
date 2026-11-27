@@ -8,13 +8,17 @@ export default [
     req: {
       minAge: 7,
       maxAge: 13,
+      maxSocialTier: "common",
+      excludeRealms: ["cloistered", "military", "heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
-      excludeTags: ["bond_childhood_friend", "astartes", "custodes", "grey_knight"]
+      excludeWorldTags: ["feral"],
+      excludeTags: ["bond_childhood_friend", "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "heretic", "chaos_aligned"]
     },
-    reqLabel: "유년기(7~13세) · 크리그 제외",
+    reqLabel: "유년기(7~13세) · 평민 이하 · 크리그·야만 행성·폐쇄 기관 제외",
     weight: 30,
-    text: "배급소가 무너지거나 폭풍이 몰아치던 어두운 날, 또래 아이 하나가 젖은 빵 절반을 내밀며 손을 잡았다. 제국의 거대한 톱니바퀴 아래에서 언제 흩어질지 모르는 처지였지만, 서로의 이름만은 잊지 말자고 맹세했다.",
+    text: "배급소가 무너지거나 정전이 닥치던 어두운 날, 또래 아이 하나가 젖은 빵 절반을 내밀며 손을 잡았다. 제국의 거대한 톱니바퀴 아래에서 언제 흩어질지 모르는 처지였지만, 서로의 이름만은 잊지 말자고 맹세했다.",
     choices: [
       {
         label: "[교섭 판정] 작은 금속 인식표 반쪽을 나누어 가지며 언젠가 살아남아 다시 만나자고 약속한다",
@@ -50,10 +54,15 @@ export default [
     once: true,
     req: {
       minAge: 16,
-      anyCareers: ["astra_militarum", "militarum_sergeant", "pdf_trooper", "commissar", "tempestus_scion"],
-      excludeTags: ["bond_guard_comrade", "heretic", "chaos_aligned"]
+      anyCareers: ["astra_militarum", "militarum_sergeant", "pdf_trooper", "tempestus_scion"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["bond_guard_comrade", "heretic", "chaos_aligned", "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "daemon_prince"]
     },
-    reqLabel: "직군: 밀리타룸·방위군·커미사르·사이온",
+    reqLabel: "밀리타룸·방위군·사이온 · 16세+ · 크리그·야만 행성 제외",
     weight: 32,
     text: "포격으로 무너진 방벽 아래에서 탄약과 붕대가 바닥났을 때, 옆 참호의 동료 병사가 자신의 마지막 라스건 전지팩을 던져 주며 등을 맞댔다. 포연이 걷힌 뒤에도 그 전우와는 눈빛만으로도 호흡이 통하는 사이가 되었다.",
     choices: [
@@ -90,10 +99,12 @@ export default [
     once: true,
     req: {
       minAge: 16,
-      anyTags: ["astartes", "grey_knight"],
-      excludeTags: ["bond_battle_brother", "heretic", "chaos_aligned", "renegade_marine"]
+      anyTags: ["battle_brother", "grey_knight"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["dreadnought", "daemonic"],
+      excludeTags: ["bond_battle_brother", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "custodes", "living_saint"]
     },
-    reqLabel: "아스타르테스 · 그레이 나이트",
+    reqLabel: "아스타르테스 배틀 브라더 · 그레이 나이트 · 드레드노트 제외",
     weight: 34,
     text: "네오파이트 시련과 수차례의 궤도 강습을 함께 돌파한 전투 형제 하나가 전투 후 갑주 정비를 도우며 챕터의 맹세를 읊었다. 수백 년을 이어 갈 전장의 짐을 나눌 진정한 배틀 브라더가 곁에 섰다.",
     choices: [
@@ -131,11 +142,16 @@ export default [
     req: {
       minAge: 16,
       anyTrees: ["inquisition", "sororitas", "ecclesiarchy", "arbites"],
-      excludeTags: ["bond_ordo_partner", "heretic", "chaos_aligned"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["bond_ordo_partner", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "high_lord_terra"]
     },
-    reqLabel: "이단심문소·소로리타스·국교·아르비테스",
+    reqLabel: "이단심문소·소로리타스·국교·아르비테스 · 16세+ · 크리그·야만 행성·하이 로드 제외",
     weight: 32,
-    text: "이단의 흔적을 쫓던 지하 성소와 법정 회랑에서 뜻이 통하는 동료 요원(혹은 자매 수녀·집행관)을 만났다. 서로를 감시하고 의심하는 제국 기관 속에서, 믿고 등을 맡길 수 있는 단 한 명의 동반자가 생겼다.",
+    text: "이단의 흔적을 쫓던 지하 성소와 법정 회랑에서 뜻이 통하는 동료를 만났다. 서로를 감시하고 의심하는 제국 기관 속에서, 믿고 등을 맡길 수 있는 단 한 명의 동반자가 생겼다.",
     choices: [
       {
         label: "[지성 판정] 비밀 암호와 공조 서약을 정하고 함께 이단의 뿌리를 추적하기로 한다",
@@ -170,12 +186,17 @@ export default [
     once: true,
     req: {
       minAge: 16,
-      anyTrees: ["navy", "rogue_trader", "mechanicus", "navis_navigator", "administratum"],
-      excludeTags: ["bond_void_companion", "heretic", "chaos_aligned"]
+      anyTrees: ["navy", "rogue_trader", "mechanicus", "navis_navigator"],
+      anyRealms: ["void", "mechanicus"],
+      excludeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["bond_void_companion", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "high_lord_terra"]
     },
-    reqLabel: "해군·로그 트레이더·기계교·항법사·행정청",
+    reqLabel: "해군·로그 트레이더·기계교·항법사(공허·기계교) · 16세+ · 크리그·야만 행성·하이 로드 제외",
     weight: 32,
-    text: "끝없는 워프 항해와 포지 월드의 굉음 속에서 겔러 필드 정비와 방대한 장부를 함께 책임지던 동료 한 명과 깊은 유대를 맺었다. 거대한 함선과 행성 관료제 속에서 서로의 생존을 보증하는 든든한 동반자다.",
+    text: "끝없는 워프 항해와 포지 월드의 굉음 속에서 겔러 필드 정비와 방대한 항해·물류 장부를 함께 책임지던 동료 한 명과 깊은 유대를 맺었다. 거대한 함선과 포지 성소 속에서 서로의 생존을 보증하는 든든한 동반자다.",
     choices: [
       {
         label: "[교섭 판정] 비상 시 서로의 관할 구역과 인맥을 열어 주기로 묵계를 맺는다",
@@ -194,7 +215,7 @@ export default [
       {
         label: "규정과 의전 외의 사적 결탁은 거부한다",
         effect: {
-          text: "기계와 서류의 원칙만을 따르며 독자적인 업무를 이어 갔다.",
+          text: "기계와 항해 규정의 원칙만을 따르며 독자적인 업무를 이어 갔다.",
           stats: { Int: 3 },
           align: { dogmatic: 3 }
         }
@@ -209,10 +230,16 @@ export default [
     once: true,
     req: {
       minAge: 16,
-      anyCareers: ["underhive_ganger", "underhive_boss", "hive_crime_lord", "chaos_cultist", "chaos_champion", "renegade_marine"],
-      excludeTags: ["bond_heretic_pact"]
+      or: [
+        { anyCareers: ["chaos_cultist", "chaos_champion"] },
+        { anyCareers: ["underhive_ganger", "underhive_boss", "hive_crime_lord"], minCorruption: 15 }
+      ],
+      excludeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["bond_heretic_pact", "renegade_marine", "chaos_lord", "daemon_prince", "astartes", "custodes", "grey_knight", "living_saint", "dreadnought"]
     },
-    reqLabel: "언더하이브 갱단 · 카오스 세력",
+    reqLabel: "카오스 컬티스트·챔피언 또는 오염 15+ 언더하이브 갱단 · 16세+ · 초인·야만 행성·크리그 제외",
     weight: 32,
     text: "집행대의 단속과 경쟁 파벌의 습격 속에서 등을 맞대고 살아남은 공범 하나가 피로 맺은 맹세를 제안했다. 언더하이브와 워프의 어둠 속에서 언제 등을 찌를지 모르지만, 당장은 둘이 손을 잡아야 더 크게 살아남는다.",
     choices: [
@@ -251,13 +278,17 @@ export default [
     req: {
       minAge: 20,
       allTags: ["bond_childhood_friend"],
+      maxCareerTier: 4,
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "heretic", "chaos_aligned"]
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "high_lord_terra", "assassin"]
     },
-    reqLabel: "유년기 소꿉친구 보유 · 20세+",
+    reqLabel: "유년기 소꿉친구 보유 · 20세+ · 크리그·야만 행성·초인·최고위 제외",
     weight: 38,
-    text: "긴 세월이 흐른 뒤, 임무 중에 마주친 낯익은 얼굴이 품에서 반쪽짜리 금속 인식표를 꺼내 보였다. 어릴 적 폐허에서 빵을 나누던 소꿉친구였다! 하지만 상대는 지금 제국의 횡령 수배자(혹은 지하 밀수꾼)로 쫓기는 신세이며, 숨겨 달라고 애원하고 있다.",
+    text: "긴 세월이 흐른 뒤, 임무 중에 마주친 낯익은 얼굴이 품에서 반쪽짜리 금속 인식표를 꺼내 보였다. 어릴 적 폐허에서 빵을 나누던 소꿉친구였다! 하지만 상대는 지금 제국의 수배령이 떨어진 지하 밀수꾼 신세이며, 숨겨 달라고 애원하고 있다.",
     choices: [
       {
         label: "[교섭 판정] 옛 정을 외면하지 않고 신분을 세탁해 안전 구역으로 빼돌려 준다",
@@ -285,7 +316,7 @@ export default [
         }
       },
       {
-        label: "제국의 법과 임무가 우선이라며 냉정히 신병을 구속해 상부에 넘긴다",
+        label: "제국의 법과 임무가 우선이라며 냉정히 상대를 구속해 상부에 넘긴다",
         effect: {
           text: "인식표를 땅에 떨어뜨린 채 체포되는 옛 친구의 뒷모습을 외면하고 공적을 보고했다.",
           stats: { Inf: 5, WP: 3 },
@@ -304,9 +335,14 @@ export default [
     req: {
       minAge: 24,
       anyTags: ["bond_guard_comrade", "bond_battle_brother", "bond_ordo_partner", "bond_void_companion"],
-      excludeTags: ["bond_fallen_comrade"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["dreadnought", "daemonic"],
+      excludeTags: ["bond_fallen_comrade", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "dreadnought", "custodes", "living_saint"]
     },
-    reqLabel: "직군 동료 보유 · 24세+",
+    reqLabel: "직군 동료 보유 · 24세+ · 크리그·야만 행성·드레드노트·이단 제외",
     weight: 36,
     text: "적의 기습과 집중 포화가 쏟아진 절체절명의 순간, 오래도록 곁을 지켜 온 전우가 날아오는 치명타를 온몸으로 막아 내며 쓰러졌다! 피투성이가 된 동료가 마지막 숨을 몰아쉬며 자신의 유품을 손에 쥐여 주려 한다.",
     choices: [
@@ -328,7 +364,7 @@ export default [
           align: { humane: 6 }
         },
         fail: {
-          text: "포화에 휩쓸려 함께 쓰러졌다가 겨우 정신을 차렸을 때, 동료는 이미 싸늘하게 식은 채 유품만 쥐여져 있었다.",
+          text: "포화에 휩쓸려 함께 쓰러졌다가 겨우 정신을 차렸을 때, 동료는 이미 싸늘하게 식은 채 유품만 손에 쥐여 있었다.",
           wounds: -18,
           stats: { WP: 3 },
           addTags: ["bond_fallen_comrade"]
@@ -355,13 +391,20 @@ export default [
       minAge: 20,
       minYear: 765,
       maxYear: 799,
+      anySegmenta: ["pacificus"],
+      anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant", "tempestus_scion"],
       allTags: ["bond_guard_comrade"],
-      excludeTags: ["met_gaunt", "heretic", "chaos_aligned", "astartes", "custodes", "grey_knight"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["met_gaunt", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "astartes", "custodes", "grey_knight", "dreadnought", "living_saint"]
     },
-    reqLabel: "전선 분대 전우 보유 · 20세+ · 765~799.M41",
+    reqLabel: "전선 분대 전우 보유 · 밀리타룸·방위군·사이온 · 세그멘툼 파시피쿠스 · 20세+ · 765~799.M41 · 크리그·야만 행성 제외",
     weight: 38,
     characters: ["gaunt"],
-    text: "전선이 무너지는 와중에 명령을 어기고 고립된 분대 전우를 구출해 복귀했다. 군법회의의 서슬 퍼런 시선 속에서, 타니스 퍼스트 앤드 온리의 이브람 건트 총커미사르가 직접 그대와 전우 앞에 걸음을 멈췄다.",
+    text: "전선이 무너지는 와중에 명령을 어기고 고립된 분대 전우를 구출해 복귀했다. 군법회의의 서슬 퍼런 시선 속에서, 타니스 퍼스트 앤드 온리의 이브람 건트 대령-커미사르가 직접 그대와 전우 앞에 걸음을 멈췄다.",
     choices: [
       {
         label: "[교섭 판정] 전우를 버리는 부대는 결코 승리할 수 없다며 당당히 소신을 밝힌다",
@@ -399,12 +442,15 @@ export default [
     req: {
       minAge: 30,
       allTags: ["bond_battle_brother"],
-      excludeTags: ["met_dante", "heretic", "chaos_aligned"]
+      excludeWorlds: ["terra", "mars"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["dreadnought", "daemonic"],
+      excludeTags: ["met_dante", "heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "grey_knight", "dreadnought", "custodes", "living_saint"]
     },
-    reqLabel: "배틀 브라더 보유 · 30세+",
+    reqLabel: "배틀 브라더 보유 · 아스타르테스 · 30세+ · 테라·화성·그레이 나이트·드레드노트 제외",
     weight: 38,
     characters: ["dante"],
-    text: "끝없는 적의 물결 속에서 탄약이 말라 가던 최후의 방어선, 수백 년을 싸워 온 블러드 엔젤 챕터 마스터 단테의 황금빛 갑주가 전장 위에서 강하했다. 단테가 이끄는 반격의 창끝에서, 오랜 배틀 브라더와 함께 돌격할 때가 왔다.",
+    text: "끝없는 적의 물결 속에서 탄약이 말라 가던 최후의 방어선, 천 년 가까이 싸워 온 블러드 엔젤 챕터 마스터 단테의 황금빛 갑주가 전장 위에서 강하했다. 단테가 이끄는 반격의 창끝에서, 오랜 배틀 브라더와 함께 돌격할 때가 왔다.",
     choices: [
       {
         label: "[백병 판정] 배틀 브라더와 측면 호흡을 맞춰 단테의 돌파로를 열어젖힌다",
@@ -441,11 +487,19 @@ export default [
     once: true,
     req: {
       minAge: 22,
-      allTags: ["bond_heretic_pact"]
+      allTags: ["bond_heretic_pact"],
+      or: [
+        { anyRealms: ["heretic"] },
+        { minCorruption: 10 }
+      ],
+      excludeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["renegade_marine", "chaos_lord", "daemon_prince", "astartes", "custodes", "grey_knight", "living_saint", "dreadnought"]
     },
-    reqLabel: "배교 혈맹 동료 보유 · 22세+",
+    reqLabel: "배교 혈맹 동료 보유 · 22세+ · 이단 영역 또는 오염 10+ · 초인·야만 행성·크리그 제외",
     weight: 36,
-    text: "함께 어둠의 거래를 이어 오던 혈맹 동료가 제국 심문대의 압박(혹은 카오스 워밴드 내 권력 다툼)을 받자, 모든 죄를 그대에게 뒤집어씌우고 달아나려 한다. 선수를 쳐서 입을 막지 않으면 파멸이 닥친다.",
+    text: "함께 금단의 어둠을 공유하던 혈맹 동료가 제국 심문대의 포위망과 지하 파벌의 권력 다툼에 몰리자, 모든 배교와 밀거래의 죄를 그대에게 뒤집어씌우고 달아나려 한다. 선수를 쳐서 입을 막지 않으면 파멸이 닥친다.",
     choices: [
       {
         label: "[권위 판정] 조직의 은밀한 세력을 동원해 배신자를 먼저 숙청하고 이득을 독차지한다",
@@ -483,9 +537,14 @@ export default [
     req: {
       minAge: 42,
       anyTags: ["bond_fallen_comrade", "bond_oath_fulfilled"],
-      excludeTags: ["heretic", "chaos_aligned"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "astartes", "custodes", "grey_knight", "dreadnought", "living_saint"]
     },
-    reqLabel: "전우의 유품·지켜 낸 전우애 보유 · 42세+",
+    reqLabel: "전우의 유품·지켜 낸 전우애 보유 · 필멸자 · 42세+ · 크리그·야만 행성·초인·이단 제외",
     weight: 36,
     text: "수많은 전장과 세월을 건너온 지금, 빛바랜 전우의 유품과 오래전 나눈 맹세를 다시 꺼내 보았다. 이제 막 전선과 성소에 발을 들인 젊은 후배가 그 유품에 담긴 사연을 조심스레 물어온다.",
     choices: [
@@ -514,6 +573,6 @@ export default [
         }
       }
     ],
-    source: "Imperialis Vita Original / Gaunt's Ghosts"
+    source: "Gaunt's Ghosts / Only War"
   }
 ];

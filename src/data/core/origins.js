@@ -56,6 +56,7 @@ export const ORIGINS = [
     name: "기계교 견습 · 포지 도제",
     en: "Mechanicus Apprentice",
     weight: 7,
+    excludeWorlds: ["krieg"],
     excludeWorldTags: ["feral"],
     statMods: { Int: 10, T: 3, BS: 3, Fel: -8 },
     lifeMod: 5,
@@ -244,7 +245,7 @@ export const TRAITS = [
     capMods: { WS: 10, T: 10, Int: -15, BS: -6 },
     talent: {
       name: "거인의 맷집",
-      desc: "백병·강인 상한 +10(지성 -15, 사격 -6), 최대 생명력 +20 · 물리 부상 경감"
+      desc: "백병·강인 상한 +10(지성 -15, 사격 -6), 최대 생명력 +20 · 물리 부상 20% 경감"
     },
     tags: ["abhuman", "ogryn"],
     desc: "고중력 행성 적응으로 거대한 근육과 순박한 충성심을 지닌 아인류. 머리는 단순하지만 황제와 커미사르를 향한 충성만은 산처럼 굳건하다."
@@ -258,7 +259,7 @@ export const TRAITS = [
     capMods: { BS: 8, Ag: 8, WS: -8, T: -8 },
     talent: {
       name: "매의 눈과 민첩함",
-      desc: "사격·민첩 상한 +8(백병·강인 -8), 사격·잠입 판정 +6"
+      desc: "사격·민첩 상한 +8(백병·강인 -8), 사격·민첩 판정 +6"
     },
     tags: ["abhuman", "ratling"],
     desc: "작은 체구와 뛰어난 시력, 교활한 식탐을 지닌 아인류. 아스트라 밀리타룸 최고의 저격수로 활약한다."
@@ -287,7 +288,7 @@ export const TRAITS = [
     capMods: { WS: 14, BS: 8, T: 14, Ag: 12 },
     talent: {
       name: "규격 외 피지컬",
-      desc: "필멸자 신체 상한 +14(민첩 +12, 사격 +8), 아스타르테스·쿠스토데스·암살청 스카우트"
+      desc: "필멸자 신체 상한 +14(민첩 +12, 사격 +8), 아스타르테스·암살청 스카우트"
     },
     tags: ["freak_physique"],
     desc: "유전 공학 없이도 아스타르테스 수련생에 필적하는 괴력과 반사 신경을 타고난 야성의 변종. 초인 기관의 징병관들이 혈안이 되어 추적한다."
@@ -318,7 +319,7 @@ export const TRAITS = [
       desc: "의지 상한 +18 · 교섭 상한 -20, 워프 오염 85% 감쇠, 침묵의 자매들·쿨렉수스 최우선 차출"
     },
     tags: ["blank", "omega_pariah"],
-    desc: "접근하는 것만으로 사이커를 기절시키고 악마의 실체를 찢어발기는 최고 등급의 공허 체질. 고독한 배척 끝에 황궁 탈론즈나 암살청에 징발된다."
+    desc: "접근하는 것만으로 사이커를 기절시키고 악마의 실체를 찢어발기는 최고 등급의 공허 체질. 고독한 배척 끝에 황제의 발톱이나 암살청에 징발된다."
   }
 ];
 

@@ -170,7 +170,9 @@ export default function HallOfSoulsApp() {
               const c = coreFmt.getCareer(cid);
               return Boolean(
                 c &&
-                  (["custodes", "grey_knights", "living_saint"].includes(c.tree) || c.id === "daemon_prince")
+                  (["custodes", "grey_knights"].includes(c.tree) ||
+                    c.id === "living_saint" ||
+                    c.id === "daemon_prince")
               );
             });
             return hasTag || hasCareer;

@@ -7,12 +7,14 @@ export default [
     once: true,
     req: {
       minAge: 16,
+      anyRealms: ["military", "void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
-      excludeTags: ["iron_nerves", "shell_shocked"]
+      excludeTags: ["iron_nerves", "shell_shocked", "astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince"]
     },
-    reqLabel: "16세 이상 · 크리그 제외 · 강철의 신경/포탄 충격 미보유",
+    reqLabel: "16세 이상 · 군사/함대 복무 필멸자 · 크리그/야만 행성 제외 · 강철의 신경/포탄 충격 미보유",
     weight: 34,
     text: "대지를 뒤흔드는 중포격과 궤도 강습선의 굉음이 연달아 참호와 방벽을 두드렸다. 먼지와 파편이 비처럼 쏟아지는 가운데 통신망마저 잡음에 묻혔고, 주변 병력들의 숨결이 거칠게 흔들리기 시작했다. 한 번 공황에 삼켜지면 다시는 고개를 들지 못할 극한의 압박 속에서, 이 포화의 소용돌이를 어떻게 버텨 낼지 결단해야 한다.",
     choices: [
@@ -85,10 +87,11 @@ export default [
     once: true,
     req: {
       minAge: 16,
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["dreadnought", "daemonic"],
-      excludeTags: ["blade_master", "crippled_limb"]
+      excludeTags: ["blade_master", "crippled_limb", "ogryn"]
     },
-    reqLabel: "16세 이상 · 드레드노트/악마 제외 · 검성의 경지/불구 미보유",
+    reqLabel: "16세 이상 · 비야만 행성 · 드레드노트/악마/오그린 제외 · 검성의 경지/불구 미보유",
     weight: 34,
     text: "피와 쇠 냄새가 진동하는 좁은 통로 끝에서 흉포한 검기를 뿜어내는 적의 정예 결투자들과 마주쳤다. 총탄을 재장전할 틈조차 없는 초근접 거리에서, 상대의 무기가 공기를 가르며 목덜미를 향해 쇄도한다. 단 한 번의 합으로 생사와 검술의 경지가 갈리는 찰나가 찾아왔다.",
     choices: [
@@ -156,10 +159,12 @@ export default [
     once: true,
     req: {
       minAge: 16,
+      excludeWorldTags: ["feral"],
+      excludeTrees: ["civil", "administratum", "governor", "ecclesiarchy"],
       excludeBodyClasses: ["dreadnought", "daemonic"],
-      excludeTags: ["deadeye_marksman", "warp_scarred"]
+      excludeTags: ["deadeye_marksman", "warp_scarred", "custodes", "grey_knight", "living_saint", "blank", "omega_pariah", "ogryn", "high_lord_terra"]
     },
-    reqLabel: "16세 이상 · 드레드노트/악마 제외 · 백발백중 명사수/워프 흉터 미보유",
+    reqLabel: "16세 이상 · 비야만 행성 · 비민간/비하이로드 · 드레드노트/악마/오염면역/무혼/오그린 제외 · 명사수/워프 흉터 미보유",
     weight: 32,
     text: "기이한 보랏빛 아지랑이와 정전기 폭풍이 시야를 일그러뜨리는 폐허 건너편에서 적의 지휘관과 악마술사가 모습을 드러냈다. 이성적인 탄도 계산을 비웃듯 대기 자체가 미세하게 일렁이는 가운데, 단 한 발로 적의 심장부를 꿰뚫을지 아니면 기이한 반동을 감수할지 결정해야 한다.",
     choices: [
@@ -228,19 +233,20 @@ export default [
       minAge: 18,
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeRealms: ["heretic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["silver_tongue", "imperial_debt", "astartes", "custodes", "grey_knight"]
+      excludeTags: ["silver_tongue", "imperial_debt", "astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "ogryn", "assassin", "heretic", "chaos_aligned"]
     },
-    reqLabel: "18세 이상 · 필멸자 · 크리그/원시 행성 제외 · 은빛 혀/거액의 채무 미보유",
+    reqLabel: "18세 이상 · 충성파 필멸자(오그린/암살자 제외) · 크리그/야만 행성 제외 · 은빛 혀/거액의 채무 미보유",
     weight: 30,
     text: "성계 상업 길드와 아드미니스트라툼 회계 감사관, 그리고 욕심 많은 용병 중개인들이 얽힌 막대한 보급 계약 테이블에 불려 나왔다. 지금 여기서 유리한 조건으로 서명권을 쥐면 막대한 권세와 인맥을 얻지만, 한 번 문서의 올가미에 걸리면 평생을 바쳐도 갚지 못할 빚더미에 올라앉을 수 있다.",
     choices: [
       {
-        label: "[친교 판정] 이해관계의 빈틈을 파고드는 유려한 언변으로 협상 판을 뒤집는다",
+        label: "[교섭 판정] 이해관계의 빈틈을 파고드는 유려한 언변으로 협상 판을 뒤집는다",
         check: { stat: "Fel", diff: -10 },
         critSuccess: {
-          text: "단 몇 마디의 정교한 수사만으로 서로 으르렁대던 감사관과 길드 대표들을 완벽히 설득했다! 모든 이익이 이쪽으로 쏠리는 계약이 체결되었고, 누구든 홀리는 은빛 혀의 달인으로 이름 높였다.",
+          text: "단 몇 마디의 정교한 수사만으로 서로 으르렁대던 감사관과 길드 대표들을 완벽히 설득했다! 모든 이익이 이쪽으로 쏠리는 계약이 체결되었고, 누구든 홀리는 은빛 혀의 달인으로 이름을 높였다.",
           stats: { Fel: 7, Inf: 7 },
           addTags: ["silver_tongue"],
           align: { ruthless: 6 }
@@ -297,10 +303,14 @@ export default [
     once: true,
     req: {
       minAge: 18,
+      anyRealms: ["military", "void"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["daemonic"],
-      excludeTags: ["tactician_eye", "notorious_ruthless"]
+      excludeTags: ["tactician_eye", "notorious_ruthless", "ogryn"]
     },
-    reqLabel: "18세 이상 · 악마 제외 · 백전노장의 전술안/악명 높은 냉혈한 미보유",
+    reqLabel: "18세 이상 · 군사/함대 복무 · 악마/오그린 제외 · 크리그/야만 행성 제외 · 전술안/냉혈한 미보유",
     weight: 34,
     text: "적의 대군이 우회로를 파고들며 방어선의 허리가 끊어질 위기에 처했다. 측면을 메울 예비대는 턱없이 부족하고, 지금 당장 전술 홀로그램 위에서 누군가는 미끼가 되어 시간을 끌거나 적의 허점을 꿰뚫는 역포위 기동을 지휘해야 한다.",
     choices: [
@@ -322,17 +332,17 @@ export default [
           text: "기동이 어긋나자 본진을 살리기 위해 미끼 부대의 철수 명령을 내리지 않고 그대로 소모시키고 말았다. 전선은 지켰으나 부하들 사이에서 악명 높은 냉혈한이라는 수군거림이 퍼졌다.",
           stats: { Inf: -3, WP: 2 },
           addTags: ["notorious_ruthless"],
-          align: { dogmatic: 5 }
+          align: { ruthless: 5, dogmatic: 2 }
         },
         critFail: {
           text: "예측이 빗나가며 측면을 막기 위해 후위 부대 전체를 적의 화망 속으로 내몰아 전멸시켰다! 승리는커녕 뼈아픈 오판과 비정한 명령 때문에 악명 높은 냉혈한이라는 오명이 지워지지 않게 되었다.",
           stats: { Inf: -5, Fel: -4 },
           addTags: ["notorious_ruthless"],
-          align: { dogmatic: 7 }
+          align: { ruthless: 7, humane: -4 }
         }
       },
       {
-        label: "[영향 판정] 직접 선두에 서서 붕괴 직전의 측면 부대를 독려해 버텨 낸다",
+        label: "[권위 판정] 직접 선두에 서서 붕괴 직전의 측면 부대를 독려해 버텨 낸다",
         check: { stat: "Inf", diff: -5 },
         critSuccess: {
           text: "압도적인 지휘 위엄으로 패주하던 병력을 다시 규합해 적의 허리를 끊어 놓았다. 현장 지휘와 대국적 안목이 어우러지며 백전노장의 전술안을 얻었다.",
@@ -347,7 +357,8 @@ export default [
         fail: {
           text: "병력을 통제하기 위해 즉결 처형과 강압적인 전진 명령을 남발해야 했다. 살아남은 자들의 눈빛에 공포와 원망이 서리며 악명 높은 냉혈한으로 불리게 되었다.",
           stats: { Fel: -3, WP: 2 },
-          addTags: ["notorious_ruthless"]
+          addTags: ["notorious_ruthless"],
+          align: { ruthless: 4, dogmatic: 2 }
         }
       },
       {
@@ -367,10 +378,11 @@ export default [
     once: true,
     req: {
       minAge: 16,
-      excludeBodyClasses: ["dreadnought", "daemonic"],
-      excludeTags: ["battle_hardened", "chronic_toxins"]
+      excludeWorldTags: ["feral"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["battle_hardened", "chronic_toxins", "astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince"]
     },
-    reqLabel: "16세 이상 · 드레드노트/악마 제외 · 백전의 생존자/만성 독소 미보유",
+    reqLabel: "16세 이상 · 필멸자 · 비야만 행성 · 백전의 생존자/만성 독소 미보유",
     weight: 34,
     text: "생화학 포탄과 부식성 포자가 자욱하게 깔린 죽음의 분지를 돌파해야 하는 강행군이 이어졌다. 여과기 수명은 바닥을 드러내고 방호복 이음새마다 시큼한 독기가 스며드는 가운데, 육체의 한계를 시험하는 잔혹한 행군을 끝까지 버텨 내야 한다.",
     choices: [
@@ -441,9 +453,12 @@ export default [
     once: true,
     req: {
       allTags: ["shell_shocked"],
-      excludeWorlds: ["krieg"]
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"]
     },
-    reqLabel: "포탄 충격 보유 · 크리그 제외",
+    reqLabel: "포탄 충격 보유 · 필멸자 · 크리그/야만 행성 제외",
     weight: 38,
     text: "밤낮없이 귓가를 찌르던 환청과 굉음의 기억이 또다시 숨통을 조여 온다. 바로 그때, 주둔지 외곽에서 적의 기습 포격이 터지며 온 대지가 흔들렸다. 과거의 공포에 영원히 무너질 것인가, 아니면 그 트라우마를 정면으로 뚫고 다시 일어설 것인가의 시험이 닥쳤다.",
     choices: [
@@ -492,9 +507,10 @@ export default [
     once: true,
     req: {
       allTags: ["crippled_limb"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["dreadnought", "daemonic"]
     },
-    reqLabel: "불구 보유 · 드레드노트/악마 제외",
+    reqLabel: "불구 보유 · 드레드노트/악마 제외 · 비야만 행성",
     weight: 38,
     text: "뒤틀린 관절과 삐걱거리는 상흔은 매 걸음마다 뼈아픈 고통을 일깨웠다. 기계교의 의체 시술과 의무관의 혹독한 재활 처방이 눈앞에 놓였다. 평생 반쪽짜리 몸으로 물러날 것인가, 아니면 뼈를 깎는 고통을 견뎌 내고 온전한 전사로 되돌아갈 것인가.",
     choices: [
@@ -544,10 +560,11 @@ export default [
     req: {
       allTags: ["warp_scarred"],
       excludeRealms: ["heretic"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["daemonic"],
-      excludeTags: ["heretic", "chaos_aligned"]
+      excludeTags: ["heretic", "chaos_aligned", "custodes", "grey_knight", "living_saint", "blank", "omega_pariah"]
     },
-    reqLabel: "워프 흉터 보유 · 악마 제외",
+    reqLabel: "워프 흉터 보유 · 충성파(오염면역/무혼 제외) · 비야만 행성",
     weight: 38,
     text: "피부 위에 아로새겨진 기이한 워프 흉터가 밤마다 차갑게 맥동하며 불경한 속삭임을 흘려보낸다. 에클레시아키의 정화 성소와 고행의 제단 앞에서, 영혼을 좀먹는 이 낙인을 불태워 정화할 기회가 찾아왔다.",
     choices: [
@@ -600,9 +617,10 @@ export default [
     once: true,
     req: {
       allTags: ["chronic_toxins"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["dreadnought", "daemonic"]
     },
-    reqLabel: "만성 독소 보유 · 드레드노트/악마 제외",
+    reqLabel: "만성 독소 보유 · 드레드노트/악마 제외 · 비야만 행성",
     weight: 38,
     text: "혈관 속을 흐르는 지독한 독기가 심장과 폐부를 옥죄며 갈수록 체력을 갉아먹고 있다. 마침내 희귀한 고순도 해독 혈청과 기계교의 전신 혈액 여과 장치에 접근할 수 있게 되었으나, 혈액을 송두리째 갈아내는 시술은 목숨을 건 도박과 같다.",
     choices: [
@@ -650,14 +668,20 @@ export default [
     category: "후천 특성 극복",
     once: true,
     req: {
-      allTags: ["notorious_ruthless"]
+      allTags: ["notorious_ruthless"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["custodes", "astartes", "grey_knight", "living_saint", "daemon_prince", "assassin", "dreadnought", "heretic", "chaos_aligned"]
     },
-    reqLabel: "악명 높은 냉혈한 보유",
+    reqLabel: "악명 높은 냉혈한 보유 · 충성파 필멸자(암살자 제외) · 크리그/야만 행성 제외",
     weight: 38,
     text: "과거의 냉혹한 결단으로 얻은 오명이 이제는 아군의 사기와 신뢰마저 갉아먹는 족쇄가 되었다. 분노와 불신이 들끓는 전선 회의장과 병영 한가운데에서, 과거의 피비린내 나는 평판을 씻어 내고 신뢰를 되찾을 마지막 기회가 찾아왔다.",
     choices: [
       {
-        label: "[친교 판정] 진심 어린 책임의 언어와 합당한 보상으로 분노한 이들의 마음을 돌린다",
+        label: "[교섭 판정] 진심 어린 책임의 언어와 합당한 보상으로 분노한 이들의 마음을 돌린다",
         check: { stat: "Fel", diff: -10 },
         critSuccess: {
           text: "변명 없이 책임을 직시하면서도 대의의 절박함을 설파한 그 한마디가 얼어붙은 병영의 공기를 단숨에 녹였다! 악명 높은 냉혈한의 낙인을 지워 버렸을 뿐 아니라, 누구든 설득하는 은빛 혀의 달인으로 거듭났다.",
@@ -697,14 +721,20 @@ export default [
     category: "후천 특성 극복",
     once: true,
     req: {
-      allTags: ["imperial_debt"]
+      allTags: ["imperial_debt"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral", "krieg"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "assassin", "heretic", "chaos_aligned"]
     },
-    reqLabel: "거액의 채무 보유",
+    reqLabel: "거액의 채무 보유 · 충성파 필멸자 · 크리그/야만 행성 제외",
     weight: 38,
     text: "산더미처럼 불어난 이자와 채권단의 독촉장이 목을 조여 온다. 바로 이때, 변경 성계의 버려진 무역선 잔해와 상업 길드의 미수금 장부를 엮어 단숨에 빚을 청산하고 판세를 뒤집을 기막힌 기회가 눈앞에 떨어졌다.",
     choices: [
       {
-        label: "[친교 판정] 채권자들을 한자리에 모아 대담한 상환 조건과 수익 분배안을 관철한다",
+        label: "[교섭 판정] 채권자들을 한자리에 모아 대담한 상환 조건과 수익 분배안을 관철한다",
         check: { stat: "Fel", diff: -10 },
         critSuccess: {
           text: "파산 직전의 벼랑 끝에서 오히려 채권자들을 투자자로 돌려세우는 기적 같은 협상을 성사시켰다! 거액의 채무를 단숨에 청산했을 뿐 아니라, 정계와 상계를 쥐락펴락하는 은빛 혀로 명성을 떨쳤다.",
@@ -743,10 +773,12 @@ export default [
     category: "특성 심화",
     once: true,
     req: {
+      minAge: 16,
       allTags: ["blade_master"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["dreadnought", "daemonic"]
     },
-    reqLabel: "검성의 경지 보유 · 드레드노트/악마 제외",
+    reqLabel: "검성의 경지 보유 · 16세 이상 · 드레드노트/악마 제외 · 비야만 행성",
     weight: 30,
     text: "전장을 휩쓸던 검성의 명성을 듣고 나타난 적진의 무쌍 검객이 폐허 한가운데에서 정식 대결을 청해 왔다. 숨 막히는 살기가 공기를 가르는 가운데, 정점에 오른 검술을 증명해 전설을 완성할지 아니면 냉정히 물러날지 선택해야 한다.",
     choices: [
@@ -791,10 +823,14 @@ export default [
     category: "특성 심화",
     once: true,
     req: {
+      minAge: 18,
       allTags: ["tactician_eye"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["daemonic"]
     },
-    reqLabel: "백전노장의 전술안 보유 · 악마 제외",
+    reqLabel: "백전노장의 전술안 보유 · 18세 이상 · 악마 제외 · 크리그/야만 행성 제외",
     weight: 30,
     text: "안개 낀 협곡으로 진입하던 아군 종대가 적의 정교한 다층 매복에 완벽히 포위당했다. 적 지휘관 역시 이쪽의 전술 습관까지 읽고 함정을 판 듯 사방에서 화망이 조여 온다. 백전노장의 전술안이 지금 가장 치열한 시험대에 올랐다.",
     choices: [
@@ -820,7 +856,8 @@ export default [
           wounds: -18,
           stats: { Int: -4, Inf: -6 },
           removeTags: ["tactician_eye"],
-          addTags: ["notorious_ruthless"]
+          addTags: ["notorious_ruthless"],
+          align: { ruthless: 5 }
         }
       },
       {

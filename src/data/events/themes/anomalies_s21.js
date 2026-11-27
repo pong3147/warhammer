@@ -12,18 +12,19 @@ export default [
       minAge: 12,
       maxAge: 26,
       allTags: ["psyker"],
+      excludeRealms: ["heretic"],
       excludeWorldTags: ["feral"],
-      excludeTags: ["alpha_plus_psyker", "blank", "astartes", "custodes", "grey_knight"]
+      excludeTags: ["alpha_plus_psyker", "blank", "astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "heretic", "chaos_aligned", "daemon_prince"]
     },
-    reqLabel: "자질: 사이커 · 12~26세 · 비초인",
+    reqLabel: "자질: 사이커 · 12~26세 · 충성파 비초인 · 비야만 행성",
     weight: 38,
-    text: "평범한 사이킥 훈련 도중, 혹은 극한의 위기 속에서 그대의 의식을 가두던 정신적 둑이 단숨에 붕괴했다. 주변 공기가 오존 냄새와 함께 새하얗게 타오르며 반경 수십 미터 내의 강철 격벽이 종잇장처럼 비틀린다. 텔레파시 합창단의 감찰관이 코피를 쏟으며 무릎을 꿇는 가운데, 시야 너머 워프의 심연이 한 사람의 그릇에 담기지 못할 만큼 거대한 힘의 수문을 열어젖히려 한다.",
+    text: "일상의 고된 훈련이나 극한의 위기 속에서 그대의 의식을 가두던 정신적 둑이 단숨에 붕괴했다. 주변 공기가 오존 냄새와 함께 새하얗게 타오르며 반경 수십 미터 내의 강철 격벽이 종잇장처럼 비틀린다. 근처에 있던 감시자와 목격자들이 코피를 쏟으며 무릎을 꿇는 가운데, 시야 너머 워프의 심연이 한 사람의 그릇에 담기지 못할 만큼 거대한 힘의 수문을 열어젖히려 한다.",
     choices: [
       {
         label: "[의지 판정] 폭주하는 워프의 격류를 억지로 붙잡아 내면의 백색 화로로 압축한다 (대성공 시 규격 외 각성)",
         check: { stat: "WP", diff: -12 },
         critSuccess: {
-          text: "기적적인 정신 집중으로 터져 나오던 사이킥 폭풍을 단 한 점의 순백한 별로 압축해 삼켰다! 전 구역의 전등이 일제히 파열되고 감찰관의 탐지기가 한계치를 넘어 녹아내렸으며, 그대는 인류 제국에서도 천 년에 한 번 나올까 말까 한 알파 플러스 등급의 권능을 손에 넣었다.",
+          text: "기적적인 정신 집중으로 터져 나오던 사이킥 폭풍을 단 한 점의 순백한 별로 압축해 삼켰다! 전 구역의 전등이 일제히 파열되고 주변의 계측기와 복스 단말이 한계치를 넘어 녹아내렸으며, 그대는 인류 제국에서도 천 년에 한 번 나올까 말까 한 알파 플러스 등급의 권능을 손에 넣었다.",
           stats: { WP: 12, Int: 6, Inf: 8 },
           corruption: 6,
           addTags: ["alpha_plus_psyker", "iron_nerves"],
@@ -57,13 +58,13 @@ export default [
           align: { humane: 5 }
         },
         fail: {
-          text: "배관이 버티지 못하고 연쇄 폭발을 일으켜 파편에 온몸을 베였다. 감찰관은 그대를 위험 등급으로 분류해 감시 기록에 올렸다.",
+          text: "배관이 버티지 못하고 연쇄 폭발을 일으켜 파편에 온몸을 베였다. 현장을 목격한 감시 당국은 그대를 위험 등급으로 분류해 감시 기록에 올렸다.",
           wounds: -16,
           corruption: 4
         }
       },
       {
-        label: "억제 두건과 성수를 끌어안고 힘의 수문이 닫힐 때까지 웅크려 기도한다",
+        label: "아퀼라 성물과 성수를 끌어안고 힘의 수문이 닫힐 때까지 웅크려 기도한다",
         effect: {
           text: "찬송을 읊조리며 모든 힘을 억눌렀다. 뼈가 시릴 만큼 차가운 오한이 지나간 뒤, 잠재되어 있던 거대한 심연은 다시 어둠 속으로 가라앉았다.",
           stats: { WP: 3 },
@@ -80,10 +81,16 @@ export default [
     category: "특수",
     once: true,
     req: {
+      minAge: 16,
       allTags: ["alpha_plus_psyker"],
-      excludeWorldTags: ["feral"]
+      anyWorldTags: ["hive", "industrial", "forge"],
+      excludeWorldTags: ["feral"],
+      excludeWorlds: ["krieg"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "high_lord_terra", "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned"]
     },
-    reqLabel: "특이점: 알파 플러스 사이커 · 비야만 행성",
+    reqLabel: "특이점: 알파 플러스 사이커 · 16세 이상 · 하이브/공업/포지 월드 · 충성파 필멸자",
     weight: 40,
     text: "노후화된 지지대가 무너지며 상층 하이브 구획의 거대한 철골 천장이 그대로 아래층 거주 구역으로 추락하기 시작했다! 수천 명의 시민과 병사들이 비명조차 지르지 못하고 압사하기 직전, 그대의 머릿속에서 은하가 뒤집히는 듯한 사이킥의 울림이 깨어난다. 규격 외의 힘이라면 이 강철 산맥을 통째로 멈춰 세울 수도, 반대로 구역 전체를 증발시킬 수도 있다.",
     choices: [
@@ -146,56 +153,62 @@ export default [
   },
   {
     id: "ev_s21_anom_03",
-    title: "은빛 갑주와 검은 함선 — 통제 불능의 존재를 겨눈 정화의 칼날",
+    title: "검은 함선과 공허의 사냥꾼 — 통제 불능의 존재를 겨눈 정화의 칼날",
     category: "특수",
     once: true,
     req: {
+      minAge: 16,
       allTags: ["alpha_plus_psyker"],
       excludeRealms: ["heretic"],
-      excludeTags: ["grey_knight", "custodes", "daemon_prince", "heretic", "chaos_aligned"]
+      excludeTags: [
+        "astartes", "custodes", "grey_knight", "inquisitor", "lord_inquisitor",
+        "high_lord_terra", "chapter_master", "sector_lord", "planetary_governor",
+        "warmaster", "living_saint", "dreadnought", "daemon_prince",
+        "heretic", "chaos_aligned"
+      ]
     },
-    reqLabel: "특이점: 알파 플러스 사이커 · 충성파 비그레이 나이트/쿠스토데스",
+    reqLabel: "특이점: 알파 플러스 사이커 · 16세 이상 · 충성파 비초인/비최고위",
     weight: 41,
-    text: "궤도 위에 검은 함선과 오르도 헤레티쿠스의 순양함이 동시에 닻을 내렸다. 그대의 사이킥 반향이 섹터 텔레파시 망을 흔들자, 이단심문관과 공허의 무녀들인 침묵의 자매들이 강하 포드를 타고 내려온 것이다. '알파 플러스 개체는 황제의 적이나 다름없다.' 마녀 사냥관의 사이킥 후드가 푸르게 빛나며 즉결 정화 혹은 영구 구속을 통보한다.",
+    text: "궤도 위에 아스트라 텔레파티카의 검은 함선과 오르도 헤레티쿠스의 순양함이 동시에 닻을 내렸다. 그대의 사이킥 반향이 섹터 텔레파시 망을 흔들자, 검은 함선 징발대와 황제의 발톱인 침묵의 자매들, 그리고 이단심문소 오르도 헤레티쿠스의 제압 부대가 강하 포드를 타고 내려온 것이다. 공허 여전사들의 무혼 장막과 육망성 억제 고리가 주변의 모든 워프 감응을 얼어붙게 만드는 가운데, 외곽에서 합류한 이단심문관이 냉혹하게 선고한다. '알파 플러스 개체는 황제의 적이나 다름없다. 즉결 정화하거나 검은 함선의 납 관에 영구 봉인하겠다.'",
     choices: [
       {
         label: "[권위 판정] 무릎을 꿇고 황제께 바치는 절대 충성과 제어력을 증명해 정화 대신 극비 징집을 요구한다",
         check: { stat: "Inf", diff: -6 },
         success: {
-          text: "이단심문관은 차가운 침묵 끝에 처형 명령을 거두었다. 대신 그대의 존재는 제국 최고 기밀 문서에만 기록된 채, 가장 치명적인 전장에 투입되는 비밀 병기로 관리되기 시작했다.",
+          text: "이단심문관과 검은 함선 징발 지휘관은 차가운 침묵 끝에 처형 명령을 거두었다. 대신 그대의 존재는 제국 최고 기밀 문서에만 기록된 채, 가장 치명적인 전장에 투입되는 비밀 병기로 관리되기 시작했다.",
           stats: { Inf: 9, WP: 6 },
           faith: 5,
           addTags: ["inquisition_favor"],
           align: { dogmatic: 7 }
         },
         fail: {
-          text: "설득이 통하지 않아 사이킥 억제 수갑을 찬 채 혹독한 심문과 시련을 겪었다. 목숨은 부지했으나 깊은 내상을 입었다.",
+          text: "설득이 통하지 않아 육망성 억제 수갑을 찬 채 혹독한 심문과 시련을 겪었다. 목숨은 부지했으나 깊은 내상을 입었다.",
           wounds: -20,
           stats: { Inf: -3, WP: 4 }
         }
       },
       {
-        label: "[의지 판정] 영혼을 꿰뚫는 심문관의 사이킥 압박을 정면으로 받아넘기며 순수한 정신력을 입증한다",
+        label: "[의지 판정] 숨통을 조이는 무혼 장막과 육망성 억제파를 정면으로 견뎌 내며 흔들리지 않는 정신력을 입증한다",
         check: { stat: "WP", diff: -10 },
         critSuccess: {
-          text: "심문소 무녀와 심문자단이 가한 정신 억제 공세를 단 한 걸음도 물러서지 않고 받아내며 오히려 상대의 사이킥 후드를 공명시켜 멈춰 세웠다! 대심문관조차 경외와 공포가 섞인 시선으로 그대를 전략 자산으로 인정했다.",
+          text: "침묵의 자매들이 펼친 공허의 장막과 제압 부대의 널-방출기 공세 속에서도 단 한 걸음도 무너지지 않고, 폭주나 빙의의 기미 없이 오히려 과부하된 억제 장치를 침묵시켰다! 현장을 지켜보던 대심문관조차 경외와 공포가 섞인 시선으로 그대를 극비 전략 자산으로 인정했다.",
           stats: { WP: 10, Inf: 10 },
           addTags: ["iron_nerves", "inquisition_favor"],
           align: { dogmatic: 5 }
         },
         success: {
-          text: "코피를 쏟으면서도 정신 방벽을 유지해 악마의 빙의 흔적이 전혀 없음을 증명했다. 추적대는 감시 인장만 남기고 철수했다.",
+          text: "코피를 쏟으면서도 무혼의 압박 속에서 정신 방벽을 유지해 악마의 빙의 흔적이 전혀 없음을 증명했다. 징발대와 추적대는 감시 인장만 남기고 철수했다.",
           stats: { WP: 7, T: 3 },
           faith: 4
         },
         fail: {
-          text: "심문관단의 공세에 정신 방벽이 뚫리며 사이킥 역류를 맞았다. 반죽음 상태로 끌려가 끔찍한 생체 억제 시술을 받아야 했다.",
+          text: "무혼 장막과 억제파의 협공에 정신 방벽이 뚫리며 극심한 사이킥 역류를 맞았다. 반죽음 상태로 끌려가 끔찍한 생체 억제 시술을 받아야 했다.",
           wounds: -26,
           stats: { WP: 2 },
           addTags: ["shell_shocked"]
         },
         critFail: {
-          text: "억제 실패로 주변 공간이 찢어지자 호위 병력이 일제히 실탄과 소각 화기를 퍼부었다! 온몸에 화상과 절단상을 입은 채 폐허 속으로 겨우 도주했다.",
+          text: "억제 실패로 주변 공간이 찢어지자 제압 부대와 호위 병력이 일제히 실탄과 소각 화기를 퍼부었다! 온몸에 화상과 절단상을 입은 채 폐허 속으로 겨우 도주했다.",
           wounds: -35,
           corruption: 6,
           addTags: ["crippled_limb", "wanted_by_inquisition"]
@@ -204,14 +217,14 @@ export default [
       {
         label: "스스로 모든 무장을 내려놓고 검은 함선의 생체 억제실에 순순히 걸어 들어간다",
         effect: {
-          text: "항거하지 않는 태도를 확인한 추적대는 즉결 처형을 보류했다. 차가운 납 관 속에서 몇 달간의 정밀 검사를 견딘 끝에, 그대는 통제 가능한 자산으로 풀려났다.",
+          text: "항거하지 않는 태도를 확인한 징발대와 이단심문관은 즉결 처형을 보류했다. 차가운 납 관 속에서 몇 달간의 정밀 검사를 견딘 끝에, 그대는 통제 가능한 자산으로 풀려났다.",
           stats: { WP: 4, T: 2 },
           faith: 4,
           align: { dogmatic: 5 }
         }
       }
     ],
-    source: "Lexicanum: Adeptus Astra Telepathica / Ordo Hereticus"
+    source: "Lexicanum: Adeptus Astra Telepathica / Sisters of Silence / Ordo Hereticus"
   },
   {
     id: "ev_s21_anom_04",
@@ -219,10 +232,12 @@ export default [
     category: "카오스",
     once: true,
     req: {
+      minAge: 16,
       allTags: ["alpha_plus_psyker"],
-      excludeTags: ["custodes", "grey_knight", "daemon_prince"]
+      excludeRealms: ["heretic"],
+      excludeTags: ["custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "heretic", "chaos_aligned"]
     },
-    reqLabel: "특이점: 알파 플러스 사이커",
+    reqLabel: "특이점: 알파 플러스 사이커 · 16세 이상 · 충성파(비오염면역/비드레드노트)",
     weight: 39,
     text: "황제조차 두려워하는 그대의 영혼은 워프의 포식자들에게는 눈부신 등대와 같다. 어느 고요한 밤, 현실의 색채가 바래고 아홉 갈래 깃털과 피의 사슬, 역병의 향기가 동시에 감각을 파고든다. '필멸자의 껍질에 갇혀 썩어 갈 것인가, 아니면 우리와 함께 별을 불태울 것인가.' 대악마의 속삭임이 고막이 아닌 영혼의 한복판을 긁는다.",
     choices: [
@@ -287,12 +302,13 @@ export default [
     category: "특수",
     once: true,
     req: {
-      minAge: 13,
+      minAge: 14,
       maxAge: 24,
       excludeWorldTags: ["feral"],
-      excludeTags: ["freak_physique", "abhuman", "astartes", "custodes", "grey_knight"]
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["freak_physique", "abhuman", "astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince"]
     },
-    reqLabel: "13~24세 · 비초인/비앱휴먼",
+    reqLabel: "14~24세 · 필멸자(비초인/비앱휴먼) · 비야만 행성",
     weight: 37,
     text: "생사가 걸린 극한의 육체적 한계 앞에서, 그대의 심장이 마치 전함의 플라즈마 노심처럼 굉음을 내며 뛰기 시작한다. 수 톤짜리 강철 문이 무너지며 동료를 덮치려 하고, 맹독성 연기와 중압이 폐부를 짓누르는 찰나, 보통 인간이라면 이미 척추가 부러졌을 무게 앞에서 그대의 근육과 뼈가 기괴하리만치 단단하게 재편되는 감각이 밀려온다.",
     choices: [
@@ -300,7 +316,7 @@ export default [
         label: "[강인 판정] 비명을 지르며 무너지는 강철 구조물을 맨손으로 떠받쳐 밀어 올린다 (대성공 시 규격 외 각성)",
         check: { stat: "T", diff: -12 },
         critSuccess: {
-          text: "두꺼운 I-빔 철골이 그대의 어깨 위에서 구부러졌다! 보통 사람의 두 배에 달하는 골밀도와 폭발적인 근섬유가 극한 스트레스 속에서 완전히 개화하며, 그대는 순수 인류 유전자의 돌연변이 정점인 규격 외 피지컬로 거듭났다.",
+          text: "두꺼운 강철 대들보가 그대의 어깨 위에서 구부러졌다! 보통 사람의 두 배에 달하는 골밀도와 폭발적인 근섬유가 극한 스트레스 속에서 완전히 개화하며, 그대는 순수 인류의 유전적 특이점인 규격 외 피지컬로 거듭났다.",
           stats: { T: 12, WS: 8, Ag: 4, Inf: 5 },
           addTags: ["freak_physique", "battle_hardened"]
         },
@@ -343,32 +359,37 @@ export default [
         }
       }
     ],
-    source: "Lexicanum: Abhuman / Catachan / Bragg (Gaunt's Ghosts)"
+    source: "Lexicanum: Catachan / Bragg (Gaunt's Ghosts)"
   },
   {
     id: "ev_s21_anom_06",
-    title: "녹색 괴수의 포효 — 맨주먹으로 꺾은 오크 놉의 목덜미",
+    title: "녹색 괴수의 포효 — 맨주먹으로 꺾은 오크 노브의 목덜미",
     category: "전투",
     once: true,
     req: {
+      minAge: 16,
       allTags: ["freak_physique"],
-      excludeBodyClasses: ["dreadnought"]
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeTrees: ["civil", "administratum", "governor", "ecclesiarchy", "navis_navigator", "imperial_knight"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "heretic", "chaos_aligned", "high_lord_terra"]
     },
-    reqLabel: "특이점: 규격 외 피지컬",
+    reqLabel: "특이점: 규격 외 피지컬 · 16세 이상 · 충성파 필멸 전투원 · 비야만 행성",
     weight: 41,
-    text: "전선이 뚫린 참호 한복판으로 집채만 한 오크 놉이 쇠파이프와 톱날 도끼를 휘두르며 난입했다! 라스건 탄환이 녀석의 두꺼운 가죽에서 튕겨 나가고 아군 분대원들이 나가떨어지는 순간, 그대의 손에 들려 있던 무기가 부러져 나간다. 하지만 물러설 곳이 없다. 그대의 거대한 체구와 괴력을 본 오크 놉이 오히려 즐거운 듯 씨익 웃으며 정면으로 돌진한다.",
+    text: "전선이 뚫린 참호 한복판으로 집채만 한 오크 노브가 쇠파이프와 톱날 도끼를 휘두르며 난입했다! 라스건 탄환이 녀석의 두꺼운 가죽에서 튕겨 나가고 아군 분대원들이 나가떨어지는 순간, 그대의 손에 들려 있던 무기가 부러져 나간다. 하지만 물러설 곳이 없다. 그대의 거대한 체구와 괴력을 본 오크 노브가 오히려 즐거운 듯 씨익 웃으며 정면으로 돌진한다.",
     choices: [
       {
-        label: "[백병 판정] 부러진 무기를 버리고 돌진하는 오크 놉의 팔을 붙잡아 꺾은 뒤 맨주먹으로 두개골을 박살 낸다",
+        label: "[백병 판정] 부러진 무기를 버리고 돌진하는 오크 노브의 팔을 붙잡아 꺾은 뒤 맨주먹으로 두개골을 박살 낸다",
         check: { stat: "WS", diff: -6 },
         critSuccess: {
-          text: "오크 놉의 거대한 도끼날을 팔뚝으로 막아 낸 뒤 턱을 정통으로 올려쳐 두개골을 함몰시켰다! 아스타르테스조차 경악할 맨손 일격에 주변의 오크 보이즈들이 겁에 질려 도망쳤고, 그대의 이름은 전선 전체에 살아 있는 전설로 퍼졌다.",
+          text: "오크 노브의 거대한 도끼날을 팔뚝으로 막아 낸 뒤 턱을 정통으로 올려쳐 두개골을 함몰시켰다! 아스타르테스조차 경악할 맨손 일격에 주변의 오크 보이즈들이 겁에 질려 도망쳤고, 그대의 이름은 전선 전체에 살아 있는 전설로 퍼졌다.",
           stats: { WS: 10, T: 8, Inf: 9 },
           addTags: ["battle_hardened"],
           align: { dogmatic: 6 }
         },
         success: {
-          text: "진흙탕 속에서 짐승처럼 뒤엉킨 사투 끝에 오크 놉의 목을 꺾어 숨통을 끊었다! 피와 기름을 뒤집어쓴 채 일어서자 아군의 환호가 터져 나왔다.",
+          text: "진흙탕 속에서 짐승처럼 뒤엉킨 사투 끝에 오크 노브의 목을 꺾어 숨통을 끊었다! 피와 기름을 뒤집어쓴 채 일어서자 아군의 환호가 터져 나왔다.",
           stats: { WS: 7, T: 5, Inf: 6 },
           wounds: -12
         },
@@ -388,7 +409,7 @@ export default [
         label: "[사격 판정] 쓰러진 전우의 중화기 탄통을 한 손으로 들어 올려 지근거리에서 화력을 퍼붓는다",
         check: { stat: "BS", diff: -4 },
         success: {
-          text: "보통 병사 셋이 붙어야 겨우 거치하는 중화기를 한 팔로 버텨 내며 오크 놉의 흉부를 벌집으로 만들었다!",
+          text: "보통 병사 셋이 붙어야 겨우 거치하는 중화기를 한 팔로 버텨 내며 오크 노브의 흉부를 벌집으로 만들었다!",
           stats: { BS: 6, T: 4, Inf: 5 }
         },
         fail: {
@@ -415,10 +436,15 @@ export default [
     category: "특수",
     once: true,
     req: {
+      minAge: 16,
       allTags: ["freak_physique"],
-      excludeTags: ["astartes", "custodes", "grey_knight", "daemon_prince"]
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeTrees: ["civil", "administratum", "governor", "ecclesiarchy", "navis_navigator", "imperial_knight"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "heretic", "chaos_aligned", "high_lord_terra"]
     },
-    reqLabel: "특이점: 규격 외 피지컬 · 비아스타르테스/비쿠스토데스",
+    reqLabel: "특이점: 규격 외 피지컬 · 16세 이상 · 충성파 필멸 전투원 · 비야만 행성",
     weight: 40,
     text: "전투가 끝난 막사 앞에, 은빛 해골 가면을 쓴 아스타르테스 채플린과 붉은 로브의 수행원들이 걸음을 멈췄다. 평범한 필멸자가 오크의 장갑판을 맨손으로 찢고 중화기를 소총처럼 휘둘렀다는 보고를 확인하러 온 것이다. '유전자 변이인가, 아니면 황제께서 빚으신 기적인가.' 아스타르테스의 거대한 체구 앞에서도 전혀 기죽지 않는 그대의 골격을 채플린이 유심히 살핀다.",
     choices: [
@@ -467,10 +493,15 @@ export default [
     category: "군사",
     once: true,
     req: {
+      minAge: 16,
       allTags: ["freak_physique"],
-      excludeBodyClasses: ["dreadnought"]
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeTrees: ["civil", "administratum", "governor", "ecclesiarchy", "navis_navigator", "imperial_knight"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "heretic", "chaos_aligned", "high_lord_terra"]
     },
-    reqLabel: "특이점: 규격 외 피지컬",
+    reqLabel: "특이점: 규격 외 피지컬 · 16세 이상 · 충성파 필멸 전투원 · 비야만 행성",
     weight: 39,
     text: "요새 방어선의 측면이 무너지며 전차 포탑에 장착되어 있던 트윈 헤비 볼터와 대형 파워 글레이브가 잔해 속에 나뒹굴고 있다. 장전수도, 거치대도 모두 날아간 상황. 적 기갑 보병대가 능선을 넘어 밀려오는 가운데, 그대의 두 팔만이 이 괴물 같은 병기들을 다시 들어 올릴 수 있다.",
     choices: [
@@ -531,10 +562,17 @@ export default [
     category: "전략",
     once: true,
     req: {
+      minAge: 18,
       allTags: ["savant_genius"],
-      excludeWorldTags: ["feral"]
+      minSocialTier: "common",
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "heretic", "chaos_aligned", "ogryn"]
     },
-    reqLabel: "특이점: 전략·지성 사반트 · 비야만 행성",
+    reqLabel: "특이점: 전략·지성 사반트 · 18세 이상 · 일반 시민 이상 충성파 필멸자 · 크리그/야만 행성 제외",
     weight: 41,
     text: "서브섹터 사령부의 거대한 전술 홀로그램이 붉은 경고등으로 뒤덮였다. 열두 개 행성의 보급선과 성전군 병력이 워프 폭풍에 얽혀 사흘 뒤면 전선이 도미노처럼 붕괴할 판이다. 고급 참모들과 데이터-서번트들이 천만 줄의 수치 앞에서 두 손을 드는 순간, 그대의 시야에는 복잡하게 얽힌 수만 개의 항로가 하나의 투명한 기하학 도형으로 겹쳐 보이기 시작한다.",
     choices: [
@@ -542,7 +580,7 @@ export default [
         label: "[지성 판정] 단 하룻밤 만에 전 서브섹터의 보급·기동 계획을 전면 재설계해 사령부에 제출한다",
         check: { stat: "Int", diff: -8 },
         critSuccess: {
-          text: "연필과 데이터 슬레이트만으로 코지테이터 수백 대가 1년 걸릴 연산을 하룻밤에 끝냈다! 모든 탄약과 수송선이 기적 같은 시차로 전선에 도착하며 세 개 행성이 동시에 구원받았고, 사령부는 그대에게 백전노장의 전술안이라는 칭호를 바쳤다.",
+          text: "철필과 데이터 슬레이트만으로 코지테이터 수백 대가 1년 걸릴 연산을 하룻밤에 끝냈다! 모든 탄약과 수송선이 기적 같은 시차로 전선에 도착하며 세 개 행성이 동시에 구원받았고, 사령부는 그대에게 백전노장의 전술안이라는 칭호를 바쳤다.",
           stats: { Int: 10, Inf: 10, Fel: 4 },
           addTags: ["tactician_eye"],
           align: { dogmatic: 5 }
@@ -592,13 +630,17 @@ export default [
     category: "정치",
     once: true,
     req: {
+      minAge: 18,
       allTags: ["savant_genius"],
+      minSocialTier: "common",
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
       excludeRealms: ["heretic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
-      excludeTags: ["custodes", "high_lord_terra", "astartes", "grey_knight", "living_saint", "heretic", "chaos_aligned"],
+      excludeTags: ["custodes", "high_lord_terra", "astartes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "warmaster", "sector_lord", "planetary_governor", "assassin", "ogryn", "heretic", "chaos_aligned"],
       excludeWorldTags: ["feral"]
     },
-    reqLabel: "특이점: 전략·지성 사반트 · 비초인/충성파 · 비야만 행성",
+    reqLabel: "특이점: 전략·지성 사반트 · 18세 이상 · 일반 시민 이상 충성파 필멸자 · 크리그/야만 행성 제외",
     weight: 40,
     text: "너무나 눈부신 공적을 세운 탓일까. 귀족 출신 직속 상관이 그대의 존재를 위협으로 여겨 은밀히 암살자를 고용했다는 사실을, 그대는 평소보다 3분 늦게 도착한 보안 보고서와 차 맛의 미세한 변화, 경비병의 시선 각도만으로 이미 눈치챘다. 오늘 밤 집무실 문밖에서 암살자의 발소리가 멎는다.",
     choices: [
@@ -658,12 +700,15 @@ export default [
     category: "전략",
     once: true,
     req: {
+      minAge: 18,
       allTags: ["savant_genius"],
+      minSocialTier: "common",
       excludeRealms: ["heretic"],
-      excludeTags: ["heretic", "chaos_aligned", "daemon_prince"],
+      excludeBodyClasses: ["dreadnought", "daemonic"],
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince", "dreadnought", "custodes", "ogryn"],
       excludeWorldTags: ["feral"]
     },
-    reqLabel: "특이점: 전략·지성 사반트 · 비야만 행성",
+    reqLabel: "특이점: 전략·지성 사반트 · 18세 이상 · 일반 시민 이상 충성파 · 비야만 행성",
     weight: 38,
     text: "테라의 고위 서기관과 성역 총사령부의 인장이 찍힌 소환장이 도착했다. 수십 년간 교착 상태에 빠진 대규모 반란 성계의 지도를 앞에 두고, 고위 장성들이 그대의 두뇌에 최종 승부수를 맡기려 한다. '이 성계를 탈환할 단 하나의 해법이 있다면, 지금 이 자리에서 증명해 보라.'",
     choices: [
@@ -715,9 +760,16 @@ export default [
     category: "특수",
     once: true,
     req: {
-      allTags: ["omega_pariah"]
+      minAge: 16,
+      allTags: ["omega_pariah"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "heretic", "chaos_aligned"]
     },
-    reqLabel: "특이점: 절대 무혼(오메가-마이너스)",
+    reqLabel: "특이점: 절대 무혼(오메가-마이너스) · 16세 이상 · 충성파 필멸자 · 크리그/야만 행성 제외",
     weight: 42,
     text: "이단 교단의 지하 신전, 혹은 워프 균열의 문턱에서 현실 세계로 강림하던 악마와 사이커 집단이 피의 의식을 완수하려 한다! 일반 블랭크라면 악마의 위압감에 무릎을 꿇었을 끔찍한 틈새지만, 그대가 발을 들이민 순간 주변의 모든 워프 불꽃이 산소를 잃은 듯 일제히 꺼져 간다. 현실에 뚫린 구멍 그 자체가 그대의 공허 앞에서 비명을 지른다.",
     choices: [
@@ -777,25 +829,37 @@ export default [
     category: "특수",
     once: true,
     req: {
+      minAge: 16,
+      maxAge: 35,
       allTags: ["omega_pariah"],
-      excludeTags: ["sister_of_silence", "assassin", "inquisitor", "astartes", "custodes", "grey_knight", "heretic", "chaos_aligned"]
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: [
+        "sister_of_silence", "abhuman", "navigator", "mutant_sanctioned", "mechanicus",
+        "imperial_knight", "sororitas", "sororitas_novitiate", "living_saint", "saint_vessel",
+        "astartes", "custodes", "grey_knight", "dreadnought", "daemon_prince",
+        "assassin", "high_lord_terra", "inquisitor", "lord_inquisitor",
+        "chapter_master", "sector_lord", "planetary_governor", "warmaster",
+        "heretic", "chaos_aligned"
+      ]
     },
-    reqLabel: "특이점: 절대 무혼 · 비초인/비이단/미소속",
+    reqLabel: "특이점: 절대 무혼 · 16~35세 · 순수 필멸 충성파(비초인/비최고위/미소속)",
     weight: 41,
     text: "평범한 인간들은 그대 곁에 서는 것만으로도 구역질과 극도의 공포를 느끼며 등을 돌린다. 평생 고독의 벽에 갇혀 있던 그대 앞에, 전혀 두려워하지 않는 차가운 시선들이 나타났다. 침묵의 자매들의 묵언 수화, 혹은 두개골 가면을 쓴 암살청 쿨렉수스 사절과 오르도 말레우스 심문관의 비밀 영장이다. '세상이 너를 혐오한다면, 그 혐오를 제국의 가장 날카로운 칼날로 바꿀 자리가 있다.'",
     choices: [
       {
-        label: "[쿨렉수스 템플] 두개골 투구와 아니무스 스페쿨룸을 받아들여 암살청의 영혼 사냥꾼이 된다",
+        label: "[쿨렉수스 템플] 두개골 투구와 아니무스 스페쿨룸을 받아들여 암살청의 영혼 사냥꾼으로 입단한다",
         req: {
+          maxCareerTier: 3,
           excludeTags: [
-            "inquisitor", "lord_inquisitor", "canoness", "cardinal",
-            "high_lord_terra", "sector_lord", "planetary_governor", "warmaster", "general_rank",
+            "interrogator_rank", "tempestus_prime", "rogue_trader", "lord_commissar",
+            "canoness", "cardinal", "general_rank",
             "commissar_general", "navy_admiral", "magos", "fabricator_general", "rt_lord_captain"
           ]
         },
         effect: {
-          text: "모든 인간적 유대를 끊고 공허 그 자체를 무기로 쓰는 오피시오 아사시노룸 쿨렉수스 암살자로 다시 태어났다.",
-          forceCareer: "assassin_operative",
+          text: "모든 인간적 유대를 끊고 공허 그 자체를 무기로 벼려 내는 오피시오 아사시노룸 쿨렉수스 템플의 수련 암살자로 거듭났다.",
+          forceCareer: "assassin_initiate",
           stats: { Ag: 8, WP: 10, Inf: 8 },
           addTags: ["assassin", "clade_culexus"],
           align: { ruthless: 8, humane: -5 }
@@ -849,9 +913,16 @@ export default [
     category: "특수",
     once: true,
     req: {
-      allTags: ["omega_pariah"]
+      minAge: 16,
+      allTags: ["omega_pariah"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince", "heretic", "chaos_aligned"]
     },
-    reqLabel: "특이점: 절대 무혼(오메가-마이너스)",
+    reqLabel: "특이점: 절대 무혼(오메가-마이너스) · 16세 이상 · 충성파 필멸자 · 크리그/야만 행성 제외",
     weight: 38,
     text: "전선의 모든 병사가 보이지 않는 공포와 환각에 사로잡혀 서로에게 총구를 겨누고 있다. 적의 사이커가 뿜어낸 정신 오염 파동이 구역 전체의 이성을 갉아먹는 가운데, 오직 그대의 시야만은 티끌 하나 없이 맑고 차갑다. 영혼이 비어 있기에 역설적으로 그 누구보다 온전한 이성을 지킨 채, 미쳐 가는 동료들을 향해 걸음을 내딛는다.",
     choices: [

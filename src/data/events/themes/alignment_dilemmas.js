@@ -110,6 +110,9 @@ export default [
     once: true,
     req: {
       minAge: 20,
+      anyWorldTags: ["hive"],
+      excludeWorlds: ["terra", "krieg", "voidborn"],
+      excludeHomeWorlds: ["krieg"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
         "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel",
@@ -118,7 +121,7 @@ export default [
       ],
       excludeWorldTags: ["feral", "krieg", "voidborn"]
     },
-    reqLabel: "필멸자 20세+",
+    reqLabel: "필멸자 20세+ · 하이브 월드(테라 제외)",
     weight: 28,
     text: "워프 폭풍으로 궤도 식량 바지선의 도착이 끊기면서 하부 하이브에 끔찍한 대기근이 닥쳤다. 그대 앞에는 행성 외곽 성전군에 바칠 십일조 곡물이 가득 쌓인 아드미니스트라툼 예비 창고가 붉은 밀랍 인장으로 봉인되어 있었다. 녹슨 철문 바깥에서는 뼈만 앙상하게 남은 시민들이 희미한 힘으로 문을 두드리며 식량을 애원하고 있었다.",
     choices: [
@@ -189,9 +192,12 @@ export default [
     req: {
       minAge: 22,
       minAlign: { ruthless: 20 },
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "heretic", "chaos_aligned", "daemon_prince"]
     },
-    reqLabel: "암흑 20+ · 속죄 분기",
+    reqLabel: "암흑 20+ · 속죄 분기 · 크리그·야만 행성 제외",
     weight: 34,
     text: "깜박이는 기름 등잔 아래 홀로 앉은 밤, 그대는 지금의 자리에 오르기까지 이용하고 짓밟아 온 이들의 이름이 빼곡한 비밀 장부를 마주했다. 문득 그대를 철석같이 믿었다가 파멸한 희생자의 텅 빈 눈동자가 뇌리를 스치며, 오랫동안 굳어 있던 가슴 한구석을 날카롭게 찔렀다. 오늘 밤이라면 이 냉혹한 사슬을 끊어 낼 수도, 혹은 영원히 강철로 굳혀 버릴 수도 있었다.",
     choices: [
@@ -235,10 +241,10 @@ export default [
     once: true,
     req: {
       minAge: 20,
-      anyTags: ["astartes"],
+      allTags: ["astartes", "battle_brother"],
       excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "grey_knight"]
     },
-    reqLabel: "초인: 아스타르테스 · 20세+",
+    reqLabel: "초인: 아스타르테스 배틀 브라더 이상 · 20세+",
     weight: 36,
     text: "그대의 타격 분대가 무너진 고가도로 너머로 진격해 오는 반역자 기갑 선봉대를 내려다보고 있다. 궤도 상공의 타격 순양함이 살상 구역에 랜스 포격을 조준 완료했으나, 교각 접근로에는 아직 대피하지 못한 제국 필멸자 난민 삼천여 명이 뒤엉켜 있었다. 궤도 포격 승인을 기다리는 함교의 복스 채널 너머로 그대의 전술 판단이 요구되었다.",
     choices: [

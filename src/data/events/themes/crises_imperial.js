@@ -297,7 +297,7 @@ export default [
     req: {
       minAge: 16,
       or: [
-        { anyCareers: ["administratum", "menial_worker"] },
+        { anyCareers: ["administratum"] },
         { anyTags: ["administratum", "noble"] }
       ],
       excludeWorlds: ["krieg"],
@@ -305,6 +305,7 @@ export default [
       excludeWorldTags: ["feral"],
       excludeTags: [
         "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
         "commissar_general", "lord_commissar", "inquisitor", "lord_inquisitor", "cardinal", "canoness",
@@ -312,7 +313,7 @@ export default [
         "departmento_head", "rt_lord_captain", "rogue_trader"
       ]
     },
-    reqLabel: "16세 이상 · 행정·관료·귀족·노동자 · 크리그·야만 행성 제외",
+    reqLabel: "16세 이상 · 행정·관료·귀족 · 크리그·야만 행성 제외",
     weight: 16,
     text: "성역 특별 감사관이 무장 아르비테스를 대동하고 청사에 들이닥쳤다! 그대가 서명한 3년 전 행성 십일조 장부에서 곡물 40만 톤의 소수점 누락이 발견되었다며, '반역적 직무 유기 — 즉각 서비터 개조형'을 선고하려 한다. 차가운 수갑을 든 집행관들이 집무실 출입구를 에워싸고 있다.",
     choices: [
@@ -397,17 +398,18 @@ export default [
         { anyTags: ["noble", "wealthy", "terra_elite", "rogue_trader"] },
         { anyCareers: ["administratum", "rogue_trader"] }
       ],
-      excludeWorlds: ["krieg"],
+      excludeWorlds: ["krieg", "voidborn", "baal", "catachan"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
       excludeTags: [
         "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "planetary_governor", "sector_lord", "magos", "fabricator_locum", "fabricator_general",
         "high_lord_terra", "warmaster", "cardinal", "lord_inquisitor"
       ]
     },
-    reqLabel: "18세 이상 · 귀족 · 상류층 · 로그 트레이더 · 관료",
+    reqLabel: "18세 이상 · 귀족 · 상류층 · 로그 트레이더 · 관료 · 데스 월드·함선·야만 행성 제외",
     weight: 16,
     text: "총독궁 연회장에서 건배한 아마섹 증류주 잔을 내려놓은 순간, 손끝이 저려 오며 시야가 흐려진다! 정적 가문이 암시장 신경독을 탔고, 연회장 출입구에는 이미 매수된 자객들이 칼자루를 쥐고 서 있다. 음악과 웃음소리가 울려 퍼지는 화려한 홀 한가운데서 식은땀이 등줄기를 타고 흐른다.",
     choices: [
@@ -488,7 +490,7 @@ export default [
       excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
-        "custodes", "grey_knight", "astartes", "transhuman", "dreadnought",
+        "custodes", "grey_knight", "astartes", "transhuman", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "high_lord_terra", "inquisitor", "lord_inquisitor", "cardinal", "warmaster", "sector_lord",
         "planetary_governor", "fabricator_general", "canoness", "commissar_general", "navy_admiral",
         "arbites_marshal", "departmento_head"
@@ -644,7 +646,7 @@ export default [
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
       excludeTags: [
-        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
         "cardinal", "canoness", "lord_inquisitor", "fabricator_general"
@@ -803,8 +805,10 @@ export default [
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
+      excludeTrees: ["sororitas", "officio_assassinorum", "living_saint", "custodes", "grey_knights", "astartes"],
       excludeTags: [
         "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "sororitas", "sororitas_novitiate", "celestian", "assassin", "living_saint", "saint_vessel",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "general_rank",
         "commissar_general", "lord_commissar", "inquisitor", "lord_inquisitor", "cardinal", "canoness",
@@ -812,7 +816,7 @@ export default [
         "departmento_head", "rt_lord_captain"
       ]
     },
-    reqLabel: "18세 이상 · 비전투 직군 · 인맥·학문 초점 · 크리그·야만 행성 제외",
+    reqLabel: "18세 이상 · 비전투 직군 · 인맥·학문 초점 · 크리그·야만 행성·초인·수도회·암살청 제외",
     weight: 15,
     text: "거처 문틈으로 검은 밀랍 인장이 찍힌 협박장과 암살 청부 계약서 사본이 밀려 들어왔다! 행성 지하를 주무르는 암흑 길드가 그대의 비밀 장부를 손에 넣었다며, 내일 새벽까지 굴복하지 않으면 자객을 보내겠다고 경고한다. 어두운 창밖 골목 건너편에서 감시자의 매서운 시선이 번뜩인다.",
     choices: [
@@ -910,10 +914,11 @@ export default [
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "high_lord_terra", "warmaster", "sector_lord",
-        "custodes", "grey_knight", "dreadnought"
+        "custodes", "grey_knight", "dreadnought",
+        "living_saint", "saint_vessel", "blank", "omega_pariah"
       ]
     },
-    reqLabel: "16세 이상 · 서고·기계교·심문소·국교·학문·금단 초점",
+    reqLabel: "16세 이상 · 서고·기계교·심문소·국교·학문·금단 초점 · 초인·성인·무혼 제외",
     weight: 15,
     text: "고대 서고 깊숙이 보관되었던 봉인 사본의 납 인장이 저절로 녹아내렸다! 펼쳐진 양피지에서 피처럼 붉은 문자가 허공에 떠올라 서고 사서들의 눈을 불태우고, 차가운 워프의 속삭임이 정신을 잠식하기 시작한다. 천장의 성유 등불이 일제히 꺼지며 촛농 냄새 사이로 끔찍한 이계의 냉기가 번진다.",
     choices: [

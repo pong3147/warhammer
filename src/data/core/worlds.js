@@ -7,7 +7,7 @@ export const SEGMENTA = {
 };
 
 export const WORLDS = [
-  // ===== 네임드 핵심 행성 14곳 =====
+  // ===== 네임드 핵심 행성 15곳 =====
   {
     id: "terra",
     name: "신성한 테라",
@@ -74,7 +74,7 @@ export const WORLDS = [
     capMods: { BS: 5, WP: 5 },
     perk: {
       name: "카디아는 버틴다",
-      desc: "사격·의지 상한 +5, 카오스·워프 판정 +6"
+      desc: "사격·의지 상한 +5, 의지·워프 판정 +6, 밀리타룸 입단 심사 +5%"
     },
     tags: ["fortress", "cadian", "militarized", "eye_of_terror"],
     guardRegiment: "카디안 쇼크 트루퍼 (Cadian Shock Troops)",
@@ -98,7 +98,7 @@ export const WORLDS = [
     capMods: { WP: 6, T: 5, Fel: -8 },
     perk: {
       name: "비타-움의 무감각",
-      desc: "의지·강인 상한 +6/+5(교섭 -8), 공포·참호 WP 판정 +5, 포탄 충격 면역"
+      desc: "의지·강인 상한 +6/+5(교섭 -8), 공포·참호 의지 판정 +5, 포탄 충격 면역"
     },
     tags: ["death", "krieg", "militarized", "radiation"],
     guardRegiment: "데스 코어 오브 크리그 (Death Korps of Krieg)",
@@ -122,7 +122,7 @@ export const WORLDS = [
     capMods: { T: 5, BS: 4 },
     perk: {
       name: "잿빛 전선의 생존자",
-      desc: "강인·사격 상한 +5/+4, 장기전 환경 위험 경감"
+      desc: "강인·사격 상한 +5/+4, 환경 위험 15% 경감"
     },
     tags: ["hive", "industrial", "armageddon", "warzone"],
     guardRegiment: "아마겟돈 스틸 리전 (Armageddon Steel Legion)",
@@ -146,7 +146,7 @@ export const WORLDS = [
     capMods: { Ag: 5, WS: 4, Inf: -3 },
     perk: {
       name: "언더하이브의 약탈자",
-      desc: "민첩·백병 상한 +5/+4(권위 -3), 하층 생존·회복 보정"
+      desc: "민첩·백병 상한 +5/+4(권위 -3), 연간 자연 회복 +1"
     },
     tags: ["hive", "underhive", "gang", "astartes_recruit"],
     guardRegiment: "네크로문다 스파이더스 (Necromundan 8th)",
@@ -267,7 +267,7 @@ export const WORLDS = [
     capMods: { BS: 5, Int: 3 },
     perk: {
       name: "장자의 가보 화기",
-      desc: "사격·지성 상한 +5/+3, 사격 정밀 판정 우대"
+      desc: "사격·지성 상한 +5/+3, 사격 판정 +3"
     },
     tags: ["hive", "industrial", "vostroyan", "cold"],
     guardRegiment: "보스트로얀 퍼스트본 (Vostroyan Firstborn)",
@@ -316,7 +316,7 @@ export const WORLDS = [
     capMods: { Ag: 6, BS: 5 },
     perk: {
       name: "유령의 발걸음",
-      desc: "민첩·사격 상한 +6/+5, 잠입·정찰 판정 +5"
+      desc: "민첩·사격 상한 +6/+5, 민첩·사격 판정 +5"
     },
     tags: ["forest", "tanith", "sabbat"],
     guardRegiment: "타니스 퍼스트 앤드 온리 (Tanith First and Only)",
@@ -364,7 +364,7 @@ export const WORLDS = [
     capMods: { WP: 6, Fel: 4 },
     perk: {
       name: "성소의 찬가",
-      desc: "의지·교섭 상한 +6/+4, 신앙 성장 가속 · 오염 저항"
+      desc: "의지·교섭 상한 +6/+4, 신앙 성장 가속 · 오염 15% 감쇠"
     },
     tags: ["shrine", "ecclesiarchy", "sororitas"],
     guardRegiment: "오펠리아 성전 수호대",
@@ -373,7 +373,7 @@ export const WORLDS = [
     source: "Lexicanum: Ophelia VII / Codex: Adepta Sororitas"
   },
 
-  // ===== 일반 제국 행성 유형 7종 (100만 행성 인구 가중치 반영 · 총 23개 행성!) =====
+  // ===== 일반 제국 행성 유형 8종 (100만 행성 인구 가중치 반영 · 총 23개 행성!) =====
   {
     id: "generic_hive",
     name: "제국 하이브 월드",
@@ -534,7 +534,7 @@ export const WORLDS = [
     capMods: { Int: 4, Ag: 4, WP: 4, T: -3 },
     perk: {
       name: "성간 항해의 감각",
-      desc: "지성·민첩·의지 상한 +4(강인 -3), 워프·우주 이상 판정 +6"
+      desc: "지성·민첩·의지 상한 +4(강인 -3), 지성·민첩 판정 +6"
     },
     tags: ["voidborn", "navy"],
     guardRegiment: "임페리얼 네이비 함내 경비대",

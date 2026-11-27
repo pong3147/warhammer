@@ -30,8 +30,9 @@ export default function FullChronicleView({
   const filteredLogs = useMemo(() => {
     let logs = [...(state.logs || [])];
     if (order === "asc") logs.reverse();
-    if (filter === "chronicle") logs = logs.filter((l) => l.kind === "chronicle");
-    else if (filter === "major") logs = logs.filter((l) => l.kind !== "chronicle");
+    const isDaily = (kind: string) => kind === "chronicle" || kind === "chronicle-grim";
+    if (filter === "chronicle") logs = logs.filter((l) => isDaily(l.kind));
+    else if (filter === "major") logs = logs.filter((l) => !isDaily(l.kind));
     return logs;
   }, [state.logs, order, filter]);
 

@@ -124,7 +124,7 @@ export default function ObituaryModal({
       className="modal-backdrop open"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="obit-title"
+      aria-labelledby="obit-rank obit-title"
       aria-hidden="false"
     >
       <div className="obituary-modal" ref={modalRef}>

@@ -479,6 +479,7 @@ export default function GameApp({ engineOverride, dataOverride, narrativeCounts 
       const cur = stateRef.current;
       const rt = runtimeRef.current;
       if (!cur || !rt || !cur.pendingEvent) return;
+      const prevTopLog = cur.logs[0];
       const res = rt.engine.resolvePendingChoice(cur, choiceIdx);
       if (!res) {
         showToast("선택할 수 없는 선택지다.", true);
@@ -493,7 +494,7 @@ export default function GameApp({ engineOverride, dataOverride, narrativeCounts 
       persistState(cur, rt.engine);
       bump();
       const top = cur.logs[0];
-      if (top) {
+      if (top && top !== prevTopLog) {
         const rollPrefix = top.meta
           ? `${formatRollOutcomeLabel(top.meta)}(${top.meta.roll}/${top.meta.target}). `
           : "";

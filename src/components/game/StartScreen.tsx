@@ -181,7 +181,6 @@ export default function StartScreen({
 
       <fieldset
         id="difficulty-fieldset"
-        aria-describedby="difficulty-desc"
         style={{
           border: "1px solid var(--border)",
           borderRadius: "6px",
@@ -200,6 +199,7 @@ export default function StartScreen({
               type="radio"
               name="difficulty"
               value="standard"
+              aria-describedby="difficulty-desc-standard"
               checked={difficulty === "standard"}
               onChange={() => setDifficulty("standard")}
             />
@@ -211,16 +211,26 @@ export default function StartScreen({
               type="radio"
               name="difficulty"
               value="grimdark"
+              aria-describedby="difficulty-desc-grimdark"
               checked={difficulty === "grimdark"}
               onChange={() => setDifficulty("grimdark")}
             />
             <span>그림다크 모드 (1 / QUADRILLION 하드코어)</span>
           </label>
         </div>
-        <p id="difficulty-desc" style={{ margin: "6px 0 0", fontSize: "12px", color: "var(--text-muted)" }}>
-          {difficulty === "grimdark"
-            ? "하층민 출생 비중·정규 기관 입단 장벽(-12%)·전선 치사율·공략형 억까 사건이 크게 강화된다."
-            : "워해머 40k 표준 난이도로 다양한 출신과 승급 경로를 균형 있게 체험한다."}
+        <p
+          id="difficulty-desc-standard"
+          className={difficulty === "standard" ? undefined : "sr-only"}
+          style={{ margin: "6px 0 0", fontSize: "12px", color: "var(--text-muted)" }}
+        >
+          워해머 40k 표준 난이도로 다양한 출신과 승급 경로를 균형 있게 체험한다.
+        </p>
+        <p
+          id="difficulty-desc-grimdark"
+          className={difficulty === "grimdark" ? undefined : "sr-only"}
+          style={{ margin: "6px 0 0", fontSize: "12px", color: "var(--text-muted)" }}
+        >
+          하층민 출생 비중·정규 기관 입단 장벽(-12%)·전선 치사율·공략형 불운·부조리 사건이 크게 강화된다.
         </p>
       </fieldset>
 

@@ -1,5 +1,6 @@
-// 종족 · 계급 · 전공 · 모성 · 선천 재능 · 후천 특성 이중 스탯 상한 및 특전 SSOT (Stage 21)
+// 종족 · 계급 · 전공 · 모성 · 선천 재능 · 후천 특성 이중 스탯 상한 및 특전 SSOT (Stage 21 · Stage 23.5)
 import { STAT_META, clamp, computeBodyClass } from "./formatters.js";
+import { isIncorruptibleTags } from "./careerRules.js";
 
 export const PHYSICAL_STATS = new Set(["WS", "BS", "T", "Ag"]);
 export const MENTAL_STATS = new Set(["Int", "WP", "Fel", "Inf"]);
@@ -9,24 +10,40 @@ export const ANOMALY_TAG_EFFECTS = {
   alpha_plus_psyker: {
     key: "alpha_plus_psyker",
     name: "알파 플러스 사이커",
+    summary: "의지 상한 +20 · 지성 상한 +8",
     capMods: { WP: 20, Int: 8 }
   },
   freak_physique: {
     key: "freak_physique",
     name: "규격 외 피지컬",
+    summary: "백병·강인 상한 +14 · 민첩 상한 +12 · 사격 상한 +8",
     capMods: { WS: 14, BS: 8, T: 14, Ag: 12 }
   },
   savant_genius: {
     key: "savant_genius",
     name: "전략·지성 사반트",
+    summary: "지성·교섭 상한 +16 · 권위 상한 +10",
     capMods: { Int: 16, Fel: 16, Inf: 10 }
   },
   omega_pariah: {
     key: "omega_pariah",
     name: "절대 무혼(오메가-마이너스)",
+    summary: "의지 상한 +18 · 교섭 상한 -20 · 워프 오염 85% 감쇠",
     capMods: { WP: 18, Fel: -20 }
   }
 };
+
+export function getAwakenedAnomalies(state) {
+  const tags = (state && Array.isArray(state.tags)) ? state.tags : [];
+  const birthTraitId = (state && state.traitId) || "none";
+  const res = [];
+  for (const [key, eff] of Object.entries(ANOMALY_TAG_EFFECTS)) {
+    if (tags.includes(key) && birthTraitId !== key) {
+      res.push(eff);
+    }
+  }
+  return res;
+}
 
 // 12대 후천 특성 (긍정 6 · 부정 6) — 치유/극복/상실(removeTags)과 실시간 연동
 export const ACQUIRED_TRAIT_EFFECTS = {
@@ -354,4 +371,52 @@ export function getAllStatCaps(state, deps) {
     caps[key] = getStatCap(state, key, deps);
   }
   return caps;
+}
+
+export function scalePositiveCorruption(state, rawCorr) {
+  if (!Number.isFinite(rawCorr) || rawCorr <= 0) return rawCorr || 0;
+  const tags = (state && Array.isArray(state.tags)) ? state.tags : [];
+  if (isIncorruptibleTags(tags)) return 0;
+  const homeWorldId = (state && (state.homeWorldId || state.worldId)) || "";
+  let val = rawCorr;
+  if (tags.includes("omega_pariah")) val = Math.floor(val * 0.15);
+  else if (tags.includes("blank")) val = Math.floor(val * 0.5);
+  if (val > 0 && homeWorldId === "ophelia7") val = Math.floor(val * 0.85);
+  return Math.max(0, val);
+}
+
+export function scaleWoundDamage(state, rawDelta) {
+  if (!Number.isFinite(rawDelta) || rawDelta >= 0) return rawDelta || 0;
+  const tags = (state && Array.isArray(state.tags)) ? state.tags : [];
+  if (tags.includes("ogryn") || (state && state.traitId === "abhuman_ogryn")) {
+    return Math.min(-1, Math.round(rawDelta * 0.8));
+  }
+  return rawDelta;
+}
+
+export function isTraitImmune(state, traitTag, getCareer = null) {
+  if (!state || !traitTag) return false;
+  const tags = Array.isArray(state.tags) ? state.tags : [];
+  const homeWorldId = state.homeWorldId || state.worldId;
+  if (traitTag === "shell_shocked") {
+    const career = getCareer ? getCareer(state.careerId) : null;
+    return (
+      homeWorldId === "krieg" ||
+      Boolean(career && career.isTranshuman) ||
+      tags.includes("astartes") ||
+      tags.includes("custodes") ||
+      tags.includes("grey_knight") ||
+      tags.includes("dreadnought") ||
+      tags.includes("living_saint") ||
+      tags.includes("daemon_prince")
+    );
+  }
+  if (traitTag === "warp_scarred") {
+    return (
+      isIncorruptibleTags(tags) ||
+      tags.includes("blank") ||
+      tags.includes("omega_pariah")
+    );
+  }
+  return false;
 }

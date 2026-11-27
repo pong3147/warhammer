@@ -9,10 +9,11 @@ export default [
     req: {
       difficulty: "grimdark",
       minAge: 18,
-      anyTrees: ["mechanicus"],
+      anyCareers: ["tech_priest"],
+      maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
     },
-    reqLabel: "그림다크 · 18세 이상 · 아뎁투스 메카니쿠스",
+    reqLabel: "그림다크 · 18세 이상 · 테크프리스트 (3티어 이하)",
     weight: 30,
     text: "고대 포지 구획의 무너진 데이터 저장고를 정비하던 중, 그대의 메카덴드라이트가 화성의 정본 목록에 등재되지 않은 미승인 STC 파편을 인양했다. 설계의 정교함은 경이로울 정도였으나, 이를 엿본 정적 마고스의 서보-스컬들이 즉시 기술 이단 혐의를 씌워 재판소 소환장을 발부했다. 옴니시아의 계율과 진리의 파편 사이에서 찰나의 선택이 목줄을 죄어 온다.",
     choices: [
@@ -29,7 +30,7 @@ export default [
           stats: { Int: 3, WP: 2, Inf: 2 }
         },
         fail: {
-          text: "증거 불충분으로 처형은 면했으나 막대한 정화 공물과 코기타토르 봉인 비용을 떠안게 되었다.",
+          text: "증거 불충분으로 처형은 면했으나 막대한 정화 공물과 코지테이터 봉인 비용을 떠안게 되었다.",
           wounds: -10,
           stats: { Inf: -3 },
           addTags: ["imperial_debt"]
@@ -42,7 +43,7 @@ export default [
         }
       },
       {
-        label: "[특성 전용 · 기계 의체] 의체 내부 코기타토르로 접속 기록을 덮어써 흔적을 말소한다",
+        label: "[특성 전용 · 기계 의체] 의체 내부 코지테이터로 접속 기록을 덮어써 흔적을 말소한다",
         req: { allTags: ["bionic"] },
         effect: {
           text: "차가운 의체 연산이 재판소 감시망보다 한 박자 빠르게 로그를 재구성했다. 파편은 비밀 금고에 봉인되었고 혐의는 연기처럼 사라졌다.",
@@ -70,20 +71,20 @@ export default [
       difficulty: "grimdark",
       minAge: 18,
       anyTrees: ["mechanicus"],
+      maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
     },
-    reqLabel: "그림다크 · 18세 이상 · 아뎁투스 메카니쿠스",
+    reqLabel: "그림다크 · 18세 이상 · 아뎁투스 메카니쿠스 (3티어 이하)",
     weight: 30,
-    text: "상급 마고스가 십일조 함대 출항을 명분으로 도저히 달성 불가능한 플라스마 도관 생산 할당량을 내렸다. 방사능 차폐막마저 낡아 터져 나가는 하층 용광로에서 서비터와 인부들이 잿더미로 변해 가는 가운데, 기한을 넘기면 그대의 육신마저 부품으로 해체될 위기에 처했다.",
+    text: "상급 마고스가 십일조 함대 출항을 명분으로 도저히 달성 불가능한 플라즈마 도관 생산 할당량을 내렸다. 방사능 차폐막마저 낡아 터져 나가는 하층 용광로에서 서비터와 인부들이 잿더미로 변해 가는 가운데, 기한을 넘기면 그대의 육신마저 부품으로 해체될 위기에 처했다.",
     choices: [
       {
         label: "[강인 판정] 치명적 방사능을 무릅쓰고 직접 도관 구획에 들어가 공정을 강행한다",
         check: { stat: "T", diff: -10 },
         critSuccess: {
-          text: "살이 타들어 가는 열기와 방사선을 견디며 기적적으로 할당량을 완수했다. 손상된 사지를 기계 의체로 대체하며 한층 냉혹한 내구력을 얻었다.",
-          wounds: -12,
-          stats: { T: 5, WP: 3 },
-          addTags: ["bionic"]
+          text: "살이 타들어 가는 열기와 방사선을 견디며 기적적으로 할당량을 완수했다. 손상된 부품을 즉석에서 교체하며 버텨 낸 강인한 내구력에 상급 마고스조차 경의를 표하며 권위를 인정했다.",
+          wounds: -8,
+          stats: { T: 6, WP: 4, Inf: 5 }
         },
         success: {
           text: "피와 냉각수를 뒤집어쓴 채 간신히 마감 시한을 맞추었다. 상급 마고스가 차갑게 고개를 끄덕였다.",
@@ -111,7 +112,7 @@ export default [
           stats: { Int: 4, Inf: 2 }
         },
         fail: {
-          text: "기계령의 역류로 코기타토르가 폭주해 화상을 입었으며, 수리 비용까지 떠안았다.",
+          text: "기계령의 역류로 코지테이터가 폭주해 화상을 입었으며, 수리 비용까지 떠안았다.",
           wounds: -14,
           addTags: ["imperial_debt"]
         }
@@ -138,14 +139,15 @@ export default [
       difficulty: "grimdark",
       minAge: 18,
       anyTrees: ["ecclesiarchy", "inquisition", "arbites", "sororitas"],
-      excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
+      maxCareerTier: 4,
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince", "high_lord_terra"]
     },
-    reqLabel: "그림다크 · 18세 이상 · 에클레시아키·심문소·아르비테스·소로리타스",
+    reqLabel: "그림다크 · 18세 이상 · 에클레시아키·심문소·아르비테스·소로리타스 (4티어 이하)",
     weight: 30,
     text: "추기경파 성직단과 오르도 헤레티쿠스의 강경 파벌이 서로를 이단 방조범으로 지목하며 피비린내 나는 내부 숙청전을 벌이고 있다. 양측 모두 무장 수녀와 집행관을 거느린 채 그대에게 상대측 정보원의 처형 영장에 서명할 것을 강요한다. 어느 쪽의 손을 잡든 반대편의 보복을 피할 수 없다.",
     choices: [
       {
-        label: "[사교 판정] 양측의 약점을 교묘히 저울질해 상급 심문 법정이 개입할 때까지 시간을 번다",
+        label: "[교섭 판정] 양측의 약점을 교묘히 저울질해 상급 심문 법정이 개입할 때까지 시간을 번다",
         check: { stat: "Fel", diff: -10 },
         critSuccess: {
           text: "현란한 외교적 수사로 두 파벌을 서로 묶어 둔 사이 상급 재판관이 도착했다. 위기를 역전시킨 언변이 전설처럼 회자되었다.",
@@ -195,7 +197,7 @@ export default [
         }
       },
       {
-        label: "우세한 로컬 집행 세력의 편에 서서 말없이 처형 영장을 집행한다",
+        label: "우세한 지역 집행 세력의 편에 서서 말없이 처형 영장을 집행한다",
         effect: {
           text: "피 묻은 명령을 묵묵히 처리해 살아남았으나, 내면의 씁쓸한 무게만은 지울 수 없었다.",
           wounds: -8,
@@ -216,9 +218,10 @@ export default [
       difficulty: "grimdark",
       minAge: 18,
       anyTrees: ["inquisition", "sororitas", "ecclesiarchy", "arbites"],
-      excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
+      maxCareerTier: 4,
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince", "high_lord_terra"]
     },
-    reqLabel: "그림다크 · 18세 이상 · 심문소·소로리타스·에클레시아키·아르비테스",
+    reqLabel: "그림다크 · 18세 이상 · 심문소·소로리타스·에클레시아키·아르비테스 (4티어 이하)",
     weight: 30,
     text: "상급 심문관이 검역 지연을 이단 은닉으로 단정 짓고, 수십만 충성스러운 제국 시민이 사는 하부 주거 구역 전체를 소각 정화하라는 대리 집행령을 내렸다. 현장의 기록을 확인한 결과, 오염은 극소수 구역에 불과하며 대다수는 무고한 노동자들이다. 제국의 잔혹한 격언인 '무고함은 아무것도 증명하지 못한다'를 따를 것인가.",
     choices: [
@@ -364,14 +367,15 @@ export default [
       difficulty: "grimdark",
       minAge: 18,
       anyTrees: ["administratum", "rogue_trader", "navy"],
+      maxCareerTier: 3,
       excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
     },
-    reqLabel: "그림다크 · 18세 이상 · 아드미니스트라툼·로그 트레이더·임페리얼 네이비",
+    reqLabel: "그림다크 · 18세 이상 · 아드미니스트라툼·로그 트레이더·임페리얼 네이비 (3티어 이하)",
     weight: 30,
     text: "섹터 총괄 감사관이 파견된 자리에서 지난 수십 년간 누적된 십일조 물자 대량 미달 사태가 폭로되었다. 실제 원인은 부패한 귀족 가문의 횡령이었으나, 고위 관료들은 하급 실무 라인과 그대의 서명란으로 모든 책임을 전가했다. 해명하지 못하면 평생 갚지 못할 배상 채무와 징벌 노역이 기다리고 있다.",
     choices: [
       {
-        label: "[사교 판정] 고등 법정에서 귀족 가문의 모순된 서류를 찌르며 책임을 되돌려 놓는다",
+        label: "[교섭 판정] 고등 법정에서 귀족 가문의 모순된 서류를 찌르며 책임을 되돌려 놓는다",
         check: { stat: "Fel", diff: -10 },
         critSuccess: {
           text: "칼날 같은 논변과 정치적 감각으로 감사관들의 시선을 뒤집어 배후 가문을 탄핵했다. 제국 법정의 은빛 혀로 명성을 떨쳤다.",
@@ -389,7 +393,7 @@ export default [
         }
       },
       {
-        label: "[지성 판정] 며칠 밤을 새워 30년 치 훼손된 양피지 두루마리와 코기타토르 기록을 복원한다",
+        label: "[지성 판정] 며칠 밤을 새워 30년 치 훼손된 양피지 두루마리와 코지테이터 기록을 복원한다",
         check: { stat: "Int", diff: -8 },
         critSuccess: {
           text: "단 하나의 오차도 없는 완벽한 회계 복원표를 제출해 감사단을 침묵시켰다.",
@@ -429,9 +433,9 @@ export default [
       difficulty: "grimdark",
       minAge: 18,
       anyTrees: ["psyker"],
-      excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince", "high_lord_terra"]
     },
-    reqLabel: "그림다크 · 18세 이상 · 아스트라 텔레파티카 (사이커)",
+    reqLabel: "그림다크 · 18세 이상 · 아스트라 텔레파티카 (사이커 · 하이 로드 제외)",
     weight: 30,
     text: "성계 외곽의 워프 난류가 아스트로패스 첨탑의 합창 회로를 정면으로 강타했다. 성가대원들의 영혼이 촛불처럼 타들어가며 피눈물을 쏟고 있지만, 성전 함대의 긴급 지원 요청 전문이 아직 송신 중이다. 지금 회로를 끊으면 함대가 워프 속에서 실종되고, 버티면 그대의 정신마저 불타 버릴 판국이다.",
     choices: [
@@ -507,9 +511,10 @@ export default [
       difficulty: "grimdark",
       minAge: 18,
       anyTrees: ["astartes"],
-      excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
+      excludeBodyClasses: ["dreadnought"],
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince", "chapter_master"]
     },
-    reqLabel: "그림다크 · 18세 이상 · 아뎁투스 아스타르테스",
+    reqLabel: "그림다크 · 18세 이상 · 아뎁투스 아스타르테스 (드레드노트·챕터 마스터 제외)",
     weight: 30,
     text: "오염된 카오스 성계에서 며칠간 고립 전투를 치르고 귀환하자마자, 챕터 채플린과 아포세카리들이 소대의 진시드 변이 여부를 확인하기 위한 무자비한 감찰 심문에 착수했다. 아스타르테스에게 두려움이란 없으나, 명예와 혈통의 순수성이 의심받는 이 가혹한 시련 앞에서는 오직 묵묵한 인내와 증명만이 허락된다.",
     choices: [

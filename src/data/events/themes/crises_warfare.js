@@ -10,9 +10,10 @@ export default [
       anyCareers: ["astra_militarum", "pdf_trooper", "militarum_officer", "tempestus_scion", "commissar", "lord_commissar", "skitarii"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned", "daemon_prince", "astartes", "transhuman", "custodes", "grey_knight", "dreadnought", "high_lord_terra"]
     },
-    reqLabel: "15세 이상 · 전선 군인 · 스키타리 · 커미사르",
+    reqLabel: "15세 이상 · 전선 군인 · 스키타리 · 커미사르 · 크리그·야만 행성 제외",
     weight: 15,
     text: "하늘이 찢어지는 굉음과 함께 적의 바실리스크급 중포탄 수십 발이 그대가 선 참호 구역을 정밀 타격했다! 흙벽이 무너져 내리고 산산조각 난 파편과 유독 연기가 시야를 완전히 삼킨다. 진동에 고막이 얼얼한 가운데 2차 일제 사격의 포성이 다시 지평선 너머에서 울려 퍼진다.",
     choices: [
@@ -165,6 +166,7 @@ export default [
         { anyWorlds: ["armageddon", "valhalla"] },
         { anyTags: ["militarum", "commissar", "astartes", "sororitas", "arbites"] }
       ],
+      excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
         "custodes", "grey_knight", "dreadnought", "living_saint", "assassin",
@@ -172,7 +174,7 @@ export default [
         "cardinal", "fabricator_general", "fabricator_locum", "knight_high_king", "nav_novator"
       ]
     },
-    reqLabel: "16세 이상 · 아마겟돈·발할라 또는 제국 무장 인원",
+    reqLabel: "16세 이상 · 아마겟돈·발할라 또는 제국 무장 인원 · 비야만 행성",
     weight: 14,
     text: "녹색 괴성 '와아아아!'가 대지를 울리며 거대한 오크 배틀왜건이 바리케이드를 박살 냈다! 수백 명의 오크 보이즈와 초파를 치켜든 노브들이 틈새로 물밀듯 쏟아져 들어온다. 굉음 속에 전선의 좌익이 흔들리며 방어선이 무너지기 일보 직전이다.",
     choices: [
@@ -200,6 +202,12 @@ export default [
       },
       {
         label: "[교섭 판정] 무너지는 방어선의 패주병들을 호통으로 규합해 2차 교차 사격선을 긴급 편성한다",
+        req: {
+          excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+          excludeTags: ["astartes", "transhuman"],
+          excludeWorlds: ["krieg"],
+          excludeHomeWorlds: ["krieg"]
+        },
         check: { stat: "Fel", diff: -5 },
         success: {
           text: "흔들리던 병사들이 그대의 외침에 대열을 되찾았다! 2차 저지선이 오크의 기세를 꺾어 놓았다.",
@@ -222,6 +230,38 @@ export default [
           text: "무너지는 전선의 비명과 워보스의 포효 속에서 정신이 무너져 내렸다. 간신히 후송되었으나 극심한 전장 트라우마가 남았다.",
           wounds: -42,
           addTags: ["shell_shocked"]
+        }
+      },
+      {
+        label: "[백병 판정] 동요 없는 전술 교리에 따라 돌파구 정면으로 역돌격해 선두 오크 노브의 목을 노린다",
+        req: {
+          or: [
+            { anyTags: ["astartes", "transhuman"] },
+            { anyHomeWorlds: ["krieg"] },
+            { anyWorlds: ["krieg"] }
+          ]
+        },
+        check: { stat: "WS", diff: -5 },
+        success: {
+          text: "일말의 공포도 없이 녹색 파도의 한복판으로 파고들어 선두 오크 노브를 베어 넘겼다! 돌파구가 순식간에 봉쇄되었다.",
+          wounds: -14,
+          stats: { WS: 6, WP: 4, Inf: 6 }
+        },
+        critSuccess: {
+          text: "냉혹한 전술 기동과 압도적 일격으로 워보스급 노브와 호위대를 단숨에 도륙하며 방어선의 흐름을 완전히 뒤집었다.",
+          wounds: -6,
+          stats: { WS: 7, WP: 5, Inf: 8 },
+          addTags: ["iron_nerves"]
+        },
+        fail: {
+          text: "수적 열세 속에 오크 노브의 초파와 파편에 깊은 외상을 입었으나, 한 치도 물러서지 않고 2차 저지선이 굳어질 시간을 벌었다.",
+          wounds: -36,
+          stats: { T: 3 }
+        },
+        critFail: {
+          text: "배틀왜건의 충각과 폭발 폭압에 휘말려 잔해 아래 깔리는 중상을 입었으나, 끝내 진지를 사수하며 증원군과 합류했다.",
+          wounds: -42,
+          stats: { T: 2 }
         }
       },
       {
@@ -427,15 +467,16 @@ export default [
     once: true,
     req: {
       minAge: 16,
-      excludeWorlds: ["terra", "mars"],
+      excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
+      excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
-        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
+        "astartes", "transhuman", "custodes", "grey_knight", "dreadnought", "living_saint",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor"
       ]
     },
-    reqLabel: "16세 이상 · 충성파 제국 인물 · 테라·화성·야만 행성 제외",
+    reqLabel: "16세 이상 · 충성파 제국 인물 · 테라·화성·크리그·함선·야만 행성 제외",
     weight: 12,
     text: "사이렌이 울리기도 전에 피와 해골 문양을 단 카오스 강습정이 구역 한복판에 착륙했다! 저주받은 워프 불꽃과 체인액스의 굉음 속에 무자비한 학살이 시작된다. 대피하던 시민들의 비명이 거리를 가득 메우는 사이, 뿔 달린 갑주를 두른 배신자들이 성당 광장으로 진격해 온다.",
     choices: [

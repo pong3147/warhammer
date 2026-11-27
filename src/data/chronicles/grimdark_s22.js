@@ -26,10 +26,11 @@ export default [
       difficulty: "grimdark",
       minAge: 6,
       maxAge: 13,
+      maxSocialTier: "common",
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       anyWorldTags: ["hive", "industrial", "civilised", "shrine"],
-      excludeRealms: ["heretic"],
+      excludeRealms: ["cloistered", "heretic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"]
     },
     text: "동이 트기 전부터 굶주린 배를 움켜쥐고 교구 배급 줄에 섰다. 쉰 목소리로 황제 찬가를 읊어야만 딱딱한 시체 전분 한 덩이를 건네받았다.",
@@ -46,6 +47,7 @@ export default [
       anyTags: ["schola", "noble", "military_blood"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeRealms: ["heretic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"]
     },
@@ -58,7 +60,9 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["menial_worker", "guild_artisan"]
+      anyCareers: ["menial_worker", "guild_artisan"],
+      anyWorldTags: ["hive", "industrial", "forge"],
+      excludeWorlds: ["krieg"]
     },
     text: "열여덟 시간 연속 교대가 끝날 무렵, 환기구에서 뿜어져 나온 유독성 철가루가 폐부 깊숙이 달라붙었다. 붉은 가래를 뱉어 내고도 내일 교대 종을 기다렸다.",
     effect: { wounds: -3, stats: { T: 1, Ag: -1 } }
@@ -69,7 +73,9 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["menial_worker"]
+      anyCareers: ["menial_worker"],
+      excludeWorldTags: ["feral"],
+      excludeWorlds: ["krieg"]
     },
     text: "구역 생산량이 행성 십일조 기준에 미달했다는 이유로 사흘 치 식수 배급이 끊겼다. 녹슨 배관에서 떨어지는 미지근한 응축수로 겨우 목을 축였다.",
     effect: { wounds: -2, faith: -1, stats: { WP: 1 } }
@@ -80,7 +86,9 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["underhive_ganger", "underhive_boss"]
+      anyCareers: ["underhive_ganger", "underhive_boss"],
+      anyWorldTags: ["hive", "underhive"],
+      excludeWorlds: ["krieg"]
     },
     text: "상층 돔에서 흘러내린 폐액이 낡은 방독면 틈새로 스며들었다. 경쟁 갱단의 기습을 피해 어둠 속에 웅크린 채 젖은 탄창을 닦았다.",
     effect: { wounds: -3, stats: { BS: 1 } }
@@ -91,7 +99,9 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["guild_artisan", "guild_magnate", "hive_crime_lord"]
+      anyCareers: ["guild_artisan", "guild_magnate", "hive_crime_lord"],
+      excludeWorldTags: ["feral"],
+      excludeWorlds: ["krieg"]
     },
     text: "감찰관에게 뇌물을 건넨 뒤에도 밀고의 공포는 가시지 않았다. 거래처 명단을 불태우고 잠들기 전까지 문고리의 빗장을 두 번씩 확인했다.",
     effect: { stats: { Int: 1, Fel: -1 } }
@@ -102,7 +112,10 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["pdf_trooper"]
+      anyCareers: ["pdf_trooper"],
+      excludeWorldTags: ["feral"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"]
     },
     text: "배급 축소에 항의하던 노동자 시위대를 향해 진압 방패를 앞세워 전진했다. 낡은 라스건이 과열될 때마다 씁쓸한 침묵만이 목구멍을 메웠다.",
     effect: { wounds: -2, faith: -1, stats: { WS: 1 } }
@@ -113,7 +126,8 @@ export default [
     priority: 3,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["astra_militarum", "militarum_sergeant"]
+      anyCareers: ["astra_militarum", "militarum_sergeant"],
+      excludeWorldTags: ["feral"]
     },
     text: "사흘 밤낮 이어진 포격으로 진흙탕이 된 참호에서 썩어 가는 발을 질질 끌며 버텼다. 사령부의 증원 명령 대신 전사한 전우의 인식표를 거두는 일이 일상이 되었다.",
     effect: { wounds: -4, stats: { WP: 1, T: 1 } }
@@ -124,7 +138,8 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["astra_militarum", "militarum_sergeant", "militarum_officer"]
+      anyCareers: ["astra_militarum", "militarum_sergeant", "militarum_officer"],
+      excludeWorldTags: ["feral"]
     },
     text: "기한이 수십 년 지난 시체 전분 통조림과 쇠 냄새가 진동하는 정화수로 배를 채웠다. 복통을 참으며 야간 경계 초소에 서는 동안 체력이 서서히 깎여 나갔다.",
     effect: { wounds: -3, stats: { T: -1, WP: 1 } }
@@ -146,7 +161,7 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["commissar_cadet", "commissar", "lord_commissar", "commissar_general"]
+      anyCareers: ["commissar", "lord_commissar", "commissar_general"]
     },
     text: "공황에 빠져 후퇴하려던 보병을 즉결 처분한 뒤 볼트 피스톨의 총열을 식혔다. 병사들의 두려움 어린 시선 속에서 장교 막사의 고독만 깊어졌다.",
     effect: { faith: 1, stats: { WP: 1, Fel: -1 } }
@@ -191,7 +206,9 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"]
+      anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"],
+      excludeWorldTags: ["feral"],
+      excludeWorlds: ["krieg"]
     },
     text: "기근에 시달리는 교구민들 앞에서 대성당 금박 첨탑의 보수 헌금을 거두어야 했다. 성직의 권위는 높아졌으나 내면의 신앙에는 작은 균열이 일었다.",
     effect: { faith: -1, stats: { Inf: 1 } }
@@ -213,7 +230,7 @@ export default [
     priority: 3,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["inquisition_acolyte", "inquisition_interrogator", "inquisitor", "lord_inquisitor"]
+      anyCareers: ["inquisition_interrogator", "inquisitor", "lord_inquisitor"]
     },
     text: "오염 의심 구역의 주민 수만 명을 선제 격리 후 소각하라는 칙령에 인장을 찍었다. 제국을 지키기 위한 필수적 잔혹함이었지만 손끝의 온기는 식어 버렸다.",
     effect: { faith: -1, stats: { WP: 1, Fel: -1 } }
@@ -225,7 +242,7 @@ export default [
     req: {
       difficulty: "grimdark",
       anyCareers: ["inquisition_acolyte", "inquisition_interrogator", "inquisitor"],
-      excludeTags: ["custodes", "grey_knight", "living_saint"]
+      excludeTags: ["custodes", "grey_knight", "living_saint", "blank", "omega_pariah"]
     },
     text: "압수한 이단 문서의 암호를 대조하던 밤, 글자 사이에서 기이한 두통과 함께 낯선 속삭임이 스며들었다. 성수로 관자놀이를 적시며 정신을 다잡았다.",
     effect: { corruption: 1, stats: { Int: 1, WP: -1 } }
@@ -258,7 +275,9 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal"]
+      anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal"],
+      excludeWorldTags: ["feral"],
+      excludeWorlds: ["krieg"]
     },
     text: "식량 창고를 습격한 굶주린 폭도들을 제압한 뒤, 피가 엉긴 쇼크 마울을 닦으며 제국 법전을 복창했다. 법의 무게는 늘 피의 대가를 요구한다.",
     effect: { wounds: -2, stats: { WS: 1, Fel: -1 } }
@@ -281,7 +300,9 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["astartes_scout", "astartes_brother", "astartes_sergeant"]
+      anyCareers: ["astartes_brother", "astartes_sergeant"],
+      excludeBodyClasses: ["dreadnought"],
+      excludeTags: ["dreadnought"]
     },
     text: "궤도 복스망에 다섯 행성의 구조 요청이 동시에 쏟아졌으나 챕터의 타격 함선은 단 한 곳만 구할 수 있었다. 나머지 네 행성의 침묵을 등지고 강하 포드에 올랐다.",
     effect: { wounds: -2, stats: { WP: 1 } }
@@ -306,7 +327,7 @@ export default [
       anyCareers: ["sanctioned_psyker", "primaris_psyker"],
       excludeTags: ["custodes", "grey_knight", "living_saint"]
     },
-    text: "정신 억제 두건의 신경 침이 관자놀이를 파고드는 고통 속에서 블랙 쉽 선창의 악몽이 되살아났다. 워프의 시선이 등 뒤에서 떨어지지 않았다.",
+    text: "정신 억제 두건의 신경 침이 관자놀이를 파고드는 고통 속에서 검은 함선 선창의 악몽이 되살아났다. 워프의 시선이 등 뒤에서 떨어지지 않았다.",
     effect: { wounds: -3, corruption: 1, stats: { WP: 1 } }
   },
   {
@@ -351,8 +372,9 @@ export default [
     priority: 2,
     req: {
       difficulty: "grimdark",
-      anyCareers: ["chaos_cultist", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"],
-      excludeTags: ["custodes", "grey_knight", "living_saint"]
+      anyCareers: ["chaos_cultist", "chaos_champion", "renegade_marine", "chaos_lord"],
+      excludeBodyClasses: ["daemonic"],
+      excludeTags: ["custodes", "grey_knight", "living_saint", "daemon_prince"]
     },
     text: "어둠의 신들이 내린 속삭임은 언제나 피와 증오의 대가를 요구했다. 헛된 약속을 붙든 채 끝없는 소모전의 톱니바퀴 속을 걸어갔다.",
     effect: { faith: -1, corruption: 1, stats: { WP: 1 } }

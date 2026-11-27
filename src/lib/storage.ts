@@ -219,7 +219,7 @@ export function sanitizeHallEntry(raw: unknown): HallEntry | null {
     deathCause: asSafeText(r.deathCause, "", 400),
     seenTimeline: asStringList(r.seenTimeline, 60),
     metCharacters: asStringList(r.metCharacters, 60),
-    tags: asStringList(r.tags, 20),
+    tags: asStringList(r.tags, 24),
     ...(stats ? { stats } : {}),
     ...(alignment ? { alignment } : {}),
     faith: asFiniteNumber(r.faith, 0, 0, 100),
