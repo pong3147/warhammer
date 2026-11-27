@@ -36,7 +36,7 @@
 3. **시각 잡음 차단:** 진행 바, 체력/신앙/오염/스탯 게이지 막대, 영문 특성치 약어, SVG 장식에는 반드시 `aria-hidden="true"`를 부여한다.
 4. **장식 기호 금지:** UI·로그·데이터 텍스트에 스크린 리더가 불필요하게 읽어 내리는 장식 기호(`★`, `↗`, `←`, `✓`)를 절대 넣지 않는다.
 5. **단일 문자 단축키 금지:** 스크린 리더 탐색 모드(`H`, `B`, `L`, `K` 등)와 충돌하는 단일 알파벳 단축키를 등록하지 않는다. (`Escape` 모달 닫기만 허용)
-6. **네임드 스포트라이트 접근성 및 출연 원칙:** 네임드 인물 조우 시 `<details open class="named-spotlight">` 시맨틱 요소를 사용해 사건 제목 바로 아래에서 자연스럽게 읽히고 원할 때 접을 수 있게 유지한다. 단, 스크린 리더 청취 피로와 선택지 분산을 막기 위해 일반·역사 사건은 원칙적으로 **1사건당 핵심 네임드 1인**만 스포트라이트에 배치하고, 여러 네임드의 동시 출연은 인물 간 협동·대면을 주제로 한 전용 크로스오버 스토리(`src/data/events/themes/named_crossover.js` 등)에 한해 적용한다.
+6. **네임드 스포트라이트 접근성 및 출연 원칙:** 네임드 인물 조우 시 `<details class="named-spotlight">` 시맨틱 요소를 사용해 사건 제목 바로 아래에서 자연스럽게 읽히고 원할 때 접거나 펼칠 수 있게 유지한다. **초회 조우(이벤트 내 미조우 네임드가 1인 이상 포함) 시 자동 전개(`open`)**, 이벤트 내 모든 네임드가 이미 기조우(`previouslyMetCharacters` 또는 `met_<id>`)인 **재조우 시 기본 접힘(원할 때 펼침)**으로 동작시키며, 시각용 인물 배지(`ev-badge character`)에는 `aria-hidden="true"`를 부여해 배지·요약·헤딩 3중 이름 낭독을 금지한다. 단, 스크린 리더 청취 피로와 선택지 분산을 막기 위해 일반·역사 사건은 원칙적으로 **1사건당 핵심 네임드 1인**만 스포트라이트에 배치하고, 여러 네임드의 동시 출연은 인물 간 협동·대면을 주제로 한 전용 크로스오버 스토리(`src/data/events/themes/named_crossover.js` 등)에 한해 적용한다.
 
 ### 2.3 소프트락 원천 차단 및 IP 안전 원칙
 * **소프트락 금지:** 모든 분기 사건(`EVENTS`)과 역사 대사건(`TIMELINE`)은 `req` 조건이 없는 **무조건 선택지 최소 1개 이상**을 반드시 포함한다.
@@ -126,7 +126,7 @@
   * **코어 메타데이터(`src/data/core/`):** `worlds.js`, `origins.js`, `careers.js`, `chapters.js`, `characters.js`, `timeline.js`, `tags.js` + 개념 사전 `src/data/glossary.js`.
   * **분기 사건(`src/data/events/`):** 도메인에 맞춰 `careers/`(직군 계열), `chapters/`(챕터), `worlds/`(행성 권역), `themes/`(생애·네임드·시대·외계·카오스·초점/태그·위기)에 배치한다. 추후 외계 종족 스타팅 등 신규 대형 축은 `src/data/events/<신규폴더>/`로 독립 추가할 수 있다.
   * **일상 연대기(`src/data/chronicles/`):** 주제별 파일(`childhood.js`, `worlds.js`, `careers.js`, `chapters.js`, `arcs_named.js`, `eras.js`, `lifecycle.js`, `general.js` 등) 또는 하위 폴더로 확장 배치한다.
-  * **용량 상한 & 1:1 승격:** 단일 사건 파일이 **110KB / 2,200줄** 또는 특정 직군·행성·챕터가 **15~20건 이상** 커지면(연대기는 **70KB / 1,400줄** 초과 시) 해당 항목을 단독 파일(`careers/guardsman.js`, `worlds/cadia.js`, `chapters/ultramarines.js` 등)로 승격 분할한다.
+  * **용량 상한 & 1:1 승격:** 코어(`src/data/core/**/*.js`)·분기 사건(`src/data/events/**/*.js`)·엔진(`src/engine/**/*.js`) 전 파일에 **110KB / 2,200줄 상한(95KB / 1,950줄 근접 경고)**을 일관 적용하며(연대기 `src/data/chronicles/**/*.js`는 **70KB / 1,400줄 상한, 58KB / 1,200줄 근접 경고** 유지), 특정 직군·행성·챕터가 **15~20건 이상** 커지면 해당 항목을 단독 파일(`careers/guardsman.js`, `worlds/cadia.js`, `chapters/ultramarines.js` 등)로 승격 분할한다.
   * **신규 태그 등록:** 새 태그 라벨은 반드시 `src/data/core/tags.js`에 등록한다.
 * **필수 QA 검증 항목 (`npm run verify` / `node scripts/qa.mjs --deep`):**
   1. `src/data/**` 전 파일 ESM 로딩·구문 오류 0건, 파일 크기 상한 확인, CSS `@import` 차단 확인.

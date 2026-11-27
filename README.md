@@ -50,7 +50,7 @@ Warhammer 40,000 인류제국 세계관을 배경으로 한 **Astro + React 아�
 
 ## 데이터 확장 방법 및 개발 문서
 
-`src/data/core/`의 코어 정의 파일(`worlds.js`, `origins.js`, `careers.js`, `chapters.js`, `characters.js`, `timeline.js` + `timeline/{m41_early,m41_late,m42_indomitus}.js`, `tags.js`), 개념 사전 `src/data/glossary.js`, 그리고 도메인별 계층 폴더(`src/data/events/{careers,chapters,worlds,themes}/`, `src/data/chronicles/`)에 ESM 모듈(`export default [...]`)로 항목이나 새 파일을 추가하면 Astro 빌드, `import.meta.glob`, Node.js QA 스위트가 자동으로 인식합니다.
+`src/data/core/`의 코어 정의 파일(`worlds.js`, `origins.js`, `careers.js` + `careers/{civil_militarum,faith_shadow,transhuman_chaos,specialist_factions}.js`, `chapters.js`, `characters.js`, `timeline.js` + `timeline/{m41_early,m41_late,m42_indomitus}.js`, `tags.js`), 개념 사전 `src/data/glossary.js`, 그리고 도메인별 계층 폴더(`src/data/events/{careers,chapters,worlds,themes}/`, `src/data/chronicles/`)에 ESM 모듈(`export default [...]`)로 항목이나 새 파일을 추가하면 Astro 빌드, `import.meta.glob`, Node.js QA 스위트가 자동으로 인식합니다.
 
 변경 후에는 `npm run verify` 또는 `npm run qa:deep`을 실행해 7대 QA 게이트, 200생애 무작위 퍼징, Vitest 행동형 접근성 테스트, 정적 빌드를 한 번에 검증할 수 있습니다.
 

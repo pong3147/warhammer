@@ -21,6 +21,15 @@ import {
 } from "../src/lib/contextualGlossary.js";
 import { CORE_DATA } from "../src/data/core/index.js";
 import { GLOSSARY_TERMS } from "../src/data/glossary.js";
+import {
+  UNBOUND_CAREERS,
+  CLOSED_VOW_TREES,
+  isUnboundCareer,
+  isClosedVowCrossBlocked,
+  isCareerTransitionBlockedPure,
+  isManualCareerAllowedPure,
+  evaluateDynamicOfferEligibilityPure
+} from "../src/engine/careerRules.js";
 
 const DEEP_MODE = process.argv.includes("--deep");
 const CHECK_DIST = process.argv.includes("--check-dist");
@@ -99,11 +108,21 @@ function runDistBundleGate(coreData, glossaryTerms) {
     ? fs.readdirSync(astroDir).filter((f) => f.endsWith(".js")).map((f) => `dist/_astro/${f}`)
     : [];
   const narrativeChunks = new Set(astroJsFiles.filter((f) => path.basename(f).startsWith("narrative.")));
+  const ENGINE_CHUNK_PREFIXES = ["createEngine.", "careerRules.", "careerActions.", "endings.", "travel."];
+  const ENGINE_CHUNK_SIGNATURES = [
+    "createDynamicCareerOfferEvent",
+    "createDynamicTransitEvent",
+    "createHonorableEndingEvent",
+    "getCareerAction",
+    "UNBOUND_CAREERS",
+    "CLOSED_VOW_TREES"
+  ];
   const engineChunks = new Set(
     astroJsFiles.filter((f) => {
-      if (path.basename(f).startsWith("createEngine.")) return true;
+      const base = path.basename(f);
+      if (ENGINE_CHUNK_PREFIXES.some((prefix) => base.startsWith(prefix))) return true;
       const code = fs.readFileSync(path.join(ROOT, f), "utf8");
-      return code.includes("createDynamicCareerOfferEvent") || code.includes("createDynamicTransitEvent");
+      return ENGINE_CHUNK_SIGNATURES.some((sig) => code.includes(sig));
     })
   );
   const glossaryDataChunks = new Set(
@@ -117,7 +136,7 @@ function runDistBundleGate(coreData, glossaryTerms) {
     fail(8, "Could not locate built lazy narrative.*.js chunk in dist/_astro/");
   }
   if (engineChunks.size === 0) {
-    fail(8, "Could not locate built createEngine.*.js chunk in dist/_astro/");
+    fail(8, "Could not locate built engine chunk(s) (createEngine/careerRules/careerActions/endings/travel) in dist/_astro/");
   }
 
   // 1. /codex/index.html must ship 0 <script> tags and 0 <astro-island> tags
@@ -216,7 +235,7 @@ function runDistBundleGate(coreData, glossaryTerms) {
   console.log(
     `[Gate 8] dist/ bundle isolation & SSR verified (9 routes, codexOverviewJS=0KB, ` +
     `codexStaticJS=${(codexStaticBytes / 1024).toFixed(1)}KB, hallStaticJS=${(hallStaticBytes / 1024).toFixed(1)}KB, ` +
-    `narrativeLeaks=0, engineLeaks=0, glossaryProseInGame=0, SSR cards 48/23/91/9/29/28).`
+    `narrativeLeaks=0, engineLeaks=0, glossaryProseInGame=0, SSR cards ${expectedCards.map((c) => c[2]).join("/")}).`
   );
 }
 
@@ -241,53 +260,55 @@ console.log(
 // ============================================================================
 const runtime = await loadNodeImperiumRuntime();
 const { DATA, Engine, coreFiles, eventFiles, chronFiles, eventSourceByIndex, chronSourceByIndex } = runtime;
+const engineFiles = collectDirFiles("src/engine", [".js"]);
 
 if (coreFiles.length === 0) fail(1, `No core data files found under ${path.join(ROOT, "src/data/core")}`);
 if (eventFiles.length === 0 || DATA.EVENTS.length === 0) fail(1, `No event data loaded (files=${eventFiles.length}, events=${DATA.EVENTS.length})`);
 if (chronFiles.length === 0 || DATA.CHRONICLES.length === 0) fail(1, `No chronicle data loaded (files=${chronFiles.length}, chronicles=${DATA.CHRONICLES.length})`);
+if (engineFiles.length === 0) fail(1, `No engine files found under ${path.join(ROOT, "src/engine")}`);
 
-const EVENT_SIZE_WARN_KB = 110;
-const EVENT_LINE_WARN = 2200;
-const CHRON_SIZE_WARN_KB = 70;
-const CHRON_LINE_WARN = 1400;
-const CORE_SIZE_WARN_KB = 95;
-const CORE_LINE_WARN = 1900;
-const CAREERS_SIZE_WARN_KB = 165;
-const CAREERS_LINE_WARN = 3300;
-const ENGINE_SIZE_WARN_KB = 260;
-const ENGINE_LINE_WARN = 5400;
+// Stage 19-D3 unified size discipline: core/events/engine = 110KB·2200L hard cap (95KB·1950L warn); chronicles = 70KB·1400L (58KB·1200L warn)
+const STD_MAX_KB = 110;
+const STD_MAX_LINES = 2200;
+const STD_WARN_KB = 95;
+const STD_WARN_LINES = 1950;
+const CHRON_MAX_KB = 70;
+const CHRON_MAX_LINES = 1400;
+const CHRON_WARN_KB = 58;
+const CHRON_WARN_LINES = 1200;
 let maxEvKB = 0;
 let maxChKB = 0;
 let maxCoreKB = 0;
-let engineKB = 0;
+let maxEngineKB = 0;
 
-for (const s of [...coreFiles, ...eventFiles, ...chronFiles, "src/engine/createEngine.js"]) {
+for (const s of [...coreFiles, "src/data/glossary.js", ...eventFiles, ...chronFiles, ...engineFiles]) {
   if (!fs.existsSync(path.join(ROOT, s))) continue;
   const rawSrc = readRel(s);
   const kb = Buffer.byteLength(rawSrc, "utf8") / 1024;
   const lineCount = rawSrc.split("\n").length;
-  if (s === "src/engine/createEngine.js") {
-    engineKB = kb;
-    if (kb > ENGINE_SIZE_WARN_KB || lineCount > ENGINE_LINE_WARN) {
-      warnings.push(`Large engine file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines) — consider extracting sub-modules`);
-    }
-  } else if (s.startsWith("src/data/core/")) {
-    if (kb > maxCoreKB) maxCoreKB = kb;
-    const isCareers = s === "src/data/core/careers.js";
-    const kbLim = isCareers ? CAREERS_SIZE_WARN_KB : CORE_SIZE_WARN_KB;
-    const lineLim = isCareers ? CAREERS_LINE_WARN : CORE_LINE_WARN;
-    if (kb > kbLim || lineCount > lineLim) {
-      warnings.push(`Large core file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines) — consider splitting`);
-    }
-  } else if (s.startsWith("src/data/events/")) {
-    if (kb > maxEvKB) maxEvKB = kb;
-    if (kb > EVENT_SIZE_WARN_KB || lineCount > EVENT_LINE_WARN) {
-      warnings.push(`Large event file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines) — consider splitting/promoting`);
-    }
-  } else if (s.startsWith("src/data/chronicles/")) {
+  if (s.startsWith("src/data/chronicles/")) {
     if (kb > maxChKB) maxChKB = kb;
-    if (kb > CHRON_SIZE_WARN_KB || lineCount > CHRON_LINE_WARN) {
-      warnings.push(`Large chronicle file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines) — consider splitting/promoting`);
+    if (kb > CHRON_MAX_KB || lineCount > CHRON_MAX_LINES) {
+      fail(1, `Chronicle file exceeds 70KB/1400L limit: ${s} (${kb.toFixed(1)}KB, ${lineCount} lines)`);
+    } else if (kb >= CHRON_WARN_KB || lineCount >= CHRON_WARN_LINES) {
+      warnings.push(`Near-limit chronicle file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines / limit 70KB·1400L)`);
+    }
+  } else {
+    let kindLabel = "file";
+    if (s.startsWith("src/engine/")) {
+      if (kb > maxEngineKB) maxEngineKB = kb;
+      kindLabel = "engine";
+    } else if (s.startsWith("src/data/core/") || s === "src/data/glossary.js") {
+      if (kb > maxCoreKB) maxCoreKB = kb;
+      kindLabel = s === "src/data/glossary.js" ? "glossary" : "core";
+    } else if (s.startsWith("src/data/events/")) {
+      if (kb > maxEvKB) maxEvKB = kb;
+      kindLabel = "event";
+    }
+    if (kb > STD_MAX_KB || lineCount > STD_MAX_LINES) {
+      fail(1, `${kindLabel} file exceeds unified 110KB/2200L limit: ${s} (${kb.toFixed(1)}KB, ${lineCount} lines)`);
+    } else if (kb >= STD_WARN_KB || lineCount >= STD_WARN_LINES) {
+      warnings.push(`Near-limit ${kindLabel} file ${s} (${kb.toFixed(1)}KB, ${lineCount} lines / limit 110KB·2200L)`);
     }
   }
 }
@@ -303,8 +324,8 @@ if (!cssPath) {
 }
 
 console.log(
-  `[Gate 1] ESM data verified (${coreFiles.length} core, ${eventFiles.length} events, ${chronFiles.length} chronicles, glossary=${DATA.GLOSSARY_TERMS.length}; ` +
-  `maxCore=${maxCoreKB.toFixed(1)}KB, engine=${engineKB.toFixed(1)}KB, maxEv=${maxEvKB.toFixed(1)}KB, maxCh=${maxChKB.toFixed(1)}KB).`
+  `[Gate 1] ESM data verified (${coreFiles.length} core, ${eventFiles.length} events, ${chronFiles.length} chronicles, ${engineFiles.length} engine, glossary=${DATA.GLOSSARY_TERMS.length}; ` +
+  `maxCore=${maxCoreKB.toFixed(1)}KB, maxEngine=${maxEngineKB.toFixed(1)}KB, maxEv=${maxEvKB.toFixed(1)}KB, maxCh=${maxChKB.toFixed(1)}KB).`
 );
 
 // ============================================================================
@@ -320,6 +341,8 @@ let srLiveCount = 0;
 if (uiFiles.length === 0) {
   fail(2, `No Astro/React UI files found under ${path.join(ROOT, "src")} (ROOT=${ROOT})`);
 }
+const FORBIDDEN_STATIC_ENGINE_RE = /\bfrom\s+["'][^"']*\/engine\/(?:createEngine|careerRules|careerActions|endings|travel)\.js["']/;
+const FORBIDDEN_DYNAMIC_ENGINE_RE = /\bimport\s*\(\s*["'][^"']*\/engine\/(?:createEngine|careerRules|careerActions|endings|travel)\.js["']\s*\)/;
 for (const f of uiFiles) {
   const src = readRel(f);
   // Single-letter keyboard shortcut ban (only Escape allowed)
@@ -332,11 +355,45 @@ for (const f of uiFiles) {
   }
   const liveMatches = src.match(/id=["']sr-live["']/g);
   if (liveMatches) srLiveCount += liveMatches.length;
+
+  // Stage 19-D3 source-level static page engine isolation guard (catches tree-shaken named imports even after Rolldown minification)
+  const isCodexOrGlossary =
+    f.startsWith("src/pages/codex/") ||
+    f.startsWith("src/pages/glossary/") ||
+    f.startsWith("src/components/codex/") ||
+    f.startsWith("src/components/glossary/");
+  const isHall = f.startsWith("src/pages/hall/") || f.startsWith("src/components/hall/");
+  if (isCodexOrGlossary && (FORBIDDEN_STATIC_ENGINE_RE.test(src) || FORBIDDEN_DYNAMIC_ENGINE_RE.test(src))) {
+    fail(2, `Static Codex/Glossary file ${f} must not import simulation engine modules (use src/engine/formatters.js only)`);
+  }
+  if (isHall && FORBIDDEN_STATIC_ENGINE_RE.test(src)) {
+    fail(2, `Hall file ${f} must not statically import simulation engine modules (only lazy dynamic import() of createEngine.js is allowed)`);
+  }
 }
 if (srLiveCount === 0) {
   fail(2, "Missing #sr-live polite live region in src/ UI components");
 }
-console.log(`[Gate 2] Static UI a11y verified (${uiFiles.length} Astro/React files, #sr-live declarations=${srLiveCount}).`);
+// Stage 19-D1 static named spotlight a11y invariant (multi-line & attribute-order safe)
+const activePanelPath = "src/components/game/ActiveEventPanel.tsx";
+if (fs.existsSync(path.join(ROOT, activePanelPath))) {
+  const apSrc = readRel(activePanelPath);
+  const detailsMatch = apSrc.match(/<details\b[\s\S]*?>/g)?.find((tag) => /className=["'][^"']*\bnamed-spotlight\b/.test(tag));
+  if (!detailsMatch) {
+    fail(2, `${activePanelPath} missing <details className="named-spotlight"> element`);
+  } else {
+    if (/\bopen(?=\s|>|\/)/.test(detailsMatch) || /\bopen=\{true\}/.test(detailsMatch)) {
+      fail(2, `${activePanelPath} hardcodes always-open named spotlight (must expand on first encounter and collapse on repeat encounter)`);
+    }
+    if (/\baria-label=/.test(detailsMatch)) {
+      fail(2, `${activePanelPath} <details className="named-spotlight"> must not duplicate <summary> with aria-label`);
+    }
+  }
+  const badgeMatch = apSrc.match(/<span\b[\s\S]*?>/g)?.find((tag) => /className=["'][^"']*\bev-badge\s+character\b/.test(tag));
+  if (!badgeMatch || !/\baria-hidden=["']true["']/.test(badgeMatch)) {
+    fail(2, `${activePanelPath} visual .ev-badge.character must carry aria-hidden="true" to avoid triple name announcement`);
+  }
+}
+console.log(`[Gate 2] Static UI a11y & source import isolation verified (${uiFiles.length} Astro/React files, #sr-live declarations=${srLiveCount}).`);
 
 // ============================================================================
 // Gate 3: 나무위키 금지 구표기 · 장식 기호 금지 검사 (전 데이터 + 개념 사전 + UI)
@@ -371,8 +428,7 @@ const scanFiles = [
   "src/data/glossary.js",
   ...eventFiles,
   ...chronFiles,
-  "src/engine/formatters.js",
-  "src/engine/createEngine.js",
+  ...engineFiles,
   "src/lib/contextualGlossary.js",
   "src/lib/storage.ts",
   ...uiFiles
@@ -1611,10 +1667,56 @@ for (const ch of DATA.CHRONICLES) {
         }
       }
     });
+
+    // Stage 19-D: previouslyMetCharacters capture contract, arcs_focus -> focus/origins_tags split, careers 4-way barrel & careerRules SSOT
+    const d1First = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "imperial_citizen", traitId: "none", eraId: "cadia_rift", gender: "male" });
+    d1First.age = 20;
+    d1First.year = 999;
+    d1First.quarter = 1;
+    d1First.careerId = "astra_militarum";
+    const d1FirstRes = Engine.advanceQuarter(d1First);
+    if (
+      d1FirstRes.status !== "event" ||
+      !d1First.pendingEvent ||
+      d1First.pendingEvent.id !== "tl_fall_of_cadia" ||
+      !Array.isArray(d1First.pendingEvent.previouslyMetCharacters) ||
+      d1First.pendingEvent.previouslyMetCharacters.length !== 0 ||
+      !d1First.metCharacters.includes("creed")
+    ) {
+      fail(4, "Stage 19-D1 first-encounter previouslyMetCharacters capture contract failed on tl_fall_of_cadia");
+    }
+    const d1Repeat = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "imperial_citizen", traitId: "none", eraId: "cadia_rift", gender: "male" });
+    d1Repeat.age = 20;
+    d1Repeat.year = 999;
+    d1Repeat.quarter = 1;
+    d1Repeat.careerId = "astra_militarum";
+    d1Repeat.metCharacters = ["creed"];
+    const d1RepeatRes = Engine.advanceQuarter(d1Repeat);
+    if (
+      d1RepeatRes.status !== "event" ||
+      !d1Repeat.pendingEvent ||
+      d1Repeat.pendingEvent.id !== "tl_fall_of_cadia" ||
+      !Array.isArray(d1Repeat.pendingEvent.previouslyMetCharacters) ||
+      d1Repeat.pendingEvent.previouslyMetCharacters.join(",") !== "creed"
+    ) {
+      fail(4, "Stage 19-D1 repeat-encounter previouslyMetCharacters capture contract failed on tl_fall_of_cadia");
+    }
+    if (eventFiles.includes("src/data/events/themes/arcs_focus.js")) {
+      fail(4, "Stage 19-D2 legacy src/data/events/themes/arcs_focus.js should have been split into focus.js + origins_tags.js");
+    }
+    if (!eventFiles.includes("src/data/events/themes/focus.js") || !eventFiles.includes("src/data/events/themes/origins_tags.js")) {
+      fail(4, "Stage 19-D2 split event files focus.js / origins_tags.js missing");
+    }
+    if (
+      !isClosedVowCrossBlocked(Engine.getCareer("adepta_sororitas"), Engine.getCareer("hive_crime_lord")) ||
+      isClosedVowCrossBlocked(Engine.getCareer("adepta_sororitas"), Engine.getCareer("inquisition_acolyte"))
+    ) {
+      fail(4, "Stage 19-D3 careerRules.js isClosedVowCrossBlocked SSOT invariant failed");
+    }
   }
 }
 
-console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-19C guards verified.`);
+console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-19D guards verified.`);
 
 // ============================================================================
 // Gate 4P: 15종 대표 페르소나 + 타 행성 방문·성인 귀족 신분·생활권·신체 정합성 & 최소 풀 하한(>= 8) 검증
@@ -1877,6 +1979,11 @@ if (DEEP_MODE) {
     return true;
   }
 
+  // SSOT sanity check against src/engine/careerRules.js
+  if (!UNBOUND_CAREERS.size || !CLOSED_VOW_TREES.size || !isUnboundCareer("child")) {
+    fail(7, "careerRules.js SSOT exports (UNBOUND_CAREERS / CLOSED_VOW_TREES / isUnboundCareer) are invalid");
+  }
+
   function canDirectStep(curr, target, baseGender, baseTags, baseTranshuman) {
     if (!curr || !target || curr.id === target.id) return false;
     const tGender = target.req && target.req.gender ? target.req.gender : null;
@@ -1886,60 +1993,24 @@ if (DEEP_MODE) {
     const effTranshuman = baseTranshuman || Boolean(curr.isTranshuman) ||
       effTags.has("astartes") || effTags.has("custodes") || effTags.has("grey_knight") || effTags.has("daemon_prince") || effTags.has("living_saint");
 
-    if ((effTags.has("custodes") || effTags.has("grey_knight") || effTags.has("living_saint")) && target.tree === "chaos") return false;
-    if (effTags.has("assassin") && target.tree !== "officio_assassinorum" && target.tree !== "chaos") return false;
-    if (effTags.has("living_saint") && target.tree !== "living_saint") return false;
-    if (effTags.has("navigator") && ["astartes", "grey_knights", "custodes", "sororitas"].includes(target.tree)) return false;
+    if (isCareerTransitionBlockedPure(effTags, curr, target, null)) return false;
 
-    const closedTrees = ["sororitas", "mechanicus", "navis_navigator", "imperial_knight", "psyker"];
-
-    // 1) Manual open transition (mirrors Stage 19-S2 isManualCareerAllowed)
+    // 1) Manual open transition (SSOT: src/engine/careerRules.js isManualCareerAllowedPure)
     if (target.selectable && target.entryMode === "open") {
       if (reqCompatibleWithBase(target.req, curr.id, baseGender, effTags)) {
-        const manualAllowed =
-          Engine.isUnboundCareer(curr.id)
-            ? (curr.id === "child" || target.tier >= curr.tier || target.tree === "chaos")
-            : (
-                (target.tree === curr.tree && target.tier >= curr.tier) ||
-                target.tree === "chaos" ||
-                Boolean(target.isTranshuman) ||
-                (target.tree === "psyker" && target.tier >= curr.tier) ||
-                (target.id === "rt_seneschal" && target.tier >= curr.tier && (curr.tree === "navis_navigator" || !closedTrees.includes(curr.tree)))
-              );
-        if (manualAllowed && (!effTranshuman || Boolean(target.isTranshuman) || target.tree === "chaos")) {
+        if (isManualCareerAllowedPure(effTags, curr, target)) {
           return true;
         }
       }
     }
 
-    // 2) Dynamic career offer transition (including Stage 19-S2 cross-institution Scout Invitation & closed-vow guard)
-    if (target.selectable && target.tier >= 2 && reqCompatibleWithBase(target.req, curr.id, baseGender, effTags)) {
-      if (curr.id === "child") {
-        if (Boolean(target.isTranshuman) || target.tier >= 3) return true;
-      } else {
-        if (!effTranshuman || Boolean(target.isTranshuman)) {
-          if (target.tree === curr.tree) {
-            if (target.tier >= curr.tier) return true;
-          } else {
-            const closedSrcBlocked =
-              closedTrees.includes(curr.tree) &&
-              target.tree !== "inquisition" &&
-              target.tree !== "living_saint" &&
-              target.tree !== "chaos" &&
-              !Boolean(target.isTranshuman) &&
-              !(curr.tree === "navis_navigator" && target.tree === "rogue_trader");
-            if (closedSrcBlocked) return false;
-            const tierOk = target.tier >= curr.tier || target.tree === "chaos";
-            const lateralOk =
-              target.entryMode === "event" ||
-              target.tree === "chaos" ||
-              Boolean(target.isTranshuman) ||
-              Boolean(target.allowLateralOffer) ||
-              (!Engine.isUnboundCareer(target.id) && target.entryMode === "open" && !effTranshuman && (!Engine.isUnboundCareer(curr.id) || curr.id === "pdf_trooper"));
-            if (tierOk && lateralOk) return true;
-          }
-        }
-      }
+    // 2) Dynamic career offer transition (SSOT: src/engine/careerRules.js evaluateDynamicOfferEligibilityPure)
+    if (reqCompatibleWithBase(target.req, curr.id, baseGender, effTags)) {
+      const offerRes = evaluateDynamicOfferEligibilityPure(effTags, curr, target, {
+        checkDestOriginTags: false,
+        checkScoutQualification: false
+      });
+      if (offerRes.allowed) return true;
     }
 
     // 3) Event forceCareer transition (with Astartes chaos_cultist -> renegade_marine redirect)

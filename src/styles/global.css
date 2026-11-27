@@ -888,8 +888,11 @@ body {
   background: linear-gradient(135deg, rgba(46, 35, 22, 0.92) 0%, rgba(21, 17, 14, 0.96) 100%);
   overflow: hidden;
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
-  animation: spotlightUnfurl 0.36s cubic-bezier(0.22, 1, 0.36, 1);
   transform-origin: top center;
+}
+
+.named-spotlight[open] {
+  animation: spotlightUnfurl 0.36s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes spotlightUnfurl {
@@ -918,6 +921,31 @@ body {
   font-size: 12px;
   color: var(--gold-bright);
   font-weight: 700;
+  transition: background 0.15s ease;
+}
+
+.named-spotlight-summary:hover {
+  background: rgba(214, 177, 94, 0.2);
+}
+
+.named-spotlight-summary::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin-left: 4px;
+  flex-shrink: 0;
+  border-right: 2px solid var(--gold-bright);
+  border-bottom: 2px solid var(--gold-bright);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.named-spotlight[open] .named-spotlight-summary::after {
+  transform: rotate(-135deg);
+}
+
+.named-spotlight:not([open]) .named-spotlight-summary {
+  border-bottom: none;
 }
 
 .named-spotlight-summary::-webkit-details-marker {
@@ -935,6 +963,7 @@ body {
 .named-spotlight-names {
   color: var(--gold-bright);
   font-size: 12.5px;
+  margin-right: auto;
 }
 
 .named-spotlight-body {
@@ -1002,8 +1031,14 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .named-spotlight,
+  .named-spotlight[open],
   .event-box {
     animation: none;
+  }
+
+  .named-spotlight-summary,
+  .named-spotlight-summary::after {
+    transition: none;
   }
 }
 

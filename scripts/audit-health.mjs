@@ -12,7 +12,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { loadNodeImperiumRuntime, ROOT } from "./_loadNodeData.mjs";
+import { collectDirFiles, loadNodeImperiumRuntime, ROOT } from "./_loadNodeData.mjs";
 
 const livesFlag = process.argv.find((a) => a.startsWith("--lives="));
 const seedFlag = process.argv.find((a) => a.startsWith("--seed="));
@@ -84,6 +84,8 @@ let maxAdultQuietQ = 0;
 let maxQuietCareer = "none";
 let maxQuietAge = 0;
 let namedSpotlightEvents = 0;
+let repeatSpotlightEvents = 0;
+let missingPrevMetSpotlights = 0;
 let maxSpotlightCards = 0;
 let timelineMultiSpotlights = 0;
 const ages = [];
@@ -200,6 +202,11 @@ for (let i = 0; i < FUZZ_LIVES; i++) {
           namedSpotlightEvents++;
           if (evChars.length > maxSpotlightCards) maxSpotlightCards = evChars.length;
           if (ev.isTimeline && evChars.length > 1) timelineMultiSpotlights++;
+          if (!Array.isArray(ev.previouslyMetCharacters)) {
+            missingPrevMetSpotlights++;
+          } else if (evChars.every((cid) => ev.previouslyMetCharacters.includes(cid))) {
+            repeatSpotlightEvents++;
+          }
         }
         const choices = ev.choices || [];
         const validIdx = [];
@@ -326,7 +333,7 @@ console.log(
 );
 console.log(
   `[Listening Rhythm] avgLogChars=${avgLogChars}, maxLogChars=${maxLogChars}, maxAdultQuietQ=${maxAdultQuietQ}(${maxQuietCareer}@${maxQuietAge}), ` +
-  `namedSpotlights=${namedSpotlightEvents}, maxSpotlightCards=${maxSpotlightCards}, ` +
+  `namedSpotlights=${namedSpotlightEvents}(repeat=${repeatSpotlightEvents}, missingPrevMet=${missingPrevMetSpotlights}), maxSpotlightCards=${maxSpotlightCards}, ` +
   `timelineMultiSpotlights=${timelineMultiSpotlights}, apexProbesOK=${apexProbesOK}/${apexSpecs.length}`
 );
 console.log(
@@ -334,22 +341,19 @@ console.log(
   `(samples=${jsonSamples})${saveCapExceeded ? " [EXCEEDED!]" : ""}`
 );
 
+const engineFiles = collectDirFiles("src/engine", [".js"]);
 const nearLimit = [];
-for (const s of [...coreFiles, ...eventFiles, ...chronFiles, "src/engine/createEngine.js"]) {
+for (const s of [...coreFiles, "src/data/glossary.js", ...eventFiles, ...chronFiles, ...engineFiles]) {
   if (!fs.existsSync(path.join(ROOT, s))) continue;
   const raw = readRel(s);
   const kb = Buffer.byteLength(raw, "utf8") / 1024;
   const lines = raw.split("\n").length;
-  if (s === "src/engine/createEngine.js" && (kb >= 240 || lines >= 5000)) {
-    nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 260KB·5400L)`);
-  } else if (s === "src/data/core/careers.js" && (kb >= 145 || lines >= 3000)) {
-    nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 165KB·3300L)`);
-  } else if (s.startsWith("src/data/core/") && s !== "src/data/core/careers.js" && (kb >= 80 || lines >= 1650)) {
-    nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 95KB·1900L)`);
-  } else if (s.startsWith("src/data/events/") && (kb >= 95 || lines >= 1950)) {
+  if (s.startsWith("src/data/chronicles/")) {
+    if (kb >= 58 || lines >= 1200) {
+      nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 70KB·1400L)`);
+    }
+  } else if (kb >= 95 || lines >= 1950) {
     nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 110KB·2200L)`);
-  } else if (s.startsWith("src/data/chronicles/") && (kb >= 58 || lines >= 1200)) {
-    nearLimit.push(`${s} (${kb.toFixed(1)}KB, ${lines}L / limit 70KB·1400L)`);
   }
 }
 console.log(`[Size Watch] nearLimit=${nearLimit.length}${nearLimit.length ? " -> " + nearLimit.join(" | ") : " (all comfortable)"}`);
@@ -364,6 +368,7 @@ if (age500RetireFailed > 0) hardFailures.push(`retireExecFailed=${age500RetireFa
 if (mortalOver300 > 0) hardFailures.push(`mortalOver300=${mortalOver300}`);
 if (saveCapExceeded) hardFailures.push(`maxSaveSize=${maxJsonKB}KB > 2048KB`);
 if (timelineMultiSpotlights > 0) hardFailures.push(`timelineMultiSpotlights=${timelineMultiSpotlights}`);
+if (missingPrevMetSpotlights > 0) hardFailures.push(`missingPrevMetSpotlights=${missingPrevMetSpotlights}`);
 if (maxSpotlightCards > 2) hardFailures.push(`maxSpotlightCards=${maxSpotlightCards} > 2`);
 if (apexProbeFailures > 0) hardFailures.push(`apexProbeFailures=${apexProbeFailures} (${apexProbeIssues.join("; ")})`);
 

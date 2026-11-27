@@ -21,6 +21,20 @@ export default function ActiveEventPanel({ state, engine, onChoose }: Props) {
   const namedChars = ev
     ? (ev.characters || []).map((cid: string) => engine.getCharacter(cid)).filter(Boolean)
     : [];
+  const hasPrevMetList = Boolean(ev && Array.isArray(ev.previouslyMetCharacters));
+  const prevMetSet = hasPrevMetList
+    ? new Set<string>(ev.previouslyMetCharacters)
+    : new Set<string>(Array.isArray(state.metCharacters) ? state.metCharacters : []);
+  const tagSet = !hasPrevMetList
+    ? new Set<string>(Array.isArray(state.tags) ? state.tags : [])
+    : null;
+  const isRepeatEncounter =
+    namedChars.length > 0 &&
+    namedChars.every((c: any) =>
+      hasPrevMetList
+        ? prevMetSet.has(c.id)
+        : prevMetSet.has(c.id) || Boolean(tagSet && tagSet.has(`met_${c.id}`))
+    );
   const alignMeta = ev && ev.alignBias && engine.ALIGNMENT_META ? engine.ALIGNMENT_META[ev.alignBias] : null;
   const rollLabel = lastRoll
     ? lastRoll.statName ||
@@ -65,16 +79,22 @@ export default function ActiveEventPanel({ state, engine, onChoose }: Props) {
                 <span className="ev-badge">범위: {ev.scope}</span>
               ) : null}
               {namedChars.map((c: any) => (
-                <span key={c.id} className="ev-badge character">
+                <span key={c.id} className="ev-badge character" aria-hidden="true">
                   인물: {c.name}
                 </span>
               ))}
             </div>
 
             {namedChars.length > 0 && (
-              <details open className="named-spotlight" aria-label="조우한 네임드 인물 소개">
+              <details
+                key={`${ev.id}-${isRepeatEncounter ? "repeat" : "first"}`}
+                open={!isRepeatEncounter}
+                className="named-spotlight"
+              >
                 <summary className="named-spotlight-summary">
-                  <span className="named-spotlight-kicker">네임드 인물 조우 기록</span>{" "}
+                  <span className="named-spotlight-kicker">
+                    {isRepeatEncounter ? "재조우 인물 소개" : "인물 소개"}
+                  </span>{" "}
                   <span className="named-spotlight-names">
                     {namedChars.map((c: any) => c.name).join(" · ")}
                   </span>

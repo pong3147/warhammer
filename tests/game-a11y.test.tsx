@@ -985,5 +985,141 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
     unmount();
     localStorage.clear();
   });
+
+  it("Stage 19-D1: opens named spotlight on first/partial-new encounter, collapses on repeat encounter with click-to-expand, hides character badge from SR, and records previouslyMetCharacters", () => {
+    localStorage.clear();
+    const cadiaTl = CORE_DATA.TIMELINE.find((t: any) => t.id === "tl_fall_of_cadia")!;
+    const creedCelestineXover = EVENTS.find((e: any) => e.id === "ev_s19a_xover_creed_celestine")!;
+    const creedSolo = EVENTS.find((e: any) => e.id === "ev_named_creed")!;
+
+    // 1. Real advanceQuarter contract: previouslyMetCharacters must capture state BEFORE pushing into state.metCharacters
+    const firstCadia = realEngine.createCharacter({
+      mode: "custom",
+      worldId: "cadia",
+      originId: "imperial_citizen",
+      traitId: "none",
+      eraId: "cadia_rift",
+      gender: "male"
+    });
+    firstCadia.age = 20;
+    firstCadia.year = 999;
+    firstCadia.quarter = 1;
+    firstCadia.careerId = "astra_militarum";
+    const res1 = realEngine.advanceQuarter(firstCadia);
+    expect(res1.status).toBe("event");
+    expect(firstCadia.pendingEvent?.id).toBe("tl_fall_of_cadia");
+    expect(firstCadia.metCharacters).toContain("creed");
+    expect(firstCadia.pendingEvent?.previouslyMetCharacters).toEqual([]);
+
+    const repeatCadia = realEngine.createCharacter({
+      mode: "custom",
+      worldId: "cadia",
+      originId: "imperial_citizen",
+      traitId: "none",
+      eraId: "cadia_rift",
+      gender: "male"
+    });
+    repeatCadia.age = 20;
+    repeatCadia.year = 999;
+    repeatCadia.quarter = 1;
+    repeatCadia.careerId = "astra_militarum";
+    repeatCadia.metCharacters = ["creed"];
+    const res2 = realEngine.advanceQuarter(repeatCadia);
+    expect(res2.status).toBe("event");
+    expect(repeatCadia.pendingEvent?.id).toBe("tl_fall_of_cadia");
+    expect(repeatCadia.pendingEvent?.previouslyMetCharacters).toEqual(["creed"]);
+
+    // 2. UI behavioral flow across 4 scenarios
+    let stepNum = 0;
+    const proxy = {
+      ...realEngine,
+      advanceQuarter(st: any) {
+        stepNum++;
+        if (stepNum === 1) {
+          // First encounter: engine already pushed "creed" into metCharacters, but previouslyMetCharacters is []
+          if (!st.metCharacters.includes("creed")) st.metCharacters.push("creed");
+          st.pendingEvent = { ...cadiaTl, isTimeline: true, previouslyMetCharacters: [] };
+          return { status: "event", event: st.pendingEvent };
+        }
+        if (stepNum === 2) {
+          // Mixed 2-person crossover: creed is already met, celestine is new -> MUST stay open
+          if (!st.metCharacters.includes("celestine")) st.metCharacters.push("celestine");
+          st.pendingEvent = { ...creedCelestineXover, isTimeline: false, previouslyMetCharacters: ["creed"] };
+          return { status: "event", event: st.pendingEvent };
+        }
+        if (stepNum === 3) {
+          // Repeat solo encounter: creed already met -> MUST start collapsed
+          st.pendingEvent = { ...creedSolo, isTimeline: false, previouslyMetCharacters: ["creed"] };
+          return { status: "event", event: st.pendingEvent };
+        }
+        if (stepNum === 4) {
+          // Legacy save fallback (no previouslyMetCharacters): both met via tags/metCharacters -> MUST start collapsed
+          st.pendingEvent = { ...creedCelestineXover, isTimeline: false };
+          return { status: "event", event: st.pendingEvent };
+        }
+        return realEngine.advanceQuarter(st);
+      }
+    };
+
+    const { container, unmount } = render(<GameApp engineOverride={proxy} dataOverride={FULL_DATA} />);
+    startCustomCharacter(container);
+
+    const resolveFallback = () => {
+      const btns = [...container.querySelectorAll(".choice-btn")] as HTMLButtonElement[];
+      fireEvent.click(btns.filter((b) => !b.disabled).at(-1)!);
+    };
+
+    // Step 1: First encounter -> open === true, visual character badge aria-hidden="true", concise summary kicker
+    fireEvent.click(container.querySelector("#btn-step")!);
+    const badges1 = [...container.querySelectorAll(".ev-badge.character")];
+    expect(badges1).toHaveLength(1);
+    expect(badges1[0].getAttribute("aria-hidden")).toBe("true");
+    const visibleBadgesText = [...container.querySelectorAll(".event-badges > :not([aria-hidden='true'])")]
+      .map((el) => el.textContent || "")
+      .join(" ");
+    expect(visibleBadgesText).not.toContain("우르사카르 E. 크리드");
+    const details1 = container.querySelector("details.named-spotlight") as HTMLDetailsElement;
+    expect(details1).not.toBeNull();
+    expect(details1.getAttribute("aria-label")).toBeNull();
+    expect(details1.open).toBe(true);
+    expect(details1.querySelector(".named-spotlight-kicker")?.textContent).toBe("인물 소개");
+    resolveFallback();
+
+    // Step 2: Mixed crossover (1 met, 1 new) -> open === true, both visual badges aria-hidden="true"
+    fireEvent.click(container.querySelector("#btn-step")!);
+    const badges2 = [...container.querySelectorAll(".ev-badge.character")];
+    expect(badges2).toHaveLength(2);
+    expect(badges2.every((b) => b.getAttribute("aria-hidden") === "true")).toBe(true);
+    const details2 = container.querySelector("details.named-spotlight") as HTMLDetailsElement;
+    expect(details2.open).toBe(true);
+    expect(details2.querySelector(".named-spotlight-kicker")?.textContent).toBe("인물 소개");
+    resolveFallback();
+
+    // Step 3: Repeat encounter -> open === false, concise repeat kicker, user can click <summary> to expand & stays open across re-renders
+    fireEvent.click(container.querySelector("#btn-step")!);
+    const details3 = container.querySelector("details.named-spotlight") as HTMLDetailsElement;
+    expect(details3).not.toBeNull();
+    expect(details3.getAttribute("aria-label")).toBeNull();
+    expect(details3.open).toBe(false);
+    expect(details3.querySelector(".named-spotlight-kicker")?.textContent).toBe("재조우 인물 소개");
+    fireEvent.click(details3.querySelector("summary.named-spotlight-summary")!);
+    expect(details3.open).toBe(true);
+    // Trigger parent GameApp re-render via status summary button -> expanded state must NOT snap shut
+    fireEvent.click(container.querySelector("#btn-status-summary")!);
+    expect((container.querySelector("details.named-spotlight") as HTMLDetailsElement).open).toBe(true);
+    resolveFallback();
+
+    // Step 4: Legacy fallback without previouslyMetCharacters -> open === false
+    fireEvent.click(container.querySelector("#btn-step")!);
+    const details4 = container.querySelector("details.named-spotlight") as HTMLDetailsElement;
+    expect(details4).not.toBeNull();
+    expect(details4.open).toBe(false);
+    expect(details4.querySelector(".named-spotlight-kicker")?.textContent).toBe("재조우 인물 소개");
+    resolveFallback();
+
+    unmount();
+    localStorage.clear();
+  });
 });
+
 
