@@ -10,6 +10,7 @@ import { CORE_DATA } from "../src/data/core/index.js";
 import { EVENTS, CHRONICLES } from "../src/data/narrative.js";
 import { GLOSSARY_CATEGORIES, GLOSSARY_TERMS } from "../src/data/glossary.js";
 import { createImperiumEngine } from "../src/engine/createEngine.js";
+import { createDynamicCentenarianEvent } from "../src/engine/centenarianOps.js";
 import { ACTIVE_SAVE_KEY, applyImportedBackup, loadHall, saveActiveState, STORAGE_KEY } from "../src/lib/storage";
 
 const FULL_DATA = { ...CORE_DATA, EVENTS, CHRONICLES };
@@ -1396,6 +1397,46 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
 
     unmount();
     localStorage.clear();
+  });
+
+  it("Stage 23: triggers centenarianOps for 100+ characters across all 3 pools with 4-year cooldown and migrateState compatibility", () => {
+    const engine = createImperiumEngine(FULL_DATA);
+    const base = engine.createCharacter({ mode: "custom", eraId: "armageddon", worldId: "macragge" });
+    delete base.lastCentenarianOpYear;
+    delete base.recentCentenarianOps;
+    const migrated = engine.migrateState(base);
+    expect(migrated.lastCentenarianOpYear).toBe(-999);
+    expect(migrated.recentCentenarianOps).toEqual([]);
+
+    const helpers = {
+      getWorld: engine.getWorld,
+      getCareer: engine.getCareer,
+      isIncorruptibleState: () => false
+    };
+
+    // Under 100 returns null
+    expect(createDynamicCentenarianEvent({ ...migrated, age: 99 }, null, helpers)).toBeNull();
+
+    // 1. Transhuman 100+
+    const astartes = { ...migrated, age: 120, year: 1100, careerId: "astartes_brother", tags: ["astartes", "transhuman"] };
+    const ev1 = createDynamicCentenarianEvent(astartes, null, helpers);
+    expect(ev1).not.toBeNull();
+    expect(ev1.isDynamicCentenarian).toBe(true);
+    expect(ev1.choices.some((ch: { req?: unknown }) => !ch.req)).toBe(true);
+    // 4-year cooldown blocks immediate re-trigger
+    expect(createDynamicCentenarianEvent({ ...astartes, year: 1102 }, null, helpers)).toBeNull();
+
+    // 2. Mortal elder 100+
+    const elder = { ...migrated, age: 105, year: 1085, careerId: "administratum", tags: ["rejuvenat"] };
+    const ev2 = createDynamicCentenarianEvent(elder, null, helpers);
+    expect(ev2).not.toBeNull();
+    expect(ev2.choices.some((ch: { req?: unknown }) => !ch.req)).toBe(true);
+
+    // 3. Chaos immortal 100+
+    const chaos = { ...migrated, age: 150, year: 1130, careerId: "daemon_prince", tags: ["heretic", "chaos_aligned", "daemon_prince"] };
+    const ev3 = createDynamicCentenarianEvent(chaos, null, helpers);
+    expect(ev3).not.toBeNull();
+    expect(ev3.choices.some((ch: { req?: unknown }) => !ch.req)).toBe(true);
   });
 });
 

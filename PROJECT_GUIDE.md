@@ -34,12 +34,12 @@ warhammer/
 ├── scripts/
 │   ├── _loadNodeData.mjs             # Node.js용 ESM 데이터·엔진 공통 로더 (fileURLToPath 크로스플랫폼 ROOT + 0건 로드 즉시 실패 가드)
 │   ├── qa.mjs                        # 상설 자동 QA 검증 스위트 (7대 게이트 + Gate 1 전 파일 110KB 통일 + Gate 2 스포트라이트/임포트 격리 + Gate 4G/4P + 데드 필드 차단·성인 크리그 사건·Stage 17~20A 불변식 + Gate 7A careerRules SSOT + --deep 1,500생애 감사)
-│   ├── qa/                           # QA 게이트 분리 모듈 2종 (`distGate.mjs` Gate 8 분할 엔진 6모듈 격리 · `personaGate.mjs` Gate 4P 17페르소나+선택지/타행성 사건 스캔)
+│   ├── qa/                           # QA 게이트 분리 모듈 3종 (`distGate.mjs` Gate 8 분할 엔진 격리 · `personaGate.mjs` Gate 4P 17페르소나 · `careerGate.mjs` Gate 7A/7B/7D)
 │   ├── audit-health.mjs              # 200생애 결정론적 퍼징 · 청취 리듬/스포트라이트 재조우·previouslyMetCharacters 계약/17~18단계 최고위 프로브 · 저장 크기·초인 오염 면역·명예 마감·전 파일 110KB 통일 용량 감시
 │   └── coverage-report.mjs           # 직군·행성·챕터·연령대·성향·네임드·시대(`endYear` 반영) 7축 콘텐츠 밀도 매트릭스
 ├── tests/
 │   ├── setup.ts                      # Testing Library jest-dom 셋업
-│   └── game-a11y.test.tsx            # 행동형 스크린 리더 접근성·포커스·1~16배속·개념 사전·Stage 19-S2/M1/M2/A/B/C/D1 스포트라이트·Stage 20-A `critSuccess`/`critFail`·`#sr-live` 판정 안내·`migrateState` 방어 Vitest 스위트 (19개 테스트)
+│   └── game-a11y.test.tsx            # 행동형 스크린 리더 접근성·포커스·1~16배속·개념 사전·Stage 19~23 회귀 Vitest 스위트 (24개 테스트)
 └── src/
     ├── layouts/
     │   └── BaseLayout.astro          # 공통 HTML 셸 · 병렬 웹폰트 · 스킵 링크 · 상단 내비게이션(4대 메뉴) · 푸터
@@ -68,10 +68,11 @@ warhammer/
     ├── styles/
     │   ├── global.css                # 고딕 데이터슬레이트 테마 · 3대 성향 게이지 · 고대비 포커스 링 · 반응형 그리드
     │   └── astro-pages.css           # 정적 페이지(개념 사전 · 코덱스 · 영혼의 전당 · 상단 내비) 전용 스타일
-    ├── engine/                       # 시뮬레이션 엔진 ESM 8모듈 (전 파일 < 72KB / < 1,800줄)
+    ├── engine/                       # 시뮬레이션 엔진 ESM 9모듈 (전 파일 < 75KB / < 1,850줄)
     │   ├── formatters.js             # 경량 공통 포매터 · 메타 상수 · 3대 계층 축 · resolveFactionEndingKey · describeReq (SSOT · 코덱스/전당용)
     │   ├── statCaps.js               # 종족·계급·전공·23모성·12재능·12후천특성 이중 스탯 상한 & ACQUIRED_TRAIT_EFFECTS SSOT (Stage 21)
     │   ├── reqEvaluator.js           # 파티션 버킷 인덱싱(`buildPoolIndex`) · 3대 계층 산출 · `makeReqContext` · `checkReq` (무순환 분리)
+    │   ├── centenarianOps.js         # 100세+ 초장수자 전용 동적 순찰 · 유물 회수 · 패권 작전 풀 (Stage 23-B)
     │   ├── createEngine.js           # 코어 시뮬레이션 엔진 팩토리 (createImperiumEngine · d100 판정 · 선택적 `critSuccess`/`critFail` 분기 · `removeTags` · `migrateState` · 진행 루프)
     │   ├── careerRules.js            # 직군 서약 격리 · 입단 심사 · 동적 발탁/스카우트 · 수동 전직 · 챕터/템플 서약 (엔진·QA Gate 7A SSOT)
     │   ├── careerActions.js          # 91종 직군 고유 자율 행동 · 리주버냇 · 기계교 의체 · 정화 고행(부정 특성 치유 연동) · 행동 실행
@@ -79,15 +80,15 @@ warhammer/
     │   └── travel.js                 # 성간 이동 · 행성 출입 자격 매트릭스 · 파견/순례/워프 항해 이상 동적 이벤트
     └── data/
         ├── index.js                  # 전체 데이터 조합 진입점 (CORE_DATA + NARRATIVE_DATA)
-        ├── narrative.js              # import.meta.glob 기반 사건(55파일)·연대기(20파일) 비동기 청크 진입점
+        ├── narrative.js              # import.meta.glob 기반 사건(62파일)·연대기(22파일) 비동기 청크 진입점
         ├── glossary.js               # 워해머 40k 주요 개념 사전 (8대 카테고리 · 48종 핵심 용어)
         ├── core/                     # 코어 메타데이터 ESM 15파일 (index.js + worlds/origins/chapters/characters/tags + careers.js 배럴 + careers/{civil_militarum,faith_shadow,transhuman_chaos,specialist_factions}.js + timeline.js 배럴 + timeline/{m41_early,m41_late,m42_indomitus}.js)
-        ├── events/                   # 분기 사건 748종 — 도메인(세력·챕터·권역·주제)별 55개 ESM 파일
-        │   ├── careers/              # 직군 계열·1:1 승격 19파일 (+`mid_ranks_s20.js`)
+        ├── events/                   # 분기 사건 788종 — 도메인(세력·챕터·권역·주제)별 62개 ESM 파일
+        │   ├── careers/              # 직군 계열·1:1 승격 20파일 (+`guardsman_grimdark.js`)
         │   ├── chapters/             # 9대 챕터 1:1 승격 9파일 + 합동 공조 1파일 = 10파일
         │   ├── worlds/               # 행성 1:1 승격 4파일 + 권역 5파일 = 9파일 (+`generic_deep.js`)
-        │   └── themes/               # 횡단 주제별 17파일 (+`anomalies_s21.js`, `acquired_traits_s21.js`)
-        └── chronicles/               # 일상 연대기 892종 — 주제별 20개 ESM 파일 (+`wear_tradeoff.js`, `anomalies_s21.js`)
+        │   └── themes/               # 횡단 주제별 23파일 (`alignment`/`lifecycle`/`crises` 6분할 포함)
+        └── chronicles/               # 일상 연대기 936종 — 주제별 22개 ESM 파일 (`grimdark_s22.js` 포함)
 ```
 
 **모듈 로딩 및 번들 분리 구조:**
@@ -146,7 +147,7 @@ warhammer/
 | `src/data/events/careers/*.js` | 20파일 · 291사건 | 기존 19파일(281건) + **22단계 `guardsman_grimdark.js`(10건)**. |
 | `src/data/events/chapters/*.js` | 10파일 · 60사건 | 9대 챕터 1:1 승격(`6*9=54`) + 합동 공조 `chapters_core`(6). |
 | `src/data/events/worlds/*.js` | 9파일 · 113사건 | 1:1 승격 4파일(`terra` 10, `cadia` 6, `krieg` 6, `armageddon` 6) + 권역 5파일(`solar` 13, `ultima` 27, `frontier` 19, `generic` 14, `generic_deep` 12). |
-| `src/data/events/themes/*.js` | 20파일 · 324사건 | 기존 17파일(294건) + **21.6단계 `bonds_s21_6.js`(12건)** + **22단계 `grimdark_misfortune.js`(10건) · `grimdark_factions.js`(8건)**. |
+| `src/data/events/themes/*.js` | 23파일 · 324사건 | 기존 17파일(294건, `alignment`/`lifecycle`/`crises` 6분할로 +3파일) + **21.6단계 `bonds_s21_6.js`(12건)** + **22단계 `grimdark_misfortune.js`(10건) · `grimdark_factions.js`(8건)**. |
 | `src/data/chronicles/*.js` | 22파일 · 936연대기 | 기존 20파일(892건) + **21.6단계 `bonds_s21_6.js`(14건)** + **22단계 `grimdark_s22.js`(30건)** — 전체 936종 상황 맞춤형 일상·부조리·그림다크 연대기. |
 
 
@@ -1145,10 +1146,40 @@ warhammer/
 
 * **Stage 22 달성도:** 목표 **100% 완료** (누적 코퍼스: `EVENTS=788`(역사 포함 `817`), `CHRONICLES=936`, `TAG_LABELS=225`, Vitest `23/23 PASS`).
 
+---
 
+## 14. 23단계 정비 · 고도화 계획: QA/테마 파일 선제 분할 · 100세+ 초장수 동적 작전 풀 & 후천 특성/극단 판정 점진 확장 (`Stage 23`)
 
+> **착수 전 계획 선기록 (`AGENTS.md` 1장 준수):** Stage 22까지 이월된 구조 유지보수 과제(`scripts/qa.mjs` Gate 7 모듈 분리, 110KB 상한에 근접한 3대 테마 파일 선제 분할)와 `[후순위 보류 후보]`(100세+ 초장수자 전용 동적 순찰·유물 회수 풀, 기존 핵심 사건의 12종 후천 특성 및 `critSuccess`/`critFail` 점진 확장)를 3개 페이즈(`23-A` · `23-B` · `23-C`) + 통합 검증(`23-D`)으로 일괄 정비한다.
 
+| 단계 | 상태 | 목표 범위 및 세부 설계 명세 |
+| --- | --- | --- |
+| **23-A (Phase A). QA `Gate 7` 모듈화 & 중대형 테마 사건 3종 선제 분할** | `[완료]` | **① `scripts/qa/careerGate.mjs` 분리:** `scripts/qa.mjs`(2,816줄 · 138KB)의 `Gate 7A/7B/7D`(~680줄)를 `runCareerAuditGate`로 무손실 분리하고, Gate 2/8 감시 목록에 `centenarianOps.js`를 추가했다. **② 3대 테마 사건 파일 2분할 (0건 차이 무손실 검증):** `alignment.js`(93.2KB · 30건) → `alignment_axes.js`(24건) + `alignment_dilemmas.js`(6건), `lifecycle.js`(86.9KB · 33건) → `lifecycle_early.js`(16건) + `lifecycle_elder.js`(17건), `crises.js`(87.4KB · 24건) → `crises_warfare.js`(12건) + `crises_imperial.js`(12건)로 분할(`deepStrictEqual` 100% 일치 검증) 후 원본 3파일을 삭제했다. |
+| **23-B (Phase B). 100세+ 초장수 동적 작전 풀 (`src/engine/centenarianOps.js`)** | `[완료]` | 정적 `maxRepeat <= 2` 불변식을 유지하면서 100세 이상 초인·불멸자·장수 필멸자의 정적 구간(`maxAdultQuietQ`)을 완화하기 위해 `createDynamicCentenarianEvent(state, reqCtx, helpers)` 동적 생성기를 신설했다(4년 쿨다운 `lastCentenarianOpYear`, 최근 6종 제외 `recentCentenarianOps`, 제국 초인 5종·장수 필멸자 5종·카오스 불멸자 4종 = 14종 변주, 무조건 선택지 + d100 판정 + `critSuccess`/`critFail`). `createEngine.js` `migrateState` 하위 호환 포함. |
+| **23-C (Phase C). 기존 핵심 사건 후천 특성(12종) & `critSuccess`/`critFail` 점진 확장** | `[완료]` | `AGENTS.md` 3.6항(한 생애 긍정 1~2 / 부정 0~2, 남발 금지, 전화위복 승화)에 따라 기존 핵심 테마 사건 15건(`crises_warfare.js` 3 · `alignment_dilemmas.js` 3 · `crises_imperial.js` 3 · `chaos_warp.js` 2 · `xenos.js` 2 · `lifecycle_elder.js` 2)에 `silver_tongue`/`notorious_ruthless` 전용 선택지, `removeTags` 치유·속죄, `critSuccess` 승화, `critFail` 위기 분기를 보강했다. |
+| **23-D (Phase D). 테스트 · 통합 QA · 문서 동기화** | `[완료]` | `tests/game-a11y.test.tsx` Stage 23 회귀 테스트(#24) 추가, `npm run verify` + `npm run qa:deep`(1,500생애 + Grimdark 300생애) 0오류 통과, `PROJECT_GUIDE.md` 수록 현황 및 완료 보고서 갱신 완료. |
 
+#### 14.1 Stage 23 완료 보고서
 
+* **단계 달성도 및 전체 누적 진행률:** Stage 23(`23-A` ~ `23-D`) 1차 구현 후 전방위 교차 감사(`iv_redteam_reviewer` · `iv_lore_auditor` · `iv_prose_a11y_critic`)에서 `centenarianOps.js` 14종 선택지 스키마 중첩 오류(`P0`)를 비롯한 Stage 21~23 누적 결함이 다수 확인되어 **`fix/stage23-5-stabilization` 브랜치에 격리 보관** 중이며, 아래 **Stage 23.5 통합 안정화** 완료 후 `main` 병합 예정이다. (`main`은 `027800e` 유지)
+* **최종 검증 실측 결과 (`npm run verify && npm run qa:deep`, 전 항목 0오류 — 단 QA 사각지대 보강 필요 확인):**
+  * **`npm run qa` (300생애):** 6개 게이트 0오류 (`15 core, 62 events, 22 chronicles, 9 engine`, `maxCore=66.9KB`, `maxEngine=73.2KB`, `maxEv=87.0KB`, `maxCh=44.9KB`, `1000q=1068.4ms`).
+  * **`npm run audit` (`seed=1663564700`, 200생애):** `crashes=0, softlocks=0, migrateFailures=0, unknownIdWarnings=0, incorruptibleLeaks=0, maxAdultQuietQ=41, maxSave=354.0KB <= 2048KB, nearLimit=0`.
+  * **`npm run typecheck`:** 0오류. **`npm test`:** **24 / 24 PASS**.
+  * **`npm run build && npm run qa:dist`:** Astro 9페이지 **2.45s 0오류** + Gate 8 0오류 (`codexOverviewJS=0KB, narrativeLeaks=0, engineLeaks=0, glossaryProseInGame=0, SSR cards 48/23/91/9/29/28`).
+  * **`npm run qa:deep` (1,500생애 + Grimdark 300생애):** 7개 게이트 0오류 (`Gate 7A/7B`: `2,180 req specs`, `directCareerMatch=91/91`, `Gate 7D`: `120 edges, 0 cap deadlocks`, `maxRepeat=2`, `Alignment Comparative` 3축 우위, `Grimdark Probe` 300생애 `grimdarkEvents=919, standardLeaks=0`).
 
+---
 
+## 15. 23.5단계 통합 안정화 계획: Stage 21~23 엔진 · UI/접근성 · QA 맹점 · 고증/정합성 전면 수습 (`Stage 23.5`)
+
+> **착수 전 계획 선기록 (`AGENTS.md` 1장 준수):** `2858b66`(Stage 21), `027800e`(Stage 21.5·21.6·22), 그리고 `fix/stage23-5-stabilization`의 Stage 23 변경분 전반에 대해 수행한 독립 3인 읽기 전용 감사(`iv_redteam_reviewer` · `iv_lore_auditor` · `iv_prose_a11y_critic`) 결과를 바탕으로 모든 `P0`/`P1`/`P2` 결함과 QA 거짓 양성 사각지대를 일괄 해소한다.
+> **상세 결함 전수 체크리스트 (파일 경로 · 항목 ID · 줄 번호 · 수정 명세):** [`docs/AUDIT_STAGE21_23.md`](./docs/AUDIT_STAGE21_23.md) 참조.
+
+| 단계 | 상태 | 목표 범위 및 세부 설계 명세 |
+| --- | --- | --- |
+| **23.5-A (Phase A). 엔진 코어 · 치유/면역 · 모성/재능 SSOT · 코어 직군 고증 수습** | `[예정]` | **메인 단독 소유:** ① `centenarianOps.js` 14종 Choice 0 중첩 스키마 평탄화 + `[XX 판정]` 접두어 + `워프석`→`블랙스톤 파편과 워프 합금` + `saint_vessel`/쿠스토데스/드레드노트/테라/야만/크리그/니힐루스 정합화. ② `careerActions.js` `canUsePenance` 오염 0 `shell_shocked`/`warp_scarred` 치유 개방. ③ `createEngine.js` 초인 `shell_shocked`·오염면역/무혼 `warp_scarred` 면역 + `applyOutcome`/`applyChronicle` `blank`/`omega_pariah`/`ophelia7` 오염 감쇠 + `applyChronicle` `removeTags` 거짓 치유 로그 수정 + `migrateState` 손상 필드 방어 + `navigator_house` 출생 자질 충돌 차단. ④ `worlds.js`/`origins.js`/`careerRules.js`/`statCaps.js` 모성·재능 특전 수치·미구현 100% 일치화 및 `ANOMALY_TAG_EFFECTS` `summary` 노출. ⑤ `careers/*.js` 국교 3직군 아인류/사이커 제외, `chaos_champion` `"다크 데마고그"` 교정, 최고위 `offerPitch` 4건 시대착오 제거 및 누락 `excludeTags` 보강. |
+| **23.5-B (Phase B). UI · 스크린 리더 접근성 · 세이브/전당 결함 수정** | `[예정]` | **메인 단독 소유:** `GameApp.tsx` `handleChooseEvent` `prevTopLog` 가드, `FullChronicleView.tsx` `chronicle-grim` 일상 필터 복원, `DossierPanel.tsx` 후천 각성 특이점 표시·`<dl>` 정리, `ActiveEventPanel.tsx` 특성 예고 보유/면역 필터, `StartScreen.tsx` 라디오 정적 `aria-describedby`·`"억까"` 순화, `ObituaryModal.tsx` `#obit-rank` 레이블 연결, `HallOfSoulsApp.tsx` `saint_vessel` 마일스톤 오인정 수정, `storage.ts` `tags` 상한 `20→24`, `codex/*.astro` `client:load` 복원 및 `CodexExplorer.tsx` 초기 해시 초점 탈취 가드. |
+| **23.5-C (Phase C). QA 스위트 · 퍼징 · Vitest 사각지대 영구 봉쇄** | `[예정]` | `scripts/qa.mjs` 공용 선택지 검증기로 정적 + 4대 동적 생성기(`centenarianOps`/`careerRules`/`travel`/`endings`) 전수 검증 + `CHRONICLES` `effect.stats`/행성 태그 키 검증 + `canUsePenance` 오염 0 치유·초인/무혼 면역·`anomalies_s21` `minAge`·비표준 판정 라벨 차단 회귀 추가. `scripts/qa/personaGate.mjs` `standard`+`grimdark` 이중 패스 편입. `scripts/audit-health.mjs` `standard`/`grimdark` 50:50 혼합 퍼징 + 매 `resolvePendingChoice` `outcome`·신규 로그 단언 추가. `tests/game-a11y.test.tsx` Stage 23.5 회귀 테스트(#25~#27) 추가. |
+| **23.5-D (Phase D). 서사 · 연대기 데이터 고증 · 정합성 · 표기 5트랙 병렬 교정** | `[예정]` | **`iv_data_writer` 5트랙 배타적 파일 병렬 수정:** ① D1(`wear_tradeoff.js` `S`/`Per` 11건·`"cold"`·리빙세인트, `chronicles/anomalies_s21.js`), ② D2(`events/themes/anomalies_s21.js` 12건 `minAge`·침묵의 자매들, `acquired_traits_s21.js`), ③ D3(`bonds_s21_6.js` 이브람 건트 `"대령-커미사르"`·갱단 배교 분리·크리그/드레드노트 가드), ④ D4(`guardsman_grimdark.js`, `grimdark_misfortune.js`, `grimdark_factions.js`, `grimdark_s22.js` 크리그·야만·`maxCareerTier`·드레드노트·표기/호칭 통일), ⑤ D5(Stage 23 수정 6파일 초인·면역자·드레드노트·비툼 네임드 행성·잔여 가드 보강). |
+| **23.5-E (Phase E). 통합 검증 · 3인 읽기 전용 재감사 `PASS` · 문서 동기화 · `main` 병합** | `[예정]` | `npm run verify && npm run qa:deep && npm run coverage` 0오류 통과 후, `iv_lore_auditor` · `iv_prose_a11y_critic` · `iv_redteam_reviewer` 3인 재감사 **`PASS` (`P0`/`P1` 0건)** 확인. `PROJECT_GUIDE.md` 상단/하단 및 `README.md` 수치 전면 동기화, `docs/AUDIT_STAGE21_23.md` 완료 갱신 후 `main` 병합·푸시. |

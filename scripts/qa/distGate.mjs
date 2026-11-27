@@ -75,7 +75,8 @@ export function runDistBundleGate({ rootDir, readRel, fail, coreData, glossaryTe
     "careerActions.",
     "endings.",
     "travel.",
-    "statCaps."
+    "statCaps.",
+    "centenarianOps."
   ];
   const ENGINE_CHUNK_SIGNATURES = [
     "createDynamicCareerOfferEvent",

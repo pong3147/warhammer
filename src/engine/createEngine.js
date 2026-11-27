@@ -41,6 +41,7 @@ import {
   getStatCap,
   getAllStatCaps
 } from "./statCaps.js";
+import { createDynamicCentenarianEvent } from "./centenarianOps.js";
 
 export function createImperiumEngine(DATA) {
   function warnUnknownId(kind, id) {
@@ -531,6 +532,8 @@ export function createImperiumEngine(DATA) {
       lastCareerActionYear: -999,
       lastCareerOfferYear: -999,
       lastCareerChangeYear: -999,
+      lastCentenarianOpYear: -999,
+      recentCentenarianOps: [],
       careerRetryAfter: {},
       declinedCareers: {},
       tags,
@@ -628,6 +631,8 @@ export function createImperiumEngine(DATA) {
     st.lastCareerActionYear = Number.isFinite(st.lastCareerActionYear) ? st.lastCareerActionYear : -999;
     st.lastCareerOfferYear = Number.isFinite(st.lastCareerOfferYear) ? st.lastCareerOfferYear : -999;
     st.lastCareerChangeYear = Number.isFinite(st.lastCareerChangeYear) ? st.lastCareerChangeYear : -999;
+    st.lastCentenarianOpYear = Number.isFinite(st.lastCentenarianOpYear) ? st.lastCentenarianOpYear : -999;
+    if (!Array.isArray(st.recentCentenarianOps)) st.recentCentenarianOps = [];
     if (!st.careerRetryAfter || typeof st.careerRetryAfter !== "object" || Array.isArray(st.careerRetryAfter)) st.careerRetryAfter = {};
     if (!st.declinedCareers || typeof st.declinedCareers !== "object" || Array.isArray(st.declinedCareers)) st.declinedCareers = {};
     if (!st.eventCounts || typeof st.eventCounts !== "object" || Array.isArray(st.eventCounts)) st.eventCounts = {};
@@ -1540,6 +1545,19 @@ export function createImperiumEngine(DATA) {
           picked,
           previouslyMetCharacters ? { previouslyMetCharacters } : null
         );
+        return { status: "event", event: state.pendingEvent };
+      }
+    }
+
+    // 2.2순위: 100세+ 초장수자 전용 동적 순찰 · 유물 회수 · 패권 작전 풀
+    if (state.age >= 100 && Math.random() < 0.25) {
+      const centEv = createDynamicCentenarianEvent(state, reqCtx, {
+        getWorld,
+        getCareer,
+        isIncorruptibleState
+      });
+      if (centEv) {
+        state.pendingEvent = centEv;
         return { status: "event", event: state.pendingEvent };
       }
     }

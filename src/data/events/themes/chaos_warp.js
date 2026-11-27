@@ -120,10 +120,25 @@ export default [
           faith: 6,
           align: { dogmatic: 5 }
         },
+        critSuccess: {
+          text: "워프의 균열을 역으로 닫아걸며 영혼에 박혀 있던 흉터마저 태워 정화했다.",
+          stats: { WP: 8, Int: 5 },
+          faith: 8,
+          corruption: -6,
+          removeTags: ["warp_scarred"],
+          addTags: ["iron_nerves"],
+          align: { dogmatic: 7 }
+        },
         fail: {
           text: "사이킥 역류로 피를 토하며 쓰러졌고, 영혼에 지워지지 않는 워프의 균열이 남았다.",
           wounds: -24,
           corruption: 14
+        },
+        critFail: {
+          text: "통제를 벗어난 워프의 불길이 정신을 할퀴며 지워지지 않는 워프 흉터를 새겼다.",
+          wounds: -28,
+          corruption: 18,
+          addTags: ["warp_scarred"]
         }
       },
       {
@@ -185,6 +200,12 @@ export default [
           stats: { WP: 6, Int: 4, Inf: 6 },
           faith: 6
         },
+        critSuccess: {
+          text: "완벽한 정신 집중으로 겔러 필드를 즉각 정상화하고, 그 여파로 영혼에 남았던 워프의 잔재까지 말끔히 씻어 냈다.",
+          stats: { WP: 7, Int: 5, Inf: 7 },
+          faith: 8,
+          removeTags: ["warp_scarred"]
+        },
         fail: {
           text: "워프의 광기에 휩쓸린 승무원들과 난투극을 벌이며 부상과 오염을 입었다.",
           wounds: -22,
@@ -203,6 +224,11 @@ export default [
         success: {
           text: "함교로 돌진하던 빙의자들을 모두 막아 내어 함교 전원의 찬사를 받았다.",
           stats: { WS: 5, T: 3, Inf: 5 }
+        },
+        critSuccess: {
+          text: "좁은 격벽 통로에서 밀려드는 빙의자들을 단신으로 베어 넘기며 신들린 검술의 경지를 증명했다.",
+          stats: { WS: 7, T: 4, Inf: 6 },
+          addTags: ["blade_master"]
         },
         fail: {
           text: "변이된 승무원의 괴력에 뼈가 부러졌다.",

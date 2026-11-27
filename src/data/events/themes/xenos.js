@@ -32,10 +32,20 @@ export default [
           text: "정확한 집중 사격으로 지휘관 오크의 머리를 날려 버렸다! 지휘 체계를 잃은 오크들이 서로 싸우며 무너졌다.",
           stats: { BS: 5, Inf: 4, WP: 3 }
         },
+        critSuccess: {
+          text: "연속 정밀 사격으로 노브와 트럭 운전수를 동시에 관통해 돌격 대열을 통째로 전복시켰다.",
+          stats: { BS: 7, Inf: 6, WP: 4 },
+          addTags: ["deadeye_marksman"]
+        },
         fail: {
           text: "오크 슈타의 난사에 어깨를 관통당했으나 간신히 전선을 유지했다.",
           wounds: -22,
           stats: { T: 2 }
+        },
+        critFail: {
+          text: "오크 중화기의 유탄 파편이 팔과 다리를 강타해 영구적인 관절 손상을 남겼다.",
+          wounds: -30,
+          addTags: ["crippled_limb"]
         }
       },
       {
@@ -44,6 +54,11 @@ export default [
         success: {
           text: "피와 포자가 튀는 백병전 끝에 오크 무리를 궤멸시켰다! 연대의 사기가 하늘을 찔렀다.",
           stats: { WS: 6, T: 4, WP: 4, Inf: 5 }
+        },
+        critSuccess: {
+          text: "거구의 오크 노브들의 맹공을 모두 흘려 넘기며 단칼에 도륙해 전선 최고의 검술가로 이름을 떨쳤다.",
+          stats: { WS: 8, T: 5, WP: 5, Inf: 7 },
+          addTags: ["blade_master"]
         },
         fail: {
           text: "괴력을 지닌 오크의 초파에 깊은 상처를 입고 야전 병원으로 실려 갔다.",
@@ -91,10 +106,20 @@ export default [
           text: "진스틸러 무리의 급습을 피해 포자낭을 불태우고 하이브 함대 침공 경보를 제때 발신했다!",
           stats: { Ag: 5, BS: 4, Inf: 6 }
         },
+        critSuccess: {
+          text: "생체 포자 폭풍 속에서도 한 치의 빈틈없이 포자낭을 소각하고 진스틸러 선봉을 전멸시켰다.",
+          stats: { Ag: 7, BS: 5, Inf: 7 },
+          addTags: ["battle_hardened"]
+        },
         fail: {
           text: "진스틸러의 예리한 발톱에 옆구리를 깊게 베였으나 지원 부대 덕분에 생존했다.",
           wounds: -28,
           stats: { T: 3 }
+        },
+        critFail: {
+          text: "포자낭의 맹독성 산성 가스를 정면으로 들이마시며 쓰러졌다. 목숨은 건졌으나 폐에 만성적인 독소 손상이 남았다.",
+          wounds: -32,
+          addTags: ["chronic_toxins"]
         }
       },
       {
@@ -103,6 +128,12 @@ export default [
         success: {
           text: "공포에 질린 대원들을 진정시켜 완벽한 교차 사격으로 외계 선봉 무리를 섬멸했다.",
           stats: { WP: 5, Fel: 4, Inf: 5 }
+        },
+        critSuccess: {
+          text: "하이브 마인드의 정신 중압감마저 정면으로 뚫어 내며 부대 전체를 철벽처럼 통솔했다.",
+          stats: { WP: 7, Fel: 5, Inf: 7 },
+          removeTags: ["shell_shocked"],
+          addTags: ["iron_nerves"]
         },
         fail: {
           text: "압도적인 정신적 중압감에 판단이 한 박자 늦어져 진스틸러의 돌격에 큰 부상을 입었다.",
