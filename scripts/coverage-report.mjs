@@ -141,6 +141,9 @@ console.log(
 console.log(`\n--- [7] Era Presets (Timeline wars within +45 yrs of birth) ---`);
 for (const ep of Engine.ERA_PRESETS || []) {
   const mid = Math.round((ep.minYear + ep.maxYear) / 2);
-  const wars = DATA.TIMELINE.filter((t) => t.year >= mid + 12 && t.year <= mid + 55).map((t) => `${t.id}(${t.year})`);
+  const wars = DATA.TIMELINE.filter((t) => {
+    const endY = t.exactYear ? t.year : (t.endYear || t.year + 1);
+    return endY >= mid + 14 && t.year <= mid + 55;
+  }).map((t) => `${t.id}(${t.year}${t.endYear ? "-" + t.endYear : ""})`);
   console.log(`  ${ep.id.padEnd(18)} (~${String(mid).padStart(4)}) | reachableWars=${wars.length}: ${wars.slice(0, 6).join(", ")}${wars.length > 6 ? " ..." : ""}`);
 }

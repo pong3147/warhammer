@@ -259,7 +259,7 @@ export default [
     id: "ch_s12_menial_1",
     badge: "매뉴팩토룸 교대",
     priority: 3,
-    req: { anyCareers: ["menial_worker", "guild_artisan"], excludeWorlds: ["krieg"] },
+    req: { anyCareers: ["menial_worker", "guild_artisan"], excludeWorlds: ["krieg"], excludeWorldTags: ["feral"] },
     text: "14시간 조업을 마치고 쇠맛 나는 정화수 한 컵과 배급 죽으로 허기를 달랬다. 기어 소리 가득한 작업장에서도 내일을 버텨 낼 작은 요령을 익혔다.",
     effect: { stats: { T: 1, Int: 1 } }
   },

@@ -316,5 +316,205 @@ export default [
     },
     text: "백칠십 년을 살아 낸 끝에 육신의 고통도, 젊은 날의 격렬한 분노도 이제는 먼 유리 너머의 풍경처럼 아득해졌다. 정기 시술과 의체 점검으로 심장은 여전히 힘차게 뛰고 있으나, 거울 속 창백한 눈동자를 들여다보면 과연 어디까지가 원래의 인간인지 스스로도 가늠하기 어렵다. 그래도 한 세기 반 넘게 축적한 통찰과 인맥 앞에서는 가장 오만한 고위 관료조차 고개를 숙였다.",
     effect: { stats: { Inf: 1, Int: 1 }, wounds: -1 }
+  },
+  // === 20단계 중견기(23~45세) · 중노년기(46~65세) · 고령기(66~100세) · 노년의 유산 연대기 (12종) ===
+  {
+    id: "ch_s20_mat_01",
+    badge: "중견의 책무",
+    priority: 3,
+    req: {
+      minAge: 23,
+      maxAge: 45,
+      maxSocialTier: "elite",
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "daemon_prince", "high_lord_terra"]
+    },
+    text: "신참 시절에야 시키는 일만 해내면 그만이었으나, 어느덧 후배들의 실수까지 대신 수습해야 하는 중견 연차가 되었다. 황동 등불 아래 밀린 결재 서류와 점검표를 정리하며, 책임을 진다는 무게가 어깨에 단단히 얹혔음을 실감했다.",
+    effect: { stats: { Int: 1, WP: 1 } }
+  },
+  {
+    id: "ch_s20_mat_02",
+    badge: "현장의 경륜",
+    priority: 3,
+    req: {
+      minAge: 28,
+      maxAge: 45,
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "위급한 돌발 상황이 터졌을 때 젊은 실무자들이 우왕좌왕하는 사이, 수년간 몸에 밴 절차대로 침착하게 대응해 혼란을 가라앉혔다. 화려한 재능보다 묵묵히 쌓아 올린 숙련이 제국에서 가장 믿을 만한 방패라는 사실을 깨달았다.",
+    effect: { stats: { WP: 1, Inf: 1 } }
+  },
+  {
+    id: "ch_s20_mat_03",
+    badge: "세월의 매듭",
+    priority: 3,
+    req: {
+      minAge: 32,
+      maxAge: 45,
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "서랍 정리 도중 스무 살 무렵 손수 적어 두었던 포부 메모를 발견하고 쓴웃음을 지었다. 젊은 날 품었던 거창한 이상은 제국의 냉엄한 현실에 깎여 나갔지만, 대신 어떤 폭풍 속에서도 쉽게 꺾이지 않는 단단한 중심이 그 자리에 남았다.",
+    effect: { stats: { WP: 1, Fel: 1 } }
+  },
+  {
+    id: "ch_s20_mat_04",
+    badge: "황혼의 독서",
+    priority: 3,
+    req: {
+      minAge: 46,
+      maxAge: 65,
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: ["rejuvenat", "bionic", "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "작은 글씨로 빽빽이 적힌 양피지 공문을 읽을 때면 어느새 팔을 한 뼘 더 뻗고 황동 돋보기를 집어 들게 되었다. 눈은 조금씩 침침해져도 행간에 숨은 의도와 거짓을 읽어 내는 통찰만큼은 젊은 시절보다 훨씬 날카로워졌다.",
+    effect: { stats: { Int: 1, WP: 1 } }
+  },
+  {
+    id: "ch_s20_mat_05",
+    badge: "바뀌어 가는 얼굴",
+    priority: 3,
+    req: {
+      minAge: 48,
+      maxAge: 65,
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "복도에서 마주치는 신임 서기와 장교들 가운데 그대가 처음 배속되던 해에 아직 태어나지도 않았던 세대가 절반을 넘었다. 그들의 서툰 패기를 말없이 지켜보며, 한 시대가 조용히 다음 세대의 손으로 넘어가고 있음을 느꼈다.",
+    effect: { stats: { Fel: 1, Inf: 1 } }
+  },
+  {
+    id: "ch_s20_mat_06",
+    badge: "중견의 등불",
+    priority: 3,
+    req: {
+      minAge: 50,
+      maxAge: 65,
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "막다른 난관에 부딪힌 젊은 책임자가 밤늦게 찾아와 조언을 청했다. 요란한 훈계 대신 이십 년 전 비슷한 위기를 넘겼던 경험담 한 토막을 들려주자, 그의 굳었던 표정에 비로소 실마리를 찾은 빛이 돌았다.",
+    effect: { stats: { Fel: 1, Int: 1 }, align: { humane: 1 } }
+  },
+  {
+    id: "ch_s20_mat_07",
+    badge: "절제의 습관",
+    priority: 3,
+    req: {
+      minAge: 52,
+      maxAge: 65,
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: ["rejuvenat", "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "예전처럼 밤을 새워 무리하면 며칠씩 회복이 더뎌진다는 사실을 받아들이고, 새벽마다 규칙적인 호흡과 따뜻한 약차로 기력을 다스리는 습관을 들였다. 낡아 가는 육신을 탓하기보다 오래 버틸 수 있게 돌보는 편이 현명하다.",
+    effect: { stats: { T: 1, WP: 1 }, wounds: 2 }
+  },
+  {
+    id: "ch_s20_mat_08",
+    badge: "백발의 경의",
+    priority: 3,
+    req: {
+      minAge: 66,
+      maxAge: 100,
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: ["rejuvenat", "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "회랑을 천천히 걸어 지나갈 때마다 젊은 실무자들과 경비병들이 말없이 길을 비켜 서고 정중히 경례를 올렸다. 예순여섯을 넘겨 살아남은 필멸자의 백발 자체가 제국에서는 그 어떤 훈장보다 묵직한 권위로 통한다.",
+    effect: { stats: { Inf: 1, WP: 1 } }
+  },
+  {
+    id: "ch_s20_mat_09",
+    badge: "황혼의 고요",
+    priority: 3,
+    req: {
+      minAge: 66,
+      maxAge: 100,
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "새벽 종소리가 울리기 전 일찍 눈을 떠 따뜻한 찻잔을 데우며 지나온 일흔 해 가까운 세월을 차분히 되짚었다. 한때 세상을 뒤흔들 것 같던 원한과 욕심도 세월 너머로 가라앉고, 오늘 하루를 무사히 맞았다는 감사만이 남았다.",
+    effect: { stats: { WP: 2 }, faith: 2 }
+  },
+  {
+    id: "ch_s20_mat_10",
+    badge: "남겨 둘 기록",
+    priority: 3,
+    req: {
+      minAge: 66,
+      maxAge: 100,
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["krieg", "feral"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "기억이 더 희미해지기 전에 젊은 시절 겪었던 전란의 지명과 절차, 그리고 꼭 지켜야 할 주의 사항을 또박또박 양피지 노트에 옮겨 적었다. 훗날 이 자리에 앉을 이름 모를 후임자가 같은 실수로 피를 흘리지 않기를 바라는 마음이었다.",
+    effect: { stats: { Int: 1, Fel: 1 }, align: { humane: 1 } }
+  },
+  {
+    id: "ch_s20_mat_11",
+    badge: "노년의 유산",
+    priority: 3,
+    req: {
+      minAge: 52,
+      allTags: ["silver_legacy"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["daemonic"],
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "우연히 들른 회의실에서 젊은 실무자가 그대가 남긴 헌장과 기록을 근거로 불합리한 관행을 조목조목 바로잡는 모습을 목격했다. 육신은 늙어 가더라도 옳은 뜻이 담긴 유산은 다음 세대의 목소리를 빌려 여전히 숨 쉬고 있었다.",
+    effect: { stats: { WP: 1, Inf: 1 }, faith: 1 }
+  },
+  {
+    id: "ch_s20_mat_12",
+    badge: "이어지는 등불",
+    priority: 3,
+    req: {
+      minAge: 55,
+      allTags: ["silver_legacy"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["daemonic"],
+      excludeTags: ["heretic", "chaos_aligned", "daemon_prince"]
+    },
+    text: "예전에 그대의 기록과 중재로 도움을 받았던 후학이 감사의 편지와 함께 정성껏 필사한 새 규정집을 보내왔다. 끝없는 어둠뿐인 제국에서도 한 사람이 남긴 성실한 발자국이 여러 사람의 길을 밝힐 수 있다는 사실에 마음이 놓였다.",
+    effect: { stats: { Fel: 1, WP: 1 }, align: { humane: 1 } }
   }
 ];

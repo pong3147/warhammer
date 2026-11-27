@@ -4,8 +4,9 @@ export const TIMELINE_M41_LATE = [
   {
     id: "tl_badab_war",
     year: 901,
-    title: "바답 전쟁 발발 — 마엘스트롬의 반역",
-    en: "Outbreak of the Badab War",
+    endYear: 912,
+    title: "바답 전쟁 — 마엘스트롬의 반역",
+    en: "The Badab War",
     scope: "울티마 세그멘툼 · 아스타르테스 · 해군",
     dispatchScope: "galaxy",
     dispatchText: "울티마 성역 마엘스트롬의 아스트랄 클로 챕터가 제국 십일조를 거부하고 반란을 일으켰다. 호루스 헤러시 이후 최대의 스페이스 마린 내전 '바답 전쟁'이 발발했다.",

@@ -4,7 +4,7 @@ export default [
     id: "ch_job_menial_1",
     badge: "매뉴팩토룸 부조리",
     priority: 3,
-    req: { anyCareers: ["menial_worker", "guild_artisan"] },
+    req: { anyCareers: ["menial_worker", "guild_artisan"], excludeWorldTags: ["feral"] },
     text: "16시간 교대 근무 중 옆자리 노동자의 팔이 유압 프레스에 빨려 들어갔다. 감독관은 즉시 외쳤다. '생산 라인 멈추지 마라! 성스러운 기계령에 피가 튀지 않았는지부터 확인해!'",
     effect: { stats: { T: 1 }, wounds: -4, faith: -2 }
   },
@@ -12,7 +12,7 @@ export default [
     id: "ch_job_menial_2",
     badge: "노동자의 일상",
     priority: 3,
-    req: { anyCareers: ["menial_worker", "guild_artisan"] },
+    req: { anyCareers: ["menial_worker", "guild_artisan"], excludeWorldTags: ["feral"] },
     text: "휴일 없는 연속 교대 끝에 할당량을 102% 달성했다. 포상으로 '황제 폐하께서 그대의 수고를 기억하신다'는 종이쪽지 한 장과 5분 추가 휴식을 받았다.",
     effect: { stats: { WP: 1 }, wounds: -2 }
   },
@@ -20,7 +20,7 @@ export default [
     id: "ch_job_menial_3",
     badge: "서비터의 눈동자",
     priority: 3,
-    req: { anyCareers: ["menial_worker", "underhive_ganger"] },
+    req: { anyCareers: ["menial_worker", "underhive_ganger"], excludeWorldTags: ["feral"] },
     text: "공장 입구 문을 여닫는 서비터의 텅 빈 눈동자에서 지난겨울 작업 거부로 잡혀간 이웃의 얼굴을 본 것 같았다. 서둘러 시선을 내리고 일터로 뛰어들어갔다.",
     effect: { stats: { WP: 1 }, faith: -1 }
   },

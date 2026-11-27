@@ -220,7 +220,11 @@ export const TAG_LABELS = {
   macro_exterminatus_scar: "익스터미나투스 낙인",
   macro_mercy_sanctuary: "전선 구호 성역 수호",
   crossover_oath: "전설들의 교차 서약",
-  solemnace_debt: "솔렘나스의 빚"
+  solemnace_debt: "솔렘나스의 빚",
+
+  // 20단계 노년·변경 회수 이력 태그
+  silver_legacy: "노년의 유산",
+  frontier_patron: "변경의 후원자"
 };
 
 // 행성 유형 태그 한글 라벨 사전 (describeReq 표시용)

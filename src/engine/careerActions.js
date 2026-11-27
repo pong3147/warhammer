@@ -461,13 +461,18 @@ export function createCareerActionsModule(deps) {
         state.wounds = clamp(state.wounds + eff.wounds, floor, state.maxWounds);
       }
       if (eff.faith) state.faith = clamp(state.faith + eff.faith, 0, 100);
+      let blockedCorr = false;
       if (eff.corruption) {
-        if (!(eff.corruption > 0 && isIncorruptibleState(state))) {
+        if (eff.corruption > 0 && isIncorruptibleState(state)) {
+          blockedCorr = true;
+        } else {
           state.corruption = clamp(state.corruption + eff.corruption, 0, 99);
         }
       }
       if (eff.align) applyAlignDelta(state, eff.align);
-      const effForDelta = appliedStats ? Object.assign({}, eff, { stats: appliedStats }) : eff;
+      const effForDelta = (appliedStats || blockedCorr)
+        ? Object.assign({}, eff, appliedStats ? { stats: appliedStats } : null, blockedCorr ? { corruption: 0 } : null)
+        : eff;
       addLog(state, act.logText, "success", null, {
         badge: "직군 고유 행동",
         deltaText: formatDeltaText(effForDelta)

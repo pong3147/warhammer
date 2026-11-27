@@ -161,6 +161,7 @@ export default [
     once: true,
     req: {
       anyCareers: ["menial_worker"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
     },
     reqLabel: "직업: 행성 노동자 · 길드원",
@@ -334,6 +335,7 @@ export default [
     req: {
       minAge: 15,
       maxSocialTier: "common",
+      excludeWorldTags: ["feral"],
       excludeRealms: ["cloistered", "heretic", "mechanicus"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
@@ -523,6 +525,7 @@ export default [
       anyCareers: ["menial_worker"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
     },
     reqLabel: "직군: 행성 노동자 · 길드원, 크리그 제외",
@@ -1161,6 +1164,7 @@ export default [
       anyCareers: ["menial_worker"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
     },
     reqLabel: "직군: 행성 노동자, 크리그 제외",

@@ -1047,6 +1047,7 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      excludeWorldTags: ["feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
         "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince",
@@ -1437,7 +1438,7 @@ export default [
       minAge: 18,
       excludeRealms: ["void"],
       excludeWorlds: ["voidborn", "krieg"],
-      excludeWorldTags: ["krieg", "voidborn"],
+      excludeWorldTags: ["krieg", "voidborn", "feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
         "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel",

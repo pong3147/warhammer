@@ -558,6 +558,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeWorldTags: ["feral"],
       or: [
         { anyCareers: ["menial_worker", "skitarii", "tech_priest"] },
         { anyWorldTags: ["industrial", "forge"] }

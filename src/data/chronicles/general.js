@@ -7,6 +7,7 @@ export default [
     req: {
       minAge: 12,
       maxSocialTier: "common",
+      excludeWorldTags: ["feral"],
       excludeRealms: ["heretic", "cloistered"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: ["noble", "astartes", "custodes", "inquisitor", "rogue_trader", "magos"],
@@ -375,7 +376,7 @@ export default [
     id: "ch_grim_deep_6",
     badge: "제국 일상",
     priority: 2,
-    req: { anyCareers: ["menial_worker"], excludeWorlds: ["krieg"] },
+    req: { anyCareers: ["menial_worker"], excludeWorlds: ["krieg"], excludeWorldTags: ["feral"] },
     text: "교대 사이렌이 울리자 피로에 절은 동료들과 함께 쇳가루 묻은 손으로 아퀼라 성호를 긋고 4시간짜리 쪽잠을 청했다.",
     effect: { stats: { T: 1 } }
   },
@@ -599,7 +600,7 @@ export default [
     id: "ch_s5_traitor_dg",
     badge: "역병 경계",
     priority: 3,
-    req: { minAge: 16, excludeWorlds: ["terra"], excludeRealms: ["heretic"] },
+    req: { minAge: 16, excludeWorlds: ["terra"], excludeWorldTags: ["feral"], excludeRealms: ["heretic"] },
     text: "인근 성계에서 데스 가드 함대의 흔적이 포착되었다는 경보와 함께, 도시 전역의 방독면 필터와 방역 소독제 배급이 일제히 강화되었다.",
     effect: { stats: { T: 1, WP: 1 } }
   },
@@ -615,7 +616,7 @@ export default [
     id: "ch_s5_traitor_nl",
     badge: "공포의 야간 경보",
     priority: 3,
-    req: { minAge: 16, excludeWorlds: ["terra", "mars"], excludeRealms: ["heretic"] },
+    req: { minAge: 16, excludeWorlds: ["terra", "mars"], excludeWorldTags: ["feral"], excludeRealms: ["heretic"] },
     text: "복스 채널에 정체불명의 잡음과 비명이 잠시 섞여 들리자 고참 병사들이 얼굴을 굳히며 즉시 전 구역 탐조등 점등을 요청했다.",
     effect: { stats: { WP: 2 } }
   },
@@ -639,5 +640,118 @@ export default [
     },
     text: "시장 골목을 지날 때마다 주변 사람들이 이유도 모른 채 몸을 움츠리며 길을 비켰다. 문득 궤도를 떠도는 검은 함선의 소문이 떠올랐다.",
     effect: { stats: { WP: 2 }, corruption: -1 }
+  },
+  {
+    id: "ch_s20_fah_01",
+    badge: "극한 보전",
+    priority: 3,
+    req: {
+      minAge: 20,
+      anyFocus: ["survival"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["daemonic"],
+      or: [
+        { anySocialTiers: ["apex"] },
+        { anyBodyClasses: ["transhuman", "dreadnought"] },
+        { anyWorlds: ["krieg"], minSocialTier: "elite" }
+      ]
+    },
+    text: "연이은 장기 전역 사이의 짧은 대기 시간마다 고압 여과 계통을 세척하고 미세한 외피 손상과 순환 피로를 꼼꼼히 다스렸다. 강철 같은 절제와 보전 습관이 수십 년의 전장을 버티게 하는 가장 든든한 방패다.",
+    effect: { wounds: 5, stats: { T: 1, WP: 1 } }
+  },
+  {
+    id: "ch_s20_fah_02",
+    badge: "무예 정진",
+    priority: 3,
+    req: {
+      minAge: 20,
+      anyFocus: ["combat"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["dreadnought", "daemonic"],
+      or: [
+        { anyBodyClasses: ["transhuman"] },
+        { anyTags: ["high_lord_terra", "warmaster", "general_rank", "navy_admiral", "lord_inquisitor", "knight_high_king", "imperial_knight", "assassin", "canoness"] },
+        { anyWorlds: ["krieg"], minSocialTier: "elite" }
+      ]
+    },
+    text: "작전이 없는 새벽마다 무기고의 홀로-교전 기록을 복기하며 무구의 영점을 미세 조정하고 치명적인 사각 돌파 보법을 되풀이했다. 정점에 선 전사일수록 단 하루의 나태도 허락하지 않는다.",
+    effect: { stats: { WS: 1, BS: 1, Ag: 1 } }
+  },
+  {
+    id: "ch_s20_fah_03",
+    badge: "신념의 촛불",
+    priority: 3,
+    req: {
+      minAge: 20,
+      anyFocus: ["faith"],
+      excludeRealms: ["heretic", "mechanicus"],
+      excludeBodyClasses: ["dreadnought", "daemonic"],
+      excludeTags: ["grey_knight", "custodes", "mechanicus", "magos", "fabricator_locum", "fabricator_general", "assassin"],
+      or: [
+        { anySocialTiers: ["apex"] },
+        { anyBodyClasses: ["transhuman"] },
+        { anyTags: ["cardinal", "canoness", "living_saint", "saint_vessel"] }
+      ]
+    },
+    text: "성역 순시와 출정을 앞둔 고요한 밤이면 오래된 순교록과 황제 찬가의 한 대목을 묵독하며 내면의 흔들림을 가라앉혔다. 수만 필멸자의 기대가 어깨를 누를수록 순결한 신념은 더욱 단단히 빛났다.",
+    effect: { faith: 4, corruption: -3, stats: { WP: 2 } }
+  },
+  {
+    id: "ch_s20_fah_04",
+    badge: "고문서 판독",
+    priority: 3,
+    req: {
+      minAge: 20,
+      anyFocus: ["lore"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["daemonic"],
+      or: [
+        { anySocialTiers: ["apex"] },
+        { anyBodyClasses: ["transhuman", "dreadnought"] },
+        { anyTags: ["magos", "fabricator_locum", "fabricator_general", "lord_inquisitor", "nav_novator", "paternoval_envoy"] }
+      ]
+    },
+    text: "암호화된 성간 항로 기록과 수천 년 전 변경 전역의 사후 보고서를 대조하며 잊힌 보급 거점과 적의 기동 패턴을 추적했다. 지식을 쥔 자만이 보이지 않는 전장의 다음 수를 먼저 읽어 낸다.",
+    effect: { stats: { Int: 2, WP: 1 } }
+  },
+  {
+    id: "ch_s20_fah_05",
+    badge: "암호 서신망",
+    priority: 3,
+    req: {
+      minAge: 25,
+      anyFocus: ["politics"],
+      excludeRealms: ["heretic"],
+      excludeBodyClasses: ["dreadnought", "daemonic"],
+      excludeTags: ["custodes", "grey_knight", "living_saint", "saint_vessel", "assassin"],
+      anyTags: [
+        "planetary_governor", "sector_lord", "high_lord_terra", "warmaster",
+        "general_rank", "navy_admiral", "inquisitor", "lord_inquisitor",
+        "cardinal", "canoness", "departmento_head", "arbites_marshal",
+        "commissar_general", "fabricator_locum", "fabricator_general",
+        "knight_high_king", "nav_novator", "paternoval_envoy",
+        "chapter_master", "rt_lord_captain"
+      ]
+    },
+    text: "아스트로패스 성가대를 거쳐 도착한 수십 통의 고위 암호 전문을 직접 분류하고, 인접 성계 유력자들과의 보급 약속과 인사 청탁을 냉철하게 조율했다. 보이지 않는 서신 한 통이 함대 하나보다 무거운 힘을 발휘한다.",
+    effect: { stats: { Inf: 2, Fel: 1 } }
+  },
+  {
+    id: "ch_s20_fah_06",
+    badge: "금기의 주석",
+    priority: 3,
+    req: {
+      minAge: 20,
+      anyFocus: ["forbidden"],
+      excludeBodyClasses: ["dreadnought", "daemonic"],
+      excludeTags: ["custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince"],
+      or: [
+        { anyRealms: ["heretic"] },
+        { anyTags: ["inquisitor", "lord_inquisitor", "magos", "fabricator_locum", "rogue_trader", "rt_lord_captain", "nav_novator", "assassin"] },
+        { anySocialTiers: ["apex"] }
+      ]
+    },
+    text: "검열 인장이 덧씌워진 고대 성좌도와 외계 함대의 잔존 통신 파편을 홀로 대조하며, 정규 교범이 결코 기록하지 않은 워프 조류의 이면을 파고들었다. 금지된 진실이 선명해질수록 차가운 이계의 여운이 정신을 스쳤다.",
+    effect: { stats: { Int: 2, WP: 1 }, corruption: 3 }
   }
 ];

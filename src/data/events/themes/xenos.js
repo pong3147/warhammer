@@ -560,6 +560,7 @@ export default [
     req: {
       minAge: 16,
       excludeWorlds: ["terra", "mars", "krieg"],
+      excludeWorldTags: ["feral"],
       excludeTags: [
         "custodes", "grey_knight", "dreadnought",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",

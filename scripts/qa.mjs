@@ -30,6 +30,8 @@ import {
   isManualCareerAllowedPure,
   evaluateDynamicOfferEligibilityPure
 } from "../src/engine/careerRules.js";
+import { runDistBundleGate } from "./qa/distGate.mjs";
+import { runPersonaAuditGate } from "./qa/personaGate.mjs";
 
 const DEEP_MODE = process.argv.includes("--deep");
 const CHECK_DIST = process.argv.includes("--check-dist");
@@ -42,206 +44,9 @@ const errors = [];
 const warnings = [];
 const fail = (gate, msg) => errors.push(`[Gate ${gate}] ${msg}`);
 
-function runDistBundleGate(coreData, glossaryTerms) {
-  const distDir = path.join(ROOT, "dist");
-  if (!fs.existsSync(distDir)) {
-    fail(8, "dist/ directory not found — run `npm run build` before `--check-dist` / `--only-dist`");
-    return;
-  }
-
-  const requiredHtml = [
-    "dist/index.html",
-    "dist/glossary/index.html",
-    "dist/hall/index.html",
-    "dist/codex/index.html",
-    "dist/codex/worlds/index.html",
-    "dist/codex/careers/index.html",
-    "dist/codex/chapters/index.html",
-    "dist/codex/timeline/index.html",
-    "dist/codex/characters/index.html"
-  ];
-  for (const rel of requiredHtml) {
-    if (!fs.existsSync(path.join(ROOT, rel))) {
-      fail(8, `Missing built HTML route: ${rel}`);
-    }
-  }
-
-  // Normalize /warhammer/_astro/foo.js -> dist/_astro/foo.js
-  const extractEntryChunks = (htmlSrc) => {
-    const refs = new Set();
-    for (const m of htmlSrc.matchAll(/(?:src|href|component-url|renderer-url)=["']([^"']*\/_astro\/[^"']+\.js)["']/g)) {
-      const idx = m[1].indexOf("/_astro/");
-      if (idx >= 0) refs.add(`dist${m[1].slice(idx)}`);
-    }
-    return [...refs];
-  };
-
-  const traceChunks = (entryChunks, { includeDynamic = false } = {}) => {
-    const visited = new Set();
-    const queue = [...entryChunks];
-    while (queue.length) {
-      const rel = queue.shift();
-      if (!rel || visited.has(rel)) continue;
-      const abs = path.join(ROOT, rel);
-      if (!fs.existsSync(abs)) continue;
-      visited.add(rel);
-      const code = fs.readFileSync(abs, "utf8");
-      // Static imports: from"./foo.js" or import"./foo.js"
-      for (const m of code.matchAll(/(?:from\s*|import\s*)["'`](\.\/[^"'`]+\.js)["'`]/g)) {
-        const nextRel = path.posix.normalize(path.posix.join(path.posix.dirname(rel), m[1]));
-        if (!visited.has(nextRel)) queue.push(nextRel);
-      }
-      if (includeDynamic) {
-        // Vite 8 / Rolldown emits backtick literals in dynamic imports: import(`./chunk.js`)
-        for (const m of code.matchAll(/import\s*\(\s*["'`](\.\/[^"'`]+\.js)["'`]\s*\)/g)) {
-          const nextRel = path.posix.normalize(path.posix.join(path.posix.dirname(rel), m[1]));
-          if (!visited.has(nextRel)) queue.push(nextRel);
-        }
-      }
-    }
-    return [...visited];
-  };
-
-  // Identify narrative, createEngine, and glossary chunks inside dist/_astro/
-  const astroDir = path.join(distDir, "_astro");
-  const astroJsFiles = fs.existsSync(astroDir)
-    ? fs.readdirSync(astroDir).filter((f) => f.endsWith(".js")).map((f) => `dist/_astro/${f}`)
-    : [];
-  const narrativeChunks = new Set(astroJsFiles.filter((f) => path.basename(f).startsWith("narrative.")));
-  const ENGINE_CHUNK_PREFIXES = ["createEngine.", "careerRules.", "careerActions.", "endings.", "travel."];
-  const ENGINE_CHUNK_SIGNATURES = [
-    "createDynamicCareerOfferEvent",
-    "createDynamicTransitEvent",
-    "createHonorableEndingEvent",
-    "getCareerAction",
-    "UNBOUND_CAREERS",
-    "CLOSED_VOW_TREES"
-  ];
-  const engineChunks = new Set(
-    astroJsFiles.filter((f) => {
-      const base = path.basename(f);
-      if (ENGINE_CHUNK_PREFIXES.some((prefix) => base.startsWith(prefix))) return true;
-      const code = fs.readFileSync(path.join(ROOT, f), "utf8");
-      return ENGINE_CHUNK_SIGNATURES.some((sig) => code.includes(sig));
-    })
-  );
-  const glossaryDataChunks = new Set(
-    astroJsFiles.filter((f) => {
-      const code = fs.readFileSync(path.join(ROOT, f), "utf8");
-      return code.includes("Pillars of the Imperium") && code.includes("emperor_golden_throne");
-    })
-  );
-
-  if (narrativeChunks.size === 0) {
-    fail(8, "Could not locate built lazy narrative.*.js chunk in dist/_astro/");
-  }
-  if (engineChunks.size === 0) {
-    fail(8, "Could not locate built engine chunk(s) (createEngine/careerRules/careerActions/endings/travel) in dist/_astro/");
-  }
-
-  // 1. /codex/index.html must ship 0 <script> tags and 0 <astro-island> tags
-  const codexOverviewHtml = readRel("dist/codex/index.html");
-  const codexOverviewScripts = (codexOverviewHtml.match(/<script\b/g) || []).length;
-  const codexOverviewIslands = (codexOverviewHtml.match(/<astro-island\b/g) || []).length;
-  if (codexOverviewScripts > 0 || codexOverviewIslands > 0) {
-    fail(8, `dist/codex/index.html must be 0KB JS (found scripts=${codexOverviewScripts}, islands=${codexOverviewIslands})`);
-  }
-
-  // 2. Non-game static pages (/glossary/, /codex/**, /hall/) MUST NOT load narrative chunk (static OR dynamic)
-  const nonGamePages = [
-    "dist/glossary/index.html",
-    "dist/hall/index.html",
-    "dist/codex/worlds/index.html",
-    "dist/codex/careers/index.html",
-    "dist/codex/chapters/index.html",
-    "dist/codex/timeline/index.html",
-    "dist/codex/characters/index.html"
-  ];
-  for (const rel of nonGamePages) {
-    const htmlSrc = readRel(rel);
-    const entries = extractEntryChunks(htmlSrc);
-    if (entries.length === 0) {
-      fail(8, `${rel} had 0 traced entry chunks (check Astro island HTML attributes in extractEntryChunks)`);
-    }
-    const staticGraph = traceChunks(entries, { includeDynamic: false });
-    const fullGraph = traceChunks(entries, { includeDynamic: true });
-
-    const leakedNarrative = fullGraph.filter((c) => narrativeChunks.has(c));
-    if (leakedNarrative.length) {
-      fail(8, `${rel} leaks narrative chunk(s): ${leakedNarrative.join(", ")}`);
-    }
-
-    if (rel === "dist/hall/index.html") {
-      // Hall must NOT eagerly load createEngine.js in its static initial graph, and SHOULD resolve it dynamically
-      const eagerEngine = staticGraph.filter((c) => engineChunks.has(c));
-      if (eagerEngine.length) {
-        fail(8, `${rel} eagerly bundles simulation engine chunk(s): ${eagerEngine.join(", ")}`);
-      }
-      const lazyEngine = fullGraph.filter((c) => engineChunks.has(c));
-      if (lazyEngine.length === 0) {
-        fail(8, `${rel} dynamic import tracer failed to detect lazy createEngine chunk (check Rolldown/Vite output syntax)`);
-      }
-    } else {
-      // Glossary and Codex pages must NOT reference createEngine.js at all (static or dynamic)
-      const leakedEngine = fullGraph.filter((c) => engineChunks.has(c));
-      if (leakedEngine.length) {
-        fail(8, `${rel} bundles simulation engine chunk(s): ${leakedEngine.join(", ")}`);
-      }
-    }
-  }
-
-  // 3. Main game page (/) must keep narrative chunk lazy (not in static graph, present in dynamic graph) and must NOT bundle glossary prose
-  const gameEntries = extractEntryChunks(readRel("dist/index.html"));
-  if (gameEntries.length === 0) {
-    fail(8, "dist/index.html had 0 traced entry chunks (check Astro island HTML attributes in extractEntryChunks)");
-  }
-  const gameStaticGraph = traceChunks(gameEntries, { includeDynamic: false });
-  const gameFullGraph = traceChunks(gameEntries, { includeDynamic: true });
-  const gameEagerNarrative = gameStaticGraph.filter((c) => narrativeChunks.has(c));
-  if (gameEagerNarrative.length) {
-    fail(8, `dist/index.html eagerly loads narrative chunk(s) instead of lazy-loading: ${gameEagerNarrative.join(", ")}`);
-  }
-  const gameLazyNarrative = gameFullGraph.filter((c) => narrativeChunks.has(c));
-  if (gameLazyNarrative.length === 0) {
-    fail(8, "dist/index.html dynamic import tracer failed to detect lazy narrative chunk (check Rolldown/Vite output syntax)");
-  }
-  const gameGlossaryLeak = gameStaticGraph.filter((c) => glossaryDataChunks.has(c));
-  if (gameGlossaryLeak.length) {
-    fail(8, `dist/index.html eagerly bundles 67KB glossary prose chunk(s): ${gameGlossaryLeak.join(", ")}`);
-  }
-
-  // 4. Static SSR card count parity against live CORE_DATA & GLOSSARY_TERMS
-  const countMatches = (rel, re) => (readRel(rel).match(re) || []).length;
-  const expectedCards = [
-    ["dist/glossary/index.html", /class="glossary-card"/g, glossaryTerms.length, "glossary"],
-    ["dist/codex/worlds/index.html", /class="codex-card"/g, coreData.WORLDS.length, "worlds"],
-    ["dist/codex/careers/index.html", /class="codex-card"/g, coreData.CAREERS.filter((c) => c.selectable).length, "careers"],
-    ["dist/codex/chapters/index.html", /class="codex-card"/g, coreData.CHAPTERS.length, "chapters"],
-    ["dist/codex/timeline/index.html", /class="codex-card"/g, coreData.TIMELINE.length, "timeline"],
-    ["dist/codex/characters/index.html", /class="codex-card"/g, coreData.CHARACTERS.length, "characters"]
-  ];
-  for (const [rel, re, expected, label] of expectedCards) {
-    const actual = countMatches(rel, re);
-    if (actual !== expected) {
-      fail(8, `${rel} SSR ${label} card count mismatch: expected ${expected}, got ${actual}`);
-    }
-  }
-
-  // Report compact bundle size summary for Codex/Hall
-  const codexStaticBytes = traceChunks(extractEntryChunks(readRel("dist/codex/careers/index.html")), { includeDynamic: false })
-    .reduce((sum, f) => sum + fs.statSync(path.join(ROOT, f)).size, 0);
-  const hallStaticBytes = traceChunks(extractEntryChunks(readRel("dist/hall/index.html")), { includeDynamic: false })
-    .reduce((sum, f) => sum + fs.statSync(path.join(ROOT, f)).size, 0);
-  console.log(
-    `[Gate 8] dist/ bundle isolation & SSR verified (9 routes, codexOverviewJS=0KB, ` +
-    `codexStaticJS=${(codexStaticBytes / 1024).toFixed(1)}KB, hallStaticJS=${(hallStaticBytes / 1024).toFixed(1)}KB, ` +
-    `narrativeLeaks=0, engineLeaks=0, glossaryProseInGame=0, SSR cards ${expectedCards.map((c) => c[2]).join("/")}).`
-  );
-}
-
 if (ONLY_DIST) {
   console.log("=== 1 / QUADRILLION : IMPERIALIS VITA — Gate 8 Production dist/ Bundle Isolation Check ===");
-  runDistBundleGate(CORE_DATA, GLOSSARY_TERMS);
+  runDistBundleGate({ rootDir: ROOT, readRel, fail, coreData: CORE_DATA, glossaryTerms: GLOSSARY_TERMS });
   console.log(`\n=== DIST CHECK SUMMARY: ${errors.length} ERRORS ===`);
   if (errors.length) {
     errors.forEach((e) => console.error("  ERROR: " + e));
@@ -341,8 +146,8 @@ let srLiveCount = 0;
 if (uiFiles.length === 0) {
   fail(2, `No Astro/React UI files found under ${path.join(ROOT, "src")} (ROOT=${ROOT})`);
 }
-const FORBIDDEN_STATIC_ENGINE_RE = /\bfrom\s+["'][^"']*\/engine\/(?:createEngine|careerRules|careerActions|endings|travel)\.js["']/;
-const FORBIDDEN_DYNAMIC_ENGINE_RE = /\bimport\s*\(\s*["'][^"']*\/engine\/(?:createEngine|careerRules|careerActions|endings|travel)\.js["']\s*\)/;
+const FORBIDDEN_STATIC_ENGINE_RE = /\bfrom\s+["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel)\.js["']/;
+const FORBIDDEN_DYNAMIC_ENGINE_RE = /\bimport\s*\(\s*["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel)\.js["']\s*\)/;
 for (const f of uiFiles) {
   const src = readRel(f);
   // Single-letter keyboard shortcut ban (only Escape allowed)
@@ -595,9 +400,10 @@ function collectOutcomeTags(out) {
 for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
   for (const ch of (ev.choices || [])) {
     collectOutcomeTags(ch.effect);
-    collectOutcomeTags(ch.outcome);
     collectOutcomeTags(ch.success);
     collectOutcomeTags(ch.fail);
+    collectOutcomeTags(ch.critSuccess);
+    collectOutcomeTags(ch.critFail);
   }
 }
 
@@ -710,13 +516,38 @@ for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
   if (choices.filter((ch) => !ch.req).length === 0) {
     fail(5, `Softlock risk (0 unconditional choices) in ${ev.id}`);
   }
+  const validStatKeys = new Set(Object.keys(Engine.STAT_META || {}));
   for (const ch of choices) {
     validateReq(ch.req, `${ev.id}:choice`);
     if (ch.req && !Engine.describeReq(ch.req)) {
       fail(4, `Empty describeReq on choice in ${ev.id}`);
     }
-    [ch.effect, ch.outcome, ch.success, ch.fail].forEach((o) => {
+    if (ch.outcome !== undefined) {
+      fail(4, `Choice in ${ev.id} uses dead field "outcome" (engine reads "effect" or "success"/"fail")`);
+    }
+    if (ch.check) {
+      if (!validStatKeys.has(ch.check.stat)) {
+        fail(4, `Invalid check.stat "${ch.check.stat}" in ${ev.id}`);
+      }
+      if (!ch.success || !ch.fail) {
+        fail(4, `Checked choice in ${ev.id} missing required success/fail outcome`);
+      }
+    } else if (!ch.effect && !ch.success) {
+      fail(4, `Unchecked choice in ${ev.id} missing effect/success outcome`);
+    }
+    if ((ch.critSuccess || ch.critFail) && !ch.check) {
+      fail(4, `Choice in ${ev.id} defines critSuccess/critFail without a d100 check`);
+    }
+    [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail].forEach((o) => {
       if (!o) return;
+      if (typeof o.text !== "string" || !o.text.trim()) {
+        fail(4, `Missing or empty outcome.text in ${ev.id}`);
+      }
+      if (o.stats) {
+        for (const sk of Object.keys(o.stats)) {
+          if (!validStatKeys.has(sk)) fail(4, `Unknown outcome.stats key "${sk}" in ${ev.id}`);
+        }
+      }
       if (o.forceCareer && !careerIds.has(o.forceCareer)) fail(4, `Unknown forceCareer "${o.forceCareer}" in ${ev.id}`);
       if (o.moveWorld && !worldIds.has(o.moveWorld)) fail(4, `Unknown moveWorld "${o.moveWorld}" in ${ev.id}`);
       if (o.align) validateAlignObj(o.align, `${ev.id}:outcome.align`, true);
@@ -729,7 +560,8 @@ for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
   }
 }
 
-// Krieg Vita-Womb family leak scan across all chronicles & events
+// Krieg Vita-Womb family leak scan across all chronicles & events (child & adult)
+const KRIEG_FAMILY_RE = /어머니|아버지|부모님|자장가|가족 식탁|가정식|엄마|아빠/;
 const kriegCheckState = Engine.createCharacter({
   mode: "custom",
   worldId: "krieg",
@@ -751,8 +583,43 @@ for (const ch of DATA.CHRONICLES) {
   }
   kriegCheckState.age = Math.max(1, (ch.req && ch.req.minAge) || 5);
   const cleaned = (ch.text || "").replace(/어머니의 품 대신/g, "");
-  if (/어머니|아버지|부모님|자장가|가족 식탁|가정식|엄마|아빠/.test(cleaned) && Engine.checkReq(kriegCheckState, ch.req)) {
+  if (KRIEG_FAMILY_RE.test(cleaned) && Engine.checkReq(kriegCheckState, ch.req)) {
     fail(3, `Krieg Vita-Womb family leak in chronicle ${ch.id}`);
+  }
+}
+const kriegAdultState = Engine.createCharacter({
+  mode: "custom",
+  worldId: "krieg",
+  originId: "imperial_citizen",
+  traitId: "none",
+  eraId: "armageddon",
+  gender: "male"
+});
+kriegAdultState.careerId = "astra_militarum";
+kriegAdultState.tags = [...new Set([...kriegAdultState.tags, "militarum"])];
+for (const ev of DATA.EVENTS) {
+  const testAges = [
+    Math.max(1, (ev.req && ev.req.minAge) || 10),
+    Math.max(18, (ev.req && ev.req.minAge) || 25)
+  ];
+  for (const age of testAges) {
+    const st = age < 14 ? kriegCheckState : kriegAdultState;
+    st.age = age;
+    st.year = st.birthYear + age;
+    if (!Engine.checkReq(st, ev.req)) continue;
+    const parts = [ev.title || "", ev.text || ""];
+    for (const ch of ev.choices || []) {
+      if (ch.req && !Engine.checkReq(st, ch.req)) continue;
+      parts.push(ch.label || "");
+      for (const o of [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail]) {
+        if (o && o.text) parts.push(o.text);
+      }
+    }
+    const cleaned = parts.join(" ").replace(/어머니의 품 대신/g, "");
+    if (KRIEG_FAMILY_RE.test(cleaned)) {
+      fail(3, `Krieg Vita-Womb family leak in event ${ev.id} (age ${age})`);
+      break;
+    }
   }
 }
 
@@ -1713,140 +1580,116 @@ for (const ch of DATA.CHRONICLES) {
     ) {
       fail(4, "Stage 19-D3 careerRules.js isClosedVowCrossBlocked SSOT invariant failed");
     }
+
+    // Stage 20-A: M41 timeline endYear reachability (sabbat/vraks/badab) & optional critSuccess/critFail branching contract
+    const tlSabbat = DATA.TIMELINE.find((t) => t.id === "tl_sabbat_crusade");
+    const tlVraks = DATA.TIMELINE.find((t) => t.id === "tl_vraks_siege");
+    const tlBadab = DATA.TIMELINE.find((t) => t.id === "tl_badab_war");
+    if (!tlSabbat || (tlSabbat.endYear || 0) < 770) {
+      fail(4, `Stage 20-A tl_sabbat_crusade must cover >= 770.M41 so sabbat preset (birth 745-749) reaches it at age 14+`);
+    }
+    if (!tlVraks || (tlVraks.endYear || 0) < 830) {
+      fail(4, `Stage 20-A tl_vraks_siege must cover canon 813-830.M41 (got endYear=${tlVraks && tlVraks.endYear})`);
+    }
+    if (!tlBadab || (tlBadab.endYear || 0) < 912) {
+      fail(4, `Stage 20-A tl_badab_war must cover canon 901-912.M41 (got endYear=${tlBadab && tlBadab.endYear})`);
+    }
+    const sabTest = Engine.createCharacter({ mode: "custom", worldId: "generic_civilised", originId: "militarum_family", traitId: "none", eraId: "sabbat", gender: "male" });
+    sabTest.segmentum = "pacificus";
+    sabTest.age = 15;
+    sabTest.year = sabTest.birthYear + 15;
+    sabTest.quarter = 1;
+    sabTest.careerId = "astra_militarum";
+    sabTest.tags.push("militarum");
+    const sabRes = Engine.advanceQuarter(sabTest);
+    if (sabRes.status !== "event" || !sabTest.pendingEvent || sabTest.pendingEvent.id !== "tl_sabbat_crusade") {
+      fail(4, `Stage 20-A sabbat preset failed to trigger tl_sabbat_crusade at age 15 (year=${sabTest.year}, got=${sabTest.pendingEvent && sabTest.pendingEvent.id})`);
+    }
+
+    // Optional critSuccess / critFail branching & fallback contract
+    const origRandom = Math.random;
+    try {
+      const mkCritState = () => {
+        const cs = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+        cs.age = 25;
+        cs.stats.Int = 50;
+        return cs;
+      };
+      const critEv = {
+        id: "qa_s20_crit_test",
+        title: "QA Crit Branch Test",
+        choices: [{
+          label: "[지성 판정] 테스트",
+          check: { stat: "Int", diff: 0 },
+          critSuccess: { text: "CRIT_OK", stats: { Int: 4 } },
+          success: { text: "NORM_OK", stats: { Int: 1 } },
+          fail: { text: "NORM_FAIL", wounds: -5 },
+          critFail: { text: "CRIT_FAIL", wounds: -12 }
+        }]
+      };
+      const fallbackEv = {
+        id: "qa_s20_crit_fallback_test",
+        title: "QA Crit Fallback Test",
+        choices: [{
+          label: "[지성 판정] 폴백",
+          check: { stat: "Int", diff: 0 },
+          success: { text: "FALLBACK_OK", stats: { Int: 1 } },
+          fail: { text: "FALLBACK_FAIL", wounds: -5 }
+        }]
+      };
+      Math.random = () => 0.01; // roll = 2 (critSuccess)
+      const sCritOk = mkCritState();
+      sCritOk.pendingEvent = critEv;
+      const rCritOk = Engine.resolvePendingChoice(sCritOk, 0);
+      if (!rCritOk || !rCritOk.rollResult.critSuccess || rCritOk.outcome.text !== "CRIT_OK") {
+        fail(4, "Stage 20-A optional choice.critSuccess did not trigger on roll <= 5");
+      }
+      const sFallbackOk = mkCritState();
+      sFallbackOk.pendingEvent = fallbackEv;
+      const rFallbackOk = Engine.resolvePendingChoice(sFallbackOk, 0);
+      if (!rFallbackOk || !rFallbackOk.rollResult.critSuccess || rFallbackOk.outcome.text !== "FALLBACK_OK") {
+        fail(4, "Stage 20-A choice without critSuccess did not fall back to choice.success");
+      }
+      Math.random = () => 0.98; // roll = 99 (critFail)
+      const sCritFail = mkCritState();
+      sCritFail.pendingEvent = critEv;
+      const rCritFail = Engine.resolvePendingChoice(sCritFail, 0);
+      if (!rCritFail || !rCritFail.rollResult.critFail || rCritFail.outcome.text !== "CRIT_FAIL") {
+        fail(4, "Stage 20-A optional choice.critFail did not trigger on roll >= 96");
+      }
+      const sFallbackFail = mkCritState();
+      sFallbackFail.pendingEvent = fallbackEv;
+      const rFallbackFail = Engine.resolvePendingChoice(sFallbackFail, 0);
+      if (!rFallbackFail || !rFallbackFail.rollResult.critFail || rFallbackFail.outcome.text !== "FALLBACK_FAIL") {
+        fail(4, "Stage 20-A choice without critFail did not fall back to choice.fail");
+      }
+
+      // Red-Team P1-3 regression: incorruptible transhuman must NOT print false "오염 +N" in deltaText
+      const incSt = Engine.createCharacter({ mode: "custom", worldId: "terra", originId: "terra_high_blood", traitId: "none", eraId: "indomitus", gender: "male" });
+      incSt.careerId = "adeptus_custodes";
+      incSt.tags.push("custodes", "transhuman");
+      incSt.corruption = 0;
+      incSt.pendingEvent = {
+        id: "qa_s20_incorr_delta",
+        title: "QA Incorruptible Delta Test",
+        choices: [{ label: "test", effect: { text: "워프 돌풍을 견뎠다.", corruption: 7, stats: { WP: 2 } } }]
+      };
+      Engine.resolvePendingChoice(incSt, 0);
+      if (incSt.corruption !== 0 || (incSt.logs[0]?.deltaText || "").includes("오염")) {
+        fail(4, `Stage 20 Red-Team P1-3: incorruptible Custodes logged false corruption deltaText="${incSt.logs[0]?.deltaText}" (corr=${incSt.corruption})`);
+      }
+    } finally {
+      Math.random = origRandom;
+    }
   }
 }
 
-console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-19D guards verified.`);
+console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-20A guards verified.`);
 
 // ============================================================================
-// Gate 4P: 15종 대표 페르소나 + 타 행성 방문·성인 귀족 신분·생활권·신체 정합성 & 최소 풀 하한(>= 8) 검증
+// Gate 4P: 대표 페르소나 신분·생활권·신체 정합성 & 최소 풀 하한(>= 8) 검증 (모듈 위임)
 // ============================================================================
-{
-  const makePersonaState = (opts) => {
-    const st = Engine.createCharacter({
-      mode: "custom",
-      worldId: opts.worldId,
-      originId: opts.originId,
-      traitId: opts.traitId || "none",
-      eraId: opts.eraId || "armageddon",
-      gender: opts.gender || "male"
-    });
-    st.age = opts.age;
-    st.year = st.birthYear + st.age;
-    if (opts.careerId) st.careerId = opts.careerId;
-    if (opts.chapterId) {
-      st.chapterId = opts.chapterId;
-      st.chapterName = Engine.getChapter(opts.chapterId)?.name || null;
-    }
-    if (opts.tags) st.tags = [...new Set([...st.tags, ...opts.tags])];
-    if (opts.faith !== undefined) st.faith = opts.faith;
-    if (opts.corruption !== undefined) st.corruption = opts.corruption;
-    if (opts.stats) st.stats = { ...st.stats, ...opts.stats };
-    return st;
-  };
-
-  const NOBLE_KID_BAN = /시체 전분|배급 통조림|배급소에 줄|양철 식기|훔친.*배급빵|장터 골목|장터 구석|구역 광장|동네 광장|구역 메디카에|낡은 주사기|골목을 뛰어|물펌프|심부름을 도맡|돌팔매|새총|하층 하이브의 유독 매연|로우 고딕 낱말|합성 배급표/;
-  const SCHOLA_KID_BAN = /어머니|아버지|부모님|엄마|아빠|가족 식탁|가정식|배급 통조림|배급소에 줄|양철 식기|훔친.*배급빵|장터 골목|장터 구석|동네 광장|구역 메디카에|골목을 뛰어|물펌프|심부름을 도맡|돌팔매|새총/;
-  const KRIEG_KID_BAN = /어머니|아버지|부모님|자장가|가족 식탁|가정식|엄마|아빠|장터|숨바꼭질|골목을 뛰어|배급 통조림/;
-  const VOID_KID_BAN = /들판|숲|산성비|비바람|계절이 바뀔|악천후|밤하늘을 가로지르는|돌팔매|새총|동네 광장|구역 광장|구역의 작은 신당|장터 골목|골목을 뛰어/;
-  const ASTARTES_BAN = /시체 전분|배급소|배급표|세입자|강제 징발|증조부|증조할아버지|구걸|결근|노점상|화장실|상관의 취향|아마섹.*상납|울부짖으며|겁에 질려 도망|혼인|결혼|동기들이 하나둘 앓아|두꺼비가 튀어나와|사막 전갈을 구워|야전삽 하나로 4시간|식당에 2,000명/;
-  const DREADNOUGHT_BAN = /시체 전분|배급소|배급표|식당|술잔|선술집|침상|침대|구두|장화|손가락|세수|거울 속 내 눈동자|전술 드레드노트 아머|크룩스 테르미나투스|파워 아머 앞에|드롭 포드 안전벨트|볼터의 약실을 직접|동기들이 하나둘 앓아|상관의 취향|두꺼비가 튀어나와|사막 전갈을 구워|야전삽 하나로 4시간|생체 폐를 유지/;
-  const CUSTODES_BAN = /시체 전분|배급소|배급표|강제 징발|증조부|증조할아버지|구걸|결근|세입자|노점상|화장실|상관의 취향|서보스컬이 골목|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|동기들이 하나둘 앓아|수천 년 전 포도주를 곁들이|두꺼비가 튀어나와|사막 전갈을 구워|야전삽 하나로 4시간|식당에 2,000명|생체 폐를 유지/;
-  const GK_BAN = /시체 전분|배급소|배급표|강제 징발|증조부|증조할아버지|구걸|결근|세입자|노점상|화장실|상관의 취향|서보스컬이 골목|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|동기들이 하나둘 앓아|순례자 가족을 보았다|순례자들을 청소 서비터|두꺼비가 튀어나와|사막 전갈을 구워|야전삽 하나로 4시간|식당에 2,000명/;
-  const HIGH_LORD_BAN = /시체 전분|배급소|배급표|배급된 회색|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|서보스컬이 골목|하층 4개 구역의 식수|전표 4,000장에 붉은 밀랍|전임 하이 로드의 서명|옆 책상에서 50년째|다음 책상으로 넘겼다|암시장 중개인|상관의 취향|사흘을 굶었다|배급 빵 두 덩이/;
-  const SAINT_BAN = /시체 전분|배급소|배급표|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|서보스컬이 골목|상관의 취향|오염의 징후|향불 냄새가 역겹|눈동자에.*보랏빛|암시장 중개인|암시장 자극제|소모품 인력을 미리|동료를 제물로|난민의 마지막 재산|쉰다섯을 넘긴 노구|리주버냇|수명 연장 시술 제안|동기들이 하나둘 앓아|직무 유기로 고발|교대 근무가 끝난|배급 빵 두 덩이/;
-  const DP_BAN = /시체 전분|배급소|배급표|배급된 회색|강제 징발|결근|세입자|증조부|증조할아버지|구걸|노점상|화장실|황제께 맹세|아퀼라 성호|성수를 뿌|기도문을 외|아르비테스.*끌려|쥐고기 꼬치|쉰다섯을 넘긴 노구|서툴게 경례|선술집|동기들이 하나둘 앓아|방독면 필터|탐조등 점등|성당 사제가 미사|향불 냄새가 역겹.*고개를 숙였다|교대 시각을 알|두꺼비가 튀어나와|사막 전갈을 구워|야전삽 하나로 4시간|식당에 2,000명/;
-
-  const personas = [
-    { id: "terra_high_kid", label: "테라 고위 귀족 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "terra", originId: "terra_high_blood" }, ban: NOBLE_KID_BAN },
-    { id: "hive_noble_kid", label: "하이브 귀족 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "necromunda", originId: "planetary_noble" }, ban: NOBLE_KID_BAN },
-    { id: "rt_scion_kid", label: "로그 트레이더 방계 유아 (하이브 출생)", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "void", bodyClass: "mortal" }, cfg: { worldId: "generic_hive", originId: "rogue_trader_scion" }, ban: new RegExp(NOBLE_KID_BAN.source + "|" + VOID_KID_BAN.source) },
-    { id: "schola_kid", label: "스콜라 유아", ages: [2, 5, 8, 11], expected: { socialTier: "common", lifeRealm: "cloistered", bodyClass: "mortal" }, cfg: { worldId: "ophelia7", originId: "schola_progenium" }, ban: SCHOLA_KID_BAN, clean: (t) => t.replace(/순직한 부모/g, "") },
-    { id: "knight_kid", label: "기사 가문 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "generic_knight", originId: "knight_house" }, ban: NOBLE_KID_BAN },
-    { id: "nav_kid", label: "항법사 가문 유아", ages: [2, 5, 8, 11], expected: { socialTier: "elite", lifeRealm: "cloistered", bodyClass: "mortal" }, cfg: { worldId: "terra", originId: "navigator_house" }, ban: new RegExp(NOBLE_KID_BAN.source + "|정상 인류' 판정") },
-    { id: "krieg_kid", label: "크리그 유아", ages: [2, 5, 8, 11], expected: { socialTier: "common", lifeRealm: "military", bodyClass: "mortal" }, cfg: { worldId: "krieg", originId: "imperial_citizen" }, ban: KRIEG_KID_BAN, clean: (t) => t.replace(/어머니의 품 대신/g, "") },
-    { id: "void_kid", label: "보이드본 유아", ages: [2, 5, 8, 11], expected: { socialTier: "common", lifeRealm: "void", bodyClass: "mortal" }, cfg: { worldId: "voidborn", originId: "imperial_citizen" }, ban: VOID_KID_BAN },
-    { id: "astartes", label: "아스타르테스", ages: [80], expected: { socialTier: "apex", lifeRealm: "military", bodyClass: "transhuman" }, cfg: { worldId: "macragge", originId: "imperial_citizen", careerId: "astartes_brother", chapterId: "ultramarines", tags: ["astartes", "transhuman", "battle_brother"], stats: { WS: 75, BS: 75, T: 75, WP: 75, Inf: 55 } }, ban: ASTARTES_BAN, visitWorlds: ["krieg", "catachan", "baal", "mars"] },
-    { id: "dreadnought", label: "드레드노트", ages: [220], expected: { socialTier: "apex", lifeRealm: "military", bodyClass: "dreadnought" }, cfg: { worldId: "macragge", originId: "imperial_citizen", careerId: "astartes_veteran", chapterId: "ultramarines", tags: ["astartes", "transhuman", "dreadnought", "battle_brother"], stats: { WS: 80, BS: 78, T: 85, WP: 82, Inf: 65 } }, ban: DREADNOUGHT_BAN, visitWorlds: ["krieg", "catachan", "baal", "mars"] },
-    { id: "custodes", label: "쿠스토데스", ages: [120], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "terra", originId: "terra_high_blood", careerId: "adeptus_custodes", tags: ["custodes", "transhuman"], stats: { WS: 90, BS: 85, T: 90, WP: 90, Int: 85, Inf: 80 } }, ban: CUSTODES_BAN, visitWorlds: ["krieg", "catachan", "baal", "mars"] },
-    { id: "grey_knight", label: "그레이 나이트", ages: [90], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "terra", originId: "imperial_citizen", traitId: "psyker", careerId: "grey_knight", tags: ["astartes", "grey_knight", "transhuman"], faith: 90, stats: { WS: 80, BS: 75, T: 80, WP: 90, Int: 75, Inf: 65 } }, ban: GK_BAN, visitWorlds: ["krieg", "catachan", "baal"] },
-    { id: "high_lord", label: "테라 하이 로드", ages: [62], expected: { socialTier: "apex", lifeRealm: "civilian", bodyClass: "mortal" }, cfg: { worldId: "terra", originId: "planetary_noble", careerId: "master_of_administratum", tags: ["administratum", "high_lord_terra"], stats: { Int: 92, Fel: 88, WP: 84, Inf: 96 } }, ban: HIGH_LORD_BAN },
-    { id: "living_saint", label: "살아 있는 성인", ages: [65], expected: { socialTier: "apex", lifeRealm: "cloistered", bodyClass: "transhuman" }, cfg: { worldId: "ophelia7", originId: "ecclesiarchy_novice", traitId: "emperor_blessed", careerId: "living_saint", gender: "female", faith: 98, tags: ["living_miracle", "saint_vessel", "living_saint", "transhuman"], stats: { WS: 85, WP: 98, Fel: 90, Inf: 88 } }, ban: SAINT_BAN },
-    { id: "daemon_prince", label: "데몬 프린스", ages: [150], expected: { socialTier: "apex", lifeRealm: "heretic", bodyClass: "daemonic" }, cfg: { worldId: "necromunda", originId: "underhive_scum", careerId: "daemon_prince", corruption: 95, faith: 0, tags: ["heretic", "chaos_aligned", "mark_khorne", "daemon_prince", "transhuman"], stats: { WS: 95, T: 92, WP: 88, Inf: 85 } }, ban: DP_BAN, visitWorlds: ["krieg", "catachan"] }
-  ];
-
-  let totalCollisions = 0;
-  let minPersonaPool = 999;
-  for (const p of personas) {
-    const matchedChronIds = new Set();
-    const matchedEventIds = new Set();
-    for (const age of p.ages) {
-      const st = makePersonaState({ ...p.cfg, age });
-      const strat = Engine.getStratification(st);
-      if (
-        strat.socialTier !== p.expected.socialTier ||
-        strat.lifeRealm !== p.expected.lifeRealm ||
-        strat.bodyClass !== p.expected.bodyClass
-      ) {
-        fail("4P", `Persona ${p.id}(age ${age}) stratification mismatch: got ${JSON.stringify(strat)}, expected ${JSON.stringify(p.expected)}`);
-      }
-      for (const ch of DATA.CHRONICLES) {
-        if (!Engine.checkReq(st, ch.req)) continue;
-        matchedChronIds.add(ch.id);
-        const rawText = p.clean ? p.clean(ch.text || "") : (ch.text || "");
-        const m = rawText.match(p.ban);
-        if (m) {
-          totalCollisions++;
-          fail("4P", `Persona ${p.id}(age ${age}) leaked chronicle ${ch.id} [matched "${m[0]}"]`);
-        }
-      }
-      for (const ev of DATA.EVENTS) {
-        if (!Engine.checkReq(st, ev.req)) continue;
-        matchedEventIds.add(ev.id);
-        const rawText = p.clean ? p.clean(`${ev.title || ""} ${ev.text || ""}`) : `${ev.title || ""} ${ev.text || ""}`;
-        const m = rawText.match(p.ban);
-        if (m) {
-          totalCollisions++;
-          fail("4P", `Persona ${p.id}(age ${age}) leaked event ${ev.id} [matched "${m[0]}"]`);
-        }
-      }
-      for (const vw of p.visitWorlds || []) {
-        const vst = makePersonaState({ ...p.cfg, age });
-        vst.worldId = vw;
-        for (const ch of DATA.CHRONICLES) {
-          if (!Engine.checkReq(vst, ch.req)) continue;
-          const rawText = p.clean ? p.clean(ch.text || "") : (ch.text || "");
-          const m = rawText.match(p.ban);
-          if (m) {
-            totalCollisions++;
-            fail("4P", `Persona ${p.id}(visiting ${vw}) leaked chronicle ${ch.id} [matched "${m[0]}"]`);
-          }
-        }
-      }
-    }
-    const poolSize = matchedChronIds.size;
-    if (poolSize < minPersonaPool) minPersonaPool = poolSize;
-    if (poolSize < 8) {
-      fail("4P", `Persona ${p.id} (${p.label}) chronicle pool < 8 (got ${poolSize})`);
-    }
-  }
-  // Adult elite/cloistered snapshot must never trigger common-worker servitor event
-  const servEv = DATA.EVENTS.find((e) => e.id === "ev_absurd_servitor_sentence");
-  if (servEv) {
-    const adultElites = [
-      makePersonaState({ worldId: "necromunda", originId: "planetary_noble", age: 25, careerId: "administratum" }),
-      makePersonaState({ worldId: "ophelia7", originId: "schola_progenium", age: 24, gender: "female", careerId: "adepta_sororitas", tags: ["sororitas"] }),
-      makePersonaState({ worldId: "generic_knight", originId: "knight_house", age: 26, careerId: "knight_scion", tags: ["imperial_knight"] })
-    ];
-    for (const st of adultElites) {
-      if (Engine.checkReq(st, servEv.req)) {
-        totalCollisions++;
-        fail("4P", `Adult elite/cloistered (${st.originId}/${st.careerId}) leaked ev_absurd_servitor_sentence`);
-      }
-    }
-  }
-  console.log(`[Gate 4P] 15-persona + cross-world/adult-elite stratification & forbidden-leak audit complete (collisions=${totalCollisions}, minChroniclePool=${minPersonaPool} >= 8).`);
-}
+runPersonaAuditGate({ DATA, Engine, fail });
 
 // ============================================================================
 // Gate 5: 소프트락 · 유년기 풀(22행성 각 4+) · fastChildhood · 2400로그 보존 · 중복률
@@ -1951,7 +1794,7 @@ if (DEEP_MODE) {
   const forceCareerTargets = new Set();
   for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
     for (const ch of (ev.choices || [])) {
-      [ch.effect, ch.outcome, ch.success, ch.fail].forEach((o) => {
+      [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail].forEach((o) => {
         if (o && o.forceCareer) forceCareerTargets.add(o.forceCareer);
       });
     }
@@ -2729,7 +2572,7 @@ if (DEEP_MODE) {
       for (let idx = 0; idx < choices.length; idx++) {
         const ch = choices[idx];
         if (!Engine.checkReq(st, ch.req)) continue;
-        const outs = [ch.effect, ch.outcome, ch.success].filter(Boolean);
+        const outs = [ch.effect, ch.success].filter(Boolean);
         let netAlign = null;
         for (const o of outs) {
           if (o.align) {
@@ -2786,7 +2629,7 @@ if (DEEP_MODE) {
 }
 
 if (CHECK_DIST) {
-  runDistBundleGate(DATA, DATA.GLOSSARY_TERMS);
+  runDistBundleGate({ rootDir: ROOT, readRel, fail, coreData: DATA, glossaryTerms: DATA.GLOSSARY_TERMS });
 }
 
 if (warnings.length) {

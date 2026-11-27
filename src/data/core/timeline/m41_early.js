@@ -430,8 +430,9 @@ export const TIMELINE_M41_EARLY = [
   {
     id: "tl_sabbat_crusade",
     year: 755,
-    title: "사바트 월드 성전 선포",
-    en: "Launch of the Sabbat Worlds Crusade",
+    endYear: 775,
+    title: "사바트 월드 대성전 — 파시피쿠스 해방전",
+    en: "The Sabbat Worlds Crusade",
     scope: "세그멘툼 파시피쿠스",
     dispatchScope: "galaxy",
     dispatchText: "워마스터 슬레이도가 서부 파시피쿠스 성역에서 '사바트 월드 대성전'을 선포했다. 은하 전역에 대규모 십일조 징집과 군수 보급 명령이 하달되었다.",
@@ -441,8 +442,8 @@ export const TIMELINE_M41_EARLY = [
       or: [{ anySegmenta: ["pacificus"] }, { anyTags: ["militarum", "navy", "commissar"] }]
     },
     characters: [],
-    summary: "워마스터 슬레이도가 카오스에 점령된 사바트 성계를 해방하기 위해 백만 대군의 성전을 선포했다.",
-    text: "은하 서부 파시피쿠스 성역 전역에 성전 징집령이 울려 퍼진다. 수백 개의 아스트라 밀리타룸 연대와 해군 함대가 카오스 군벌들의 손아귀에서 사바트 월드를 되찾기 위해 집결하고 있다.",
+    summary: "755.M41 워마스터 슬레이도의 선포로 개시된 사바트 월드 대성전이 마카로스 체제를 거쳐 카오스 점령지 해방을 위한 대규모 전선으로 이어지고 있다.",
+    text: "은하 서부 파시피쿠스 성역 전역에 사바트 월드 대성전의 징집령과 군수 동원령이 울려 퍼진다. 수백 개의 아스트라 밀리타룸 연대와 제국 함대가 아콘의 카오스 군벌들로부터 사바트 성계를 되찾기 위해 끝없는 해방전에 투입되고 있다.",
     choices: [
       {
         label: "[사격 판정] 성전군 원정대에 자원하여 출정한다",
@@ -542,7 +543,8 @@ export const TIMELINE_M41_EARLY = [
   {
     id: "tl_vraks_siege",
     year: 813,
-    title: "브락스 무기고 행성 공성전 개전",
+    endYear: 830,
+    title: "브락스 무기고 행성 공성전",
     en: "Siege of Vraks",
     scope: "크리그 · 아스트라 밀리타룸 · 이단심문소",
     dispatchScope: "galaxy",

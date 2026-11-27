@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CORE_DATA, coreEngine, loadFullGameRuntime } from "../../data/index.js";
+import { formatRollOutcomeLabel } from "../../engine/formatters.js";
 import { buildPlainTextChronicle, copyTextWithFallback } from "../../lib/chronicleText";
 import {
   clearActiveState,
@@ -492,7 +493,12 @@ export default function GameApp({ engineOverride, dataOverride, narrativeCounts 
       persistState(cur, rt.engine);
       bump();
       const top = cur.logs[0];
-      if (top) announce(`${top.text}${top.deltaText ? " 변화: " + top.deltaText : ""}`);
+      if (top) {
+        const rollPrefix = top.meta
+          ? `${formatRollOutcomeLabel(top.meta)}(${top.meta.roll}/${top.meta.target}). `
+          : "";
+        announce(`${rollPrefix}${top.text}${top.deltaText ? " 변화: " + top.deltaText : ""}`);
+      }
       if (!cur.pendingEvent) {
         window.setTimeout(() => {
           const target = document.getElementById("recent-chronicle-heading");

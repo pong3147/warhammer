@@ -1120,6 +1120,101 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
     unmount();
     localStorage.clear();
   });
+
+  it("Stage 20-A: resolves optional critSuccess/critFail bespoke outcomes in GameApp UI and preserves fallback", () => {
+    const realEngine = createImperiumEngine(FULL_DATA);
+    const critEvent = {
+      id: "ev_test_s20_crit",
+      title: "극단 판정 테스트 사건",
+      category: "테스트",
+      text: "극단적 판정 분기를 검증하는 사건이다.",
+      choices: [
+        {
+          label: "[지성 판정] 대성공과 대실패를 검증한다",
+          check: { stat: "Int", diff: 0 },
+          critSuccess: { text: "황금빛 기적의 대성공 산문이 기록되었다.", stats: { Int: 5 } },
+          success: { text: "일반 성공 산문이 기록되었다.", stats: { Int: 1 } },
+          fail: { text: "일반 실패 산문이 기록되었다.", wounds: -5 },
+          critFail: { text: "치명적 대실패 산문이 기록되었다.", wounds: -12 }
+        },
+        {
+          label: "안전하게 물러난다",
+          effect: { text: "물러났다." }
+        }
+      ]
+    };
+
+    const fallbackEvent = {
+      id: "ev_test_s20_crit_fallback",
+      title: "일반 판정 폴백 사건",
+      category: "테스트",
+      text: "critSuccess 미지정 사건의 폴백을 검증한다.",
+      choices: [
+        {
+          label: "[지성 판정] 일반 성공 폴백 검증",
+          check: { stat: "Int", diff: 0 },
+          success: { text: "일반 성공 폴백 산문이 정상 출력되었다.", stats: { Int: 1 } },
+          fail: { text: "일반 실패 폴백 산문.", wounds: -5 }
+        }
+      ]
+    };
+
+    let step = 0;
+    const proxy = {
+      ...realEngine,
+      advanceQuarter(st: any) {
+        step++;
+        st.stats.Int = 55;
+        st.pendingEvent = step <= 2 ? critEvent : fallbackEvent;
+        return { status: "event", event: st.pendingEvent };
+      }
+    };
+
+    const randSpy = vi.spyOn(Math, "random");
+    try {
+      const { container, unmount } = render(<GameApp engineOverride={proxy} dataOverride={FULL_DATA} />);
+      startCustomCharacter(container);
+
+      // Step 1: force roll <= 5 (critSuccess) -> bespoke critSuccess prose + 대성공 in banner, chronicle, and #sr-live
+      randSpy.mockReturnValue(0.01);
+      fireEvent.click(container.querySelector("#btn-step")!);
+      expect(container.querySelector("#active-event-heading")?.textContent).toContain("극단 판정 테스트 사건");
+      fireEvent.click(container.querySelectorAll(".choice-btn")[0]);
+      expect(container.querySelector("#roll-banner")?.textContent).toContain("대성공");
+      expect(container.querySelector("#recent-log-list")?.textContent).toContain("황금빛 기적의 대성공 산문이 기록되었다.");
+      expect(container.querySelector("#sr-live")?.textContent).toContain("대성공(");
+
+      // Step 2: force roll >= 96 (critFail) -> bespoke critFail prose + 대실패 in banner, chronicle, and #sr-live
+      randSpy.mockReturnValue(0.98);
+      fireEvent.click(container.querySelector("#btn-step")!);
+      fireEvent.click(container.querySelectorAll(".choice-btn")[0]);
+      expect(container.querySelector("#roll-banner")?.textContent).toContain("대실패");
+      expect(container.querySelector("#recent-log-list")?.textContent).toContain("치명적 대실패 산문이 기록되었다.");
+      expect(container.querySelector("#sr-live")?.textContent).toContain("대실패(");
+
+      // Step 3: force roll <= 5 on event without critSuccess -> falls back to choice.success prose
+      randSpy.mockReturnValue(0.01);
+      fireEvent.click(container.querySelector("#btn-step")!);
+      fireEvent.click(container.querySelectorAll(".choice-btn")[0]);
+      expect(container.querySelector("#roll-banner")?.textContent).toContain("대성공");
+      expect(container.querySelector("#recent-log-list")?.textContent).toContain("일반 성공 폴백 산문이 정상 출력되었다.");
+      expect(container.querySelector("#sr-live")?.textContent).toContain("대성공(");
+
+      // Red-Team Structural Risk #2: migrateState must sanitize malformed pendingEvent / lastRoll without crashing
+      const rawBroken = realEngine.createCharacter({ mode: "custom", worldId: "terra", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+      rawBroken.pendingEvent = { id: "corrupt_ev", title: "손상", choices: "not_an_array" as any };
+      rawBroken.lastRoll = { roll: "NaN" as any, target: null as any };
+      const migrated = realEngine.migrateState(rawBroken);
+      expect(migrated?.pendingEvent).toBeNull();
+      expect(migrated?.lastRoll).toBeNull();
+
+      unmount();
+      localStorage.clear();
+    } finally {
+      randSpy.mockRestore();
+    }
+  });
 });
+
 
 
