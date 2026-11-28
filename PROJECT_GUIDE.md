@@ -209,12 +209,49 @@ warhammer/
 
 ---
 
-## 6. 차기 단계 (Stage 24+) 진행 예정 · 선제 리스크 및 보류 후보
+## 6. 차기 단계 진행 예정 계획 — Stage 24: 4대 직교 컨텍스트 · 영아기 차단 · 공간/신분 정합성 엔진 & 계급별 운명 궤도 개편 `[예정]`
 
-> **운영 규약 (`AGENTS.md` 1장):** 신규 다단계 작업 착수 시 본 절에 전체 계획과 목표 범위를 먼저 기록하고, 100% 완료·검증·`main` 병합이 끝나면 상세 로드맵·보고서를 `docs/archive/`로 무손실 이관해 5장 인덱스에 추가한다.
+> **운영 규약 (`AGENTS.md` 1장):** 본 절은 새 세션 착수 전 미리 기록한 Stage 24 공식 설계·실행 계획이다(`L4` 규약 적용). 100% 완료·검증·3인 읽기 전용 감사 `PASS`·`main` 병합이 끝나면 상세 로드맵·완료 보고서를 `docs/archive/`로 무손실 이관해 5장 인덱스에 추가한다.
 
-* **현재 진행 중/예정 단계:** 없음 (Stage 23.5까지 잔여 미완 과제 **0건**).
-* **Stage 24+ 착수 시 우선 검토할 선제 리스크 & `[후순위 보류 후보]`:**
-  1. **`src/engine/createEngine.js` 선제 모듈 분리:** 현재 `1,913줄 / 77.0KB`로 경고선(`1,950줄`)까지 37줄 여유이므로, 차기 엔진 기능 추가 전 `createCharacter`/`migrateState` 생명주기 함수를 별도 무순환 모듈(`src/engine/stateLifecycle.js`)로 선제 분리 권장.
-  2. **`scripts/qa/careerGate.mjs` 강등-서약 태그 정적 검사 일반화:** 비카오스 Tier `N` `forceCareer` 선택지에 폐쇄 서약 `addTags`가 결합될 때 `preventDowngrade`로 인해 상위 티어가 이종 폐쇄 태그를 영구 상속하지 않도록 범용 정적 검사 편입 권장.
-  3. **`[후순위 보류 후보]` 테라 주둔 초인 장수기 작전 보강:** `src/engine/centenarianOps.js`에 테라 주둔 쿠스토데스·살아 있는 성인 전용 100세+ 동적 작전 2종 추가 검토.
+### 6.1 배경 및 실측된 4대 구조 결함
+1. **보이드본(`voidborn`) 공허 생활권 누수 & 출생 혼선:**
+   * `src/data/core/origins.js`의 `rogue_trader_scion`이 일반 행성 출생 시에도 무조건 `"voidborn"` 태그를 부여해 행성·공허 정체성이 혼선되었다.
+   * `worldId: "voidborn"` 체류 상태에서도 공용 지표면 사건 **48건**(예: 18세 43건 중 33건, 22세 세네샬 50건 중 38건)과 공용 지표면 연대기 **21건**(노점상, 하층 배수로, 상층 첨탑 만찬, 거주구 벽보 등)이 `void` 공간으로 누출되었다.
+2. **0~5세 영아기 선택지 사건 노출:**
+   * `TIMELINE` 29건 중 **9건**(`tl_great_rift`, `tl_guilliman_return`, `tl_psychic_awakening`, `tl_arks_of_omen_lion`, `tl_fourth_tyranic`, `tl_fall_of_cadia`, `tl_tanith_fall`, `tl_devastation_baal`, `tl_lions_gate`)에 `filter.minAge`가 없고, `EVENTS`에도 `ev_hive_plague` · `ev_agri_harvest` 2건에 `minAge`가 누락되어 1~3세 영아기에 성전 보급관 자원·권모술수·참전 선택지가 떴다.
+3. **계급별 진로 위화감 · 태생 정체성 증발 · 지문–선택지 불일치 위험:**
+   * 귀족 · 로그 트레이더 방계(14~18세)의 수동 전직 창에 노동자·갱단·PDF·가드 사병·스키타리가 그대로 노출되었고, 정작 `rt_seneschal`은 `minAge: 20`이라 19세에 뜬금없이 `administratum`으로 자동 배치되었다.
+   * 크리그(`krieg`) 일반 시민 출생자가 14세에 데스 코어가 아닌 `menial_worker`로 배정되는 허점이 있었다.
+   * 귀족이 군에 들어가도 사병과 동일하게 취급되어 낙하산 임관의 명암이 드러나지 않으며, 고정 `event.text` 하나로는 출신별 선택지와 지문 시점이 어긋날 수 있었다.
+   * 유년기 검은 함선 사건(`ev_s2_child_blackship_sky`)에서 일반 시민 어른들이 아뎁투스 아스트라 텔레파티카 정식 기관명을 행정관처럼 읊어 고증 어조가 어색했다.
+4. **고정 페르소나 QA 한계 & `createEngine.js` 용량 임계:**
+   * 고정 17페르소나만으로는 `23행성 × 11출신 × 12자질 × 91직군` 조합 폭발을 방어하기 어렵다.
+   * `src/engine/createEngine.js`가 현재 `1,913줄 / 77.0KB`로 경고선(`1,950줄`)까지 37줄 여유만 남았다.
+
+### 6.2 확정 설계 원칙 (5대 핵심 규격)
+1. **4대 직교 컨텍스트 축 (`originClass` · `habitat` · `socialTier` · `bodyClass`) & 보이드본 출생 일원화:**
+   * 기존 `lifeRealm`은 100% 하위 호환 유지하되, 서로 덮어쓰지 않는 독립 축 `originClass`(`underclass | common | military_caste | schola | noble | high_noble | disowned`)와 `habitat`(`void | surface | frontline | cloister`)를 `formatters.js`/`reqEvaluator.js`에 추가한다(`anyOriginClasses`/`excludeOriginClasses`/`anyHabitats`/`excludeHabitats` 조건 키 및 `describeReq` 지원).
+   * **보이드본 출생 일원화:** `origins.js`의 `rogue_trader_scion`에서 무조건 붙던 `"voidborn"` 태그를 제거한다. 오직 **`worldId === "voidborn"`(성간 함대 · 보이드본)** 출생자만 진짜 보이드본(`voidborn` 태그 + 유년기 `habitat: "void"`)이 되며(`voidborn` 출생 시 `rogue_trader_scion` 가중치 우대), 일반 행성(크리그·야만 행성 제외) 출생 로그 트레이더 방계는 해당 행성 귀족 영지 출신으로 자연스럽게 판정한다.
+2. **조건부 지문 변주 (`resolveEventText`: `leadVariants` / `textVariants`):**
+   * `pendingEvent` 생성 시점에 캐릭터 상태(`req`)에 맞는 도입부 1~2문장(`leadVariants`) 또는 본문(`textVariants`)을 최종 `ev.text`로 확정해 **지문(서술)과 출신별 선택지가 100% 한 문맥으로 일치**하게 한다(React UI · `localStorage` 저장 포맷 100% 무변경 호환).
+3. **0~5세 영아기 선택지 원천 차단 + 역사 대사건 목격 로그 전환:**
+   * `createEngine.js` `advanceQuarter`에서 `state.age < 6`일 때 `EVENTS` 및 직접 선택형 `TIMELINE`을 원천 차단한다.
+   * 0~5세에 대균열 · 인도미투스 성전 등 전역 역사 대사건 연도를 지나가면 `tl.infantLog || tl.dispatchText` 영아기 목격 패시브 로그만 기록한다(카디아 · 타니스 · 바알 행성 파괴 시 부모·피난선에 실려 안전 성계로 자동 탈출 처리).
+4. **계급별 운명 궤도 + 귀족 낙하산 임관 + 흙수저 역전 경로 100% 보존:**
+   * **크리그 (`krieg`):** 14세에 `menial_worker` 대신 **데스 코어 오브 크리그(`astra_militarum`)** 기본 편입(사이커 · 특이점 · 전장 공훈 · 타락 분기로 변화 가능).
+   * **아르비테스 (`arbites`):** `schola` 출신 또는 교조(`dogmatic >= 20`) / 의지(`WP >= 44`) 적성 충족 시 개방.
+   * **귀족 · 로그 트레이더 · 테라 고위 귀족 (`!disowned_noble`):** 기본 수동 전직 창에서 하위·사병 직군(`menial_worker`, `underhive_ganger`, `pdf_trooper`, `astra_militarum`, `skitarii`) 숨김. 대신 **`rt_seneschal` 혈통 18세 개방**(91직군 체계 유지) + **18세부터 위관 장교(`militarum_officer`) 낙하산 직통 임관(`noble_commission` 부여)** + 19세 강제 서기관 배치 대신 **18~19세 성년 진로 결단 분기 사건**(`createComingOfAgeEvent` — 가문 승계 · 엘리트 임관 · **가문 의절 `disowned_noble`** 선택 시 하위 직군 해금).
+   * **하층민 · 일반 시민(흙수저):** 자력 전직 지원 경로와 태생 무관 우연 발탁 루트(스페이스 마린 징병관 · 검은 함선 → 사이커/그레이 나이트 · 블랭크 → 침묵의 자매들/암살청 · 심문소/로그 트레이더 스카우트 · 성흔 각성)를 **100% 보존**하면서, 하이브 십일조 강제 징집령·언더하이브 14세 갈림길 같은 제국다운 현실 압력 분기를 강화한다.
+5. **속성 기반(Property-Based) QA 정적 린터 & 무작위 카테시안 조합 퍼저:**
+   * 고정 페르소나를 17종 → **22종 × 2난이도**(보이드본 성인 로그 트레이더 · 보이드본 네이비 · 귀족 낙하산 장교 · 크리그 14세 데스 코어 · 언더하이브 갱단 추가)로 확장하고,
+   * 매 QA마다 **500개 무작위 유효 `(world × origin × trait × career × age)` 조합 퍼저** + **정적 공간/신분/영아기 린터** + `careerGate.mjs` **비카오스 `forceCareer` 강등-서약 태그 정적 검사**를 도입해 조합 찐빠 재발을 원천 봉쇄한다.
+
+### 6.3 단계별 실행 로드맵 (`24-A` ~ `24-D`, `L4` 프로토콜)
+
+| 단계 | 상태 | 소유권 | 목표 범위 및 세부 명세 |
+| --- | :---: | --- | --- |
+| **24-A (Phase A). 엔진 선제 분리 · 4직교 축 · `resolveEventText` · 영아기 차단 · 진로 궤도** | `[예정]` | 메인 단독 | **① `src/engine/stateLifecycle.js` 신설:** `createEngine.js`에서 `generateName`/`computeLifeExpectancy`/`createCharacter`/`migrateState`(~350줄) 무순환 분리(`createEngine.js` ~1,560줄로 감량). **② `formatters.js` · `reqEvaluator.js`:** `originClass`/`habitat` 4직교 축 + `checkReq`/`describeReq` + `resolveEventText`(`leadVariants`/`textVariants`). **③ `createEngine.js` · `careerRules.js`:** `age < 6` 선택지 차단 + 영아기 `TIMELINE` 목격/자동 탈출 로그, 크리그 14세 데스 코어 기본 편입, 상위 출신 하위 직군 필터, 귀족 낙하산 `noble_commission`, 18~19세 성년 결단 분기(`createComingOfAgeEvent`). **④ 코어 데이터 & UI:** `tags.js` 3태그(`disowned_noble`/`noble_commission`/`shore_leave_void`), `origins.js` 보이드본 태그 일원화, `careers/*.js`(`militarum_officer` 귀족 18세 · `rt_seneschal` 혈통 18세 · `arbites` 스콜라/교조 적성), `timeline/*.js` 9건 `minAge`+`infantLog`, `AutonomousPanel.tsx` 안내 문구 동기화, `centenarianOps.js` 테라 쿠스토데스·리빙 세인트 2종(Stage 23.5 보류 후보) 병합. |
+| **24-B (Phase B). 속성 기반 QA 린터 · 500조합 퍼저 · 강등-서약 검사 · Vitest** | `[예정]` | 메인 단독 | **① `distGate.mjs` · `qa.mjs`:** `stateLifecycle.js` Gate 2/8 격리(10모듈), Gate 3 `leadVariants`/`textVariants` 스캔, Gate 4 **0~5세 발동 가능 선택지 사건 0건** 단언 + **정적 지표면↔공허 공간 린터** + `createComingOfAgeEvent` 검증. **② `personaGate.mjs`:** 22페르소나 × 2난이도(`rt_scion_kid` `voidborn` 기준 정합화 포함) + **500개 무작위 카테시안 조합 퍼저**. **③ `careerGate.mjs`:** 비카오스 `forceCareer` + 폐쇄 서약 `addTags` 강등 누수 범용 정적 검사 + `originClass`/`habitat` 도달성 검증. **④ `tests/game-a11y.test.tsx`:** Stage 24 회귀 테스트(#28~#30) 추가. |
+| **24-C (Phase C). 공허 누수 교정 · 보이드본/낙하산/징집 서사 팩 · 검은 함선 교정** | `[예정]` | `iv_data_writer` 3트랙 병렬 | **Track C1 (기존 공허 누수 교정):** 지표면→공허 누수 48사건 · 21연대기 `excludeHabitats: ["void"]` 정합화 + `ev_hive_plague`/`ev_agri_harvest` `minAge: 14` 추가. **Track C2 (보이드본 전용 팩 신설):** `events/worlds/voidborn_deep.js`(+10사건: 보이드본 첫 지표면 상륙 광장공포증 `shore_leave_void`, 기항지 임시 상륙 교역, 원자로 데크 배급 분쟁 등) + `chronicles/voidborn_s24.js`(+18연대기). **Track C3 (낙하산·출신 교차·징집·검은 함선):** `events/themes/origin_crossover_s24.js`(+10사건: 귀족 낙하산 소위 vs 고참 분대장, 하층민 장교 vs 귀족 참모, 하이브 강제 십일조 징집령, 언더하이브 14세 갈림길, 의절 귀족 생존기, 크리그 14세 첫 참호) + `chronicles/origin_crossover_s24.js`(+16연대기) + `lifecycle_early.js` `ev_s2_child_blackship_sky` 일반 시민 공포·소문 어조 고증 교정 + 기존 핵심 직군 사건 10~12건 `leadVariants` + 출신별 선택지 결합. |
+| **24-D (Phase D). 통합 검증 · 3인 읽기 전용 감사 `PASS` · 마감 및 아카이브** | `[예정]` | 메인 + 3인 읽기 전용 감사관 | `npm run verify && npm run qa:deep && npm run coverage` 전 항목 0오류·0경고, `iv_lore_auditor` · `iv_prose_a11y_critic` · `iv_redteam_reviewer` 전원 `PASS` (`P0`/`P1` 0건), `PROJECT_GUIDE.md` · `README.md` 수치 동기화, `origin/main` 병합·푸시 및 완료 기록 `docs/archive/` 이관. |
+
