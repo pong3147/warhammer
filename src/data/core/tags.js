@@ -252,7 +252,12 @@ export const TAG_LABELS = {
   bond_void_companion: "함선·기계교 동반자",
   bond_heretic_pact: "배교 혈맹 동료",
   bond_fallen_comrade: "전우의 유품",
-  bond_oath_fulfilled: "지켜 낸 전우애"
+  bond_oath_fulfilled: "지켜 낸 전우애",
+
+  // 24단계 4대 직교 컨텍스트 · 귀족 낙하산/의절 · 보이드본 상륙 태그 3종
+  disowned_noble: "의절한 귀족",
+  noble_commission: "귀족 낙하산 임관",
+  shore_leave_void: "보이드본 첫 지표 상륙"
 };
 
 // 행성 유형 태그 한글 라벨 사전 (describeReq 표시용)

@@ -277,8 +277,8 @@ export function createTravelModule(deps) {
       };
     }
 
-    // 7. 귀족 출신 시민/관료/성직자 (권위 45 미만 인접 성역, 45 이상 은하 전역)
-    if (state.tags.includes("noble") || state.tags.includes("rogue_trader_blood")) {
+    // 7. 귀족 출신 시민/관료/성직자 (권위 45 미만 인접 성역, 45 이상 은하 전역; 의절 귀족 제외)
+    if (!state.tags.includes("disowned_noble") && (state.tags.includes("noble") || state.tags.includes("rogue_trader_blood"))) {
       const canGalaxy = (state.stats && state.stats.Inf ? state.stats.Inf : 0) >= 45;
       return {
         canAttempt: true,
@@ -970,8 +970,8 @@ export function createTravelModule(deps) {
       };
     }
 
-    // 5) 귀족 가문 · 성역 궁정 알현 소환
-    if (state.tags.includes("noble") || state.tags.includes("rogue_trader_blood")) {
+    // 5) 귀족 가문 · 성역 궁정 알현 소환 (의절 귀족 제외)
+    if (!state.tags.includes("disowned_noble") && (state.tags.includes("noble") || state.tags.includes("rogue_trader_blood"))) {
       return {
         id: `dyn_noble_court_${state.year}`,
         isTimeline: false,

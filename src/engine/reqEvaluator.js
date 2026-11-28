@@ -1,7 +1,9 @@
-// 조건 평가 · 파티션 버킷 인덱싱 · 3대 계층 축 컨텍스트 모듈 (무순환 DAG · createEngine 분리)
+// 조건 평가 · 파티션 버킷 인덱싱 · 4대 직교 컨텍스트 축 · 조건부 지문 변주 모듈 (무순환 DAG · createEngine 분리)
 import {
   computeBodyClass,
+  computeHabitat,
   computeLifeRealm,
+  computeOriginClass,
   computeSocialTier,
   getAlignmentInfo,
   normalizeAlignment
@@ -96,7 +98,9 @@ export function createReqEvaluatorModule({ DATA, getWorld, getCareer }) {
     return {
       socialTier: computeSocialTier(state, career, tagSet),
       lifeRealm: computeLifeRealm(state, career, world, tagSet),
-      bodyClass: computeBodyClass(state, career, tagSet)
+      bodyClass: computeBodyClass(state, career, tagSet),
+      originClass: computeOriginClass(state, tagSet),
+      habitat: computeHabitat(state, career, world, tagSet)
     };
   }
 
@@ -117,7 +121,9 @@ export function createReqEvaluatorModule({ DATA, getWorld, getCareer }) {
       alignDominant: alignInfo.dominant,
       socialTier: computeSocialTier(state, career, tagSet),
       lifeRealm: computeLifeRealm(state, career, world, tagSet),
-      bodyClass: computeBodyClass(state, career, tagSet)
+      bodyClass: computeBodyClass(state, career, tagSet),
+      originClass: computeOriginClass(state, tagSet),
+      habitat: computeHabitat(state, career, world, tagSet)
     };
   }
 
@@ -166,6 +172,18 @@ export function createReqEvaluatorModule({ DATA, getWorld, getCareer }) {
       const body = (ctx && ctx.bodyClass) || computeBodyClass(state, (ctx && ctx.career) || getCareer(state.careerId), ctx && ctx.tagSet);
       if (req.anyBodyClasses && !req.anyBodyClasses.includes(body)) return false;
       if (req.excludeBodyClasses && req.excludeBodyClasses.includes(body)) return false;
+    }
+
+    if (req.anyOriginClasses || req.excludeOriginClasses) {
+      const oClass = (ctx && ctx.originClass) || computeOriginClass(state, ctx && ctx.tagSet);
+      if (req.anyOriginClasses && !req.anyOriginClasses.includes(oClass)) return false;
+      if (req.excludeOriginClasses && req.excludeOriginClasses.includes(oClass)) return false;
+    }
+
+    if (req.anyHabitats || req.excludeHabitats) {
+      const hab = (ctx && ctx.habitat) || computeHabitat(state, (ctx && ctx.career) || getCareer(state.careerId), (ctx && ctx.world) || getWorld(state.worldId), ctx && ctx.tagSet);
+      if (req.anyHabitats && !req.anyHabitats.includes(hab)) return false;
+      if (req.excludeHabitats && req.excludeHabitats.includes(hab)) return false;
     }
 
     if (req.anyPastCareers) {
@@ -308,6 +326,36 @@ export function createReqEvaluatorModule({ DATA, getWorld, getCareer }) {
     return true;
   }
 
+  function resolveEventText(ev, state, ctx) {
+    if (!ev || typeof ev !== "object") return "";
+    const reqCtx = ctx || (state ? makeReqContext(state) : null);
+    let body = typeof ev.text === "string" ? ev.text : "";
+
+    if (Array.isArray(ev.textVariants) && state) {
+      for (let i = 0; i < ev.textVariants.length; i++) {
+        const variant = ev.textVariants[i];
+        if (!variant || typeof variant.text !== "string" || !variant.text.trim()) continue;
+        if (!variant.req || checkReq(state, variant.req, reqCtx)) {
+          body = variant.text;
+          break;
+        }
+      }
+    }
+
+    if (Array.isArray(ev.leadVariants) && state) {
+      for (let i = 0; i < ev.leadVariants.length; i++) {
+        const variant = ev.leadVariants[i];
+        if (!variant || typeof variant.lead !== "string" || !variant.lead.trim()) continue;
+        if (!variant.req || checkReq(state, variant.req, reqCtx)) {
+          body = body ? `${variant.lead} ${body}` : variant.lead;
+          break;
+        }
+      }
+    }
+
+    return body;
+  }
+
   return {
     WORLD_TAG_SET_BY_ID,
     EVENT_BY_ID,
@@ -315,6 +363,7 @@ export function createReqEvaluatorModule({ DATA, getWorld, getCareer }) {
     getChronicleBuckets,
     getStratification,
     makeReqContext,
-    checkReq
+    checkReq,
+    resolveEventText
   };
 }

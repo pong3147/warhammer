@@ -270,7 +270,7 @@ export default [
     id: "ch_s19_kid_rt_inf_1",
     badge: "무역 영장 가문의 요람",
     priority: 3,
-    req: { minAge: 1, maxAge: 5, anyCareers: ["child"], allTags: ["rogue_trader_blood"] },
+    req: { minAge: 1, maxAge: 5, anyCareers: ["child"], allTags: ["rogue_trader_blood"], anyHabitats: ["void"] },
     text: "황금 무역 영장의 복제 인장이 걸린 기함 귀빈실 요람에서, 성간 선단의 가신들이 바치는 변경 성계 향료 냄새를 맡으며 유아기를 보냈다. 요람 밖 관측창 너머로는 가문 호위함들의 항행등이 별빛처럼 반짝였다.",
     effect: { stats: { Fel: 1, Inf: 1 } },
     source: "Rogue Trader Core Rulebook: Rogue Trader Dynasty"
@@ -306,7 +306,7 @@ export default [
     id: "ch_s19_kid_rt_2",
     badge: "기함 함교의 외교 참관",
     priority: 3,
-    req: { minAge: 6, maxAge: 13, anyCareers: ["child"], allTags: ["rogue_trader_blood"] },
+    req: { minAge: 6, maxAge: 13, anyCareers: ["child"], allTags: ["rogue_trader_blood"], anyHabitats: ["void"] },
     text: "기함 응접실 발코니에서 행성 총독 특사들과 가문 대표가 벌이는 치열한 관세 협상을 지켜보았다. 미소 뒤에 숨겨진 위압과 적절한 양보의 시점을 읽는 감각이 어린 시절부터 자연스레 몸에 배었다.",
     effect: { stats: { Fel: 1, WP: 1 } },
     source: "Rogue Trader Core Rulebook: Dynasty"
@@ -315,7 +315,7 @@ export default [
     id: "ch_s19_kid_rt_3",
     badge: "함내 결투장과 항법 훈련",
     priority: 3,
-    req: { minAge: 7, maxAge: 13, anyCareers: ["child"], allTags: ["rogue_trader_blood"] },
+    req: { minAge: 7, maxAge: 13, anyCareers: ["child"], allTags: ["rogue_trader_blood"], anyHabitats: ["void"] },
     text: "선단 아크-밀리턴트 교관의 지도 아래 좁은 함선 복도를 가정한 무중력 검술과 단발 라스 피스톨 사격을 익혔다. 방계 혈손이라 하더라도 해적의 난입 앞에서 당당히 맞설 무예가 필수였다.",
     effect: { stats: { WS: 1, BS: 1 } },
     source: "Rogue Trader Core Rulebook: Arch-Militant"
@@ -332,7 +332,7 @@ export default [
       minAge: 1,
       maxAge: 5,
       anyCareers: ["child"],
-      or: [{ anyWorlds: ["voidborn"] }, { allTags: ["rogue_trader_blood"] }]
+      anyWorlds: ["voidborn"]
     },
     text: "두꺼운 선체 격벽 안쪽에서 플라즈마 원자로와 인공 중력 발전기가 내는 낮고 규칙적인 진동음을 자장가 삼아 잠들었다. 실우주 관측창 너머로 펼쳐진 차가운 별빛과 약한 인공 중력이 함선 태생 아이의 첫 세상이 되었다.",
     effect: { stats: { WP: 1, Ag: 1 } },

@@ -6,6 +6,7 @@ export default [
     category: "전투",
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       anyTags: ["militarum", "imperial_military", "astartes", "sororitas", "mechanicus"],
       excludeWorlds: ["terra", "mars"],
       excludeWorldTags: ["feral"],
@@ -90,6 +91,7 @@ export default [
     req: {
       minAge: 16,
       minYear: 745,
+      excludeHabitats: ["void"],
       anyTags: ["militarum", "astartes", "sororitas", "inquisition_agent", "inquisitor", "mechanicus"],
       excludeWorlds: ["terra", "mars"],
       excludeWorldTags: ["feral"],
@@ -299,6 +301,7 @@ export default [
     req: {
       minAge: 15,
       minYear: 742,
+      excludeHabitats: ["void"],
       anySegmenta: ["ultima"],
       excludeWorlds: ["terra", "mars", "krieg"],
       excludeHomeWorlds: ["krieg"],
@@ -363,6 +366,7 @@ export default [
     category: "이단·외계",
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       anyCareers: ["pdf_trooper", "astra_militarum", "militarum_sergeant", "underhive_ganger", "underhive_boss", "menial_worker", "inquisition_acolyte"],
       excludeTags: [
         "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
@@ -411,6 +415,7 @@ export default [
     category: "전투",
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
@@ -600,6 +605,7 @@ export default [
     req: {
       minAge: 18,
       minYear: 742,
+      excludeHabitats: ["void"],
       anySegmenta: ["ultima"],
       excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
       excludeWorldTags: ["feral"],
@@ -656,6 +662,7 @@ export default [
     once: true,
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
       excludeWorldTags: ["feral"],
       excludeTags: [
@@ -717,6 +724,7 @@ export default [
     once: true,
     req: {
       minAge: 20,
+      excludeHabitats: ["void"],
       excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
       excludeWorldTags: ["feral"],
       excludeTags: [
@@ -778,6 +786,7 @@ export default [
     req: {
       minAge: 18,
       minYear: 897,
+      excludeHabitats: ["void"],
       excludeWorlds: ["terra", "mars", "macragge", "ophelia7", "baal", "fenris", "nocturne", "cadia", "krieg", "voidborn"],
       excludeWorldTags: ["feral"],
       excludeTags: [
@@ -834,6 +843,7 @@ export default [
     req: {
       minAge: 22,
       minYear: 897,
+      excludeHabitats: ["void"],
       excludeWorlds: ["terra", "mars"],
       excludeWorldTags: ["feral"],
       excludeTags: [
@@ -895,6 +905,7 @@ export default [
     once: true,
     req: {
       minAge: 18,
+      excludeHabitats: ["void"],
       excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
       excludeWorldTags: ["feral"],
       excludeTags: [

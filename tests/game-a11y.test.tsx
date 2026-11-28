@@ -1730,6 +1730,236 @@ describe("Imperialis Vita — React Behavioral Screen-Reader A11y & Pacing Suite
     window.location.hash = "";
     externalBtn.remove();
   });
+
+  it("Stage 24 (#28): verifies 4 orthogonal axes, voidborn birth unification, and resolveEventText (leadVariants/textVariants) live rendering in ActiveEventPanel", () => {
+    const engine = createImperiumEngine(FULL_DATA);
+
+    // 1. Voidborn birth unification: rogue_trader_scion on hive vs voidborn
+    const hiveRt = engine.createCharacter({ mode: "custom", worldId: "generic_hive", originId: "rogue_trader_scion", traitId: "none", eraId: "armageddon", gender: "male" });
+    expect(hiveRt.tags).not.toContain("voidborn");
+    expect(engine.getStratification(hiveRt)).toMatchObject({
+      socialTier: "elite",
+      originClass: "noble",
+      habitat: "surface",
+      bodyClass: "mortal"
+    });
+
+    const voidRt = engine.createCharacter({ mode: "custom", worldId: "voidborn", originId: "rogue_trader_scion", traitId: "none", eraId: "armageddon", gender: "female" });
+    expect(voidRt.tags).toContain("voidborn");
+    expect(engine.getStratification(voidRt)).toMatchObject({
+      socialTier: "elite",
+      originClass: "noble",
+      habitat: "void",
+      bodyClass: "mortal"
+    });
+
+    // 2. resolveEventText with leadVariants & textVariants rendered in ActiveEventPanel
+    const sampleEv = {
+      id: "ev_s24_ui_variant_test",
+      title: "조건부 지문 검증 사건",
+      category: "테스트",
+      text: "함교의 경보가 울렸다.",
+      leadVariants: [
+        { req: { anyHabitats: ["void"] }, lead: "성간 기함의 강철 격벽이 흔들리며" },
+        { req: { anyOriginClasses: ["noble", "high_noble"] }, lead: "귀족 가문의 문장을 단 채" }
+      ],
+      choices: [{ label: "상황을 살핀다", effect: { text: "상황을 파악했다." } }],
+      source: "Test Suite"
+    };
+    const resolvedVoid = engine.resolveEventText(sampleEv, voidRt);
+    expect(resolvedVoid).toBe("성간 기함의 강철 격벽이 흔들리며 함교의 경보가 울렸다.");
+    expect(engine.resolveEventText(sampleEv, hiveRt)).toBe("귀족 가문의 문장을 단 채 함교의 경보가 울렸다.");
+
+    let fired = false;
+    const proxy = {
+      ...engine,
+      createCharacter(cfg: any) {
+        return engine.createCharacter({ ...cfg, worldId: "voidborn", originId: "rogue_trader_scion" });
+      },
+      advanceQuarter(st: any, opts?: any) {
+        if (!fired) {
+          fired = true;
+          st.pendingEvent = { ...sampleEv, text: engine.resolveEventText(sampleEv, st) };
+          return { status: "event", isNewYear: false };
+        }
+        return engine.advanceQuarter(st, opts);
+      }
+    };
+    const { container, unmount } = render(<GameApp engineOverride={proxy} dataOverride={FULL_DATA} />);
+    startCustomCharacter(container);
+    fireEvent.click(container.querySelector("#btn-step")!);
+    expect(container.querySelector(".event-text")?.textContent).toContain("성간 기함의 강철 격벽이 흔들리며 함교의 경보가 울렸다.");
+    unmount();
+    localStorage.clear();
+  });
+
+  it("Stage 24 (#29): blocks choice events and direct timeline at ages 0~5 while converting global cataclysms to witness logs + Cadia/Tanith auto-evac, Baal bunker survival, and #sr-live announcement", () => {
+    const engine = createImperiumEngine(FULL_DATA);
+    const randSpy = vi.spyOn(Math, "random").mockReturnValue(0.01);
+    try {
+      // Cadia age-2 infant during 999.M41 -> auto-evac to voidborn, no pendingEvent, logs[0] preserved as witness
+      const cadiaInf = engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "imperial_citizen", traitId: "none", eraId: "cadia_rift", gender: "male" });
+      cadiaInf.age = 1;
+      cadiaInf.quarter = 3;
+      cadiaInf.year = 998;
+      const res = engine.advanceQuarter(cadiaInf);
+      expect(res.status).not.toBe("event");
+      expect(cadiaInf.pendingEvent).toBeNull();
+      expect(cadiaInf.worldId).toBe("voidborn");
+      expect(cadiaInf.seenTimeline).toContain("tl_fall_of_cadia");
+      expect(cadiaInf.globalFlags.greatRiftOpened).toBe(true);
+      expect(cadiaInf.logs[0]?.badge).toBe("유아기 역사 목격");
+
+      // Tanith age-3 infant during 765.M41 -> auto-evac to generic_civilised
+      const tanithInf = engine.createCharacter({ mode: "custom", worldId: "tanith", originId: "imperial_citizen", traitId: "none", eraId: "sabbat", gender: "female" });
+      tanithInf.age = 2;
+      tanithInf.quarter = 3;
+      tanithInf.year = 764;
+      engine.advanceQuarter(tanithInf);
+      expect(tanithInf.pendingEvent).toBeNull();
+      expect(tanithInf.worldId).toBe("generic_civilised");
+      expect(tanithInf.seenTimeline).toContain("tl_tanith_fall");
+      expect(tanithInf.logs[0]?.badge).toBe("유아기 역사 목격");
+
+      // Baal age-2 infant during 999.M41 -> canon Arx Angelicum bunker survival (stays on baal, no orbital evac)
+      const baalInf = engine.createCharacter({ mode: "custom", worldId: "baal", originId: "imperial_citizen", traitId: "none", eraId: "cadia_rift", gender: "male" });
+      baalInf.age = 1;
+      baalInf.quarter = 3;
+      baalInf.year = 998;
+      engine.advanceQuarter(baalInf);
+      expect(baalInf.pendingEvent).toBeNull();
+      expect(baalInf.worldId).toBe("baal");
+      expect(baalInf.seenTimeline).toContain("tl_devastation_baal");
+      expect(baalInf.logs[0]?.badge).toBe("유아기 역사 목격");
+
+      // UI #sr-live regression: infant historical witness log MUST be announced to blind screen-reader users
+      const srProxy = {
+        ...engine,
+        createCharacter(cfg: any) {
+          const st = engine.createCharacter({ ...cfg, worldId: "cadia", originId: "imperial_citizen", eraId: "cadia_rift" });
+          st.age = 1;
+          st.quarter = 3;
+          st.year = 998;
+          return st;
+        }
+      };
+      const { container, unmount } = render(<GameApp engineOverride={srProxy} dataOverride={FULL_DATA} />);
+      startCustomCharacter(container);
+      fireEvent.click(container.querySelector("#btn-step")!);
+      const liveText = container.querySelector("#sr-live")?.textContent || "";
+      expect(liveText).toContain("유아기 역사 목격");
+      unmount();
+      localStorage.clear();
+    } finally {
+      randSpy.mockRestore();
+    }
+  });
+
+  it("Stage 24 (#30): verifies Krieg age-14 Death Korps, noble lower-career hiding & AutonomousPanel copy, age-18 coming-of-age (parachute/disowned RT revocation), and 16 centenarian ops", () => {
+    const engine = createImperiumEngine(FULL_DATA);
+
+    // 1. Krieg 14yo defaults to Death Korps (astra_militarum) AND #sr-live prioritizes kind="career" ([직무 편입]) over same-quarter chronicle at logs[0]
+    const randHigh = vi.spyOn(Math, "random").mockReturnValue(0.99);
+    try {
+      let kriegRef: any = null;
+      const kriegProxy = {
+        ...engine,
+        createCharacter(cfg: any) {
+          const st = engine.createCharacter({ ...cfg, worldId: "krieg", originId: "imperial_citizen", eraId: "armageddon", gender: "male" });
+          st.age = 13;
+          st.quarter = 3;
+          st.year = st.birthYear + 13;
+          kriegRef = st;
+          return st;
+        }
+      };
+      const { container: kCont, unmount: kUnmount } = render(<GameApp engineOverride={kriegProxy} dataOverride={FULL_DATA} />);
+      startCustomCharacter(kCont);
+      fireEvent.click(kCont.querySelector("#btn-step")!);
+      expect(kriegRef.careerId).toBe("astra_militarum");
+      expect(kriegRef.tags).toContain("militarum");
+      // Chronicle ran after career assignment so logs[0] is chronicle/normal, NOT career — yet #sr-live must prioritize kind="career"
+      expect(kriegRef.logs[0]?.kind).not.toBe("career");
+      expect(kriegRef.logs.some((l: any) => l.kind === "career" && l.badge === "직무 편입")).toBe(true);
+      const kLive = kCont.querySelector("#sr-live")?.textContent || "";
+      expect(kLive).toContain("[직무 편입]");
+      expect(kLive).toContain("데스 코어 오브 크리그");
+      kUnmount();
+      localStorage.clear();
+    } finally {
+      randHigh.mockRestore();
+    }
+
+    // 2. Upper-noble hides lower careers in AutonomousPanel and shows updated Stage 24 copy (real DOM buttons, non-empty!)
+    const nobProxy = {
+      ...engine,
+      createCharacter(cfg: any) {
+        const st = engine.createCharacter({ ...cfg, worldId: "necromunda", originId: "planetary_noble" });
+        st.age = 18;
+        st.year = st.birthYear + 18;
+        st.stats = { WS: 48, BS: 48, T: 48, Ag: 48, Int: 48, WP: 48, Fel: 48, Inf: 50 };
+        return st;
+      }
+    };
+    const { container, unmount } = render(<GameApp engineOverride={nobProxy} dataOverride={FULL_DATA} />);
+    startCustomCharacter(container);
+    const autoPanel = container.querySelector('aside[aria-labelledby="heading-auto"]');
+    expect(autoPanel).not.toBeNull();
+    const autoText = autoPanel?.textContent || "";
+    expect(autoText).toContain("귀족 가문 수습 기간");
+    expect(autoText).toContain("위관 장교 낙하산 임관");
+    expect(autoText).toContain("가문 의절");
+    const careerBtnTexts = Array.from(autoPanel!.querySelectorAll(".btn-apply-career")).map((el) => el.textContent || "");
+    expect(careerBtnTexts.length).toBeGreaterThan(0);
+    expect(careerBtnTexts.some((t) => t.includes("행성 노동자") || t.includes("언더하이브 갱단") || t.includes("행성 방위군"))).toBe(false);
+    unmount();
+    localStorage.clear();
+
+    // 3. Age-18 Q2 coming-of-age event: parachute officer vs disowned RT noble privilege revocation
+    const paraSt = engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "planetary_noble", traitId: "none", eraId: "armageddon", gender: "male" });
+    paraSt.age = 18;
+    paraSt.quarter = 1;
+    paraSt.year = paraSt.birthYear + 18;
+    paraSt.wounds = 100;
+    engine.advanceQuarter(paraSt);
+    expect(paraSt.pendingEvent?.isComingOfAge).toBe(true);
+    const paraIdx = paraSt.pendingEvent.choices.findIndex((c: any) => c.effect?.acceptCareerOffer === "militarum_officer");
+    engine.resolvePendingChoice(paraSt, paraIdx);
+    expect(paraSt.careerId).toBe("militarum_officer");
+    expect(paraSt.tags).toContain("noble_commission");
+
+    const disSt = engine.createCharacter({ mode: "custom", worldId: "voidborn", originId: "rogue_trader_scion", traitId: "none", eraId: "armageddon", gender: "female" });
+    disSt.age = 18;
+    disSt.quarter = 2;
+    disSt.stats = { WS: 46, BS: 46, T: 46, Ag: 46, Int: 46, WP: 46, Fel: 46, Inf: 46 };
+    disSt.pendingEvent = engine.createComingOfAgeEvent(disSt);
+    const disIdx = disSt.pendingEvent.choices.findIndex((c: any) => (c.effect?.addTags || []).includes("disowned_noble"));
+    engine.resolvePendingChoice(disSt, disIdx);
+    expect(disSt.careerId).toBe("menial_worker");
+    expect(disSt.tags).toContain("disowned_noble");
+    expect(disSt.tags).not.toContain("rogue_trader_blood");
+    expect(engine.getStratification(disSt).originClass).toBe("disowned");
+    expect(engine.isManualCareerAllowed(disSt, engine.getCareer("astra_militarum"))).toBe(true);
+    expect(engine.getTravelProfile(disSt).authority).not.toContain("가문 사설");
+    expect(engine.checkReq(disSt, engine.getCareer("rt_seneschal").req)).toBe(false);
+
+    // 4. 16 centenarianOps templates including Custodes Blood Games & Living Saint miracle
+    const totalOps = Object.values(CENTENARIAN_OP_POOLS).reduce((acc, arr) => acc + arr.length, 0);
+    expect(totalOps).toBe(16);
+    const cust120 = engine.createCharacter({ mode: "custom", worldId: "terra", originId: "terra_high_blood", traitId: "none", eraId: "indomitus", gender: "male" });
+    cust120.age = 125;
+    cust120.careerId = "adeptus_custodes";
+    cust120.tags.push("custodes", "transhuman");
+    const custEv = createDynamicCentenarianEvent(cust120, null, { getWorld: engine.getWorld, getCareer: engine.getCareer, isIncorruptibleState: () => true });
+    expect(custEv).toBeTruthy();
+
+    const saint120 = engine.createCharacter({ mode: "custom", worldId: "ophelia7", originId: "ecclesiarchy_novice", traitId: "emperor_blessed", eraId: "indomitus", gender: "female" });
+    saint120.age = 120;
+    saint120.careerId = "living_saint";
+    saint120.tags.push("living_saint", "transhuman");
+    const saintEv = createDynamicCentenarianEvent(saint120, null, { getWorld: engine.getWorld, getCareer: engine.getCareer, isIncorruptibleState: () => true });
+    expect(saintEv).toBeTruthy();
+  });
 });
 
 

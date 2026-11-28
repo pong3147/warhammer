@@ -9,6 +9,7 @@ export default [
       minAge: 16,
       minYear: 960,
       maxYear: 1030,
+      excludeHabitats: ["void"],
       excludeTags: [
         "met_marbo",
         "astartes", "grey_knight", "custodes", "dreadnought",
@@ -106,6 +107,7 @@ export default [
       minAge: 16,
       minYear: 942,
       maxYear: 1005,
+      excludeHabitats: ["void"],
       excludeTags: [
         "met_yarrick",
         "astartes", "grey_knight", "custodes", "dreadnought",
@@ -157,6 +159,7 @@ export default [
       minAge: 16,
       minYear: 919,
       maxYear: 1002,
+      excludeWorlds: ["voidborn"],
       excludeTags: [
         "imperial_nihilus", "met_cain",
         "astartes", "grey_knight", "custodes", "dreadnought",
@@ -209,6 +212,7 @@ export default [
       minAge: 15,
       minYear: 766,
       maxYear: 795,
+      excludeHabitats: ["void"],
       excludeTags: [
         "met_gaunt",
         "astartes", "grey_knight", "custodes", "dreadnought",
@@ -414,6 +418,7 @@ export default [
       minAge: 18,
       minYear: 240,
       maxYear: 495,
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["krieg", "feral", "death"],
@@ -470,6 +475,7 @@ export default [
     req: {
       minAge: 16,
       minYear: 900,
+      excludeHabitats: ["void"],
       excludeTags: [
         "met_grimnar", "custodes", "high_lord_terra", "chapter_master",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
@@ -519,6 +525,7 @@ export default [
     req: {
       minAge: 14,
       minYear: 941,
+      excludeHabitats: ["void"],
       excludeTags: [
         "met_tushan", "dreadnought", "custodes",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
@@ -668,6 +675,7 @@ export default [
       minAge: 18,
       minYear: 931,
       maxYear: 1018,
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["krieg", "feral", "death"],
@@ -722,6 +730,7 @@ export default [
       minAge: 15,
       minYear: 998,
       maxYear: 1040,
+      excludeHabitats: ["void"],
       excludeTags: [
         "met_grimaldus",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
@@ -823,6 +832,7 @@ export default [
       minAge: 14,
       minYear: 970,
       maxYear: 999,
+      excludeHabitats: ["void"],
       excludeTags: [
         "met_creed",
         "astartes", "grey_knight", "custodes", "dreadnought",
@@ -889,6 +899,7 @@ export default [
     req: {
       minAge: 16,
       minYear: 941,
+      excludeHabitats: ["void"],
       excludeTags: [
         "met_ghazghkull",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"

@@ -195,7 +195,7 @@ export default [
     id: "ch_s12_rt_2",
     badge: "무역 영장 연회",
     priority: 3,
-    req: { anyCareers: ["rt_seneschal", "rogue_trader", "rt_lord_captain", "guild_magnate"] },
+    req: { anyCareers: ["rt_seneschal", "rogue_trader", "rt_lord_captain", "guild_magnate"], excludeWorlds: ["voidborn"] },
     text: "행성 총독궁 만찬에서 변경에서 들여온 진귀한 보석과 술을 풀어 상류층 귀족들의 환심을 샀다. 로그 트레이더에게 사교장은 곧 전장이다.",
     effect: { stats: { Fel: 1, Inf: 1 } }
   },
@@ -219,7 +219,7 @@ export default [
     id: "ch_s12_ganger_1",
     badge: "언더하이브 거래",
     priority: 3,
-    req: { anyCareers: ["underhive_ganger", "underhive_boss", "hive_crime_lord"] },
+    req: { anyCareers: ["underhive_ganger", "underhive_boss", "hive_crime_lord"], excludeHabitats: ["void"] },
     text: "녹슨 돔 환기구 아래 비밀 공방에서 사제 산탄총의 총열을 다듬고 불법 개조 탄환을 챙겼다. 하층 구역에서는 탄창이 곧 생명줄이다.",
     effect: { stats: { BS: 1, Ag: 1 } }
   },
@@ -227,7 +227,7 @@ export default [
     id: "ch_s12_ganger_2",
     badge: "언더하이브 순찰",
     priority: 3,
-    req: { anyCareers: ["underhive_ganger", "underhive_boss", "hive_crime_lord"] },
+    req: { anyCareers: ["underhive_ganger", "underhive_boss", "hive_crime_lord"], excludeHabitats: ["void"] },
     text: "유독 안개가 깔린 구역 경계에서 라이벌 갱단의 낙서를 지우고 아군 표식을 새로 그렸다. 작은 방심 하나가 구역 전체를 빼앗긴다.",
     effect: { stats: { WS: 1, T: 1 } }
   },
@@ -243,7 +243,7 @@ export default [
     id: "ch_s12_arbites_1",
     badge: "아르비테스 기동 순찰",
     priority: 3,
-    req: { anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal", "grand_provost_marshal"] },
+    req: { anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal", "grand_provost_marshal"], excludeHabitats: ["void"] },
     text: "장갑 사이버-마스티프 사냥개와 함께 야간 하이브 간선도로를 순찰하며 통행 금지 위반자와 불법 무기 밀수꾼을 즉결 제압했다.",
     effect: { stats: { WS: 1, WP: 1 } }
   },
@@ -259,7 +259,7 @@ export default [
     id: "ch_s12_menial_1",
     badge: "매뉴팩토룸 교대",
     priority: 3,
-    req: { anyCareers: ["menial_worker", "guild_artisan"], excludeWorlds: ["krieg"], excludeWorldTags: ["feral"] },
+    req: { anyCareers: ["menial_worker", "guild_artisan"], excludeHabitats: ["void"], excludeWorlds: ["krieg"], excludeWorldTags: ["feral"] },
     text: "14시간 조업을 마치고 쇠맛 나는 정화수 한 컵과 배급 죽으로 허기를 달랬다. 기어 소리 가득한 작업장에서도 내일을 버텨 낼 작은 요령을 익혔다.",
     effect: { stats: { T: 1, Int: 1 } }
   },
@@ -267,7 +267,7 @@ export default [
     id: "ch_s12_pdf_1",
     badge: "행성 방위군 경계",
     priority: 3,
-    req: { anyCareers: ["pdf_trooper"] },
+    req: { anyCareers: ["pdf_trooper"], excludeHabitats: ["void"] },
     text: "행성 우주 항구 검문소에서 화물 컨테이너를 일일이 검문하며 불법 이단 서적과 밀수 오토건을 적발했다.",
     effect: { stats: { BS: 1, Int: 1 } }
   },

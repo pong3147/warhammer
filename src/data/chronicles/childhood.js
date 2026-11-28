@@ -526,7 +526,7 @@ export default [
     id: "ch_s8_kid_void_inf_2",
     badge: "함선 선실 요람",
     priority: 3,
-    req: { minAge: 1, maxAge: 5, or: [{ anyWorlds: ["voidborn"] }, { allTags: ["rogue_trader_blood"] }] },
+    req: { minAge: 1, maxAge: 5, anyWorlds: ["voidborn"] },
     text: "워프 항해 경보가 울리자 선실의 모든 방폭 셔터가 닫혔다. 어른들은 아이가 이상한 꿈을 꾸지 않도록 황제의 순결 인장을 요람에 걸어 두었다.",
     effect: { stats: { WP: 1 }, faith: 2 }
   },
@@ -542,7 +542,7 @@ export default [
     id: "ch_s8_kid_void_ch_1",
     badge: "함선 유년기",
     priority: 3,
-    req: { minAge: 6, maxAge: 13, or: [{ anyWorlds: ["voidborn"] }, { allTags: ["rogue_trader_blood"] }] },
+    req: { minAge: 6, maxAge: 13, anyWorlds: ["voidborn"] },
     text: "어두운 화물 갑판의 관측창 너머로 끝없이 펼쳐진 은하 성운을 바라보았다. 행성 표면의 흙보다 별빛과 강철 갑판이 훨씬 친숙했다.",
     effect: { stats: { WP: 1, Int: 1 } }
   },
@@ -761,7 +761,7 @@ export default [
     id: "ch_s8_kid_univ_2",
     badge: "제국 유년기",
     priority: 2,
-    req: { minAge: 1, maxAge: 7, maxSocialTier: "common", excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg", "voidborn"] },
+    req: { minAge: 1, maxAge: 7, maxSocialTier: "common", excludeHabitats: ["void"], excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg", "voidborn"] },
     text: "어둠이 깊게 내린 밤, 타닥거리는 등불과 화톳불 곁에서 하늘의 황제가 악귀를 물리치는 전승을 들으며 잠들었다.",
     effect: { faith: 1, stats: { WP: 1 } }
   },
@@ -769,7 +769,7 @@ export default [
     id: "ch_s8_kid_univ_3",
     badge: "제국 유년기",
     priority: 2,
-    req: { minAge: 1, maxAge: 8, maxSocialTier: "common", excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg", "voidborn"], excludeWorldTags: ["feral"] },
+    req: { minAge: 1, maxAge: 8, maxSocialTier: "common", excludeHabitats: ["void"], excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg", "voidborn"], excludeWorldTags: ["feral"] },
     text: "구역 광장에 날아든 낡은 서보-스컬이 윙윙거리며 인구조사 빛을 비출 때, 호기심에 뒤를 따라다니다가 호통을 들었다.",
     effect: { stats: { Int: 1 } }
   },
@@ -777,7 +777,7 @@ export default [
     id: "ch_s8_kid_univ_4",
     badge: "제국 유년기",
     priority: 2,
-    req: { minAge: 1, maxAge: 8, excludeRealms: ["void"], excludeWorlds: ["krieg", "voidborn"] },
+    req: { minAge: 1, maxAge: 8, excludeHabitats: ["void"], excludeRealms: ["void"], excludeWorlds: ["krieg", "voidborn"] },
     text: "계절이 바뀔 때마다 몰아치는 악천후와 열병을 앓고 일어난 뒤, 한 뼘 더 단단해진 체력을 얻었다.",
     effect: { stats: { T: 1 } }
   },
@@ -785,7 +785,7 @@ export default [
     id: "ch_s8_kid_univ_5",
     badge: "제국 유년기",
     priority: 2,
-    req: { minAge: 2, maxAge: 8, maxSocialTier: "common", excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg", "voidborn"], excludeWorldTags: ["feral"] },
+    req: { minAge: 2, maxAge: 8, maxSocialTier: "common", excludeHabitats: ["void"], excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg", "voidborn"], excludeWorldTags: ["feral"] },
     text: "장터 구석에서 노병이 들려주는 머나먼 성전의 영웅담에 귀를 쫑긋 세우며 나무 막대를 라스건처럼 겨눴다.",
     effect: { stats: { BS: 1 } }
   },
@@ -793,7 +793,7 @@ export default [
     id: "ch_s8_kid_univ_6",
     badge: "제국 유년기",
     priority: 2,
-    req: { minAge: 2, maxAge: 9, maxSocialTier: "common", excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg", "voidborn"] },
+    req: { minAge: 2, maxAge: 9, maxSocialTier: "common", excludeHabitats: ["void"], excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg", "voidborn"] },
     text: "또래 아이들과 구역과 골목을 뛰어다니며 숨바꼭질과 술래잡기를 반복해 좁은 길을 빠져나가는 감각을 익혔다.",
     effect: { stats: { Ag: 1, Fel: 1 } }
   },
@@ -817,7 +817,7 @@ export default [
     id: "ch_s8_kid_univ_9",
     badge: "제국 유년기",
     priority: 2,
-    req: { minAge: 4, maxAge: 12, maxSocialTier: "common", excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg", "voidborn"], excludeWorldTags: ["feral"] },
+    req: { minAge: 4, maxAge: 12, maxSocialTier: "common", excludeHabitats: ["void"], excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg", "voidborn"], excludeWorldTags: ["feral"] },
     text: "구역의 작은 신당 앞에서 촛불을 켜고 순례 행렬이 지나가는 모습을 지켜보며 경외심을 키웠다.",
     effect: { faith: 2 }
   },
@@ -841,7 +841,7 @@ export default [
     id: "ch_s8_kid_univ_12",
     badge: "제국 유년기",
     priority: 2,
-    req: { minAge: 6, maxAge: 13, excludeRealms: ["void"], excludeWorlds: ["krieg"] },
+    req: { minAge: 6, maxAge: 13, excludeHabitats: ["void"], excludeRealms: ["void"], excludeWorlds: ["krieg"] },
     text: "밤하늘을 가로지르는 성간 함선의 붉은 별빛을 올려다보며, 하늘 너머 황제의 영토가 얼마나 광활할지 상상했다.",
     effect: { stats: { WP: 1 } }
   },
@@ -857,7 +857,7 @@ export default [
     id: "ch_s8_kid_univ_14",
     badge: "제국 유년기",
     priority: 2,
-    req: { minAge: 7, maxAge: 13, maxSocialTier: "common", excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg"], excludeWorldTags: ["feral"] },
+    req: { minAge: 7, maxAge: 13, maxSocialTier: "common", excludeHabitats: ["void"], excludeRealms: ["cloistered", "void"], excludeWorlds: ["krieg"], excludeWorldTags: ["feral"] },
     text: "구역 경비대의 낡은 모의 사격판 앞에서 돌팔매와 새총으로 표적을 맞히며 거리 감각을 길렀다.",
     effect: { stats: { BS: 1, Ag: 1 } }
   },

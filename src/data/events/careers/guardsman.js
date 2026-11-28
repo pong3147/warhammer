@@ -13,8 +13,38 @@ export default [
     },
     reqLabel: "직업: 아스트라 밀리타룸 보병",
     weight: 24,
+    leadVariants: [
+      {
+        req: { anyOriginClasses: ["underclass"] },
+        lead: "하층 작업장과 뒷골목에서 낡은 부품을 뜯어 고치며 살아온 눈에는, 새로 내어 준 지급품의 조악한 상태가 한눈에 들어왔다."
+      },
+      {
+        req: { anyOriginClasses: ["military_caste"], excludeHomeWorlds: ["krieg"] },
+        lead: "어릴 적부터 제식 화기 손질을 손에 익혀 둔 군인 가문 출신답게, 보급 상자를 열어 보자마자 심각한 이상을 즉시 알아챘다."
+      },
+      {
+        req: { allTags: ["disowned_noble"] },
+        lead: "가문에서 쫓겨나 보병 계급장을 달고서야, 한때 서류 속 숫자로만 보던 제국 병참의 처참한 현실을 온몸으로 맞닥뜨렸다."
+      }
+    ],
     text: "전선 투입 직전, 병참부에서 지급한 라스건 전지팩 절반이 불량품이고 탄약 상자에는 300년 전 봉건 행성용 화살촉이 들어 있었다! 그런데도 대대장은 《제국 보병 입문서》의 '제국 보급품에 의심을 품는 자는 총살' 조항을 낭독하고 있다.",
     choices: [
+      {
+        label: "[교섭 판정 · 하층민 출신] 암시장 거래 요령으로 타 연대 병참 하사관과 은밀히 물물교환해 정상 전지팩을 빼돌린다",
+        req: { anyOriginClasses: ["underclass"] },
+        check: { stat: "Fel", diff: 5 },
+        success: {
+          text: "비상 담배와 여분 건빵 몇 꾸러미가 순식간에 최상급 라스건 전지팩 두 상자로 둔갑했다! 분대원들이 그대의 생존 수완에 혀를 내둘렀다.",
+          stats: { Fel: 6, Ag: 4, Inf: 3 },
+          align: { ruthless: 5 }
+        },
+        fail: {
+          text: "거래 상대가 헌병 끄나풀인 바람에 추가 야간 보초 징계를 받았으나, 불량 전지팩 몇 개는 슬쩍 바꿔치기하는 데 성공했다.",
+          wounds: -8,
+          stats: { Ag: 2, Inf: -2 },
+          align: { ruthless: 4 }
+        }
+      },
       {
         label: "[지성 판정] 밤새 불량 전지팩을 뜯어 정상 부품을 조합해 분대 무기를 살려 낸다",
         check: { stat: "Int", diff: 0 },
@@ -58,8 +88,38 @@ export default [
     },
     reqLabel: "직군: 아스트라 밀리타룸",
     weight: 25,
+    leadVariants: [
+      {
+        req: { anyOriginClasses: ["military_caste"], excludeHomeWorlds: ["krieg"] },
+        lead: "선대 무관들로부터 전우의 군번줄만큼은 반드시 거두어야 한다고 배워 온 그대의 시선이 참호 바깥으로 고정되었다."
+      },
+      {
+        req: { anyOriginClasses: ["underclass"] },
+        lead: "밑바닥 시절 폐허와 고철 더미를 누비며 익힌 지형 감각이 저격수의 사각지대를 본능적으로 그려 냈다."
+      },
+      {
+        req: { allTags: ["disowned_noble"] },
+        lead: "화려한 가문의 보호막이 사라진 전장에서, 오직 곁의 분대원들만이 이제 그대가 지켜야 할 유일한 소속이었다."
+      }
+    ],
     text: "양측의 포격이 잠시 멎은 틈, 철조망 너머 무주지에 부서진 보급 수송차와 쓰러진 선임 병사의 시신이 보인다. 적 저격수가 노리고 있을 것이 분명하지만, 분대에는 탄약과 깨끗한 붕대가 바닥난 상태다.",
     choices: [
+      {
+        label: "[의지 판정 · 군인 가문 출신] 선조의 야전 교본대로 연막과 엄호 사격 타이밍을 맞춰 분대원과 합동으로 보급품과 군번줄을 회수한다",
+        req: { anyOriginClasses: ["military_caste"], excludeHomeWorlds: ["krieg"] },
+        check: { stat: "WP", diff: 5 },
+        success: {
+          text: "빈틈없는 교대 엄호 속에 적 저격수가 방아쇠를 당길 틈조차 주지 않았다! 탄약과 깨끗한 붕대, 그리고 선임의 군번줄까지 온전히 되찾았다.",
+          stats: { WP: 6, BS: 4, Fel: 5, Inf: 4 },
+          align: { humane: 7 }
+        },
+        fail: {
+          text: "연막이 바람에 일찍 흩어지며 파편에 팔을 스쳤으나, 끝내 군번줄만은 놓지 않고 참호로 돌아왔다.",
+          wounds: -14,
+          stats: { WP: 4, T: 3 },
+          align: { humane: 5 }
+        }
+      },
       {
         label: "[민첩 판정] 포탄 구덩이를 포복으로 기어가 탄약 상자와 선임의 군번줄을 모두 회수한다",
         check: { stat: "Ag", diff: 0 },
@@ -112,8 +172,37 @@ export default [
     },
     reqLabel: "직군: 아스트라 밀리타룸",
     weight: 30,
+    leadVariants: [
+      {
+        req: { allTags: ["disowned_noble"] },
+        lead: "한때 수정 잔에 담긴 정제수와 포도주만 마시던 몸이지만, 이제는 진흙 참호 한복판에서 굶주린 분대원들과 생사를 나눠야 할 처지다."
+      },
+      {
+        req: { anyOriginClasses: ["underclass"] },
+        lead: "하층 구역의 탁한 배관수를 끓이고 걸러 마시며 버텨 온 경험 덕분에, 수면 위의 기름띠만 보고도 치명적인 위험을 직감했다."
+      },
+      {
+        req: { anyOriginClasses: ["military_caste"], excludeHomeWorlds: ["krieg"] },
+        lead: "군인 가문에서 귀에 못이 박히도록 들은 야전 위생 수칙이 본능처럼 머릿속에 울렸다."
+      }
+    ],
     text: "장마철 참호에 고인 빗물 저장 탱크에 화학 탄막의 잔류 독성이 스며들고, 비상 시체 전분 통조림마저 절반이 부패해 버렸다. 야전 메디카에가 도착하기까지 이틀을 버텨야 하는데, 갈증에 지친 신병들이 오염된 물을 그대로 퍼 마시려 한다.",
     choices: [
+      {
+        label: "[교섭 판정 · 의절한 귀족 출신] 옛 상류층 예법과 하이 고딕 억양을 꺼내 들어 후방 보급 장교에게 정수 정제와 의약품을 당당히 받아 낸다",
+        req: { allTags: ["disowned_noble"] },
+        check: { stat: "Fel", diff: 5 },
+        success: {
+          text: "뜻밖의 품격 있는 어조에 주눅 든 보급 장교가 얼른 정수 정제와 정식 의약품 상자를 내어 주었다! 버려진 과거의 교양이 분대 전원을 살렸다.",
+          stats: { Fel: 7, Inf: 5, WP: 3 },
+          align: { humane: 7 }
+        },
+        fail: {
+          text: "귀족 행세를 한다는 의심만 사서 빈손으로 쫓겨났으나, 신병들이 오염수를 마시기 전에 막아 낼 시간은 벌었다.",
+          stats: { Inf: -2, WP: 3 },
+          align: { humane: 5 }
+        }
+      },
       {
         label: "[교섭 판정] 인접 포병대 보급 하사관과 담판해 정수 정제와 뜨거운 리카프 한 통을 끌어온다",
         check: { stat: "Fel", diff: 0 },

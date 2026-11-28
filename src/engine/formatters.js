@@ -60,6 +60,35 @@ export const BODY_CLASS_LABELS = {
   daemonic: "악마·워프 승천체"
 };
 
+export const ORIGIN_CLASS_KEYS = [
+  "underclass",
+  "common",
+  "military_caste",
+  "schola",
+  "noble",
+  "high_noble",
+  "disowned"
+];
+
+export const ORIGIN_CLASS_LABELS = {
+  underclass: "하층민",
+  common: "일반 시민",
+  military_caste: "군인 가문",
+  schola: "스콜라 프로제니움",
+  noble: "귀족·유력 가문",
+  high_noble: "테라 고위 귀족",
+  disowned: "의절한 귀족"
+};
+
+export const HABITAT_KEYS = ["void", "surface", "frontline", "cloister"];
+
+export const HABITAT_LABELS = {
+  void: "성간 함선·공허",
+  surface: "행성 지표면",
+  frontline: "최전선·군사 구역",
+  cloister: "폐쇄 성소·수도원"
+};
+
 const APEX_SOCIAL_TAGS = [
   "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "daemon_prince",
   "high_lord_terra", "warmaster", "chapter_master", "sector_lord", "planetary_governor",
@@ -77,6 +106,8 @@ const ELITE_SOCIAL_TAGS = [
   "lord_commissar", "tempestus_prime", "navy_captain", "arbites_judge",
   "navis_officer", "knight_scion", "knight_freeblade"
 ];
+
+const BIRTH_PRIVILEGE_TAGS = new Set(["noble", "wealthy", "terra_elite", "rogue_trader_blood", "knight_blood"]);
 
 export function computeBodyClass(state, career, tagSet) {
   const tags = tagSet || new Set((state && state.tags) || []);
@@ -119,8 +150,11 @@ export function computeSocialTier(state, career, tagSet) {
   if (c && ["navis_navigator", "imperial_knight", "rogue_trader", "officio_assassinorum", "governor", "inquisition"].includes(c.tree)) {
     return "elite";
   }
+  const isDisowned = tags.has("disowned_noble");
   for (let i = 0; i < ELITE_SOCIAL_TAGS.length; i++) {
-    if (tags.has(ELITE_SOCIAL_TAGS[i])) return "elite";
+    const et = ELITE_SOCIAL_TAGS[i];
+    if (isDisowned && BIRTH_PRIVILEGE_TAGS.has(et)) continue;
+    if (tags.has(et)) return "elite";
   }
   const cid = (c && c.id) || (state && state.careerId) || "child";
   if (cid === "underhive_ganger" || cid === "underhive_boss") return "underclass";
@@ -128,6 +162,72 @@ export function computeSocialTier(state, career, tagSet) {
     return "underclass";
   }
   return "common";
+}
+
+export function computeOriginClass(state, tagSet) {
+  const tags = tagSet || new Set((state && state.tags) || []);
+  const oid = (state && state.originId) || "";
+  if (tags.has("disowned_noble")) return "disowned";
+  if (oid === "terra_high_blood" || tags.has("terra_elite")) return "high_noble";
+  if (oid === "schola_progenium" || tags.has("schola")) return "schola";
+  if (
+    oid === "planetary_noble" ||
+    oid === "rogue_trader_scion" ||
+    oid === "navigator_house" ||
+    oid === "knight_house" ||
+    tags.has("noble") ||
+    tags.has("rogue_trader_blood") ||
+    tags.has("knight_blood") ||
+    tags.has("navigator")
+  ) {
+    return "noble";
+  }
+  if (oid === "militarum_family" || tags.has("military_blood")) return "military_caste";
+  if (oid === "underhive_scum" || tags.has("lowborn")) return "underclass";
+  return "common";
+}
+
+export function computeHabitat(state, career, world, tagSet) {
+  const tags = tagSet || new Set((state && state.tags) || []);
+  const c = career || null;
+  const w = world || null;
+  const cid = (c && c.id) || (state && state.careerId) || "child";
+  const tree = (c && c.tree) || "civil";
+
+  if (
+    (w && (w.id === "voidborn" || (Array.isArray(w.tags) && w.tags.includes("voidborn")))) ||
+    tree === "navy" ||
+    tree === "navis_navigator" ||
+    tree === "rogue_trader"
+  ) {
+    return "void";
+  }
+  if (
+    tree === "custodes" ||
+    tree === "grey_knights" ||
+    tree === "officio_assassinorum" ||
+    tree === "sororitas" ||
+    tree === "living_saint" ||
+    tree === "ecclesiarchy" ||
+    cid === "sanctioned_psyker" ||
+    cid === "master_of_astronomicum" ||
+    (cid === "child" && (tags.has("schola") || tags.has("navigator")))
+  ) {
+    return "cloister";
+  }
+  if (
+    tree === "militarum" ||
+    tree === "commissariat" ||
+    tree === "astartes" ||
+    tree === "imperial_knight" ||
+    cid === "primaris_psyker" ||
+    cid === "skitarii" ||
+    cid === "skitarii_marshal" ||
+    (cid === "child" && w && w.id === "krieg")
+  ) {
+    return "frontline";
+  }
+  return "surface";
 }
 
 export function computeLifeRealm(state, career, world, tagSet) {
@@ -525,6 +625,12 @@ export function createCoreFormatters(DATA) {
     if (req.anyBodyClasses && req.anyBodyClasses.length) {
       parts.push("신체 분류: " + req.anyBodyClasses.map((k) => BODY_CLASS_LABELS[k] || k).join("/"));
     }
+    if (req.anyOriginClasses && req.anyOriginClasses.length) {
+      parts.push("출신 계급: " + req.anyOriginClasses.map((k) => ORIGIN_CLASS_LABELS[k] || k).join("/"));
+    }
+    if (req.anyHabitats && req.anyHabitats.length) {
+      parts.push("거주 공간: " + req.anyHabitats.map((k) => HABITAT_LABELS[k] || k).join("/"));
+    }
     if (req.maxCareerTier !== undefined) {
       parts.push(`진로 Tier ${req.maxCareerTier} 이하`);
     }
@@ -587,6 +693,12 @@ export function createCoreFormatters(DATA) {
       if (req.excludeBodyClasses && req.excludeBodyClasses.length) {
         parts.push(req.excludeBodyClasses.map((k) => `${BODY_CLASS_LABELS[k] || k} 제외`).join(", "));
       }
+      if (req.excludeOriginClasses && req.excludeOriginClasses.length) {
+        parts.push(req.excludeOriginClasses.map((k) => `${ORIGIN_CLASS_LABELS[k] || k} 제외`).join(", "));
+      }
+      if (req.excludeHabitats && req.excludeHabitats.length) {
+        parts.push(req.excludeHabitats.map((k) => `${HABITAT_LABELS[k] || k} 제외`).join(", "));
+      }
       if (req.excludeTrees && req.excludeTrees.length) {
         parts.push(req.excludeTrees.map((t) => `${TREE_NAME_BY_ID.get(t) || t} 제외`).join(", "));
       }
@@ -626,6 +738,10 @@ export function createCoreFormatters(DATA) {
     LIFE_REALM_LABELS,
     BODY_CLASS_KEYS,
     BODY_CLASS_LABELS,
+    ORIGIN_CLASS_KEYS,
+    ORIGIN_CLASS_LABELS,
+    HABITAT_KEYS,
+    HABITAT_LABELS,
     FACTION_ENDING_KEYS,
     STAT_META,
     FOCUSES,
@@ -649,6 +765,8 @@ export function createCoreFormatters(DATA) {
     computeSocialTier,
     computeLifeRealm,
     computeBodyClass,
+    computeOriginClass,
+    computeHabitat,
     resolveFactionEndingKey,
     formatImperialYear,
     formatImperialDate,

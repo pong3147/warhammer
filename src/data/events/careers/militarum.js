@@ -8,6 +8,7 @@ export default [
       minAge: 16,
       maxAge: 34,
       anyCareers: ["menial_worker", "pdf_trooper", "underhive_ganger"],
+      excludeHabitats: ["void"],
       excludeWorlds: ["terra", "mars", "krieg", "baal", "fenris", "nocturne", "macragge"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["forge", "krieg"],
@@ -15,8 +16,42 @@ export default [
     },
     reqLabel: "16~34세 · 시민/방위군/갱단원",
     weight: 18,
+    leadVariants: [
+      {
+        req: { anyOriginClasses: ["military_caste"], excludeHomeWorlds: ["krieg"] },
+        lead: "어릴 적부터 선대 무관들의 군번줄을 보며 자란 그대에게, 궤도 수송선의 도착은 두려움이 아니라 마침내 찾아온 소명이었다."
+      },
+      {
+        req: { anyOriginClasses: ["underclass"] },
+        lead: "어차피 하층 구역에서 매연이나 들이마시다 스러질 바에야 라스건이라도 쥐어 보는 편이 나을지도 모른다는 생각이 스쳤다."
+      },
+      {
+        req: { allTags: ["disowned_noble"] },
+        lead: "가문에서 쫓겨난 지금, 한때 귀족이었던 신분은 징집 서기의 명단 앞에서 아무런 방패도 되어 주지 못했다."
+      }
+    ],
     text: "행성 궤도에 거대한 제국 병력 수송선이 정박했다. 아드미니스트라툼의 십일조 징집 포고문이 행성 전역에 울려 퍼진다. 가장 건장한 청년 10%가 아스트라 밀리타룸 연대로 차출된다!",
     choices: [
+      {
+        label: "[지성 판정 · 군인 가문 출신] 선조가 복무했던 정예 연대의 추천 기록을 제출해 신병 보충대가 아닌 숙련 분대 배속을 받아 낸다",
+        req: { anyOriginClasses: ["military_caste"], excludeHomeWorlds: ["krieg"] },
+        check: { stat: "Int", diff: 5 },
+        success: {
+          text: "징병 장교가 가문의 복무 기록을 확인하고 고개를 끄덕였다! 탄탄한 장비와 숙련 고참들이 포진한 정예 소대에 배속되었다.",
+          forceCareer: "astra_militarum",
+          stats: { BS: 6, WS: 5, T: 4, Inf: 5 },
+          faith: 6,
+          addTags: ["militarum", "imperial_military"],
+          align: { dogmatic: 7 }
+        },
+        fail: {
+          text: "서류 확인이 지연되어 일반 보충 소대로 편입되었으나, 기본 제식만큼은 모병관의 눈도장을 받았다.",
+          forceCareer: "astra_militarum",
+          stats: { BS: 4, WS: 4, T: 3 },
+          addTags: ["militarum", "imperial_military"],
+          align: { dogmatic: 5 }
+        }
+      },
       {
         label: "황제의 부름에 응해 행성 고유 연대에 입대한다",
         effect: {
@@ -75,8 +110,39 @@ export default [
     },
     reqLabel: "병종: 커미사르",
     weight: 22,
+    leadVariants: [
+      {
+        req: { allTags: ["noble_commission"] },
+        lead: "귀족 낙하산 장교 이력을 거쳐 커미사르 제복을 입은 그대를 향한 병사들의 시선에는 여전히 낯선 불신이 섞여 있었다."
+      },
+      {
+        req: { anyOriginClasses: ["schola"] },
+        lead: "스콜라 프로제니움의 교리 수업에서 수백 번이나 외웠던 '후퇴는 반역'이라는 문장이 폭음 사이로 차갑게 떠올랐다."
+      },
+      {
+        req: { anyOriginClasses: ["underclass", "common"] },
+        lead: "밑바닥 민초의 공포가 어떤 맛인지 아는 그대에게, 전장의 죽음 앞에서 흔들리는 병사들의 얼굴은 결코 남의 일 같지 않았다."
+      }
+    ],
     text: "카오스 컬티스트의 포격에 겁에 질린 신병 소대가 참호 뒤로 패주하려 한다. 볼트 피스톨에 손이 올라간다. 《오피시오 프리펙투스 교범》은 즉결 처형을 명하지만, 부대 전체의 사기는 칼날 위를 걷고 있다.",
     choices: [
+      {
+        label: "[의지 판정 · 스콜라 출신] 볼트 피스톨을 하늘로 겨누고 스콜라 전장 기도문을 우렁차게 선창해 처형 없이 공포를 꺾는다",
+        req: { anyOriginClasses: ["schola"] },
+        check: { stat: "WP", diff: 0 },
+        success: {
+          text: "흔들림 없는 교리의 음성이 신병들의 패닉을 단숨에 잠재웠다! 단 한 명의 처형도 없이 소대 전원이 총검을 꽂고 참호로 되돌아왔다.",
+          stats: { WP: 7, Fel: 5, Inf: 7 },
+          faith: 9,
+          align: { dogmatic: 6, humane: 5 }
+        },
+        fail: {
+          text: "기도문이 포성에 묻혀 일부 신병이 도주를 시도했고, 결국 경고 사격을 퍼부으며 겨우 전선을 수습했다.",
+          wounds: -12,
+          stats: { WP: 4, Inf: 2 },
+          align: { dogmatic: 5 }
+        }
+      },
       {
         label: "[교섭 판정 · 교섭 48+] 처형 대신 몸소 참호 위로 올라가 돌격을 선도한다",
         req: { stats: { Fel: 48 } },
@@ -124,8 +190,37 @@ export default [
     },
     reqLabel: "직업: 아스트라 밀리타룸 장교",
     weight: 24,
+    leadVariants: [
+      {
+        req: { allTags: ["noble_commission"] },
+        lead: "귀족 출신 장교라면 으레 실적과 진급부터 따지리라 짐작한 듯, 지휘부 참모진은 눈 하나 깜짝하지 않고 병사들의 목숨을 흥정하듯 올려놓았다."
+      },
+      {
+        req: { anyOriginClasses: ["underclass", "common"] },
+        lead: "보병 참호의 진흙 바닥에서부터 올라온 그대 눈에는, 작전 도표 위의 차가운 손실 예상치가 곧 얼굴과 이름을 지닌 부하들로 보였다."
+      },
+      {
+        req: { anyOriginClasses: ["military_caste"], excludeHomeWorlds: ["krieg"] },
+        lead: "대대로 전선을 지켜 온 군인 가문의 교훈은 분명했다. 무의미한 소모전은 승리가 아니라 지휘관의 게으름일 뿐이다."
+      }
+    ],
     text: "적 요새를 함락시킬 두 가지 작전안이 탁자 위에 올랐다. 사단 참모는 냉정하게 말한다. '정면 인해전술을 쓰면 병사 8,000명이 죽지만 귀한 바실리스크 포탄을 아끼고 6시간 빨리 점령해 승진할 수 있소.'",
     choices: [
+      {
+        label: "[권위 판정 · 귀족 낙하산 임관] 가문의 군수 후원 라인을 통해 추가 바실리스크 포탄 300발을 직접 조달해 정면 희생을 막는다",
+        req: { allTags: ["noble_commission"] },
+        check: { stat: "Inf", diff: 0 },
+        success: {
+          text: "사흘 만에 가문 인장이 찍힌 포탄 열차가 도착해 적 요새를 잿더미로 만들었다! 참모의 코를 납작하게 누르고 8,000명의 목숨까지 구했다.",
+          stats: { Inf: 8, Fel: 7, Int: 4 },
+          align: { humane: 8 }
+        },
+        fail: {
+          text: "가문 보급선이 행정 절차에 묶여 절반만 제때 도착했으나, 덕분에 사상률을 크게 줄인 채 요새를 점령했다.",
+          stats: { Inf: -2, Fel: 4, WP: 3 },
+          align: { humane: 6 }
+        }
+      },
       {
         label: "[지성 판정] 참모의 비웃음을 무릅쓰고 야간 우회 기동 작전을 직접 설계한다",
         check: { stat: "Int", diff: -5 },
@@ -270,6 +365,7 @@ export default [
     category: "전투",
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       anyTags: ["militarum", "imperial_military", "astartes", "sororitas", "mechanicus"],
       excludeTags: ["heretic", "chaos_aligned", "renegade_marine", "chaos_lord", "daemon_prince", "high_lord_terra"]
     },
@@ -402,8 +498,38 @@ export default [
     },
     reqLabel: "계급: 아스트라 밀리타룸 장교",
     weight: 28,
+    leadVariants: [
+      {
+        req: { allTags: ["noble_commission"] },
+        lead: "같은 귀족 출신이라 하여 무능한 사단장의 자살 돌격 명령까지 묵인할 수는 없었다. 지휘관의 명예는 혈통이 아니라 부하를 이끄는 책임에서 나온다."
+      },
+      {
+        req: { anyOriginClasses: ["underclass", "common"] },
+        lead: "안전한 사령부 천막에 앉아 하층민 병사들을 소모품처럼 내모는 상급자의 오만에, 밑바닥에서 기어올라온 그대의 피가 차갑게 끓어올랐다."
+      },
+      {
+        req: { anyOriginClasses: ["military_caste"], excludeHomeWorlds: ["krieg"] },
+        lead: "선대 무관들이 피로 증명한 제국군 전술 교리에 비추어 보아도, 화력 엄호 없이 적의 방어선을 맨몸으로 뚫으라는 지시는 명백한 자멸 행위였다."
+      }
+    ],
     text: "후방에서 포도주나 마시던 귀족 출신 사단장이 '내일 새벽 포병 지원 없이 지뢰밭 정면으로 총검 돌격하라'는 미친 명령을 하달했다. 그대로 따르면 휘하 장병 4,000명이 10분 만에 갈려 나가고, 거역하면 군법회의와 커미사르의 총구가 기다린다!",
     choices: [
+      {
+        label: "[지성 판정 · 군인 가문 출신] 선조들의 공성전 교범에서 끌어낸 야간 공병 개척안을 사단 참모부에 정식 대안으로 관철한다",
+        req: { anyOriginClasses: ["military_caste"], excludeHomeWorlds: ["krieg"] },
+        check: { stat: "Int", diff: 0 },
+        success: {
+          text: "치밀한 공병 지뢰 제거 계획에 사단장마저 체면을 살리며 서명할 수밖에 없었다! 4,000명의 정예 병력을 보전하고 적 고지를 탈환했다.",
+          stats: { Int: 7, Inf: 7, Fel: 5 },
+          align: { humane: 8 }
+        },
+        fail: {
+          text: "공병 작업이 일부 지체되어 사단장의 불호령을 들었으나, 적어도 지뢰밭 정면 자살 돌격만은 막아 냈다.",
+          wounds: -12,
+          stats: { Int: 3, WP: 4 },
+          align: { humane: 5 }
+        }
+      },
       {
         label: "[교섭 판정] 연대 커미사르에게 냉정한 전술 손실 데이터를 제시해 합법적인 작전 수정권을 얻어 낸다",
         check: { stat: "Fel", diff: -5 },

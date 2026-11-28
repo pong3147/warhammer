@@ -103,7 +103,7 @@ export const ORIGINS = [
     statMods: { Inf: 20, Fel: 11, Ag: 5, BS: 4, Int: 5, WP: 2 },
     lifeMod: 18,
     faithMod: -5,
-    tags: ["noble", "rogue_trader_blood", "voidborn"],
+    tags: ["noble", "rogue_trader_blood"],
     desc: "황제의 무역 영장을 지닌 호걸 가문의 방계 혈손. 제국의 법 너머 미지의 성계와 외계 유물에 대한 야망을 품고 태어난다.",
     source: "Rogue Trader Core Rulebook (FFG)"
   },

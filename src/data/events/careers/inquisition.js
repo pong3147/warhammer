@@ -49,7 +49,18 @@ export default [
         "tempestus_prime",
         "psyker_primaris",
         "guild_magnate",
-        "crime_lord"
+        "crime_lord",
+        "navigator",
+        "navis_officer",
+        "nav_novator",
+        "paternoval_envoy",
+        "imperial_knight",
+        "knight_scion",
+        "knight_high_king",
+        "assassin",
+        "grand_master_assassins",
+        "living_saint",
+        "saint_vessel"
       ]
     },
     reqLabel: "18세+ · 지성 50+ · 의지 50+",
@@ -619,7 +630,18 @@ export default [
             "commissar",
             "lord_commissar",
             "officer",
-            "scion"
+            "scion",
+            "navigator",
+            "navis_officer",
+            "nav_novator",
+            "paternoval_envoy",
+            "imperial_knight",
+            "knight_scion",
+            "knight_high_king",
+            "assassin",
+            "grand_master_assassins",
+            "living_saint",
+            "saint_vessel"
           ]
         },
         effect: {

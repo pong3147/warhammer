@@ -8,6 +8,7 @@ export default [
     req: {
       minAge: 54,
       stats: { Inf: 74 },
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral", "krieg"],
@@ -53,6 +54,7 @@ export default [
     once: true,
     req: {
       minAge: 55,
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral", "krieg"],
@@ -380,6 +382,7 @@ export default [
     once: true,
     req: {
       minAge: 55,
+      excludeHabitats: ["void"],
       anyTags: ["militarum", "navy", "officer", "commissar", "arbites"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin", "navigator",
@@ -445,6 +448,7 @@ export default [
     req: {
       minAge: 16,
       maxAge: 45,
+      excludeHabitats: ["void"],
       excludeTrees: ["navis_navigator", "officio_assassinorum", "living_saint"],
       excludeTags: [
         "bond_comrade",
@@ -776,6 +780,7 @@ export default [
     req: {
       minAge: 20,
       maxAge: 45,
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral", "krieg"],
@@ -833,6 +838,7 @@ export default [
       minAge: 24,
       maxAge: 60,
       allTags: ["bond_family"],
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral", "krieg"],
@@ -900,6 +906,7 @@ export default [
     req: {
       minAge: 34,
       allTags: ["bond_family"],
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral", "krieg"],
@@ -963,6 +970,7 @@ export default [
     req: {
       minAge: 44,
       allTags: ["bond_heir"],
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral", "krieg"],

@@ -194,6 +194,98 @@ const TRANSHUMAN_OPS = [
       ],
       source: "Lexicanum: Ordo Malleus"
     })
+  },
+  {
+    id: "dyn_cent_blood_games",
+    title: "장수기 임무 — 황궁의 혈전 유희(블러드 게임)",
+    isEligible: (ctx) => ctx.isCustodes,
+    build: (state) => ({
+      text: `${state.age}세에 이른 만 명의 수호자로서 황궁의 방어 취약점을 검증하는 극비 훈련 '혈전 유희'에 임했다. 가상 침투자가 외곽 성벽의 맹점을 노리고 황금 옥좌를 향해 잠입을 시도하고 있다.`,
+      choices: [
+        {
+          label: "[지성 판정] 백 년 넘게 익힌 황궁 도면과 보안망을 역산해 가상 침투자의 경로를 선제 차단한다",
+          check: {
+            stat: "Int",
+            diff: -12
+          },
+          success: {
+            text: "내부 감시망조차 놓친 수로 배관의 사각지대를 간파해 가상 침투자를 무력화하고, 황궁 방어 교리를 한 단계 더 치밀하게 보완했다.",
+            stats: { Int: 2, WS: 1, Inf: 1 }
+          },
+          critSuccess: {
+            text: "단 한 번의 교전만으로 세 겹의 기만 동선을 모두 간파해 실드-캡틴 평의회의 경의를 얻고 황궁 핵심 구역의 경비 지침을 개정했다.",
+            stats: { Int: 2, WS: 2, WP: 1, Inf: 2 }
+          },
+          fail: {
+            text: "치열한 모의 격투 끝에 방어선 돌파를 허용하고 타박상을 입었으나, 드러난 보안 허점을 즉시 봉쇄했다.",
+            wounds: -10,
+            stats: { Int: 1 }
+          },
+          critFail: {
+            text: "예상치 못한 기만술에 휘말려 중상을 입고 훈련 패배를 기록했으나, 그 참혹한 교훈이 황궁의 새 방벽이 되었다.",
+            wounds: -16,
+            stats: { WP: 1 }
+          }
+        },
+        {
+          label: "외곽 관문과 지하 감시 회랑의 경계 교대 주기를 전면 재편하며 기본 방어에 집중한다",
+          effect: {
+            text: "화려한 추격 대신 빈틈없는 순찰 규율로 황금 옥좌의 침묵을 지켜 냈다.",
+            stats: { WP: 1, Int: 1 },
+            align: { dogmatic: 1 }
+          }
+        }
+      ],
+      source: "Lexicanum: Blood Games / Codex: Adeptus Custodes"
+    })
+  },
+  {
+    id: "dyn_cent_living_miracle",
+    title: "장수기 현현 — 절망의 전선에 내린 성광",
+    isEligible: (ctx) => ctx.isLivingSaint,
+    build: (state, ctx) => ({
+      text: `${state.age}년의 세월을 넘어 황제의 의지가 다시금 그대를 부른다. ${ctx.worldName} 방면에서 무너져 가는 제국 방어선과 신음하는 순례자들의 기도가 워프의 암흑을 뚫고 그대의 영혼에 닿았다.`,
+      choices: [
+        {
+          label: "[의지 판정] 황금빛 성광을 펼쳐 적의 악마 군세를 불태우고 무너진 아군 전열을 일으켜 세운다",
+          check: {
+            stat: "WP",
+            diff: -12
+          },
+          success: {
+            text: "눈부신 성광이 전장을 가르자 패주하던 병사들이 다시 총을 들었고, 부정한 그림자들이 재로 흩어졌다.",
+            stats: { WP: 2, Fel: 1, Inf: 1 },
+            faith: 3
+          },
+          critSuccess: {
+            text: "기적의 성화가 전선 전체를 감싸며 중상자들의 고통을 잠재우고 적 지휘부를 단숨에 분쇄했다. 수만 명이 무릎 꿇고 찬송가를 외쳤다.",
+            stats: { WP: 2, Fel: 2, Inf: 2 },
+            faith: 5,
+            align: { humane: 1, dogmatic: 1 }
+          },
+          fail: {
+            text: "워프의 역풍을 정면으로 받아내며 육신에 깊은 소모를 입었으나, 방어선이 완전히 붕괴하는 것만은 막아 냈다.",
+            wounds: -12,
+            faith: 1
+          },
+          critFail: {
+            text: "압도적인 악마의 저주를 홀로 떠안아 극심한 탈진과 상처를 입었으나, 끝까지 성광의 불씨를 꺼뜨리지 않았다.",
+            wounds: -18,
+            stats: { WP: 1 }
+          }
+        },
+        {
+          label: "야전 의무소와 피난 행렬 사이를 거닐며 지친 영혼들에게 조용히 축복과 안식을 전한다",
+          effect: {
+            text: "화려한 천벌 대신 따뜻한 손길로 무너져 가던 신자들의 믿음을 다시 일으켜 세웠다.",
+            stats: { Fel: 1, WP: 1 },
+            faith: 3,
+            align: { humane: 2 }
+          }
+        }
+      ],
+      source: "Lexicanum: Living Saint / Codex: Adepta Sororitas"
+    })
   }
 ];
 

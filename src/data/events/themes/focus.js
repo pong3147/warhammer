@@ -8,6 +8,7 @@ export default [
     req: {
       minAge: 14,
       anyFocus: ["survival"],
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
@@ -124,6 +125,7 @@ export default [
     req: {
       minAge: 14,
       anyFocus: ["faith"],
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
@@ -243,6 +245,7 @@ export default [
     req: {
       minAge: 14,
       anyFocus: ["politics"],
+      excludeHabitats: ["void"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
@@ -298,6 +301,7 @@ export default [
     req: {
       minAge: 16,
       anyFocus: ["forbidden"],
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
@@ -359,6 +363,7 @@ export default [
     req: {
       minAge: 32,
       anyFocus: ["survival"],
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
@@ -417,6 +422,7 @@ export default [
     req: {
       minAge: 32,
       anyFocus: ["combat"],
+      excludeHabitats: ["void"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
@@ -470,6 +476,7 @@ export default [
     req: {
       minAge: 32,
       anyFocus: ["faith"],
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
@@ -532,6 +539,7 @@ export default [
     req: {
       minAge: 32,
       anyFocus: ["lore"],
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
@@ -589,6 +597,7 @@ export default [
     req: {
       minAge: 32,
       anyFocus: ["politics"],
+      excludeHabitats: ["void"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "living_saint", "saint_vessel", "assassin",
         "heretic", "chaos_aligned", "daemon_prince",
@@ -644,6 +653,7 @@ export default [
     req: {
       minAge: 28,
       anyFocus: ["forbidden"],
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral", "krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [

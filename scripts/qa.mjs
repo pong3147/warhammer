@@ -25,7 +25,7 @@ import { isClosedVowCrossBlocked } from "../src/engine/careerRules.js";
 import { CENTENARIAN_OP_POOLS } from "../src/engine/centenarianOps.js";
 import { createTravelModule } from "../src/engine/travel.js";
 import { runDistBundleGate } from "./qa/distGate.mjs";
-import { runPersonaAuditGate } from "./qa/personaGate.mjs";
+import { runPersonaAuditGate, SURFACE_ONLY_LANDMARK_RE, isVoidNativeReq } from "./qa/personaGate.mjs";
 import { runCareerAuditGate } from "./qa/careerGate.mjs";
 
 const DEEP_MODE = process.argv.includes("--deep");
@@ -141,8 +141,8 @@ let srLiveCount = 0;
 if (uiFiles.length === 0) {
   fail(2, `No Astro/React UI files found under ${path.join(ROOT, "src")} (ROOT=${ROOT})`);
 }
-const FORBIDDEN_STATIC_ENGINE_RE = /\bfrom\s+["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel|statCaps|centenarianOps)\.js["']/;
-const FORBIDDEN_DYNAMIC_ENGINE_RE = /\bimport\s*\(\s*["'][^"']*\/engine\/(?:createEngine|reqEvaluator|careerRules|careerActions|endings|travel|statCaps|centenarianOps)\.js["']\s*\)/;
+const FORBIDDEN_STATIC_ENGINE_RE = /\bfrom\s+["'][^"']*\/engine\/(?:createEngine|reqEvaluator|stateLifecycle|careerRules|careerActions|endings|travel|statCaps|centenarianOps)\.js["']/;
+const FORBIDDEN_DYNAMIC_ENGINE_RE = /\bimport\s*\(\s*["'][^"']*\/engine\/(?:createEngine|reqEvaluator|stateLifecycle|careerRules|careerActions|endings|travel|statCaps|centenarianOps)\.js["']\s*\)/;
 for (const f of uiFiles) {
   const src = readRel(f);
   // Single-letter keyboard shortcut ban (only Escape allowed)
@@ -388,6 +388,8 @@ const producedTags = new Set([
   "clade_callidus",
   "clade_eversor",
   "clade_culexus",
+  "noble_commission",
+  "disowned_noble",
   ...DATA.ORIGINS.flatMap((o) => o.tags || []),
   ...DATA.TRAITS.flatMap((t) => t.tags || []),
   ...DATA.CAREERS.flatMap((c) => (c.onJoin && c.onJoin.addTags) || []),
@@ -412,6 +414,8 @@ const alignKeys = new Set(Engine.ALIGNMENT_KEYS || ["humane", "dogmatic", "ruthl
 const domAlignKeys = new Set(["humane", "dogmatic", "ruthless", "neutral"]);
 const socialTierOrder = Engine.SOCIAL_TIER_ORDER || ["underclass", "common", "elite", "apex"];
 const socialTierSet = new Set(socialTierOrder);
+const originClassSet = new Set(Engine.ORIGIN_CLASS_KEYS || ["underclass", "common", "military_caste", "schola", "noble", "high_noble", "disowned"]);
+const habitatSet = new Set(Engine.HABITAT_KEYS || ["void", "surface", "frontline", "cloister"]);
 const lifeRealmSet = new Set(Engine.LIFE_REALM_KEYS || ["civilian", "cloistered", "military", "void", "mechanicus", "heretic"]);
 const bodyClassSet = new Set(Engine.BODY_CLASS_KEYS || ["mortal", "augmetic", "transhuman", "dreadnought", "daemonic"]);
 const careerTreeSet = new Set(DATA.CAREERS.map((c) => c.tree).filter(Boolean));
@@ -456,6 +460,10 @@ function validateReq(req, owner) {
     fail(4, `Contradictory minSocialTier "${req.minSocialTier}" > maxSocialTier "${req.maxSocialTier}" in ${owner}`);
   }
   (req.anySocialTiers || []).forEach((s) => { if (!socialTierSet.has(s)) fail(4, `Unknown socialTier "${s}" in ${owner}`); });
+  (req.anyOriginClasses || []).forEach((oc) => { if (!originClassSet.has(oc)) fail(4, `Unknown originClass "${oc}" in ${owner}`); });
+  (req.excludeOriginClasses || []).forEach((oc) => { if (!originClassSet.has(oc)) fail(4, `Unknown excludeOriginClass "${oc}" in ${owner}`); });
+  (req.anyHabitats || []).forEach((hb) => { if (!habitatSet.has(hb)) fail(4, `Unknown habitat "${hb}" in ${owner}`); });
+  (req.excludeHabitats || []).forEach((hb) => { if (!habitatSet.has(hb)) fail(4, `Unknown excludeHabitat "${hb}" in ${owner}`); });
   (req.anyRealms || []).forEach((r) => { if (!lifeRealmSet.has(r)) fail(4, `Unknown realm "${r}" in ${owner}`); });
   (req.excludeRealms || []).forEach((r) => { if (!lifeRealmSet.has(r)) fail(4, `Unknown excludeRealm "${r}" in ${owner}`); });
   (req.anyBodyClasses || []).forEach((b) => { if (!bodyClassSet.has(b)) fail(4, `Unknown bodyClass "${b}" in ${owner}`); });
@@ -584,6 +592,40 @@ for (const ev of [...DATA.EVENTS, ...DATA.TIMELINE]) {
   (ev.characters || []).forEach((cid) => {
     if (!charIds.has(cid)) fail(4, `Unknown character "${cid}" in ${ev.id}`);
   });
+  if (ev.leadVariants !== undefined) {
+    if (!Array.isArray(ev.leadVariants)) {
+      fail(4, `Invalid non-array leadVariants on ${ev.id}`);
+    } else {
+      ev.leadVariants.forEach((v, vi) => {
+        const vo = `${ev.id}:leadVariants[${vi}]`;
+        if (!v || typeof v.lead !== "string" || !v.lead.trim()) fail(4, `Empty or non-string lead in ${vo}`);
+        validateReq(v && v.req, vo);
+        for (const re of forbiddenTerms) {
+          const m = (v?.lead || "").match(re);
+          if (m) fail(3, `Forbidden spelling "${m[0]}" in ${vo}`);
+        }
+        const sm = (v?.lead || "").match(forbiddenSymbols);
+        if (sm) fail(3, `Forbidden decorative symbol "${[...new Set(sm)].join("")}" in ${vo}`);
+      });
+    }
+  }
+  if (ev.textVariants !== undefined) {
+    if (!Array.isArray(ev.textVariants)) {
+      fail(4, `Invalid non-array textVariants on ${ev.id}`);
+    } else {
+      ev.textVariants.forEach((v, vi) => {
+        const vo = `${ev.id}:textVariants[${vi}]`;
+        if (!v || typeof v.text !== "string" || !v.text.trim()) fail(4, `Empty or non-string text in ${vo}`);
+        validateReq(v && v.req, vo);
+        for (const re of forbiddenTerms) {
+          const m = (v?.text || "").match(re);
+          if (m) fail(3, `Forbidden spelling "${m[0]}" in ${vo}`);
+        }
+        const sm = (v?.text || "").match(forbiddenSymbols);
+        if (sm) fail(3, `Forbidden decorative symbol "${[...new Set(sm)].join("")}" in ${vo}`);
+      });
+    }
+  }
   validateEventChoices(ev, ev.id);
 }
 
@@ -1828,8 +1870,8 @@ for (const ev of DATA.EVENTS) {
           }
         }
       }
-      if (centTemplateCount !== 14) {
-        fail(4, `Expected 14 centenarianOps templates across 3 pools, found ${centTemplateCount}`);
+      if (centTemplateCount !== 16) {
+        fail(4, `Expected 16 centenarianOps templates across 3 pools, found ${centTemplateCount}`);
       }
 
       // 2) careerRules dynamic offers, chapter selection & assassin clade selection
@@ -2038,13 +2080,245 @@ for (const ev of DATA.EVENTS) {
       if (!migNull || migNull.wounds !== migNull.maxWounds || migNull.birthYear !== 980) {
         fail(4, `Stage 23.5 migrateState must not coerce null wounds/birthYear to 0 (got wounds=${migNull?.wounds}, birthYear=${migNull?.birthYear})`);
       }
+
+      // Stage 24: 4 orthogonal axes, voidborn birth unification, resolveEventText, age 0~5 infant blocking + witness/auto-evac, class destiny orbits, createComingOfAgeEvent, static surface<->void habitat linter
+      const s24Desc = Engine.describeReq({ anyOriginClasses: ["noble", "high_noble"], anyHabitats: ["void"] });
+      if (!s24Desc || !s24Desc.includes("출신 계급") || !s24Desc.includes("거주 공간")) {
+        fail(4, `Stage 24 describeReq failed for originClass/habitat: "${s24Desc}"`);
+      }
+      const s24ExclDesc = Engine.describeReq({ excludeOriginClasses: ["underclass"], excludeHabitats: ["void"] });
+      if (!s24ExclDesc) {
+        fail(4, `Stage 24 describeReq returned empty for excludeOriginClasses/excludeHabitats`);
+      }
+
+      // Voidborn birth unification: rogue_trader_scion on hive vs voidborn
+      const rtHive = Engine.createCharacter({ mode: "custom", worldId: "generic_hive", originId: "rogue_trader_scion", traitId: "none", eraId: "armageddon", gender: "male" });
+      if (rtHive.tags.includes("voidborn") || Engine.getStratification(rtHive).habitat !== "surface" || Engine.getStratification(rtHive).originClass !== "noble") {
+        fail(4, `Stage 24 surface-born rogue_trader_scion should not carry voidborn tag or void habitat (tags=${rtHive.tags.join(",")}, strat=${JSON.stringify(Engine.getStratification(rtHive))})`);
+      }
+      const rtVoid = Engine.createCharacter({ mode: "custom", worldId: "voidborn", originId: "rogue_trader_scion", traitId: "none", eraId: "armageddon", gender: "female" });
+      if (!rtVoid.tags.includes("voidborn") || Engine.getStratification(rtVoid).habitat !== "void" || Engine.getStratification(rtVoid).originClass !== "noble") {
+        fail(4, `Stage 24 voidborn rogue_trader_scion should carry voidborn tag and void habitat (tags=${rtVoid.tags.join(",")}, strat=${JSON.stringify(Engine.getStratification(rtVoid))})`);
+      }
+
+      // resolveEventText (leadVariants + textVariants)
+      const varEvLead = {
+        id: "qa_s24_var_lead",
+        text: "기본 본문 문장이다.",
+        leadVariants: [
+          { req: { anyOriginClasses: ["noble", "high_noble"] }, lead: "귀족 도입부다." },
+          { req: { anyHabitats: ["void"] }, lead: "공허 도입부다." }
+        ]
+      };
+      if (Engine.resolveEventText(varEvLead, rtHive) !== "귀족 도입부다. 기본 본문 문장이다.") {
+        fail(4, `Stage 24 resolveEventText leadVariants mismatch: "${Engine.resolveEventText(varEvLead, rtHive)}"`);
+      }
+      const varEvText = {
+        id: "qa_s24_var_text",
+        text: "기본 전체 본문이다.",
+        textVariants: [{ req: { anyHabitats: ["void"] }, text: "공허 전용 대체 본문이다." }]
+      };
+      if (Engine.resolveEventText(varEvText, rtVoid) !== "공허 전용 대체 본문이다." || Engine.resolveEventText(varEvText, rtHive) !== "기본 전체 본문이다.") {
+        fail(4, `Stage 24 resolveEventText textVariants mismatch`);
+      }
+
+      // Static 0~5yo invariant: 0 EVENTS and 0 TIMELINE pass checkReq across valid infant (world x origin x age 0..5)
+      let infantEventMatches = 0;
+      let infantTimelineMatches = 0;
+      for (const w of DATA.WORLDS) {
+        const wTags = new Set(w.tags || []);
+        const validOrigins = DATA.ORIGINS.filter((o) => (!o.worldFilter || o.worldFilter.includes(w.id)) && (!o.excludeWorlds || !o.excludeWorlds.includes(w.id)) && (!o.excludeWorldTags || !o.excludeWorldTags.some((t) => wTags.has(t))));
+        for (const o of validOrigins) {
+          for (const age of [0, 3, 5]) {
+            const infSt = Engine.createCharacter({ mode: "custom", worldId: w.id, originId: o.id, traitId: "none", eraId: "cadia_rift", gender: "male" });
+            infSt.age = age;
+            infSt.year = 999;
+            for (const ev of DATA.EVENTS) {
+              if (Engine.checkReq(infSt, ev.req)) {
+                infantEventMatches++;
+                fail(4, `Stage 24 age-${age} infant (${w.id}/${o.id}) matched choice event "${ev.id}" (minAge >= 6 required)`);
+              }
+            }
+            for (const tl of DATA.TIMELINE) {
+              if (Engine.checkReq(infSt, tl.filter)) {
+                infantTimelineMatches++;
+                fail(4, `Stage 24 age-${age} infant (${w.id}/${o.id}) matched direct timeline "${tl.id}" (filter.minAge >= 6 required)`);
+              }
+            }
+          }
+        }
+      }
+
+      // Runtime 0~5yo infant blocking + Cadia/Tanith/Baal auto-evacuation + Krieg family safety
+      const cadiaInf = Engine.createCharacter({ mode: "custom", worldId: "cadia", originId: "imperial_citizen", traitId: "none", eraId: "cadia_rift", gender: "male" });
+      cadiaInf.age = 1;
+      cadiaInf.quarter = 3;
+      cadiaInf.year = 998;
+      Math.random = () => 0.01;
+      const cadInfRes = Engine.advanceQuarter(cadiaInf);
+      Math.random = origRandom;
+      if (cadInfRes.status === "event" || cadiaInf.pendingEvent || cadiaInf.worldId !== "voidborn" || !cadiaInf.seenTimeline.includes("tl_fall_of_cadia") || !cadiaInf.globalFlags.greatRiftOpened || cadiaInf.logs[0]?.badge !== "유아기 역사 목격") {
+        fail(4, `Stage 24 Cadia age-2 infant fall failed witness/auto-evac (status=${cadInfRes.status}, world=${cadiaInf.worldId}, topBadge=${cadiaInf.logs[0]?.badge}, seen=${cadiaInf.seenTimeline.join(",")})`);
+      }
+      const tanithInf = Engine.createCharacter({ mode: "custom", worldId: "tanith", originId: "imperial_citizen", traitId: "none", eraId: "sabbat", gender: "female" });
+      tanithInf.age = 2;
+      tanithInf.quarter = 3;
+      tanithInf.year = 764;
+      Math.random = () => 0.01;
+      Engine.advanceQuarter(tanithInf);
+      Math.random = origRandom;
+      if (tanithInf.pendingEvent || tanithInf.worldId !== "generic_civilised" || !tanithInf.seenTimeline.includes("tl_tanith_fall") || tanithInf.logs[0]?.badge !== "유아기 역사 목격") {
+        fail(4, `Stage 24 Tanith age-3 infant fall failed witness/auto-evac (world=${tanithInf.worldId}, topBadge=${tanithInf.logs[0]?.badge})`);
+      }
+      const baalInf = Engine.createCharacter({ mode: "custom", worldId: "baal", originId: "imperial_citizen", traitId: "none", eraId: "cadia_rift", gender: "male" });
+      baalInf.age = 1;
+      baalInf.quarter = 3;
+      baalInf.year = 998;
+      Math.random = () => 0.01;
+      Engine.advanceQuarter(baalInf);
+      Math.random = origRandom;
+      if (baalInf.pendingEvent || baalInf.worldId !== "baal" || !baalInf.seenTimeline.includes("tl_devastation_baal") || baalInf.logs[0]?.badge !== "유아기 역사 목격") {
+        fail(4, `Stage 24 Baal age-2 infant canon bunker survival failed (world=${baalInf.worldId}, topBadge=${baalInf.logs[0]?.badge})`);
+      }
+      const kriegInf = Engine.createCharacter({ mode: "custom", worldId: "krieg", originId: "imperial_citizen", traitId: "none", eraId: "cadia_rift", gender: "male" });
+      kriegInf.age = 1;
+      kriegInf.quarter = 3;
+      kriegInf.year = 998;
+      Engine.advanceQuarter(kriegInf);
+      const kriegWitnessLogs = kriegInf.logs.filter((l) => l.badge === "유아기 역사 목격");
+      if (kriegWitnessLogs.length === 0) {
+        fail(4, `Stage 24 Krieg age-2 infant failed to record 유아기 역사 목격 log for Great Rift`);
+      }
+      const kriegInfLogText = kriegInf.logs.map((l) => l.text).join(" ").replace(/어머니의 품 대신/g, "");
+      if (/어머니|아버지|부모님|자장가|가족 식탁|가정식|엄마|아빠/.test(kriegInfLogText)) {
+        fail(4, `Stage 24 Krieg age-2 infantLog leaked family terminology: "${kriegInfLogText}"`);
+      }
+
+      // Krieg age 14 Death Korps default career
+      const krieg14 = Engine.createCharacter({ mode: "custom", worldId: "krieg", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+      krieg14.age = 13;
+      krieg14.quarter = 3;
+      krieg14.year = krieg14.birthYear + 13;
+      Engine.advanceQuarter(krieg14);
+      if (krieg14.careerId !== "astra_militarum" || !krieg14.tags.includes("militarum")) {
+        fail(4, `Stage 24 Krieg age-14 should default to Death Korps (astra_militarum), got "${krieg14.careerId}"`);
+      }
+
+      // Arbites aptitude gate (requires schola or dogmatic>=20 or WP>=44)
+      const arbRaw = Engine.createCharacter({ mode: "custom", worldId: "generic_civilised", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" });
+      arbRaw.age = 20;
+      arbRaw.careerId = "menial_worker";
+      arbRaw.stats = { WS: 42, BS: 42, T: 42, Ag: 42, Int: 42, WP: 40, Fel: 40, Inf: 40 };
+      arbRaw.alignment = { humane: 5, dogmatic: 5, ruthless: 0 };
+      if (Engine.checkReq(arbRaw, Engine.getCareer("arbites").req)) {
+        fail(4, `Stage 24 arbites should block non-schola character with dogmatic<20 and WP<44`);
+      }
+      arbRaw.alignment.dogmatic = 20;
+      if (!Engine.checkReq(arbRaw, Engine.getCareer("arbites").req)) {
+        fail(4, `Stage 24 arbites should allow character meeting dogmatic>=20 aptitude`);
+      }
+
+      // Upper-noble lower-career hiding, age-18 rt_seneschal bloodline, age-18 parachute officer + noble_commission, createComingOfAgeEvent & disowned_noble unlock
+      const nob18 = Engine.createCharacter({ mode: "custom", worldId: "voidborn", originId: "rogue_trader_scion", traitId: "none", eraId: "armageddon", gender: "male" });
+      nob18.age = 18;
+      nob18.quarter = 1;
+      nob18.year = nob18.birthYear + 18;
+      nob18.stats = { WS: 45, BS: 45, T: 45, Ag: 45, Int: 45, WP: 45, Fel: 48, Inf: 50 };
+      const nobOpts = Engine.getContextualOptions(nob18);
+      if (nobOpts.unlockedCareers.some((c) => Engine.NOBLE_HIDDEN_LOW_CAREERS.has(c.id))) {
+        fail(4, `Stage 24 upper-noble unlockedCareers leaked hidden lower career: ${nobOpts.unlockedCareers.map((c) => c.id).join(",")}`);
+      }
+      if (!nobOpts.unlockedCareers.some((c) => c.id === "rt_seneschal") || !nobOpts.unlockedCareers.some((c) => c.id === "militarum_officer")) {
+        fail(4, `Stage 24 age-18 RT noble should unlock both rt_seneschal and parachute militarum_officer`);
+      }
+      // Validate createComingOfAgeEvent across 3 archetypes
+      for (const [label, wid, oid] of [
+        ["planetary_noble", "necromunda", "planetary_noble"],
+        ["rt_voidborn", "voidborn", "rogue_trader_scion"],
+        ["terra_high", "terra", "terra_high_blood"]
+      ]) {
+        const cSt = Engine.createCharacter({ mode: "custom", worldId: wid, originId: oid, traitId: "none", eraId: "armageddon", gender: "female" });
+        cSt.age = 18;
+        cSt.quarter = 2;
+        const cEv = Engine.createComingOfAgeEvent(cSt);
+        validateEventChoices(cEv, `dyn:careerRules:coming_of_age:${label}`);
+      }
+      // Trigger coming-of-age at age 18 Q2 and choose parachute officer vs disowned_noble
+      nob18.wounds = 100;
+      Engine.advanceQuarter(nob18);
+      if (!nob18.pendingEvent || !nob18.pendingEvent.isComingOfAge) {
+        fail(4, `Stage 24 age-18 Q2 noble child failed to trigger createComingOfAgeEvent`);
+      } else {
+        const paraIdx = nob18.pendingEvent.choices.findIndex((c) => c.effect && c.effect.acceptCareerOffer === "militarum_officer");
+        Engine.resolvePendingChoice(nob18, paraIdx);
+        if (nob18.careerId !== "militarum_officer" || !nob18.tags.includes("noble_commission")) {
+          fail(4, `Stage 24 coming-of-age parachute choice failed to grant militarum_officer + noble_commission`);
+        }
+      }
+      const disSt = Engine.createCharacter({ mode: "custom", worldId: "voidborn", originId: "rogue_trader_scion", traitId: "none", eraId: "armageddon", gender: "male" });
+      disSt.age = 18;
+      disSt.quarter = 2;
+      disSt.stats = { WS: 45, BS: 45, T: 45, Ag: 45, Int: 45, WP: 45, Fel: 45, Inf: 45 };
+      disSt.pendingEvent = Engine.createComingOfAgeEvent(disSt);
+      const disIdx = disSt.pendingEvent.choices.findIndex((c) => c.effect && (c.effect.addTags || []).includes("disowned_noble"));
+      Engine.resolvePendingChoice(disSt, disIdx);
+      if (
+        disSt.careerId !== "menial_worker" ||
+        !disSt.tags.includes("disowned_noble") ||
+        disSt.tags.includes("rogue_trader_blood") ||
+        Engine.getStratification(disSt).originClass !== "disowned" ||
+        Engine.getStratification(disSt).socialTier !== "common"
+      ) {
+        fail(4, `Stage 24 disowned_noble choice failed to strip RT/noble privilege and drop originClass/socialTier`);
+      }
+      if (!Engine.isManualCareerAllowed(disSt, Engine.getCareer("astra_militarum"))) {
+        fail(4, `Stage 24 disowned_noble should unlock lower careers like astra_militarum`);
+      }
+      if (Engine.getTravelProfile(disSt).authority.includes("가문 사설") || Engine.checkReq(disSt, Engine.getCareer("rt_seneschal").req)) {
+        fail(4, `Stage 24 disowned RT scion retained family yacht travel or bloodline rt_seneschal entry`);
+      }
+
+      // Static surface <-> void habitat linter across ALL non-void-native EVENTS & CHRONICLES
+      const voidProbeStates = [
+        (() => { const s = Engine.createCharacter({ mode: "custom", worldId: "voidborn", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" }); s.age = 10; return s; })(),
+        (() => { const s = Engine.createCharacter({ mode: "custom", worldId: "voidborn", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" }); s.age = 24; s.careerId = "menial_worker"; return s; })(),
+        (() => { const s = Engine.createCharacter({ mode: "custom", worldId: "voidborn", originId: "rogue_trader_scion", traitId: "none", eraId: "armageddon", gender: "female" }); s.age = 24; s.careerId = "rt_seneschal"; s.tags.push("rt_seneschal"); return s; })(),
+        (() => { const s = Engine.createCharacter({ mode: "custom", worldId: "voidborn", originId: "imperial_citizen", traitId: "none", eraId: "armageddon", gender: "male" }); s.age = 26; s.careerId = "imperial_navy"; s.tags.push("imperial_military"); return s; })()
+      ];
+      let voidEvLeaks = 0;
+      let voidChLeaks = 0;
+      for (const ev of DATA.EVENTS) {
+        if (isVoidNativeReq(ev.req)) continue;
+        for (const vp of voidProbeStates) {
+          if (!Engine.checkReq(vp, ev.req)) continue;
+          const resolved = Engine.resolveEventText(ev, vp);
+          const m = `${ev.title || ""} ${resolved}`.match(SURFACE_ONLY_LANDMARK_RE);
+          if (m) {
+            voidEvLeaks++;
+            fail(4, `Stage 24 surface->void habitat leak in event "${ev.id}" (${vp.careerId}/age${vp.age}) [matched "${m[0]}"]`);
+            break;
+          }
+        }
+      }
+      for (const ch of DATA.CHRONICLES) {
+        if (isVoidNativeReq(ch.req)) continue;
+        for (const vp of voidProbeStates) {
+          if (!Engine.checkReq(vp, ch.req)) continue;
+          const m = (ch.text || "").match(SURFACE_ONLY_LANDMARK_RE);
+          if (m) {
+            voidChLeaks++;
+            fail(4, `Stage 24 surface->void habitat leak in chronicle "${ch.id}" (${vp.careerId}/age${vp.age}) [matched "${m[0]}"]`);
+            break;
+          }
+        }
+      }
     } finally {
       Math.random = origRandom;
     }
   }
 }
 
-console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-20A guards verified.`);
+console.log(`[Gate 4] Integrity, ${DATA.CAREERS.filter((c) => c.selectable).length}-career metadata, alignment schema, tag production, describeReq, dynamic offers, migration, honorable ending & Stage 17-24 guards verified.`);
 
 // ============================================================================
 // Gate 4P: 대표 페르소나 신분·생활권·신체 정합성 & 최소 풀 하한(>= 8) 검증 (모듈 위임)

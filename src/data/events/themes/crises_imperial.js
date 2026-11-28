@@ -7,6 +7,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       anyWorldTags: ["forge", "mechanicus"],
       excludeTags: [
         "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
@@ -84,6 +85,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       anyWorldTags: ["agri"],
       excludeTags: [
         "astartes", "transhuman", "power_armor", "custodes", "grey_knight", "dreadnought",
@@ -161,6 +163,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       or: [
         { anyWorldTags: ["underhive", "gang"] },
         { anyCareers: ["underhive_ganger"] }
@@ -239,6 +242,7 @@ export default [
     once: true,
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       anyWorldTags: ["feral"],
       excludeTags: [
         "astartes", "transhuman", "power_armor", "custodes", "grey_knight", "dreadnought",
@@ -296,6 +300,7 @@ export default [
     once: true,
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       or: [
         { anyCareers: ["administratum"] },
         { anyTags: ["administratum", "noble"] }
@@ -485,6 +490,7 @@ export default [
     once: true,
     req: {
       minAge: 18,
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
@@ -637,6 +643,7 @@ export default [
     once: true,
     req: {
       minAge: 17,
+      excludeHabitats: ["void"],
       or: [
         { anyCareers: ["ecclesiarchy_priest", "administratum"] },
         { anyTags: ["pious", "ecclesiarchy", "noble"] },
@@ -798,6 +805,7 @@ export default [
     once: true,
     req: {
       minAge: 18,
+      excludeHabitats: ["void"],
       or: [
         { anyCareers: ["administratum", "menial_worker", "underhive_ganger", "arbites", "ecclesiarchy_priest", "rogue_trader"] },
         { anyFocus: ["politics", "lore"] }
@@ -904,6 +912,7 @@ export default [
     once: true,
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       or: [
         { anyCareers: ["administratum", "tech_priest", "inquisition_acolyte", "inquisitor", "ecclesiarchy_priest", "sanctioned_psyker"] },
         { anyFocus: ["lore", "forbidden"] }

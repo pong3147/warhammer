@@ -233,7 +233,7 @@ export function runCareerAuditGate({ DATA, Engine, eventSourceByIndex, chronSour
       out.greatRift = b.greatRift;
     }
 
-    const intersectKeys = ["anyCareers", "anyTrees", "anyChapters", "anyWorlds", "anyHomeWorlds", "anySegmenta", "anyFocus", "anyDominantAlign", "anySocialTiers", "anyRealms", "anyBodyClasses"];
+    const intersectKeys = ["anyCareers", "anyTrees", "anyChapters", "anyWorlds", "anyHomeWorlds", "anySegmenta", "anyFocus", "anyDominantAlign", "anySocialTiers", "anyOriginClasses", "anyHabitats", "anyRealms", "anyBodyClasses"];
     for (const k of intersectKeys) {
       if (b[k]) {
         const merged = intersectArrays(out[k], b[k]);
@@ -249,7 +249,7 @@ export function runCareerAuditGate({ DATA, Engine, eventSourceByIndex, chronSour
     delete out.anyWorldTags;
     delete out.anyPastCareers;
 
-    const unionKeys = ["allTags", "excludeTags", "excludeWorlds", "excludeHomeWorlds", "excludeWorldTags", "excludeChapters", "excludePastCareers", "excludeRealms", "excludeBodyClasses", "excludeTrees"];
+    const unionKeys = ["allTags", "excludeTags", "excludeWorlds", "excludeHomeWorlds", "excludeWorldTags", "excludeChapters", "excludePastCareers", "excludeOriginClasses", "excludeHabitats", "excludeRealms", "excludeBodyClasses", "excludeTrees"];
     for (const k of unionKeys) {
       if (b[k]) out[k] = [...new Set([...(out[k] || []), ...b[k]])];
     }
@@ -404,6 +404,8 @@ export function runCareerAuditGate({ DATA, Engine, eventSourceByIndex, chronSour
     const exclTrees = new Set(cl.excludeTrees || []);
     const needsStratSearch = Boolean(
       cl.minSocialTier || cl.maxSocialTier || cl.anySocialTiers ||
+      cl.anyOriginClasses || cl.excludeOriginClasses ||
+      cl.anyHabitats || cl.excludeHabitats ||
       cl.anyRealms || cl.excludeRealms ||
       cl.anyBodyClasses || cl.excludeBodyClasses ||
       cl.excludeTrees || cl.maxCareerTier !== undefined
@@ -433,7 +435,7 @@ export function runCareerAuditGate({ DATA, Engine, eventSourceByIndex, chronSour
       }
       const preferredIds = age < 14
         ? ["child"]
-        : ["menial_worker", "astra_militarum", "underhive_ganger", "administratum", "imperial_navy", "tech_priest", "ecclesiarchy_priest", "militarum_officer", "inquisitor", "astartes_brother", "adeptus_custodes", "chaos_cultist", "daemon_prince", "child"];
+        : ["menial_worker", "astra_militarum", "underhive_ganger", "administratum", "imperial_navy", "rt_seneschal", "tech_priest", "ecclesiarchy_priest", "militarum_officer", "inquisitor", "astartes_brother", "adeptus_custodes", "chaos_cultist", "daemon_prince", "child"];
       const seen = new Set();
       for (const pid of preferredIds) {
         const co = careerById.get(pid);
@@ -457,15 +459,50 @@ export function runCareerAuditGate({ DATA, Engine, eventSourceByIndex, chronSour
     if (careerCandidates.length === 0) return null;
 
     const extraTagVariants = needsStratSearch
-      ? [[], ["lowborn"], ["noble"], ["bionic"], ["dreadnought"], ["astartes", "transhuman"], ["daemon_prince"], ["schola"], ["voidborn"], ["mechanicus_blood"], ["heretic"]]
+      ? [
+          [],
+          ["lowborn"],
+          ["military_blood"],
+          ["schola"],
+          ["noble"],
+          ["terra_elite", "noble"],
+          ["disowned_noble"],
+          ["rogue_trader_blood", "noble"],
+          ["bionic"],
+          ["dreadnought"],
+          ["astartes", "transhuman"],
+          ["daemon_prince"],
+          ["voidborn"],
+          ["mechanicus_blood"],
+          ["heretic"]
+        ]
       : [[]];
 
-    const worldTryList = needsStratSearch
-      ? [
-          ...worldCandidates.filter((w) => !exclHomeWorlds.has(w.id)),
-          ...worldCandidates.filter((w) => exclHomeWorlds.has(w.id))
-        ].slice(0, 8)
-      : [worldCandidates.find((w) => !exclHomeWorlds.has(w.id)) || worldCandidates[0]];
+    let worldTryList;
+    if (needsStratSearch) {
+      const priorityWorldIds = ["voidborn", "generic_civilised", "krieg", "terra", "necromunda", "cadia"];
+      const pickedW = [];
+      const seenW = new Set();
+      const pushW = (w) => {
+        if (!w || seenW.has(w.id)) return;
+        seenW.add(w.id);
+        pickedW.push(w);
+      };
+      for (const pid of priorityWorldIds) {
+        pushW(worldCandidates.find((w) => w.id === pid && !exclHomeWorlds.has(w.id)));
+      }
+      for (const w of worldCandidates) {
+        if (!exclHomeWorlds.has(w.id)) pushW(w);
+        if (pickedW.length >= 10) break;
+      }
+      for (const w of worldCandidates) {
+        pushW(w);
+        if (pickedW.length >= 12) break;
+      }
+      worldTryList = pickedW;
+    } else {
+      worldTryList = [worldCandidates.find((w) => !exclHomeWorlds.has(w.id)) || worldCandidates[0]];
+    }
 
     const focus = (cl.anyFocus && cl.anyFocus[0]) || "survival";
     const stats = { WS: 50, BS: 50, T: 50, Ag: 50, Int: 50, WP: 50, Fel: 50, Inf: 50 };
@@ -477,6 +514,10 @@ export function runCareerAuditGate({ DATA, Engine, eventSourceByIndex, chronSour
       minSocialTier: cl.minSocialTier,
       maxSocialTier: cl.maxSocialTier,
       anySocialTiers: cl.anySocialTiers,
+      anyOriginClasses: cl.anyOriginClasses,
+      excludeOriginClasses: cl.excludeOriginClasses,
+      anyHabitats: cl.anyHabitats,
+      excludeHabitats: cl.excludeHabitats,
       anyRealms: cl.anyRealms,
       excludeRealms: cl.excludeRealms,
       anyBodyClasses: cl.anyBodyClasses,
@@ -690,4 +731,191 @@ export function runCareerAuditGate({ DATA, Engine, eventSourceByIndex, chronSour
     }
   }
   console.log(`[Gate 7D] Promotion-cap integrity proved (${checkedEdges} direct edges, 0 cap deadlocks).`);
+
+  // Gate 7E: 비카오스 forceCareer 강등 누수 · 폐쇄 서약 addTags 교차 누수 범용 정적 검사 + leadVariants/textVariants 도달성
+  const CLOSED_VOW_TAG_TO_TREES = {
+    sororitas: new Set(["sororitas"]),
+    mechanicus: new Set(["mechanicus"]),
+    navigator: new Set(["navis_navigator"]),
+    imperial_knight: new Set(["imperial_knight"]),
+    assassin: new Set(["officio_assassinorum"]),
+    astartes: new Set(["astartes", "grey_knights", "chaos"]),
+    custodes: new Set(["custodes"]),
+    grey_knight: new Set(["grey_knights"]),
+    living_saint: new Set(["living_saint"])
+  };
+  const INSTITUTION_TAGS = new Set([
+    ...Object.keys(CLOSED_VOW_TAG_TO_TREES),
+    "militarum",
+    "imperial_military",
+    "inquisition_agent",
+    "inquisitor",
+    "lord_inquisitor",
+    "administratum",
+    "ecclesiarchy",
+    "rogue_trader",
+    "rt_seneschal",
+    "arbites",
+    "commissar",
+    "navy",
+    "navy_captain",
+    "navy_admiral"
+  ]);
+  const closedVowProbes = [
+    { careerId: "adepta_sororitas", tree: "sororitas", tags: ["sororitas", "ecclesiarchy"], gender: "female" },
+    { careerId: "tech_priest", tree: "mechanicus", tags: ["mechanicus", "bionic"], gender: "male" },
+    { careerId: "nav_senior", tree: "navis_navigator", tags: ["navigator", "navis_officer", "voidborn"], gender: "male" },
+    { careerId: "nav_novator", tree: "navis_navigator", tags: ["navigator", "nav_novator", "voidborn"], gender: "male" },
+    { careerId: "knight_scion", tree: "imperial_knight", tags: ["imperial_knight", "knight_blood", "imperial_military"], gender: "male" },
+    { careerId: "assassin_operative", tree: "officio_assassinorum", tags: ["assassin", "clade_vindicare"], gender: "male" },
+    { careerId: "astartes_brother", tree: "astartes", tags: ["astartes", "transhuman", "battle_brother"], gender: "male", transhuman: true },
+    { careerId: "adeptus_custodes", tree: "custodes", tags: ["custodes", "transhuman"], gender: "male", transhuman: true },
+    { careerId: "grey_knight", tree: "grey_knights", tags: ["astartes", "grey_knight", "transhuman", "psyker"], gender: "male", transhuman: true },
+    { careerId: "living_saint", tree: "living_saint", tags: ["living_saint", "saint_vessel", "transhuman"], gender: "female", transhuman: true }
+  ];
+  const highTierMortalProbes = [
+    { careerId: "militarum_general", tree: "militarum", tags: ["general_rank", "militarum", "officer", "imperial_military"], gender: "male" },
+    { careerId: "lord_inquisitor", tree: "inquisition", tags: ["lord_inquisitor", "inquisitor", "rosette"], gender: "male" },
+    { careerId: "planetary_governor", tree: "governor", tags: ["planetary_governor", "noble"], gender: "male" },
+    { careerId: "master_of_administratum", tree: "administratum", tags: ["administratum", "departmento_head", "high_lord_terra"], gender: "male" }
+  ];
+
+  // Validate probe IDs and institution tags up front so typos can never silently turn Gate 7E green
+  for (const probe of [...closedVowProbes, ...highTierMortalProbes]) {
+    const pc = careerById.get(probe.careerId);
+    if (!pc) {
+      fail(7, `Gate 7E internal probe references nonexistent careerId "${probe.careerId}"`);
+    } else if (pc.tree !== probe.tree) {
+      fail(7, `Gate 7E internal probe "${probe.careerId}" tree mismatch (probe=${probe.tree}, actual=${pc.tree})`);
+    }
+  }
+  const tagLabels = DATA.TAG_LABELS || {};
+  for (const instTag of INSTITUTION_TAGS) {
+    if (!Object.prototype.hasOwnProperty.call(tagLabels, instTag)) {
+      fail(7, `Gate 7E INSTITUTION_TAGS contains unregistered tag "${instTag}"`);
+    }
+  }
+
+  function canProbeMatchChoice(evReq, chReq, probeCareerId, probeExtraTags, probeGender) {
+    const evClauses = expandClauses(evReq);
+    const chClauses = expandClauses(chReq);
+    const pCareer = careerById.get(probeCareerId);
+    if (!pCareer) return false;
+    for (const ec of evClauses) {
+      for (const cc of chClauses) {
+        const merged = mergeFlatReq(ec, cc);
+        if (!merged) continue;
+        if (merged.gender && merged.gender !== probeGender) continue;
+        if (merged.anyCareers && !merged.anyCareers.includes(probeCareerId)) continue;
+        if (merged.anyTrees && !merged.anyTrees.includes(pCareer.tree)) continue;
+        if (merged.excludeTrees && merged.excludeTrees.includes(pCareer.tree)) continue;
+        if (merged.maxCareerTier !== undefined && pCareer.tier > merged.maxCareerTier) continue;
+        const exclTags = new Set(merged.excludeTags || []);
+        if (probeExtraTags.some((t) => exclTags.has(t))) continue;
+        const forcedMerged = mergeFlatReq(merged, {
+          anyCareers: [probeCareerId],
+          gender: probeGender,
+          allTags: probeExtraTags
+        });
+        if (!forcedMerged) continue;
+        const st = synthesizeClauseState(forcedMerged);
+        if (st && Engine.checkReq(st, evReq) && Engine.checkReq(st, chReq)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  let variantReachChecked = 0;
+  let forceCareerAudited = 0;
+  let closedVowTagAudited = 0;
+  for (let i = 0; i < DATA.EVENTS.length; i++) {
+    const ev = DATA.EVENTS[i];
+    const src = eventSourceByIndex[i] || "EVENTS";
+    for (const [vKey, vList] of [["leadVariants", ev.leadVariants], ["textVariants", ev.textVariants]]) {
+      if (!Array.isArray(vList)) continue;
+      vList.forEach((v, vi) => {
+        if (!v || !v.req) return;
+        variantReachChecked++;
+        const parentClauses = expandClauses(ev.req);
+        const varClauses = expandClauses(v.req);
+        let ok = false;
+        for (const ec of parentClauses) {
+          for (const vc of varClauses) {
+            const m = mergeFlatReq(ec, vc);
+            if (!m) continue;
+            const st = synthesizeClauseState(m);
+            if (st && Engine.checkReq(st, ev.req) && Engine.checkReq(st, v.req)) { ok = true; break; }
+          }
+          if (ok) break;
+        }
+        if (!ok) fail(7, `Gate 7E unreachable ${vKey}[${vi}] under parent req in ${ev.id} (${src})`);
+      });
+    }
+
+    (ev.choices || []).forEach((ch, ci) => {
+      const chOwner = `${ev.id}:choice[${ci}] (${src})`;
+      const outcomes = [ch.effect, ch.success, ch.fail, ch.critSuccess, ch.critFail].filter(Boolean);
+      for (const out of outcomes) {
+        const addedTags = Array.isArray(out.addTags) ? out.addTags : [];
+        if (out.forceCareer) {
+          const tc = careerById.get(out.forceCareer);
+          if (tc && tc.tree !== "chaos") {
+            forceCareerAudited++;
+            const leakedInstTags = addedTags.filter((t) => INSTITUTION_TAGS.has(t));
+            if (leakedInstTags.length > 0) {
+              // Check higher-tier mortal downgrade leak (using live career tier from careerById)
+              for (const hp of highTierMortalProbes) {
+                const hpCareer = careerById.get(hp.careerId);
+                if (hpCareer && hpCareer.tier > tc.tier && canProbeMatchChoice(ev.req, ch.req, hp.careerId, hp.tags, hp.gender)) {
+                  fail(7, `Gate 7E non-chaos forceCareer="${tc.id}"(T${tc.tier}) + addTags=[${leakedInstTags.join(",")}] leaks to higher-tier ${hp.careerId}(T${hpCareer.tier}) in ${chOwner}`);
+                }
+              }
+              // Check transhuman/closed-vow downgrade leak
+              for (const cp of closedVowProbes) {
+                const cpCareer = careerById.get(cp.careerId);
+                if (cp.tree === tc.tree) continue;
+                const blockedByEngine = (cp.transhuman && !tc.isTranshuman) || (cpCareer && cpCareer.tier > tc.tier) || cp.tree === "officio_assassinorum" || cp.tree === "living_saint";
+                if (blockedByEngine && canProbeMatchChoice(ev.req, ch.req, cp.careerId, cp.tags, cp.gender)) {
+                  fail(7, `Gate 7E non-chaos forceCareer="${tc.id}" + addTags=[${leakedInstTags.join(",")}] leaks institutional tag onto blocked order ${cp.careerId} in ${chOwner}`);
+                }
+              }
+            }
+            // Check hard biological/gender target career restrictions (abhuman / gender) cannot be bypassed by forceCareer
+            const targetExclTags = (tc.req && Array.isArray(tc.req.excludeTags)) ? tc.req.excludeTags : [];
+            if (targetExclTags.includes("abhuman")) {
+              if (canProbeMatchChoice(ev.req, ch.req, "menial_worker", ["abhuman", "ogryn"], "male")) {
+                fail(7, `Gate 7E non-chaos forceCareer="${tc.id}" (excludes abhuman) can be reached by abhuman probe in ${chOwner}`);
+              }
+            }
+            if (tc.req && tc.req.gender) {
+              const oppGender = tc.req.gender === "male" ? "female" : "male";
+              if (canProbeMatchChoice(ev.req, ch.req, "menial_worker", [], oppGender)) {
+                fail(7, `Gate 7E non-chaos forceCareer="${tc.id}" (gender=${tc.req.gender}) can be reached by ${oppGender} probe in ${chOwner}`);
+              }
+            }
+          }
+        }
+        // Check closed-vow exclusive tag cross-leak (even without forceCareer)
+        for (const t of addedTags) {
+          const allowedTrees = CLOSED_VOW_TAG_TO_TREES[t];
+          if (!allowedTrees) continue;
+          closedVowTagAudited++;
+          for (const cp of closedVowProbes) {
+            if (allowedTrees.has(cp.tree)) continue;
+            // Living saint can legitimately be reached from sororitas
+            if (t === "living_saint" && cp.tree === "sororitas") continue;
+            if (canProbeMatchChoice(ev.req, ch.req, cp.careerId, cp.tags, cp.gender)) {
+              fail(7, `Gate 7E closed-vow tag "${t}" can leak onto incompatible closed-vow order ${cp.careerId} in ${chOwner}`);
+            }
+          }
+        }
+      }
+    });
+  }
+  console.log(
+    `[Gate 7E] Non-chaos forceCareer & closed-vow tag leak guard + variant reachability complete ` +
+    `(forceCareerChecked=${forceCareerAudited}, closedVowTagsChecked=${closedVowTagAudited}, variantsChecked=${variantReachChecked}).`
+  );
 }

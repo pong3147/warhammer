@@ -62,7 +62,7 @@ export function runDistBundleGate({ rootDir, readRel, fail, coreData, glossaryTe
     return [...visited];
   };
 
-  // Identify narrative, simulation engine (7 split modules), and glossary chunks inside dist/_astro/
+  // Identify narrative, simulation engine (10 split modules), and glossary chunks inside dist/_astro/
   const astroDir = path.join(distDir, "_astro");
   const astroJsFiles = fs.existsSync(astroDir)
     ? fs.readdirSync(astroDir).filter((f) => f.endsWith(".js")).map((f) => `dist/_astro/${f}`)
@@ -71,6 +71,7 @@ export function runDistBundleGate({ rootDir, readRel, fail, coreData, glossaryTe
   const ENGINE_CHUNK_PREFIXES = [
     "createEngine.",
     "reqEvaluator.",
+    "stateLifecycle.",
     "careerRules.",
     "careerActions.",
     "endings.",
@@ -82,6 +83,7 @@ export function runDistBundleGate({ rootDir, readRel, fail, coreData, glossaryTe
     "createDynamicCareerOfferEvent",
     "createDynamicTransitEvent",
     "createHonorableEndingEvent",
+    "createStateLifecycleModule",
     "getCareerAction",
     "UNBOUND_CAREERS",
     "CLOSED_VOW_TREES",
@@ -107,7 +109,7 @@ export function runDistBundleGate({ rootDir, readRel, fail, coreData, glossaryTe
     fail(8, "Could not locate built lazy narrative.*.js chunk in dist/_astro/");
   }
   if (engineChunks.size === 0) {
-    fail(8, "Could not locate built engine chunk(s) (createEngine/reqEvaluator/careerRules/careerActions/endings/travel) in dist/_astro/");
+    fail(8, "Could not locate built engine chunk(s) (createEngine/reqEvaluator/stateLifecycle/careerRules/careerActions/endings/travel) in dist/_astro/");
   }
 
   // 1. /codex/index.html must ship 0 <script> tags and 0 <astro-island> tags

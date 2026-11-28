@@ -4,7 +4,7 @@ export default [
     id: "ch_job_menial_1",
     badge: "매뉴팩토룸 부조리",
     priority: 3,
-    req: { anyCareers: ["menial_worker", "guild_artisan"], excludeWorldTags: ["feral"] },
+    req: { anyCareers: ["menial_worker", "guild_artisan"], excludeHabitats: ["void"], excludeWorldTags: ["feral"] },
     text: "16시간 교대 근무 중 옆자리 노동자의 팔이 유압 프레스에 빨려 들어갔다. 감독관은 즉시 외쳤다. '생산 라인 멈추지 마라! 성스러운 기계령에 피가 튀지 않았는지부터 확인해!'",
     effect: { stats: { T: 1 }, wounds: -4, faith: -2 }
   },
@@ -12,7 +12,7 @@ export default [
     id: "ch_job_menial_2",
     badge: "노동자의 일상",
     priority: 3,
-    req: { anyCareers: ["menial_worker", "guild_artisan"], excludeWorldTags: ["feral"] },
+    req: { anyCareers: ["menial_worker", "guild_artisan"], excludeHabitats: ["void"], excludeWorldTags: ["feral"] },
     text: "휴일 없는 연속 교대 끝에 할당량을 102% 달성했다. 포상으로 '황제 폐하께서 그대의 수고를 기억하신다'는 종이쪽지 한 장과 5분 추가 휴식을 받았다.",
     effect: { stats: { WP: 1 }, wounds: -2 }
   },
@@ -20,7 +20,7 @@ export default [
     id: "ch_job_menial_3",
     badge: "서비터의 눈동자",
     priority: 3,
-    req: { anyCareers: ["menial_worker", "underhive_ganger"], excludeWorldTags: ["feral"] },
+    req: { anyCareers: ["menial_worker", "underhive_ganger"], excludeHabitats: ["void"], excludeWorldTags: ["feral"] },
     text: "공장 입구 문을 여닫는 서비터의 텅 빈 눈동자에서 지난겨울 작업 거부로 잡혀간 이웃의 얼굴을 본 것 같았다. 서둘러 시선을 내리고 일터로 뛰어들어갔다.",
     effect: { stats: { WP: 1 }, faith: -1 }
   },
@@ -28,7 +28,7 @@ export default [
     id: "ch_job_ganger_1",
     badge: "언더하이브 생존",
     priority: 3,
-    req: { anyCareers: ["underhive_ganger", "underhive_boss", "hive_crime_lord"] },
+    req: { anyCareers: ["underhive_ganger", "underhive_boss", "hive_crime_lord"], excludeHabitats: ["void"] },
     text: "암시장에서 유통기한이 80년 지난 군용 합성 육포와 녹슨 스터브 권총 탄환을 맞바꾸었다. 하층 구역에선 탄환이 화폐보다 신용도가 높다.",
     effect: { stats: { BS: 1, Ag: 1 } }
   },
@@ -36,7 +36,7 @@ export default [
     id: "ch_job_pdf_1",
     badge: "행성 방위군",
     priority: 3,
-    req: { anyCareers: ["pdf_trooper"] },
+    req: { anyCareers: ["pdf_trooper"], excludeHabitats: ["void"] },
     text: "총독 관저 외곽을 보초 서며 낡은 오토건을 닦았다. 귀족 영식들이 술에 취해 정원 조각상에 총을 쏘며 놀았지만, 제국법상 경비병은 눈을 감고 있어야 했다.",
     effect: { stats: { BS: 1, WP: 1 } }
   },
@@ -44,7 +44,7 @@ export default [
     id: "ch_job_guard_1",
     badge: "보병 입문서 부조리",
     priority: 3,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], excludeHabitats: ["void"] },
     text: "군장 검사에서 《제국 보병 입문서》를 잠깐 못 찾은 분대원이 현장에서 채찍 30대를 맞았다. 입문서에는 '오크는 겁쟁이이며 라스건 한 발에 쓰러진다'고 적혀 있었다.",
     effect: { stats: { WP: 1 } }
   },
@@ -52,7 +52,7 @@ export default [
     id: "ch_job_guard_2",
     badge: "병참 오배송",
     priority: 3,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], excludeHabitats: ["void"] },
     text: "아드미니스트라툼의 착오로 혹한 행성에 사막용 반바지와 전부 왼쪽 발뿐인 군화가 보급되었다. 항의한 병장은 '제국 물자 모독죄'로 영창에 갇혔다.",
     effect: { stats: { T: 1 }, wounds: -3 }
   },
@@ -60,7 +60,7 @@ export default [
     id: "ch_job_guard_3",
     badge: "15시간 생존율",
     priority: 3,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], excludeHabitats: ["void"] },
     text: "진흙 참호 속에서 식은 레이션을 씹으며 신병들에게 '포탄이 떨어지면 기도보다 구덩이에 코 박는 게 빠르다'고 속삭여 주었다. 평균 생존 시간 15시간의 전선에서 또 한 해를 넘겼다.",
     effect: { stats: { T: 1, BS: 1 } }
   },
@@ -188,7 +188,7 @@ export default [
     id: "ch_job_arbites_1",
     badge: "제국법 집행",
     priority: 3,
-    req: { maxCareerTier: 4, anyCareers: ["arbites", "arbites_judge_rank"] },
+    req: { maxCareerTier: 4, anyCareers: ["arbites", "arbites_judge_rank"], excludeHabitats: ["void"] },
     text: "십일조 곡물 창고에서 빵 한 덩이를 훔친 굶주린 부랑자에게 제국법 제412조를 적용해 '서비터 전환형'을 선고했다. 법은 자비가 아니라 제국의 생존 기계다.",
     effect: { stats: { WP: 1, Inf: 1 } }
   },
@@ -212,7 +212,7 @@ export default [
     id: "ch_job_priest_1",
     badge: "에클레시아키 설교",
     priority: 3,
-    req: { maxCareerTier: 5, anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"] },
+    req: { maxCareerTier: 5, anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"], excludeHabitats: ["void"] },
     text: "광장에서 4시간 동안 '고통은 축복이며 가난은 영혼을 맑게 한다'고 열변을 토했다. 설교가 끝난 뒤 순금 향로와 고급 포도주가 담긴 추기경 마차에 올랐다.",
     effect: { stats: { Fel: 1, Inf: 1 }, faith: 3 }
   },
@@ -236,7 +236,7 @@ export default [
     id: "ch_job_cultist_1",
     badge: "암흑의 비밀 집회",
     priority: 3,
-    req: { anyCareers: ["chaos_cultist", "chaos_champion"] },
+    req: { anyCareers: ["chaos_cultist", "chaos_champion"], excludeHabitats: ["void"] },
     text: "폐기된 하수도 제단에서 촛불을 켜고 여덟 갈래 별을 그렸다. 배고픔과 채찍에 지친 하층 노동자들이 하나둘 거짓 황제를 저주하며 우리의 대열에 합류했다.",
     effect: { stats: { Fel: 1, WP: 1 }, corruption: 4 }
   },
@@ -244,7 +244,7 @@ export default [
     id: "ch_job_guard_artillery",
     badge: "아스트라 밀리타룸",
     priority: 3,
-    req: { anyCareers: ["astra_militarum", "militarum_officer"] },
+    req: { anyCareers: ["astra_militarum", "militarum_officer"], excludeHabitats: ["void"] },
     text: "후방 바실리스크 자주포가 아군 참호 바로 30미터 앞에 포탄을 쏟아부었다. 무전병이 항의하자 포병대 장교는 '오차 범위 0.4% 이내, 제국 표준 합격'이라 답했다.",
     effect: { stats: { T: 1, WP: 1 }, wounds: -4 }
   },
@@ -420,7 +420,7 @@ export default [
     id: "ch_job_ex_inquisitor",
     badge: "이단심문관의 식사",
     priority: 3,
-    req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"] },
+    req: { anyCareers: ["inquisitor", "lord_inquisitor", "inquisitor_representative"], excludeHabitats: ["void"] },
     text: "행성 총독궁 만찬에 예고 없이 방문해 독살 탐지 서보스컬을 띄운 채 포도주를 음미했다. 식탁에 둘러앉은 귀족 20명 중 아무도 땀을 닦지 못했다.",
     effect: { stats: { Inf: 2, Int: 1 } }
   },
@@ -476,7 +476,7 @@ export default [
     id: "ch_job_ex_arbites_2",
     badge: "아르비테스 야간 순찰",
     priority: 3,
-    req: { anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal", "grand_provost_marshal"] },
+    req: { anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal", "grand_provost_marshal"], excludeHabitats: ["void"] },
     text: "아르비테스 요새 법정에서 하루 400건의 약식 재판을 3시간 만에 끝냈다. 판결은 대개 벌금, 징역 탄광, 서비터 전환 셋 중 하나였다.",
     effect: { stats: { WP: 1, Int: 1 } }
   },
@@ -484,7 +484,7 @@ export default [
     id: "ch_job_ex_priest_2",
     badge: "국교의 설교",
     priority: 3,
-    req: { anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal", "ecclesiarch"] },
+    req: { anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal", "ecclesiarch"], excludeHabitats: ["void"] },
     text: "체인소드 끝을 치켜들고 광장에서 이단 근절을 부르짖자 흥분한 신도들이 봉헌함에 은화를 쏟아부었다.",
     effect: { stats: { Fel: 1, Inf: 1 }, faith: 3 }
   },
@@ -500,7 +500,7 @@ export default [
     id: "ch_job_ex_cultist_2",
     badge: "암흑의 속삭임",
     priority: 3,
-    req: { anyCareers: ["chaos_cultist", "chaos_champion"] },
+    req: { anyCareers: ["chaos_cultist", "chaos_champion"], excludeHabitats: ["void"] },
     text: "폐공장 지하에서 훔친 제국 보급품에 카오스의 룬을 새겼다. 아르비테스 순찰 사이렌이 가까워질 때마다 아슬아슬한 전율이 등줄기를 탔다.",
     effect: { stats: { Ag: 1, Int: 1 }, corruption: 3 }
   },
@@ -516,7 +516,7 @@ export default [
     id: "ch_rank_deep_pdf_1",
     badge: "행성 방위군",
     priority: 3,
-    req: { anyCareers: ["pdf_trooper"] },
+    req: { anyCareers: ["pdf_trooper"], excludeHabitats: ["void"] },
     text: "고향 행성 외곽 검문소에서 14시간 보초를 서며 밀수 화물차를 단속했다. 아스트라 밀리타룸 차출 명단이 내려올 때마다 막사가 술렁인다.",
     effect: { stats: { BS: 1 } }
   },
@@ -524,7 +524,7 @@ export default [
     id: "ch_rank_deep_guard_1",
     badge: "제국 보병",
     priority: 3,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], excludeHabitats: ["void"] },
     text: "데파르트멘토 무니토룸에서 보급된 300년 묵은 시체 전분 전투식량을 씹으며 라스건 배터리 팩을 모닥불에 살짝 데워 비상 충전했다.",
     effect: { stats: { T: 1 } }
   },
@@ -532,7 +532,7 @@ export default [
     id: "ch_rank_deep_guard_2",
     badge: "제국 보병",
     priority: 3,
-    req: { anyCareers: ["astra_militarum", "militarum_sergeant"] },
+    req: { anyCareers: ["astra_militarum", "militarum_sergeant"], excludeHabitats: ["void"] },
     text: "신병 보충대가 참호에 도착하자 고참들과 함께 '15시간만 버티면 베테랑이다'라는 씁쓸한 농담을 건네며 철모를 눌러 썼다.",
     effect: { stats: { WP: 1, T: 1 } }
   },
@@ -676,7 +676,7 @@ export default [
     id: "ch_rank_deep_arbites_1",
     badge: "아르비테스",
     priority: 3,
-    req: { anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal", "grand_provost_marshal"] },
+    req: { anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal", "grand_provost_marshal"], excludeHabitats: ["void"] },
     text: "렉스 임페리얼리스 법전 420권을 암송한 뒤 컴뱃 샷건에 특수 집행탄을 장전했다. 법 앞에 귀천도, 자비도 없다.",
     effect: { stats: { BS: 1, WP: 1 } }
   },
@@ -684,7 +684,7 @@ export default [
     id: "ch_rank_deep_admin_1",
     badge: "아드미니스트라툼",
     priority: 3,
-    req: { maxCareerTier: 3, anyCareers: ["administratum", "admin_prefect_rank", "admin_departmento_head"] },
+    req: { maxCareerTier: 3, anyCareers: ["administratum", "admin_prefect_rank", "admin_departmento_head"], excludeHabitats: ["void"] },
     text: "서류 산더미 사이에서 240년 전에 접수된 행성 도로 보수 민원서를 발견해 '관할 이관 대기' 도장을 정성스럽게 찍어 다음 책상으로 넘겼다.",
     effect: { stats: { Int: 1, Inf: 1 } }
   },
@@ -692,7 +692,7 @@ export default [
     id: "ch_rank_deep_priest_1",
     badge: "에클레시아키",
     priority: 3,
-    req: { anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal", "ecclesiarch"] },
+    req: { anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal", "ecclesiarch"], excludeHabitats: ["void"] },
     text: "대성당 강단에서 황제의 영광을 열변한 뒤, 전장용 에비스서레이터 체인소드의 톱니에 향유를 발랐다.",
     effect: { stats: { Fel: 1 }, faith: 4 }
   },
@@ -716,7 +716,7 @@ export default [
     id: "ch_s2_cultist_1",
     badge: "암흑 교단",
     priority: 3,
-    req: { anyCareers: ["chaos_cultist", "chaos_champion"] },
+    req: { anyCareers: ["chaos_cultist", "chaos_champion"], excludeHabitats: ["void"] },
     text: "하층 배수구 아래 비밀 회합에서 굶주린 공장 인부들에게 암호문을 나누어 주었다. 절망은 카오스 신들이 가장 사랑하는 거름이다.",
     effect: { stats: { Fel: 1 }, corruption: 2 }
   },
@@ -724,7 +724,7 @@ export default [
     id: "ch_s2_cultist_2",
     badge: "암흑 교단",
     priority: 3,
-    req: { anyCareers: ["chaos_cultist", "chaos_champion"] },
+    req: { anyCareers: ["chaos_cultist", "chaos_champion"], excludeHabitats: ["void"] },
     text: "아르비테스 순찰대의 감시망을 피해 밀수 탄약과 금지된 의식 초를 지하 은신처로 옮겼다. 반란의 날은 조용히 다가오고 있다.",
     effect: { stats: { Ag: 1, Int: 1 }, corruption: 2 }
   },
@@ -780,7 +780,7 @@ export default [
     id: "ch_s2_priest_1",
     badge: "에클레시아키",
     priority: 3,
-    req: { maxCareerTier: 5, anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"] },
+    req: { maxCareerTier: 5, anyCareers: ["ecclesiarchy_priest", "ministorum_confessor", "ecclesiarchy_cardinal"], excludeHabitats: ["void"] },
     text: "향 연기가 자욱한 대성당에서 야전 출정 병사들의 라스건에 성유를 바르며 황제의 가호를 우렁차게 선포했다.",
     effect: { stats: { Fel: 1, WP: 1 }, faith: 3 }
   },
@@ -811,6 +811,7 @@ export default [
     req: {
       minAge: 16,
       gender: "female",
+      excludeHabitats: ["void"],
       anyCareers: ["pdf_trooper", "astra_militarum", "militarum_officer", "commissar", "arbites", "imperial_navy"],
       excludeWorlds: ["krieg"]
     },
@@ -829,7 +830,7 @@ export default [
     id: "ch_s13_governor_tithe",
     badge: "행성 통치부",
     priority: 3,
-    req: { anyCareers: ["planetary_governor", "sector_lord"] },
+    req: { anyCareers: ["planetary_governor", "sector_lord"], excludeHabitats: ["void"] },
     text: "첨탑 궁정 발코니 아래로 펼쳐진 하이브와 궤도 십일조 수송선을 내려다보며, 아드미니스트라툼 감사 보고서와 방위군 예산을 결재했다.",
     effect: { stats: { Inf: 1, Fel: 1 } }
   },

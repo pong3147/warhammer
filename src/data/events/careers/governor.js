@@ -8,7 +8,7 @@ export default [
     title: "행성 총독 — 아드미니스트라툼 십일조 체납 감사관의 최후통첩",
     category: "통치",
     once: true,
-    req: { anyCareers: ["planetary_governor"], allTags: ["planetary_governor"] },
+    req: { anyCareers: ["planetary_governor"], allTags: ["planetary_governor"], excludeHabitats: ["void"] },
     reqLabel: "직군: 행성 총독",
     weight: 36,
     text: "궤도 셔틀에서 내린 아드미니스트라툼 수석 감사관이 중무장한 아르비테스 호위대를 대동한 채 총독궁 알현실로 들어섰다. 지난 십일조 결산에서 산업 구역 역병과 수송 지연이 겹쳐 프로메튬과 병력 할당량이 14퍼센트 미달되었다는 통보서였다. 제국법 렉스 임페리알리스 아래 행성 총독은 행성 안에서 절대 군주이지만, 십일조를 채우지 못하면 단 하룻밤 만에 반역자로 규정되어 파면·처형당한다. 감사관은 서늘한 시선으로 사흘의 유예를 선고했다.",
@@ -75,7 +75,7 @@ export default [
     title: "행성 총독 — 하층 하이브 기근 폭동과 화염의 야간 통금",
     category: "통치",
     once: true,
-    req: { anyCareers: ["planetary_governor"] },
+    req: { anyCareers: ["planetary_governor"], excludeHabitats: ["void"] },
     reqLabel: "직군: 행성 총독",
     weight: 35,
     text: "워프 폭풍으로 성간 곡물 수송선이 세 차례 연속 지연되자 하층 하이브의 시체 전분 배급소가 완전히 바닥났다. 굶주린 노동자 수십만 명이 중층 격벽을 부수고 세무 초소에 불을 지르며 상층 첨탑 승강기 광장으로 밀려들고 있다. 행성 방위군 사령관은 기갑 연대의 실탄 진압 승인을 재촉하고, 아뎁투스 아르비테스 치안 요새에서는 비상 계엄권을 넘기면 공동 진압에 나서겠다고 통보해 왔다.",
@@ -190,7 +190,7 @@ export default [
     req: {
       anyCareers: ["planetary_governor", "sector_lord", "guild_magnate", "rt_lord_captain"],
       anyPastCareers: ["menial_worker", "underhive_ganger"],
-      excludeWorlds: ["krieg"]
+      excludeWorlds: ["krieg", "voidborn"]
     },
     reqLabel: "최고위 통치·상업 계급 · 경력: 하층 노동자/갱단원 (크리그 제외)",
     weight: 36,
@@ -380,7 +380,7 @@ export default [
     req: { anyCareers: ["rt_seneschal"], allTags: ["rt_seneschal"] },
     reqLabel: "직군: 로그 트레이더 세네샬",
     weight: 36,
-    text: "선장이 변경 총독궁의 화려한 연회에 참석한 사이, 로그 트레이더 왕조의 진짜 심장인 기함 회계실에는 암호화된 양피지 장부가 산더미처럼 쌓여 있다. 변경 정거장의 차티스트 곡물 대리인과 어둠의 무기 중개상이 서로 독점 보급 계약을 요구하며 그대에게 대리 협상을 청해 왔고, 바로 그날 밤 전임 병참관이 선단 수익의 3할을 빼돌린 이중 장부까지 발견되었다. 펜 끝 하나로 왕조의 금고를 배로 불릴 수도, 어두운 선내 복도에서 칼날을 맞을 수도 있는 밤이다.",
+    text: "선장이 기항지 행성 총독의 화려한 사절 연회에 참석한 사이, 로그 트레이더 왕조의 진짜 심장인 기함 회계실에는 암호화된 양피지 장부가 산더미처럼 쌓여 있다. 변경 정거장의 차티스트 곡물 대리인과 어둠의 무기 중개상이 서로 독점 보급 계약을 요구하며 그대에게 대리 협상을 청해 왔고, 바로 그날 밤 전임 병참관이 선단 수익의 3할을 빼돌린 이중 장부까지 발견되었다. 펜 끝 하나로 왕조의 금고를 배로 불릴 수도, 어두운 선내 복도에서 칼날을 맞을 수도 있는 밤이다.",
     choices: [
       {
         label: "[지성 판정] 암호화된 이중 장부를 밤새 역추적해 횡령 자금을 전액 회수하고 두 교역소 모두에 유리한 차등 관세를 관철한다",
@@ -793,7 +793,7 @@ export default [
     title: "하이브 암흑가 거두 — 상층 첨탑 부패 귀족의 밀거래와 아르비테스 기습",
     category: "지하 세계",
     once: true,
-    req: { anyCareers: ["hive_crime_lord"], allTags: ["crime_lord"] },
+    req: { anyCareers: ["hive_crime_lord"], allTags: ["crime_lord"], excludeHabitats: ["void"] },
     reqLabel: "직군: 하이브 암흑가 거두",
     weight: 36,
     alignBias: "ruthless",

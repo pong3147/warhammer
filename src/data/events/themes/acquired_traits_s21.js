@@ -159,6 +159,7 @@ export default [
     once: true,
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral"],
       excludeTrees: ["civil", "administratum", "governor", "ecclesiarchy"],
       excludeBodyClasses: ["dreadnought", "daemonic"],
@@ -378,6 +379,7 @@ export default [
     once: true,
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: ["battle_hardened", "chronic_toxins", "astartes", "custodes", "grey_knight", "living_saint", "dreadnought", "daemon_prince"]

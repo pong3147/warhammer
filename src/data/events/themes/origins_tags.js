@@ -38,6 +38,8 @@ export default [
             "rogue_trader", "rt_lord_captain", "rt_seneschal", "arbites_marshal", "arbites_judge",
             "departmento_head", "admin_prefect", "tempestus_prime", "scion", "officer",
             "guild_magnate", "crime_lord", "sanctioned_psyker", "psyker_primaris",
+            "navigator", "navis_officer", "nav_novator", "paternoval_envoy",
+            "imperial_knight", "knight_scion", "knight_high_king", "abhuman",
             "assassin", "grand_master_assassins", "living_saint", "saint_vessel"
           ]
         },

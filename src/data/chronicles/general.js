@@ -27,6 +27,7 @@ export default [
       minAge: 14,
       maxSocialTier: "elite",
       maxCareerTier: 4,
+      excludeHabitats: ["void"],
       excludeRealms: ["heretic", "cloistered"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       anyWorldTags: ["hive", "civilised", "shrine", "agri", "terra", "fortress", "industrial"],
@@ -41,6 +42,7 @@ export default [
     priority: 1,
     req: {
       minAge: 12,
+      excludeHabitats: ["void"],
       excludeRealms: ["heretic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       anyWorldTags: ["hive", "industrial", "civilised", "shrine", "fortress", "terra"],
@@ -56,6 +58,7 @@ export default [
     req: {
       minAge: 12,
       maxSocialTier: "common",
+      excludeHabitats: ["void"],
       excludeRealms: ["heretic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       anyWorldTags: ["hive", "industrial", "civilised", "terra"],
@@ -86,9 +89,10 @@ export default [
     req: {
       minAge: 15,
       maxSocialTier: "common",
+      excludeHabitats: ["void"],
       excludeRealms: ["heretic", "cloistered", "military", "mechanicus"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
-      anyWorldTags: ["hive", "industrial", "civilised", "voidborn", "terra"],
+      anyWorldTags: ["hive", "industrial", "civilised", "terra"],
       excludeTags: ["noble", "navy", "arbites", "militarum", "imperial_military", "mechanicus", "astartes", "custodes", "inquisitor", "commissar", "magos"]
     },
     text: "해군 강제 징발단이 선술집 골목을 통째로 봉쇄하고 손님 수십 명을 쇠사슬로 묶어 갔다. 다행히 뒷문으로 몸을 숨겨 평생 포탄 노예가 되는 신세는 면했다.",
@@ -100,6 +104,7 @@ export default [
     priority: 1,
     req: {
       minAge: 12,
+      excludeHabitats: ["void"],
       excludeRealms: ["heretic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       anyWorldTags: ["hive", "civilised", "shrine", "agri", "terra"],
@@ -116,6 +121,7 @@ export default [
       minAge: 14,
       maxSocialTier: "elite",
       maxCareerTier: 4,
+      excludeHabitats: ["void"],
       excludeRealms: ["heretic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       anyWorldTags: ["hive", "civilised", "shrine", "terra", "paradise"],
@@ -288,7 +294,7 @@ export default [
     id: "ch_absurd_ex_5",
     badge: "서비터의 오작동",
     priority: 1,
-    req: { minAge: 14, maxSocialTier: "elite", excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], anyWorldTags: ["hive", "industrial", "forge", "civilised", "terra"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 14, maxSocialTier: "elite", excludeHabitats: ["void"], excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], anyWorldTags: ["hive", "industrial", "forge", "civilised", "terra"], excludeTags: ["astartes", "custodes"] },
     text: "거리 청소 서비터가 오작동을 일으켜 쓰레기 대신 행인의 구두를 계속 쓸어 담았다. 테크프리스트가 오기 전까지 아무도 감히 기계령을 건드리지 못했다.",
     effect: { stats: { Ag: 1 } }
   },
@@ -296,7 +302,7 @@ export default [
     id: "ch_absurd_ex_6",
     badge: "제국의 치안",
     priority: 1,
-    req: { minAge: 14, maxSocialTier: "common", excludeRealms: ["heretic", "cloistered"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], anyWorldTags: ["hive", "civilised", "terra", "industrial"], excludeTags: ["noble", "astartes", "custodes", "inquisitor"] },
+    req: { minAge: 14, maxSocialTier: "common", excludeHabitats: ["void"], excludeRealms: ["heretic", "cloistered"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], anyWorldTags: ["hive", "civilised", "terra", "industrial"], excludeTags: ["noble", "astartes", "custodes", "inquisitor"] },
     text: "옆집 세입자가 '황제 폐하의 옥좌가 좀 불편하지 않으실까'라고 중얼거렸다는 밀고가 들어가자 10분 만에 아르비테스 장갑차가 골목을 들이받았다.",
     effect: { stats: { WP: 1 }, faith: 2 }
   },
@@ -352,7 +358,7 @@ export default [
     id: "ch_grim_deep_3",
     badge: "제국 부조리",
     priority: 1,
-    req: { minAge: 14, maxSocialTier: "elite", maxCareerTier: 4, excludeRealms: ["heretic", "cloistered"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes", "grey_knight", "heretic"], excludeWorldTags: ["feral"] },
+    req: { minAge: 14, maxSocialTier: "common", maxCareerTier: 4, excludeHabitats: ["void"], excludeRealms: ["heretic", "cloistered"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], excludeTags: ["astartes", "custodes", "grey_knight", "heretic"], excludeWorldTags: ["feral"] },
     text: "노점상이 '고위 주교 친필 축성 순결의 인장'을 헐값에 팔다 아르비테스 순찰대에 적발되었다. 밀랍을 긁어 보니 공업용 윤활유 찌꺼기였다.",
     effect: { stats: { Int: 1 } }
   },
@@ -360,7 +366,7 @@ export default [
     id: "ch_grim_deep_4",
     badge: "제국 부조리",
     priority: 1,
-    req: { minAge: 14, maxSocialTier: "elite", excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], anyWorldTags: ["hive", "forge", "civilised", "terra"], excludeTags: ["astartes", "custodes"] },
+    req: { minAge: 14, maxSocialTier: "elite", excludeHabitats: ["void"], excludeRealms: ["heretic"], excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"], anyWorldTags: ["hive", "forge", "civilised", "terra"], excludeTags: ["astartes", "custodes"] },
     text: "거리를 청소하던 서비터가 회로 오류로 행인의 장화를 쓰레기로 인식해 끝없이 빗자루로 쓸어 댔다. 기계교 수리 요청 대기 순번은 9개월 뒤였다.",
     effect: { stats: { Ag: 1 } }
   },
@@ -600,7 +606,7 @@ export default [
     id: "ch_s5_traitor_dg",
     badge: "역병 경계",
     priority: 3,
-    req: { minAge: 16, excludeWorlds: ["terra"], excludeWorldTags: ["feral"], excludeRealms: ["heretic"] },
+    req: { minAge: 16, excludeHabitats: ["void"], excludeWorlds: ["terra"], excludeWorldTags: ["feral"], excludeRealms: ["heretic"] },
     text: "인근 성계에서 데스 가드 함대의 흔적이 포착되었다는 경보와 함께, 도시 전역의 방독면 필터와 방역 소독제 배급이 일제히 강화되었다.",
     effect: { stats: { T: 1, WP: 1 } }
   },
@@ -635,6 +641,7 @@ export default [
     req: {
       minAge: 14,
       gender: "female",
+      excludeHabitats: ["void"],
       allTags: ["blank"],
       excludeTags: ["sister_of_silence"]
     },

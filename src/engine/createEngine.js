@@ -5,8 +5,12 @@ import {
   BODY_CLASS_LABELS,
   FACTION_ENDING_KEYS,
   FOCUSES,
+  HABITAT_KEYS,
+  HABITAT_LABELS,
   LIFE_REALM_KEYS,
   LIFE_REALM_LABELS,
+  ORIGIN_CLASS_KEYS,
+  ORIGIN_CLASS_LABELS,
   QUARTER_LABELS,
   SAVE_VERSION,
   SOCIAL_TIER_LABELS,
@@ -23,11 +27,14 @@ import {
   resolveFactionEndingKey
 } from "./formatters.js";
 import { createReqEvaluatorModule } from "./reqEvaluator.js";
+import { createStateLifecycleModule } from "./stateLifecycle.js";
 import { createEndingsModule } from "./endings.js";
 import { createTravelModule } from "./travel.js";
 import {
   UNBOUND_CAREERS,
+  NOBLE_HIDDEN_LOW_CAREERS,
   isUnboundCareer,
+  isParachuteNobleOfficer,
   isIncorruptibleTags,
   isDirectSuccessorReq,
   isClosedVowCrossBlocked,
@@ -65,18 +72,6 @@ export function createImperiumEngine(DATA) {
     }
     state.alignment = cur;
   }
-
-  const ERA_PRESETS = [
-    { id: "random", name: "무작위 격동기 (M41 말)", minYear: 930, maxYear: 994, desc: "아마겟돈 전쟁, 카디아 붕괴, 대균열, 인도미투스 성전을 관통하는 핵심 시대." },
-    { id: "gothic_war", name: "고딕 전쟁기 (120.M41 · 제12차 블랙 크루세이드)", minYear: 118, maxYear: 123, desc: "139~151.M41 레이븐스버그 제독과 약탈자 아바돈이 블랙스톤 요새를 두고 격돌하는 제국 해군 대혈전의 시대." },
-    { id: "eisenhorn", name: "아이젠혼 시대 (225.M41 · 스카루스)", minYear: 222, maxYear: 228, desc: "240.M41~500.M41 오르도 제노스 이단심문관 그레고르 아이젠혼이 활약하던 M41 초중반 시대." },
-    { id: "first_armageddon", name: "제1차 아마겟돈과 수치의 달들 (424.M41)", minYear: 422, maxYear: 427, desc: "444.M41 앙그론의 침공과 스페이스 울프 대 이단심문소의 비극적 대립 '수치의 달들'을 정면으로 겪는 시대." },
-    { id: "sabbat", name: "사바트 성전기 (746.M41)", minYear: 745, maxYear: 749, desc: "755.M41 사바트 월드 성전 선포와 765.M41 타니스 멸망(이브람 건트)을 겪는 시대." },
-    { id: "badab", name: "바답 전쟁기 (882.M41)", minYear: 880, maxYear: 885, desc: "901~912.M41 마엘스트롬 반역과 스페이스 마린 내전을 목격하는 시대." },
-    { id: "armageddon", name: "제2·3차 아마겟돈 격동기 (915.M41)", minYear: 913, maxYear: 917, desc: "931.M41 케인의 발할라 제597연대와 941.M41 야릭·단테의 제2차 아마겟돈 전쟁을 맞는 시대." },
-    { id: "cadia_rift", name: "카디아 붕괴와 대균열 직전 (980.M41)", minYear: 979, maxYear: 981, desc: "19세 무렵 999.M41 카디아 최후, 바알의 파괴, 사자의 문과 인도미투스 성전을 정면 돌파하는 시대." },
-    { id: "indomitus", name: "인도미투스 성전 시대 (998.M41)", minYear: 996, maxYear: 1002, desc: "대균열 이후 프라이머리스, 옥타리우스, 역병 전쟁, 비질루스, 파리아 넥서스, 라이온 귀환, 4차 타이라니드 전쟁의 시대." }
-  ];
 
   const coreFmt = createCoreFormatters(DATA);
   const {
@@ -119,7 +114,8 @@ export function createImperiumEngine(DATA) {
     getChronicleBuckets,
     getStratification,
     makeReqContext,
-    checkReq
+    checkReq,
+    resolveEventText
   } = reqEvalMod;
 
   function getLivingSaintAspect(state) {
@@ -370,352 +366,6 @@ export function createImperiumEngine(DATA) {
     };
   }
 
-  function generateName(gender, world) {
-    if (world.id === "krieg") {
-      const base = DATA.NAMES.kriegNumbers[randInt(0, DATA.NAMES.kriegNumbers.length - 1)];
-      return `병사 ${base}-${randInt(10, 99)}`;
-    }
-    const firstPool = gender === "female" ? DATA.NAMES.female : DATA.NAMES.male;
-    const first = firstPool[randInt(0, firstPool.length - 1)];
-    const sur = DATA.NAMES.surnames[randInt(0, DATA.NAMES.surnames.length - 1)];
-    return `${first} ${sur}`;
-  }
-
-  function computeLifeExpectancy(state) {
-    const world = getWorld(state.worldId);
-    const homeWorld = getWorld(state.homeWorldId || state.worldId);
-    const origin = getOrigin(state.originId);
-    const career = getCareer(state.careerId);
-    const tMod = clamp(Math.floor(((state.stats.T || 25) - 25) * 0.35), -8, 18);
-    const homeLifePerk = homeWorld.id === "generic_agri" ? 5 : (homeWorld.id === "generic_paradise" ? 8 : 0);
-    return Math.max(24, Math.round(
-      world.baseLifeExpectancy +
-      (origin.lifeMod || 0) +
-      (career.lifeBonus || 0) +
-      (state.extraLifeBonus || 0) +
-      homeLifePerk +
-      tMod
-    ));
-  }
-
-  function createCharacter(config = {}) {
-    const mode = config.mode || "random";
-    const difficulty = config.difficulty === "grimdark" ? "grimdark" : "standard";
-
-    // 1. 시대 / 출생 연도
-    let birthYear;
-    if (mode === "custom" && config.eraId) {
-      let preset = ERA_PRESETS.find((e) => e.id === config.eraId);
-      if (!preset) {
-        warnUnknownId("eraId", config.eraId);
-        preset = ERA_PRESETS[0];
-      }
-      birthYear = randInt(preset.minYear, preset.maxYear);
-    } else {
-      // 운명 모드: 85% 확률로 카디아/아마겟돈/대균열을 관통하는 핵심 격동기, 15% 확률로 사바트~바답 시대
-      birthYear = Math.random() < 0.85 ? randInt(935, 992) : randInt(745, 934);
-    }
-
-    // 2. 행성 선택 (이미 파괴된 행성 고증 보정)
-    let world;
-    if (mode === "custom" && config.worldId && config.worldId !== "random") {
-      if (!WORLD_BY_ID.has(config.worldId)) warnUnknownId("worldId", config.worldId);
-      world = getWorld(config.worldId);
-      if (world.destroyedYear && birthYear >= world.destroyedYear - 4) {
-        birthYear = world.destroyedYear - 18;
-      }
-    } else {
-      const validWorlds = DATA.WORLDS.filter((w) => !w.destroyedYear || birthYear < w.destroyedYear - 5);
-      world = pickWeighted(validWorlds, "spawnWeight");
-    }
-
-    // 세그멘툼 결정
-    const segKeys = Object.keys(DATA.SEGMENTA);
-    const segmentum = world.segmentum === "random" ? segKeys[randInt(0, segKeys.length - 1)] : world.segmentum;
-
-    // 3. 성별
-    const gender = (mode === "custom" && config.gender && config.gender !== "random")
-      ? config.gender
-      : (Math.random() < 0.5 ? "male" : "female");
-
-    // 4. 출생 신분
-    let origin;
-    if (mode === "custom" && config.originId && config.originId !== "random") {
-      if (!ORIGIN_BY_ID.has(config.originId)) warnUnknownId("originId", config.originId);
-      origin = getOrigin(config.originId);
-    } else {
-      const worldTags = world.tags || [];
-      const eligibleOrigins = DATA.ORIGINS.filter((o) => {
-        if (o.worldFilter && !o.worldFilter.includes(world.id)) return false;
-        if (o.excludeWorlds && o.excludeWorlds.includes(world.id)) return false;
-        if (o.excludeWorldTags && o.excludeWorldTags.some((wt) => worldTags.includes(wt))) return false;
-        return true;
-      });
-      const basePool = eligibleOrigins.length ? eligibleOrigins : DATA.ORIGINS;
-      if (difficulty === "grimdark") {
-        const grimPool = basePool.map((o) => {
-          const isCommoner = (o.tags || []).some((t) => t === "lowborn" || t === "citizen");
-          return { item: o, w: (o.weight || 1) * (isCommoner ? 2.6 : 1) };
-        });
-        origin = pickWeighted(grimPool, "w").item;
-      } else {
-        origin = pickWeighted(basePool, "weight");
-      }
-    }
-
-    // 5. 선천 자질
-    let trait;
-    if (mode === "custom" && config.traitId && config.traitId !== "random") {
-      if (!TRAIT_BY_ID.has(config.traitId)) warnUnknownId("traitId", config.traitId);
-      trait = getTrait(config.traitId);
-    } else {
-      let eligibleTraits = DATA.TRAITS;
-      if (origin && origin.id === "navigator_house") {
-        const blocked = new Set(["blank", "omega_pariah", "abhuman_ogryn", "abhuman_ratling", "psyker", "alpha_plus_psyker"]);
-        eligibleTraits = DATA.TRAITS.filter((t) => !blocked.has(t.id));
-      }
-      trait = pickWeighted(eligibleTraits, "weight");
-    }
-
-    // 6. 8대 고증 특성치 생성 (Dark Heresy 2d10+18 스타일 + 보정)
-    const stats = {};
-    for (const key of Object.keys(STAT_META)) {
-      const base = 18 + randInt(1, 10) + randInt(1, 10);
-      const wMod = (world.statMods && world.statMods[key]) || 0;
-      const oMod = (origin.statMods && origin.statMods[key]) || 0;
-      const tMod = (trait.statMods && trait.statMods[key]) || 0;
-      stats[key] = clamp(base + wMod + oMod + tMod, 8, 85);
-    }
-
-    const tags = Array.from(new Set([...(origin.tags || []), ...(trait.tags || [])]));
-    const capProbeState = {
-      age: 0,
-      careerId: "child",
-      worldId: world.id,
-      homeWorldId: world.id,
-      traitId: trait.id,
-      tags,
-      augmeticsCount: 0
-    };
-    for (const key of Object.keys(STAT_META)) {
-      const cap = getStatCap(capProbeState, key, { getWorld, getCareer, getTrait });
-      stats[key] = clamp(stats[key], 8, cap);
-    }
-
-    const name = (mode === "custom" && config.customName && config.customName.trim())
-      ? config.customName.trim()
-      : generateName(gender, world);
-
-    const faith = clamp(48 + (origin.faithMod || 0) + (trait.faithBonus || 0), 5, 100);
-    const corruption = clamp(trait.corruptionStart || 0, 0, 100);
-    const maxWounds = tags.includes("ogryn") ? 120 : 100;
-    const wounds = clamp(82 + Math.floor((stats.T - 25) / 2) + (tags.includes("ogryn") ? 15 : 0), 65, maxWounds);
-
-    const state = {
-      saveVersion: SAVE_VERSION,
-      id: `soul_${Date.now()}_${randInt(100, 999)}`,
-      mode,
-      difficulty,
-      name,
-      gender,
-      birthYear,
-      year: birthYear,
-      quarter: 1,
-      age: 0,
-      alive: true,
-      deathCause: null,
-      worldId: world.id,
-      homeWorldId: world.id,
-      visitedWorlds: [world.id],
-      segmentum,
-      originId: origin.id,
-      traitId: trait.id,
-      careerId: "child",
-      careerHistory: ["child"],
-      chapterId: null,
-      chapterName: world.astartesChapter || null,
-      focus: "survival",
-      stats,
-      wounds,
-      maxWounds,
-      faith,
-      corruption,
-      alignment: { humane: 0, dogmatic: 0, ruthless: 0 },
-      extraLifeBonus: 0,
-      rejuvenatCount: 0,
-      augmeticsCount: 0,
-      lastRejuvenatAge: -99,
-      lastAugmeticsAge: -99,
-      lastPenanceYear: -999,
-      lastTravelYear: -999,
-      lastCareerActionYear: -999,
-      lastCareerOfferYear: -999,
-      lastCareerChangeYear: -999,
-      lastCentenarianOpYear: -999,
-      recentCentenarianOps: [],
-      careerRetryAfter: {},
-      declinedCareers: {},
-      tags,
-      seenEvents: [],
-      recentEvents: [],
-      eventCounts: {},
-      seenTimeline: [],
-      heardNews: [],
-      recentChronicles: [],
-      metCharacters: [],
-      globalFlags: {
-        greatRiftOpened: birthYear >= 999
-      },
-      pendingEvent: null,
-      lastRoll: null,
-      logs: []
-    };
-
-    syncImperialNihilus(state);
-
-    const birthLogText = world.id === "krieg"
-      ? `${formatImperialYear(birthYear)} — 크리그 지하 비타-움(인공 배양실)에서 ${name}(${gender === "male" ? "남" : "여"})이(가) 배양·등록되었다. 배속 분류: [${origin.name}] · 선천 자질: [${trait.name}].`
-      : `${formatImperialYear(birthYear)} — ${world.name}(${world.worldClass})의 ${origin.name} 가정에서 ${name}(${gender === "male" ? "남" : "여"})이(가) 태어났다. 선천 자질: [${trait.name}].`;
-
-    addLog(state, birthLogText, "birth");
-
-    return state;
-  }
-
-  function migrateState(raw) {
-    if (
-      !raw ||
-      typeof raw !== "object" ||
-      Array.isArray(raw) ||
-      !raw.id ||
-      !raw.stats ||
-      typeof raw.stats !== "object" ||
-      Array.isArray(raw.stats) ||
-      !Array.isArray(raw.logs)
-    ) {
-      return null;
-    }
-    const st = raw;
-    if (!WORLD_BY_ID.has(st.worldId)) {
-      warnUnknownId("worldId", st.worldId);
-      st.worldId = DATA.WORLDS[0].id;
-    }
-    if (!WORLD_BY_ID.has(st.homeWorldId)) {
-      st.homeWorldId = st.worldId;
-    }
-    if (!ORIGIN_BY_ID.has(st.originId)) {
-      warnUnknownId("originId", st.originId);
-      st.originId = DATA.ORIGINS[0].id;
-    }
-    if (!TRAIT_BY_ID.has(st.traitId)) {
-      warnUnknownId("traitId", st.traitId);
-      st.traitId = DATA.TRAITS[0].id;
-    }
-    if (!CAREER_BY_ID.has(st.careerId)) {
-      warnUnknownId("careerId", st.careerId);
-      st.careerId = "child";
-    }
-    if (st.chapterId && !CHAPTER_BY_ID.has(st.chapterId)) {
-      warnUnknownId("chapterId", st.chapterId);
-      st.chapterId = null;
-    }
-    if (!DATA.SEGMENTA[st.segmentum]) {
-      const curW = getWorld(st.worldId);
-      st.segmentum = curW.segmentum === "random" ? "solar" : curW.segmentum;
-    }
-    if (typeof st.focus !== "string" || !Object.prototype.hasOwnProperty.call(FOCUSES, st.focus)) {
-      st.focus = "survival";
-    }
-    st.difficulty = st.difficulty === "grimdark" ? "grimdark" : "standard";
-    const finiteNum = (v) => (v !== null && v !== "" && typeof v !== "boolean" ? Number(v) : NaN);
-    const qNum = finiteNum(st.quarter);
-    st.quarter = Number.isFinite(qNum) ? clamp(Math.floor(qNum), 1, 3) : 1;
-    const ageNum = finiteNum(st.age);
-    st.age = Number.isFinite(ageNum) ? clamp(Math.floor(ageNum), 0, 5000) : 0;
-    const birthYearNum = finiteNum(st.birthYear);
-    st.birthYear = Number.isFinite(birthYearNum) ? Math.floor(birthYearNum) : 980;
-    const yearNum = finiteNum(st.year);
-    st.year = Number.isFinite(yearNum) ? Math.floor(yearNum) : st.birthYear + st.age;
-    const maxWNum = finiteNum(st.maxWounds);
-    st.maxWounds = Number.isFinite(maxWNum) ? clamp(Math.round(maxWNum), 50, 500) : 100;
-    const woundsNum = finiteNum(st.wounds);
-    st.wounds = Number.isFinite(woundsNum) ? clamp(Math.round(woundsNum), 0, st.maxWounds) : st.maxWounds;
-    const faithNum = finiteNum(st.faith);
-    st.faith = Number.isFinite(faithNum) ? clamp(Math.round(faithNum), 0, 100) : 50;
-    const corrNum = finiteNum(st.corruption);
-    st.corruption = Number.isFinite(corrNum) ? clamp(Math.round(corrNum), 0, 100) : 0;
-    st.alignment = normalizeAlignment(st);
-
-    for (const key of Object.keys(STAT_META)) {
-      if (!Number.isFinite(st.stats[key])) st.stats[key] = 25;
-      else st.stats[key] = clamp(Math.round(st.stats[key]), 5, 100);
-    }
-
-    const extraLifeNum = finiteNum(st.extraLifeBonus);
-    st.extraLifeBonus = Number.isFinite(extraLifeNum) ? clamp(Math.round(extraLifeNum), -100, 3000) : 0;
-    const rejNum = finiteNum(st.rejuvenatCount);
-    st.rejuvenatCount = Number.isFinite(rejNum) ? clamp(Math.floor(rejNum), 0, 10) : 0;
-    const augNum = finiteNum(st.augmeticsCount);
-    st.augmeticsCount = Number.isFinite(augNum) ? clamp(Math.floor(augNum), 0, 10) : 0;
-    st.lastRejuvenatAge = Number.isFinite(st.lastRejuvenatAge) ? st.lastRejuvenatAge : -99;
-    st.lastAugmeticsAge = Number.isFinite(st.lastAugmeticsAge) ? st.lastAugmeticsAge : -99;
-    st.lastPenanceYear = Number.isFinite(st.lastPenanceYear) ? st.lastPenanceYear : -999;
-    st.lastTravelYear = Number.isFinite(st.lastTravelYear) ? st.lastTravelYear : -999;
-    st.lastCareerActionYear = Number.isFinite(st.lastCareerActionYear) ? st.lastCareerActionYear : -999;
-    st.lastCareerOfferYear = Number.isFinite(st.lastCareerOfferYear) ? st.lastCareerOfferYear : -999;
-    st.lastCareerChangeYear = Number.isFinite(st.lastCareerChangeYear) ? st.lastCareerChangeYear : -999;
-    st.lastCentenarianOpYear = Number.isFinite(st.lastCentenarianOpYear) ? st.lastCentenarianOpYear : -999;
-    if (!Array.isArray(st.recentCentenarianOps)) st.recentCentenarianOps = [];
-    if (!st.careerRetryAfter || typeof st.careerRetryAfter !== "object" || Array.isArray(st.careerRetryAfter)) st.careerRetryAfter = {};
-    if (!st.declinedCareers || typeof st.declinedCareers !== "object" || Array.isArray(st.declinedCareers)) st.declinedCareers = {};
-    if (!st.eventCounts || typeof st.eventCounts !== "object" || Array.isArray(st.eventCounts)) st.eventCounts = {};
-    if (!st.globalFlags || typeof st.globalFlags !== "object") {
-      st.globalFlags = { greatRiftOpened: st.year >= 999 };
-    }
-    if (!Array.isArray(st.visitedWorlds) || !st.visitedWorlds.length) st.visitedWorlds = [st.worldId];
-    if (!Array.isArray(st.careerHistory) || !st.careerHistory.length) st.careerHistory = [st.careerId];
-    if (!Array.isArray(st.tags)) st.tags = [];
-    if (!Array.isArray(st.seenEvents)) st.seenEvents = [];
-    if (!Array.isArray(st.recentEvents)) st.recentEvents = [];
-    if (!Array.isArray(st.seenTimeline)) st.seenTimeline = [];
-    if (!Array.isArray(st.heardNews)) st.heardNews = [];
-    if (!Array.isArray(st.recentChronicles)) st.recentChronicles = [];
-    if (!Array.isArray(st.metCharacters)) st.metCharacters = [];
-    st.logs = st.logs.filter(
-      (entry) => entry && typeof entry === "object" && !Array.isArray(entry) && typeof entry.text === "string"
-    );
-
-    if (st.pendingEvent) {
-      if (
-        typeof st.pendingEvent !== "object" ||
-        Array.isArray(st.pendingEvent) ||
-        !Array.isArray(st.pendingEvent.choices)
-      ) {
-        st.pendingEvent = null;
-      } else {
-        st.pendingEvent.choices = st.pendingEvent.choices.filter(
-          (ch) => ch && typeof ch === "object" && !Array.isArray(ch) && typeof ch.label === "string"
-        );
-        if (st.pendingEvent.choices.length === 0) {
-          st.pendingEvent = null;
-        }
-      }
-    }
-    if (
-      st.lastRoll &&
-      (typeof st.lastRoll !== "object" ||
-        Array.isArray(st.lastRoll) ||
-        !Number.isFinite(st.lastRoll.roll) ||
-        !Number.isFinite(st.lastRoll.target))
-    ) {
-      st.lastRoll = null;
-    }
-
-    syncImperialNihilus(st);
-    st.saveVersion = SAVE_VERSION;
-    return st;
-  }
-
   const MAX_LOGS = 2400;
   const PRUNABLE_LOG_KINDS = new Set(["chronicle", "chronicle-grim", "normal"]);
 
@@ -742,6 +392,30 @@ export function createImperiumEngine(DATA) {
       else state.logs.pop();
     }
   }
+
+  const stateLifecycleMod = createStateLifecycleModule({
+    DATA,
+    WORLD_BY_ID,
+    ORIGIN_BY_ID,
+    TRAIT_BY_ID,
+    CAREER_BY_ID,
+    CHAPTER_BY_ID,
+    getWorld,
+    getOrigin,
+    getTrait,
+    getCareer,
+    randInt,
+    pickWeighted,
+    warnUnknownId,
+    syncImperialNihilus,
+    addLog
+  });
+  const {
+    ERA_PRESETS,
+    computeLifeExpectancy,
+    createCharacter,
+    migrateState
+  } = stateLifecycleMod;
 
   function formatDeltaText(eff) {
     if (!eff) return "";
@@ -850,6 +524,7 @@ export function createImperiumEngine(DATA) {
     createChapterSelectionEvent,
     hasAssassinClade,
     createAssassinCladeEvent,
+    createComingOfAgeEvent,
     applyCareerJoinEffects,
     createDynamicCareerOfferEvent,
     attemptCareerChange
@@ -971,6 +646,7 @@ export function createImperiumEngine(DATA) {
     if (outcome.acceptCareerOffer) {
       const targetCareer = getCareer(outcome.acceptCareerOffer);
       if (targetCareer && targetCareer.selectable) {
+        const grantNobleCommission = isParachuteNobleOfficer(state, targetCareer.id);
         state.careerId = targetCareer.id;
         if (!UNBOUND_CAREERS.has(targetCareer.id)) {
           state.lastCareerChangeYear = state.year;
@@ -982,6 +658,9 @@ export function createImperiumEngine(DATA) {
         }
         if (targetCareer.onJoin) {
           acceptedJoinEff = applyCareerJoinEffects(state, targetCareer.onJoin);
+        }
+        if (grantNobleCommission && !state.tags.includes("noble_commission")) {
+          state.tags.push("noble_commission");
         }
       }
     }
@@ -1232,6 +911,9 @@ export function createImperiumEngine(DATA) {
     const focus = FOCUSES[state.focus];
 
     if (state.age < 12) {
+      if (world.id === "voidborn") {
+        return `${world.name}의 강철 격벽 아래서 황제 찬송가와 선내 생존 수칙을 익히며 자랐다.`;
+      }
       return `${world.name}의 하늘 아래서 황제 찬송가와 생존 수칙을 익히며 자랐다.`;
     }
     if (state.tags.includes("astartes")) {
@@ -1293,14 +975,25 @@ export function createImperiumEngine(DATA) {
           if (!state.tags.includes("mechanicus")) state.tags.push("mechanicus");
           if (!state.tags.includes("bionic")) state.tags.push("bionic");
           addLog(state, "14세가 되어 기계교 견습 과정을 마치고 스키타리 예비대에 편입되었다.", "career", null, { badge: "직무 편입" });
-        } else if (state.tags.includes("noble")) {
+        } else if (state.tags.includes("noble") && !state.tags.includes("disowned_noble")) {
           addLog(
             state,
-            "14세가 되어 귀족 가문의 수습 기간에 들어갔다. 만 18세 기간까지 아드미니스트라툼·군·해군·국교·아르비테스 등 원하는 제국 정규 기관을 직접 선택해 지원할 수 있다.",
+            "14세가 되어 귀족 가문의 수습 기간에 들어갔다. 만 18세 성년 결단 전까지 행정부·해군·국교·아르비테스 등 정규 기관에 지원하거나, 만 18세부터 위관 장교 낙하산 임관·세네샬 승계·가문 의절 중 운명을 고를 수 있다.",
             "career",
             null,
             { badge: "가문 수습" }
           );
+        } else if (
+          (state.homeWorldId === "krieg" || state.worldId === "krieg") &&
+          !state.tags.includes("heretic") &&
+          !state.tags.includes("schola")
+        ) {
+          state.careerId = "astra_militarum";
+          state.lastCareerChangeYear = state.year;
+          state.careerHistory.push("astra_militarum");
+          if (!state.tags.includes("militarum")) state.tags.push("militarum");
+          if (!state.tags.includes("imperial_military")) state.tags.push("imperial_military");
+          addLog(state, "14세가 되어 크리그 지하 훈련소의 실탄 사격 시험을 마치고 데스 코어 오브 크리그 정식 보병으로 배치되었다.", "career", null, { badge: "직무 편입" });
         } else if (state.tags.includes("military_blood")) {
           state.careerId = "pdf_trooper";
           state.careerHistory.push("pdf_trooper");
@@ -1312,7 +1005,7 @@ export function createImperiumEngine(DATA) {
         }
       }
 
-      // 19세 진입 시 스콜라 프로제니움 · 귀족 가문 수습 종료 자동 배치 (18세 1년간 minAge:18 기관 직접 지원 창구 보장 + 영구 child 고착 방지)
+      // 19세 진입 시 스콜라 프로제니움 · 귀족 가문 수습 종료 안전망 자동 배치 (영구 child 고착 방지)
       if (state.age >= 19 && state.careerId === "child") {
         let gradCareerId = "pdf_trooper";
         let gradMsg = "스콜라 프로제니움 과정을 수료하고 행성 방위군(PDF) 기간병으로 배치되었다. 이제 커미사르·사이온·소로리타스·심문소 등 상위 진로를 노릴 수 있다.";
@@ -1334,8 +1027,11 @@ export function createImperiumEngine(DATA) {
             gradCareerId = "administratum";
             gradMsg = "스콜라 프로제니움 행정 과정을 수료해 아드미니스트라툼 서기관으로 임관했다.";
           }
-        } else if (state.tags.includes("noble")) {
-          if (!state.tags.includes("abhuman")) {
+        } else if (state.tags.includes("noble") || state.tags.includes("rogue_trader_blood")) {
+          if (state.tags.includes("rogue_trader_blood") && !state.tags.includes("abhuman")) {
+            gradCareerId = "rt_seneschal";
+            gradMsg = "가문 수습 기간을 마치고 로그 트레이더 기함의 수석 참모 '세네샬'로 정규 취임했다.";
+          } else if (!state.tags.includes("abhuman")) {
             gradCareerId = "administratum";
             gradMsg = "가문 수습 기간을 마치고 제국 아드미니스트라툼 서기관으로 정규 임관했다.";
           } else {
@@ -1467,6 +1163,7 @@ export function createImperiumEngine(DATA) {
         state.pendingEvent = Object.assign(
           { isTimeline: false },
           dreadEv,
+          { text: resolveEventText(dreadEv, state) },
           previouslyMetCharacters ? { previouslyMetCharacters } : null
         );
         return { status: "event", event: state.pendingEvent };
@@ -1493,12 +1190,38 @@ export function createImperiumEngine(DATA) {
       return { status: "dead" };
     }
 
-    const reqCtx = makeReqContext(state);
+    let reqCtx = makeReqContext(state);
 
-    // 1순위: 역사 연표(TIMELINE) 직접 체험 + 타 행성/성역 원격 아스트로패스 속보 전파
+    // 1순위: 역사 연표(TIMELINE) 직접 체험 + 영아기(0~5세) 목격·자동 탈출 전환 + 원격 아스트로패스 속보
+    let infantWitnessLogged = false;
     for (const tl of DATA.TIMELINE) {
       const maxYear = tl.exactYear ? tl.year : (tl.endYear || tl.year + 1);
       if (state.year >= tl.year && state.year <= maxYear && !state.seenTimeline.includes(tl.id)) {
+        if (state.age < 6) {
+          if (tl.infantLog) {
+            const infantFilter = tl.filter ? Object.assign({}, tl.filter) : null;
+            if (infantFilter && infantFilter.minAge !== undefined) delete infantFilter.minAge;
+            if (checkReq(state, infantFilter, reqCtx)) {
+              state.seenTimeline.push(tl.id);
+              if (!state.heardNews.includes(tl.id)) state.heardNews.push(tl.id);
+              if (tl.setGlobalFlag) {
+                state.globalFlags[tl.setGlobalFlag] = true;
+                if (tl.setGlobalFlag === "greatRiftOpened") syncImperialNihilus(state);
+              }
+              if (tl.infantEvacWorld && state.worldId !== tl.infantEvacWorld) {
+                const evacWorld = getWorld(tl.infantEvacWorld);
+                state.worldId = evacWorld.id;
+                if (!state.visitedWorlds.includes(evacWorld.id)) state.visitedWorlds.push(evacWorld.id);
+                if (evacWorld.segmentum !== "random") state.segmentum = evacWorld.segmentum;
+                syncImperialNihilus(state);
+                reqCtx = makeReqContext(state);
+              }
+              addLog(state, tl.infantLog, "event", null, { badge: "유아기 역사 목격" });
+              infantWitnessLogged = true;
+            }
+          }
+          continue;
+        }
         if (checkReq(state, tl.filter, reqCtx)) {
           state.seenTimeline.push(tl.id);
           if (!state.heardNews.includes(tl.id)) state.heardNews.push(tl.id);
@@ -1506,6 +1229,7 @@ export function createImperiumEngine(DATA) {
           state.pendingEvent = Object.assign(
             { isTimeline: true, category: "역사 사건" },
             tl,
+            { text: resolveEventText(tl, state, reqCtx) },
             previouslyMetCharacters ? { previouslyMetCharacters } : null
           );
           return { status: "event", event: state.pendingEvent };
@@ -1532,6 +1256,24 @@ export function createImperiumEngine(DATA) {
       }
     }
 
+    // 1.2순위: 18세 귀족 · 로그 트레이더 · 테라 고위 귀족 성년 진로 결단 분기
+    if (
+      state.age === 18 &&
+      state.quarter >= 2 &&
+      state.careerId === "child" &&
+      !state.tags.includes("schola") &&
+      !state.tags.includes("disowned_noble") &&
+      (state.tags.includes("noble") || state.tags.includes("rogue_trader_blood") || state.tags.includes("terra_elite")) &&
+      !state.seenEvents.includes("dyn_coming_of_age_noble")
+    ) {
+      const comeEv = createComingOfAgeEvent(state);
+      if (comeEv) {
+        state.seenEvents.push("dyn_coming_of_age_noble");
+        state.pendingEvent = comeEv;
+        return { status: "event", event: state.pendingEvent };
+      }
+    }
+
     // 1.5순위: 동적 승급 · 평행 횡단 · 최고위 추대 진로 제안 이벤트
     if (state.age >= 10) {
       const offerEv = createDynamicCareerOfferEvent(state, reqCtx);
@@ -1541,9 +1283,9 @@ export function createImperiumEngine(DATA) {
       }
     }
 
-    // 2순위: 동적 조건 이벤트(EVENTS) 발동 — 확률 선판정으로 미발동 분기(~72%)의 전체 스캔 생략!
+    // 2순위: 동적 조건 이벤트(EVENTS) 발동 — 0~5세 영아기 원천 차단 + 확률 선판정으로 미발동 분기(~72%)의 전체 스캔 생략!
     const eventChance = state.age >= 12 && state.age <= 18 ? 0.34 : 0.28;
-    if (Math.random() < eventChance) {
+    if (state.age >= 6 && Math.random() < eventChance) {
       const countsMap = state.eventCounts || {};
       const seenSet = new Set(state.seenEvents || []);
       const recentEvs = state.recentEvents || [];
@@ -1606,6 +1348,7 @@ export function createImperiumEngine(DATA) {
         state.pendingEvent = Object.assign(
           { isTimeline: false },
           picked,
+          { text: resolveEventText(picked, state, reqCtx) },
           previouslyMetCharacters ? { previouslyMetCharacters } : null
         );
         return { status: "event", event: state.pendingEvent };
@@ -1639,8 +1382,10 @@ export function createImperiumEngine(DATA) {
       }
     }
 
-    // 3순위: 본인 행성·직업·신분·시대에 딱 맞는 일상·부조리 연대기 기록
-    applyChronicle(state, reqCtx);
+    // 3순위: 본인 행성·직업·신분·시대에 딱 맞는 일상·부조리 연대기 기록 (유아기 역사 목격 발생 분기에는 최상단 로그 보호를 위해 생략)
+    if (!infantWitnessLogged) {
+      applyChronicle(state, reqCtx);
+    }
     return { status: "ok", isNewYear };
   }
 
@@ -1844,6 +1589,10 @@ export function createImperiumEngine(DATA) {
     ALIGNMENT_META,
     SOCIAL_TIER_ORDER,
     SOCIAL_TIER_LABELS,
+    ORIGIN_CLASS_KEYS,
+    ORIGIN_CLASS_LABELS,
+    HABITAT_KEYS,
+    HABITAT_LABELS,
     LIFE_REALM_KEYS,
     LIFE_REALM_LABELS,
     BODY_CLASS_KEYS,
@@ -1855,6 +1604,7 @@ export function createImperiumEngine(DATA) {
     FOCUSES,
     ERA_PRESETS,
     TAG_LABELS,
+    NOBLE_HIDDEN_LOW_CAREERS,
     clamp,
     normalizeAlignment,
     applyAlignDelta,
@@ -1868,6 +1618,7 @@ export function createImperiumEngine(DATA) {
     applyDiminishedStatGain,
     computeCheckPreview,
     isUnboundCareer,
+    isParachuteNobleOfficer,
     isManualCareerAllowed,
     getAdmissionPreview,
     canAccessWorld,
@@ -1883,6 +1634,7 @@ export function createImperiumEngine(DATA) {
     getCareerAction,
     getCareerDisplayTitle,
     checkReq,
+    resolveEventText,
     describeReq,
     rollD100,
     computeLifeExpectancy,
@@ -1901,6 +1653,7 @@ export function createImperiumEngine(DATA) {
     createWarpAnomalyTransitEvent,
     createDynamicCareerOfferEvent,
     createAssassinCladeEvent,
+    createComingOfAgeEvent,
     getTravelProfile,
     evaluateTravelAttempt,
     getTravelCandidateWorlds,

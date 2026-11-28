@@ -19,8 +19,36 @@ export default [
     },
     reqLabel: "관료·장교·어콜라이트 또는 지성 44 이상 시민·귀족",
     weight: 15,
+    leadVariants: [
+      {
+        req: { anyOriginClasses: ["noble", "high_noble"] },
+        lead: "상류 가문에서 익힌 행성 회계와 영지 장부 감각 덕분에, 남들이 무심히 넘긴 문서의 이질감이 단번에 눈에 띄었다."
+      },
+      {
+        req: { anyOriginClasses: ["underclass"] },
+        lead: "어릴 적 배급표 한 장의 무게를 뼈저리게 겪어 본 탓에, 식량 할당란의 이상한 숫자 하나가 심장을 서늘하게 찔렀다."
+      },
+      {
+        req: { anyOriginClasses: ["schola"] },
+        lead: "스콜라 프로제니움에서 암기한 제국 십일조 규율과 수치 검산 습관이 결정적인 오차를 포착해 냈다."
+      }
+    ],
     text: "십일조 장부를 검수하던 중, 30년 전 선임 서기관의 잉크 번짐 때문에 인접 아그리 월드의 식량 할당량이 10배로 잘못 청구되어 반란이 임박했다는 사실을 발견했다!",
     choices: [
+      {
+        label: "[교섭 판정 · 귀족 출신] 가문의 행정 인맥과 사교 채널을 동원해 14단계 결재 절차를 단숨에 우회·정정한다",
+        req: { anyOriginClasses: ["noble", "high_noble"] },
+        check: { stat: "Fel", diff: 5 },
+        success: {
+          text: "상급 서기관과의 사적인 자리에서 즉석 수정 인장을 받아 냈다! 인맥이 수억 명의 기아를 막고 그대의 권위도 함께 올렸다.",
+          stats: { Fel: 5, Inf: 10, Int: 3 },
+          align: { humane: 6 }
+        },
+        fail: {
+          text: "인맥을 동원하려다 정적 가문의 견제에 걸려 감사부의 따가운 시선을 샀으나, 오류 정정만은 가까스로 통과시켰다.",
+          stats: { Inf: -3, Int: 4 }
+        }
+      },
       {
         label: "[지성 판정] 14단계 관료 절차와 78개의 도장을 밤새 돌파해 오류를 바로잡는다",
         check: { stat: "Int", diff: -5 },
@@ -100,6 +128,7 @@ export default [
     category: "치안",
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
@@ -111,8 +140,38 @@ export default [
     },
     reqLabel: "아르비테스 · 행성 방위군 · 장교 또는 권위 42 이상 필멸자",
     weight: 14,
+    leadVariants: [
+      {
+        req: { anyOriginClasses: ["underclass"] },
+        lead: "거친 사투리와 절박한 외침이 밀려드는 순간, 어릴 적 배를 곯며 자란 밑바닥 골목의 기억이 생생히 되살아났다."
+      },
+      {
+        req: { anyOriginClasses: ["schola"] },
+        lead: "스콜라 프로제니움에서 암송한 제국법의 준엄한 원칙이 소란스러운 함성 속에서도 흔들림 없이 떠올랐다."
+      },
+      {
+        req: { anyOriginClasses: ["noble", "high_noble"] },
+        lead: "높은 첨탑에서 내려다보기만 하던 밑바닥의 원성이 오늘 비로소 살기 띤 현실로 눈앞을 덮쳐 왔다."
+      }
+    ],
     text: "십일조 증액으로 시체 전분 배급이 반 토막 나자 분노한 노동자 수만 명이 총독궁으로 몰려들었다. 군중 속에는 정체불명의 이단 선동가가 섞여 있다는 첩보가 있다.",
     choices: [
+      {
+        label: "[교섭 판정 · 하층민 출신] 하층 구역 은어와 뒷골목 생리를 꿰뚫어 선동가가 숨긴 이단 표식을 군중 앞에서 폭로한다",
+        req: { anyOriginClasses: ["underclass"] },
+        check: { stat: "Fel", diff: 5 },
+        success: {
+          text: "밑바닥의 말투로 선동가의 거짓을 낱낱이 까발리자 분노한 군중이 스스로 선동가를 묶어 내놓았다! 피 한 방울 없이 폭동을 잠재웠다.",
+          stats: { Fel: 7, Int: 4, Inf: 7 },
+          align: { humane: 9 }
+        },
+        fail: {
+          text: "일부 노동자들은 귀를 기울였으나 무장 선동조가 먼저 돌을 던져 혼전에 휘말리고 말았다.",
+          wounds: -14,
+          stats: { Fel: 3, WS: 2 },
+          align: { humane: 5 }
+        }
+      },
       {
         label: "[이단심문관·커미사르 전용] 광장 연단에 올라 배후 컬트 선동가를 즉석 색출·처단해 폭동을 5분 만에 잠재운다",
         req: { anyTags: ["inquisitor", "commissar", "lord_commissar"] },
@@ -161,6 +220,7 @@ export default [
     once: true,
     req: {
       anyCareers: ["menial_worker"],
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral"],
       excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
     },
@@ -202,12 +262,43 @@ export default [
     once: true,
     req: {
       anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal"],
+      excludeHabitats: ["void"],
       excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
     },
     reqLabel: "직업: 아뎁투스 아르비테스",
     weight: 24,
+    leadVariants: [
+      {
+        req: { anyOriginClasses: ["schola"] },
+        lead: "혈연도 사적인 정실도 끊어 내도록 길러진 스콜라 프로제니움 출신 집행관에게, 권력자의 뇌물과 회유 따위는 가증스러운 모독일 뿐이었다."
+      },
+      {
+        req: { anyOriginClasses: ["noble", "high_noble"] },
+        lead: "같은 상류층 귀족 사회의 은밀한 생리를 잘 알기에, 총독 가문이 사건을 덮으려 얼마나 집요하게 움직일지 단번에 읽혔다."
+      },
+      {
+        req: { anyOriginClasses: ["underclass"] },
+        lead: "도로 위에 스러진 노동자들은 어릴 적 그대와 똑같은 밑바닥의 얼굴을 하고 있었다."
+      }
+    ],
     text: "만취한 행성 총독의 장남이 고급 반중력 차량으로 십일조 노동자 행렬을 들이받아 40명이 즉사했다! 총독은 막대한 금괴를 보내며 사건 무마를 요구하고 있다. 하지만 죽은 자들은 '황제의 십일조 생산 자산'이었다.",
     choices: [
+      {
+        label: "[지성 판정 · 스콜라 출신] 렉스 임페리알리스 십일조 보호 조항을 완벽히 암송해 성역 본부 직속 체포 영장을 즉석 발부한다",
+        req: { anyOriginClasses: ["schola"] },
+        check: { stat: "Int", diff: 5 },
+        success: {
+          text: "단 한 자도 틀리지 않은 제국법 조항 인용 앞에 총독 사병대조차 감히 총구를 들지 못했다! 총독의 장남을 압송하며 스콜라 정예의 위엄을 떨쳤다.",
+          stats: { Int: 6, WP: 5, Inf: 10 },
+          align: { dogmatic: 10 }
+        },
+        fail: {
+          text: "총독 측 법률 고문단이 관할권 이의를 제기하며 시간을 끄는 바람에 격렬한 대치 끝에야 영장을 집행했다.",
+          wounds: -16,
+          stats: { Int: 3, Inf: 5 },
+          align: { dogmatic: 7 }
+        }
+      },
       {
         label: "[의지 판정] 총독궁 문을 부수고 들어가 '제국 십일조 자산 훼손죄'로 아들을 체포한다",
         check: { stat: "WP", diff: -5 },
@@ -247,8 +338,38 @@ export default [
     },
     reqLabel: "직업: 임페리얼 네이비",
     weight: 24,
+    leadVariants: [
+      {
+        req: { anyOriginClasses: ["underclass"] },
+        lead: "하층 포갑판의 쇠사슬과 숨 막히는 기름 냄새는 어릴 적 그대가 자라 온 바닥의 삶과 다르지 않았다."
+      },
+      {
+        req: { anyOriginClasses: ["noble", "high_noble"] },
+        lead: "가문의 함대 장교 교육에서 배운 대로라면, 하층 노역자의 항명은 지체 없는 본보기로 다스려야 할 중죄다."
+      },
+      {
+        req: { anyOriginClasses: ["military_caste"], excludeHomeWorlds: ["krieg"] },
+        lead: "대대로 제국군에 복무해 온 가문의 감각으로 보건대, 주동자만 떼어 내면 하층 포갑판의 분노는 충분히 수습할 수 있었다."
+      }
+    ],
     text: "18개월째 항구 없는 성간 항해에 내몰린 하층 포갑판 강제 징발 노역자 2,000명이 쇠사슬을 끊고 무기고를 점거했다! 함장은 차갑게 말한다. '해군 육전대를 투입할 필요 없소. 4번 구역의 공기 배출 레버만 당기시오.'",
     choices: [
+      {
+        label: "[교섭 판정 · 하층민 출신] 무장 없이 격벽 통화구 앞에 서서 노역자들의 언어로 식수·교대 개선을 약속하고 투항을 이끌어 낸다",
+        req: { anyOriginClasses: ["underclass"] },
+        check: { stat: "Fel", diff: 0 },
+        success: {
+          text: "귀족 장교들의 위선과 다른 진심이 통했다! 2,000명의 노역자가 무기를 내려놓고 투항해 함선의 전투력을 온전히 지켰다.",
+          stats: { Fel: 7, WP: 4, Inf: 6 },
+          align: { humane: 10 }
+        },
+        fail: {
+          text: "분노가 이미 선을 넘은 주동자들이 통화구를 부수고 달려들어 결국 무력 진압 과정에서 부상을 입었다.",
+          wounds: -18,
+          stats: { Fel: 3, WS: 2 },
+          align: { humane: 6 }
+        }
+      },
       {
         label: "[백병 판정] 진공 사살 대신 직접 해군 육전대를 이끌고 진입해 주동자만 제압한다",
         check: { stat: "WS", diff: -5 },
@@ -282,6 +403,7 @@ export default [
     category: "부조리",
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "transhuman",
         "noble", "wealthy", "officer", "commissar", "lord_commissar", "commissar_general",
@@ -335,6 +457,7 @@ export default [
     req: {
       minAge: 15,
       maxSocialTier: "common",
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral"],
       excludeRealms: ["cloistered", "heretic", "mechanicus"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
@@ -387,6 +510,7 @@ export default [
     category: "부조리",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       anyWorldTags: ["hive", "industrial", "civilised", "terra"],
       excludeTags: [
         "noble", "wealthy",
@@ -523,6 +647,7 @@ export default [
     category: "직군 고유",
     req: {
       anyCareers: ["menial_worker"],
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
@@ -672,6 +797,7 @@ export default [
     category: "직군 고유",
     req: {
       anyCareers: ["arbites", "arbites_judge_rank", "arbites_marshal"],
+      excludeHabitats: ["void"],
       excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
     },
     reqLabel: "직군: 아뎁투스 아르비테스",
@@ -806,6 +932,7 @@ export default [
     category: "직군 심화",
     req: {
       anyCareers: ["underhive_ganger"],
+      excludeHabitats: ["void"],
       excludeTags: ["heretic", "chaos_aligned", "chaos_champion", "daemon_prince"]
     },
     reqLabel: "직군: 언더하이브 갱단원",
@@ -1162,6 +1289,7 @@ export default [
     category: "직군 심화",
     req: {
       anyCareers: ["menial_worker"],
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],

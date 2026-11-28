@@ -7,6 +7,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       anyCareers: ["astra_militarum", "pdf_trooper", "militarum_officer", "tempestus_scion", "commissar", "lord_commissar", "skitarii"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
@@ -84,6 +85,7 @@ export default [
     req: {
       minAge: 16,
       minYear: 745,
+      excludeHabitats: ["void"],
       anySegmenta: ["ultima", "tempestus", "pacificus"],
       excludeWorldTags: ["feral"],
       excludeTags: [
@@ -162,6 +164,7 @@ export default [
     once: true,
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       or: [
         { anyWorlds: ["armageddon", "valhalla"] },
         { anyTags: ["militarum", "commissar", "astartes", "sororitas", "arbites"] }
@@ -282,6 +285,7 @@ export default [
     once: true,
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       anyWorlds: ["catachan"],
       excludeTags: [
         "power_armor", "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
@@ -353,6 +357,7 @@ export default [
     once: true,
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       anyWorlds: ["baal"],
       excludeTags: [
         "power_armor", "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
@@ -410,6 +415,7 @@ export default [
     once: true,
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       anyWorlds: ["fenris"],
       excludeTags: [
         "power_armor", "astartes", "transhuman", "custodes", "grey_knight", "dreadnought",
@@ -467,6 +473,7 @@ export default [
     once: true,
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       excludeWorlds: ["terra", "mars", "krieg", "voidborn"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],
@@ -531,6 +538,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral"],
       excludeTags: [
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince",
@@ -599,6 +607,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       anyWorldTags: ["hive"],
       excludeTags: [
         "astartes", "transhuman", "custodes", "grey_knight", "dreadnought", "living_saint", "assassin",
@@ -677,6 +686,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral"],
       or: [
         { anyCareers: ["menial_worker", "skitarii", "tech_priest"] },
@@ -740,6 +750,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeWorldTags: ["feral"],

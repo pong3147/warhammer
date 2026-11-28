@@ -10,6 +10,7 @@ export default [
     alignBias: "humane",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeTags: [
         "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "assassin",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "knight_high_king", "nav_novator",
@@ -64,6 +65,7 @@ export default [
     alignBias: "humane",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeRealms: ["void"],
       excludeWorlds: ["voidborn"],
       excludeTags: [
@@ -126,6 +128,7 @@ export default [
     alignBias: "humane",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeTags: [
         "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "assassin",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "knight_high_king", "nav_novator",
@@ -178,6 +181,7 @@ export default [
     alignBias: "humane",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "assassin", "high_lord_terra", "warmaster", "sector_lord", "planetary_governor", "knight_high_king", "nav_novator", "inquisitor", "lord_inquisitor", "heretic", "chaos_aligned", "daemon_prince"],
       excludeWorldTags: ["feral", "krieg"]
     },
@@ -241,6 +245,7 @@ export default [
     alignBias: "humane",
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       minAlign: { humane: 20 },
       anyDominantAlign: ["humane"],
       excludeTags: [
@@ -297,6 +302,7 @@ export default [
     alignBias: "humane",
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       minAlign: { humane: 20 },
       anyDominantAlign: ["humane"],
       excludeTags: [
@@ -362,6 +368,7 @@ export default [
     alignBias: "humane",
     req: {
       minAge: 18,
+      excludeHabitats: ["void"],
       minAlign: { humane: 35 },
       anyDominantAlign: ["humane"],
       excludeTags: [
@@ -423,6 +430,7 @@ export default [
     once: true,
     req: {
       minAge: 18,
+      excludeHabitats: ["void"],
       allTags: ["align_beacon_mercy"],
       excludeTags: ["dreadnought", "heretic", "chaos_aligned", "daemon_prince"]
     },
@@ -478,6 +486,7 @@ export default [
     alignBias: "dogmatic",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
         "custodes", "grey_knight", "astartes", "dreadnought", "living_saint", "saint_vessel",
@@ -536,6 +545,7 @@ export default [
     alignBias: "dogmatic",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeTags: [
         "custodes", "grey_knight", "astartes", "dreadnought",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
@@ -587,6 +597,7 @@ export default [
     alignBias: "dogmatic",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeTags: [
         "custodes", "grey_knight", "astartes", "dreadnought",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
@@ -641,6 +652,7 @@ export default [
     alignBias: "dogmatic",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeTags: [
         "custodes", "grey_knight", "astartes", "dreadnought",
         "high_lord_terra", "warmaster", "sector_lord", "planetary_governor",
@@ -696,6 +708,7 @@ export default [
     alignBias: "dogmatic",
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       minAlign: { dogmatic: 20 },
       anyDominantAlign: ["dogmatic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
@@ -755,6 +768,7 @@ export default [
     alignBias: "dogmatic",
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       minAlign: { dogmatic: 20 },
       anyDominantAlign: ["dogmatic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
@@ -821,6 +835,7 @@ export default [
     alignBias: "dogmatic",
     req: {
       minAge: 18,
+      excludeHabitats: ["void"],
       minAlign: { dogmatic: 35 },
       anyDominantAlign: ["dogmatic"],
       excludeTags: [
@@ -883,6 +898,7 @@ export default [
     once: true,
     req: {
       minAge: 18,
+      excludeHabitats: ["void"],
       allTags: ["align_iron_dogma"],
       excludeBodyClasses: ["dreadnought", "daemonic"],
       excludeTags: [
@@ -942,6 +958,7 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
         "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince",
@@ -996,6 +1013,7 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
         "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince",
@@ -1047,6 +1065,7 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeWorldTags: ["feral"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
@@ -1101,6 +1120,7 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
         "astartes", "dreadnought", "custodes", "grey_knight", "living_saint", "saint_vessel", "daemon_prince",
@@ -1156,6 +1176,7 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 16,
+      excludeHabitats: ["void"],
       minAlign: { ruthless: 20 },
       anyDominantAlign: ["ruthless"],
       excludeTags: [
@@ -1219,6 +1240,7 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 18,
+      excludeHabitats: ["void"],
       minAlign: { ruthless: 30 },
       anyDominantAlign: ["ruthless"],
       excludeTags: ["align_shadow_broker", "astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince", "living_saint", "assassin", "high_lord_terra", "knight_high_king", "nav_novator"],
@@ -1276,6 +1298,7 @@ export default [
     alignBias: "ruthless",
     req: {
       minAge: 18,
+      excludeHabitats: ["void"],
       minAlign: { ruthless: 25 },
       anyDominantAlign: ["ruthless"],
       excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince"],
@@ -1336,6 +1359,7 @@ export default [
     once: true,
     req: {
       minAge: 18,
+      excludeHabitats: ["void"],
       allTags: ["align_shadow_broker"],
       excludeTags: ["astartes", "dreadnought", "custodes", "grey_knight", "daemon_prince"],
       excludeWorldTags: ["feral", "krieg"]

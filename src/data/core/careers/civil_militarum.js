@@ -326,9 +326,13 @@ export const CAREERS_CIVIL_MILITARUM_FRONT = [
     hazardMod: 0.016,
     annualGrowth: { Fel: 1.8, Int: 1.5, Inf: 2, WP: 1.2 },
     req: {
-      minAge: 22,
-      stats: { Int: 42, Fel: 42, WP: 40 },
-      or: [{ anyCareers: ["astra_militarum", "militarum_sergeant", "pdf_trooper", "tempestus_scion"] }, { anyTags: ["noble", "military_blood"] }],
+      minAge: 18,
+      stats: { Int: 38, Fel: 38, WP: 36 },
+      or: [
+        { allTags: ["noble"], excludeTags: ["disowned_noble"], stats: { Inf: 45 } },
+        { minAge: 22, stats: { Int: 42, Fel: 42, WP: 40 }, anyCareers: ["astra_militarum", "militarum_sergeant", "pdf_trooper", "tempestus_scion"] },
+        { minAge: 22, stats: { Int: 42, Fel: 42, WP: 40 }, anyTags: ["military_blood"] }
+      ],
       excludeTags: ["abhuman", "astartes", "custodes", "heretic", "assassin", "living_saint"]
     },
     selectable: true,
@@ -672,7 +676,13 @@ export const CAREERS_IMPERIAL_STATE = [
     lifeBonus: 12,
     hazardMod: 0.014,
     annualGrowth: { WS: 1.5, BS: 1.5, WP: 1.5, Int: 1.2, Inf: 1.2 },
-    req: { minAge: 18, stats: { WP: 38, WS: 34, Int: 34 }, maxCorruption: 15, excludeTags: ["astartes", "custodes", "abhuman", "heretic", "assassin", "living_saint"] },
+    req: {
+      minAge: 18,
+      stats: { WP: 38, WS: 34, Int: 34 },
+      or: [{ allTags: ["schola"] }, { minAlign: { dogmatic: 20 } }, { stats: { WP: 44 } }],
+      maxCorruption: 15,
+      excludeTags: ["astartes", "custodes", "abhuman", "heretic", "assassin", "living_saint"]
+    },
     selectable: true,
     onJoin: { stats: { WS: 5, BS: 5, WP: 6, Inf: 8 }, addTags: ["arbites"] },
     desc: "행성 총독마저 체포할 권한을 지닌 제국법(Lex Imperialis)의 냉혹한 집행자. 샷건과 쇼크 마울로 폭동과 반역을 진압한다.",
@@ -953,9 +963,13 @@ export const CAREERS_IMPERIAL_STATE = [
     hazardMod: 0.013,
     annualGrowth: { Fel: 2.0, Inf: 2.0, Int: 1.6, Ag: 1.4 },
     req: {
-      minAge: 20,
-      stats: { Fel: 42, Int: 40, Inf: 38 },
-      or: [{ anyTags: ["rogue_trader_blood", "voidborn", "noble"] }, { anyCareers: ["imperial_navy", "guild_artisan", "militarum_officer", "underhive_boss"] }],
+      minAge: 18,
+      stats: { Fel: 38, Int: 36, Inf: 38 },
+      or: [
+        { allTags: ["rogue_trader_blood"], excludeTags: ["disowned_noble"] },
+        { minAge: 20, stats: { Fel: 42, Int: 40, Inf: 38 }, anyTags: ["voidborn", "noble"] },
+        { minAge: 20, stats: { Fel: 42, Int: 40, Inf: 38 }, anyCareers: ["imperial_navy", "guild_artisan", "militarum_officer", "underhive_boss"] }
+      ],
       excludeTags: ["abhuman", "astartes", "custodes", "heretic", "assassin", "living_saint"]
     },
     selectable: true,

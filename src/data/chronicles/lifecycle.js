@@ -123,6 +123,7 @@ export default [
     req: {
       minAge: 14,
       maxAge: 21,
+      excludeHabitats: ["void"],
       anyCareers: ["pdf_trooper", "astra_militarum", "tempestus_scion"],
       excludeWorlds: ["krieg"]
     },

@@ -21,7 +21,7 @@ import ObituaryModal from "./ObituaryModal";
 import RecentChronicleList from "./RecentChronicleList";
 import StartScreen from "./StartScreen";
 import TimeControlPanel from "./TimeControlPanel";
-import type { StartConfig } from "./types";
+import type { LogEntry, StartConfig } from "./types";
 
 export interface NarrativeCounts {
   events: number;
@@ -292,8 +292,31 @@ export default function GameApp({ engineOverride, dataOverride, narrativeCounts 
     bump();
 
     if (prefsRef.current.srAnnounce && cur.logs[0] && cur.logs[0] !== prevTopLog) {
-      const top = cur.logs[0];
-      if (top) announce(`${top.year}, ${top.age}세: ${top.text}`);
+      const newLogs: LogEntry[] = [];
+      for (let i = 0; i < cur.logs.length && i < 12; i++) {
+        if (cur.logs[i] === prevTopLog) break;
+        newLogs.push(cur.logs[i] as LogEntry);
+      }
+      const kindRank = (l: LogEntry): number => {
+        if (l.kind === "death") return 4;
+        if (l.kind === "career" || l.badge === "유아기 역사 목격") return 3;
+        if (l.kind === "danger") return 2;
+        if (l.kind === "event") return 1;
+        return 0;
+      };
+      let targetLog: LogEntry | undefined = newLogs[0];
+      let bestRank = targetLog ? kindRank(targetLog) : -1;
+      for (let i = 1; i < newLogs.length; i++) {
+        const r = kindRank(newLogs[i]);
+        if (r > bestRank) {
+          bestRank = r;
+          targetLog = newLogs[i];
+        }
+      }
+      if (targetLog) {
+        const badgePrefix = targetLog.badge ? `[${targetLog.badge}] ` : "";
+        announce(`${targetLog.year}, ${targetLog.age}세: ${badgePrefix}${targetLog.text}`);
+      }
     }
   }, [announce, bump, detectNewCareerUnlocks, handleDeath, persistState, showToast]);
 

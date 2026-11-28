@@ -22,6 +22,29 @@ export const CLOSED_VOW_TREES = new Set([
   "psyker"
 ]);
 
+export const NOBLE_HIDDEN_LOW_CAREERS = new Set([
+  "menial_worker",
+  "underhive_ganger",
+  "pdf_trooper",
+  "astra_militarum",
+  "skitarii"
+]);
+
+const ENLISTED_MILITARUM_CAREERS = new Set([
+  "astra_militarum",
+  "militarum_sergeant",
+  "pdf_trooper",
+  "tempestus_scion"
+]);
+
+export function isParachuteNobleOfficer(state, targetCareerId) {
+  if (!state || targetCareerId !== "militarum_officer") return false;
+  const tags = Array.isArray(state.tags) ? state.tags : [];
+  if (!tags.includes("noble") || tags.includes("disowned_noble")) return false;
+  const history = Array.isArray(state.careerHistory) ? state.careerHistory : [state.careerId];
+  return !history.some((cid) => ENLISTED_MILITARUM_CAREERS.has(cid));
+}
+
 export function isUnboundCareer(careerId) {
   return UNBOUND_CAREERS.has(careerId);
 }
@@ -91,6 +114,14 @@ export function isManualCareerAllowedPure(tags, curCareer, targetCareer) {
   if (curCareer.id === targetCareer.id) return false;
   if (isCareerTransitionBlockedPure(tags, curCareer, targetCareer)) return false;
   const hasTag = (t) => (tags instanceof Set ? tags.has(t) : Array.isArray(tags) && tags.includes(t));
+  // 귀족 · 로그 트레이더 · 테라 고위 귀족(!disowned_noble)은 수동 전직 창에서 하위·사병 직군을 숨긴다
+  const isUpperNoblePatronage =
+    (hasTag("noble") || hasTag("rogue_trader_blood") || hasTag("terra_elite")) &&
+    !hasTag("disowned_noble") &&
+    !hasTag("abhuman");
+  if (isUpperNoblePatronage && NOBLE_HIDDEN_LOW_CAREERS.has(targetCareer.id)) {
+    return false;
+  }
   // 비구속 초년·민간·방위군 신분은 자격이 열리는 모든 open 직군에 자유 지원 가능
   if (UNBOUND_CAREERS.has(curCareer.id)) {
     return curCareer.id === "child" || targetCareer.tier >= curCareer.tier || targetCareer.tree === "chaos";
@@ -752,6 +783,7 @@ export function createCareerRulesModule(deps) {
       }
     }
 
+    const grantNobleCommission = isParachuteNobleOfficer(state, career.id);
     state.careerId = career.id;
     if (!UNBOUND_CAREERS.has(career.id)) {
       state.lastCareerChangeYear = state.year;
@@ -763,13 +795,22 @@ export function createCareerRulesModule(deps) {
     }
 
     if (career.onJoin) {
-      applyOutcome(
-        state,
-        Object.assign({ text: `새로운 직책 [${getCareerDisplayTitle(state, career)}] 자리에 취임했다!` }, career.onJoin),
-        null,
-        "join"
+      const joinOutcome = Object.assign(
+        {
+          text: grantNobleCommission
+            ? `병졸 복무를 거치지 않고 가문의 후광으로 [${getCareerDisplayTitle(state, career)}] 자리에 직통 임관했다!`
+            : `새로운 직책 [${getCareerDisplayTitle(state, career)}] 자리에 취임했다!`
+        },
+        career.onJoin
       );
+      if (grantNobleCommission) {
+        joinOutcome.addTags = Array.from(new Set([...(career.onJoin.addTags || []), "noble_commission"]));
+      }
+      applyOutcome(state, joinOutcome, null, "join");
     } else {
+      if (grantNobleCommission && !state.tags.includes("noble_commission")) {
+        state.tags.push("noble_commission");
+      }
       addLog(state, `새로운 직책 [${getCareerDisplayTitle(state, career)}] 자리에 취임했다!`, "career");
     }
 
@@ -784,11 +825,100 @@ export function createCareerRulesModule(deps) {
     return { ok: true, career, openedEvent: state.pendingEvent || null };
   }
 
+  function createComingOfAgeEvent(state) {
+    if (!state) return null;
+    const tags = Array.isArray(state.tags) ? state.tags : [];
+    const hasRtBlood = tags.includes("rogue_trader_blood");
+    const isTerraHigh = tags.includes("terra_elite");
+    const isVoid = state.worldId === "voidborn";
+
+    const sceneIntro = isVoid
+      ? hasRtBlood
+        ? "가문 기함의 원로 회랑에서 성년 서약식이 열렸다. 선단의 회계장부와 무역 영장 사본, 그리고 제국 함대 추천서가 눈앞에 놓였다."
+        : "가문 주력선의 원로 회랑에서 성년 서약식이 열렸다. 성간 차터 상단 문서와 제국 함대 사관 추천서가 눈앞에 놓였다."
+      : isTerraHigh
+      ? "황궁 외곽 고위 귀족 저택의 대리석 홀에서 성년 선포식이 열렸다. 테라 상류 가문의 문장을 단 추천서들이 은쟁반 위에 줄지어 놓였다."
+      : "가문의 상층 응접실에서 성년 수습의 마침표를 찍는 가문 평의회가 열렸다. 가주와 원로들이 그대의 앞길을 가를 임명장과 추천서를 내밀었다.";
+
+    const choices = [];
+    if (hasRtBlood) {
+      choices.push({
+        label: "[가문 승계] 로그 트레이더 기함 수석 참모 '세네샬' 직책으로 취임한다",
+        req: { allTags: ["rogue_trader_blood"], excludeTags: ["heretic", "abhuman"] },
+        effect: {
+          acceptCareerOffer: "rt_seneschal",
+          text: "가문의 무역 영장을 보좌하는 기함 수석 참모 '세네샬'로 정식 취임했다. 변경 성계의 부와 음모가 눈앞에 펼쳐진다."
+        }
+      });
+    }
+
+    choices.push(
+      {
+        label: "[가문 행정] 가문 추천장을 받아 아드미니스트라툼 서기관으로 임관한다",
+        req: { excludeTags: ["heretic", "abhuman"] },
+        effect: {
+          acceptCareerOffer: "administratum",
+          text: "가문의 인맥과 보증을 등에 업고 제국 아드미니스트라툼 정규 서기관으로 임관했다. 거대한 관료제의 사다리에 첫발을 올렸다."
+        }
+      },
+      {
+        label: "[낙하산 임관] 사병 복무 없이 아스트라 밀리타룸 위관 장교로 직통 임관한다",
+        req: { excludeTags: ["heretic", "abhuman"] },
+        effect: {
+          acceptCareerOffer: "militarum_officer",
+          addTags: ["noble_commission"],
+          text: "병졸 계급을 거치지 않고 가문의 후광으로 연대 위관 장교에 직통 임관했다. 전선 고참병들의 싸늘한 시선 속에서 지휘권을 증명해야 한다."
+        }
+      },
+      {
+        label: "[함대 임관] 제국 해군 사관 추천서를 받아 임페리얼 네이비에 입대한다",
+        req: { excludeTags: ["heretic", "abhuman"] },
+        effect: {
+          acceptCareerOffer: "imperial_navy",
+          text: "제국 해군 사관 추천서를 받아 순양함 함교의 초급 사관으로 편입되었다. 성간 함대의 엄혹한 규율이 그대를 맞이한다."
+        }
+      },
+      {
+        label: "[이단 도피] 이미 찍힌 이단 낙인을 감추고 지하 카오스 밀교단으로 스며든다",
+        req: { allTags: ["heretic"] },
+        effect: {
+          acceptCareerOffer: "chaos_cultist",
+          text: "정규 제국 기관의 문이 닫히자, 가문의 어두운 밀실 통로를 빠져나와 카오스 밀교단의 그림자 속으로 몸을 숨겼다."
+        }
+      },
+      {
+        label: "[가문 의절] 가문의 특권과 작위를 포기하고 밑바닥에서 자립한다 (하위 직군 해금 · 권위 -15)",
+        effect: {
+          forceCareer: "menial_worker",
+          addTags: ["disowned_noble"],
+          removeTags: ["noble", "wealthy", "terra_elite", "rogue_trader_blood"],
+          stats: { Inf: -15, WP: 4 },
+          align: { humane: 2 },
+          text: "가문의 인장을 바닥에 내려놓고 의절을 선언했다. 재산과 특권은 몰수당했으나, 이제 누구의 꼭두각시도 아닌 몸으로 노동자·갱단·방위군·가드 사병까지 스스로 길을 고를 수 있다."
+        }
+      }
+    );
+
+    return {
+      id: `dyn_coming_of_age_noble_${state.year}`,
+      isTimeline: false,
+      isComingOfAge: true,
+      category: "성년 진로 결단",
+      reqLabel: "18세 귀족 가문 수습 종료",
+      title: "성년의 기로 — 가문의 유산과 스스로 택할 운명",
+      text: `${sceneIntro} 만 18세 성년에 이른 지금, 가문이 마련해 둔 엘리트 임관 경로를 따를지, 아니면 특권을 모두 벗어 던지고 밑바닥에서 제 힘으로 살아갈지 결단할 때다.`,
+      choices,
+      source: "Dark Heresy 2e: Highborn / Rogue Trader Core Rulebook"
+    };
+  }
+
 
   return {
     UNBOUND_CAREERS,
     CLOSED_VOW_TREES,
+    NOBLE_HIDDEN_LOW_CAREERS,
     isUnboundCareer,
+    isParachuteNobleOfficer,
     isDirectSuccessorReq,
     isClosedVowCrossBlocked,
     isCareerTransitionBlocked,
@@ -798,6 +928,7 @@ export function createCareerRulesModule(deps) {
     createChapterSelectionEvent,
     hasAssassinClade,
     createAssassinCladeEvent,
+    createComingOfAgeEvent,
     applyCareerJoinEffects,
     createDynamicCareerOfferEvent,
     attemptCareerChange

@@ -120,7 +120,17 @@ export default [
     },
     reqLabel: "6~13세 · 비야만 행성 유년기",
     weight: 30,
-    text: "갑자기 하늘빛이 서늘하게 가라앉더니, 구름 너머로 거대한 검은 전함들이 정박하는 그림자가 드리워졌다. 어른들은 '아뎁투스 아스트라 텔레파티카의 검은 함선이 십일조를 거두러 왔다'며 굳은 얼굴로 아퀼라 성호를 긋는다.",
+    leadVariants: [
+      {
+        req: { anyOriginClasses: ["schola"] },
+        lead: "스콜라 교관들이 며칠 전부터 통금 경계 훈련을 강화하며 황금 옥좌로 바쳐질 사이킥 십일조의 엄중한 의미를 일러 두었던 참이었다."
+      },
+      {
+        req: { anyOriginClasses: ["noble", "high_noble"] },
+        lead: "며칠째 가문 가정교사가 테라로 향하는 냉혹한 사이킥 십일조와 야간 통금 수칙을 조용히 일러 두며 저택에 팽팽한 긴장이 감돌던 참이었다."
+      }
+    ],
+    text: "갑자기 하늘빛이 서늘하게 가라앉더니, 구름 너머로 거대한 검은 전함들이 정박하는 그림자가 드리워졌다. 거리의 어른들은 감히 정식 기관명조차 입에 올리지 못한 채 '검은 배가 마녀와 이상한 아이들을 싣고 가려 궤도에 떴다'고 낮게 속삭이며 굳은 얼굴로 아퀼라 성호를 긋는다.",
     choices: [
       {
         label: "[의지 판정] 공포에 숨지 않고 성당 광장에 서서 황제 찬송가를 목청껏 따라 부른다",
@@ -829,6 +839,7 @@ export default [
         "astartes", "custodes", "grey_knight", "dreadnought",
         "heretic", "chaos_aligned", "chaos_champion", "renegade_marine", "chaos_lord", "daemon_prince"
       ],
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"]
     },

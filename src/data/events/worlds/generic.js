@@ -8,6 +8,7 @@ export default [
     req: {
       minAge: 14,
       maxAge: 45,
+      excludeHabitats: ["void"],
       excludeWorlds: ["krieg"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
@@ -80,6 +81,7 @@ export default [
       minAge: 13,
       maxAge: 35,
       maxCareerTier: 3,
+      excludeHabitats: ["void"],
       excludeRealms: ["heretic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       excludeTags: [
@@ -139,7 +141,9 @@ export default [
     title: "하층 하이브의 유독 매연과 역병",
     category: "일상",
     req: {
+      minAge: 14,
       maxSocialTier: "common",
+      excludeHabitats: ["void"],
       excludeRealms: ["cloistered", "heretic"],
       excludeBodyClasses: ["transhuman", "dreadnought", "daemonic"],
       anyWorldTags: ["hive", "industrial", "forge"],
@@ -188,6 +192,7 @@ export default [
     category: "일상",
     req: {
       minAge: 12,
+      excludeHabitats: ["void"],
       excludeWorldTags: ["krieg", "feral", "death", "voidborn"],
       excludeHomeWorlds: ["krieg"],
       excludeTags: [
@@ -239,6 +244,8 @@ export default [
     title: "아그리 월드의 풍년과 궤도 십일조 수확",
     category: "일상",
     req: {
+      minAge: 14,
+      excludeHabitats: ["void"],
       anyWorldTags: ["agri"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought",
@@ -284,6 +291,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       anyWorldTags: ["paradise"],
       excludeTags: [
         "dreadnought", "high_lord_terra",
@@ -382,6 +390,7 @@ export default [
     once: true,
     req: {
       minAge: 12,
+      excludeHabitats: ["void"],
       anyWorldTags: ["feral"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought", "high_lord_terra",
@@ -427,6 +436,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       anyWorldTags: ["agri"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought",
@@ -486,6 +496,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       anyWorldTags: ["paradise"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought",
@@ -540,6 +551,7 @@ export default [
     once: true,
     req: {
       minAge: 14,
+      excludeHabitats: ["void"],
       anyWorldTags: ["feral"],
       excludeTags: [
         "astartes", "custodes", "grey_knight", "dreadnought",
@@ -595,6 +607,7 @@ export default [
     once: true,
     req: {
       minAge: 15,
+      excludeHabitats: ["void"],
       anyWorldTags: ["hive"],
       excludeWorlds: ["terra", "krieg"],
       excludeTags: [

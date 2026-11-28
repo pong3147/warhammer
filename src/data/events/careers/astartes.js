@@ -9,7 +9,11 @@ export default [
       minAge: 11,
       maxAge: 16,
       gender: "male",
-      excludeTags: ["astartes", "custodes", "abhuman", "heretic", "chaos_aligned"],
+      maxCareerTier: 2,
+      excludeWorlds: ["krieg"],
+      excludeHomeWorlds: ["krieg"],
+      excludeTrees: ["mechanicus", "navis_navigator", "imperial_knight", "officio_assassinorum", "sororitas", "living_saint"],
+      excludeTags: ["astartes", "custodes", "grey_knight", "abhuman", "blank", "omega_pariah", "knight_blood", "heretic", "chaos_aligned", "navigator", "mechanicus", "imperial_knight", "assassin", "living_saint"],
       or: [{ anyTags: ["geneseed_compatible"] }, { anyWorldTags: ["astartes_recruit"] }]
     },
     reqLabel: "소년기 11~16세 · 진시드 적합 또는 챕터 징병 행성",

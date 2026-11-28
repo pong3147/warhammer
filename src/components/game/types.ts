@@ -24,3 +24,14 @@ export interface StartConfig {
   gender?: string;
   customName?: string;
 }
+
+export interface LogEntry {
+  year: string;
+  age: number;
+  text: string;
+  kind: string;
+  meta?: Record<string, unknown> | null;
+  badge?: string | null;
+  deltaText?: string | null;
+  chronicleId?: string | null;
+}
